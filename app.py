@@ -1,10 +1,19 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # <--- Import adicionado pelo Pedro
 # Importamos as funções do arquivo crud.py que o grupo criou
 from crud import inserir_usuario, criar_tabelas
 # Biblioteca para o Argon2id (criptografia)
 from passlib.hash import argon2
 
 app = Flask(__name__)
+
+# =====================================================================
+# --- ALTERAÇÃO FEITA POR PEDRO SANTOS ---
+# Ativação do CORS (Cross-Origin Resource Sharing). 
+# Sem isso, o navegador do Vini bloqueava a requisição de cadastro
+# achando que era um ataque, impedindo o Front de falar com a API.
+CORS(app)
+# =====================================================================
 
 # PEPPER: Uma chave secreta que só nós sabemos. 
 # Ela NÃO fica no banco de dados. Isso impede que hackers quebrem as senhas
