@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initAchievements();
     animateProgressBars();
     initModulesView();
-    initStatItems();   // <-- Movido para cá! (Estava solto no código)
-    initDailyGoal();   // <-- Movido para cá! (Estava solto no código)
+    initStatItems();   
+    initDailyGoal();   
     
     // 3. Roda a animação de entrada
-    playWelcomeAnimation(); // <-- Movido para cá!
+    playWelcomeAnimation(); 
 
     // Torna as funções de navegação globais para o HTML conseguir chamar, se precisar
     window.showHomeView = showHomeView;
