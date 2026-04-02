@@ -95,7 +95,7 @@ function handleNavigation(section) {
             showModulesView();
             break;
         case 'Ligas':
-            console.log('Navigate to leagues page');
+            window.location.href = 'ligas.html';
             break;
         case 'Missões':
             console.log('Navigate to missions page');
@@ -123,7 +123,7 @@ function initTrailInteractions() {
             }
 
             if (moduleName) {
-                const target = `trilha (1).html?module=${encodeURIComponent(trailTitle)}`;
+                const target = `trilhas.html?module=${encodeURIComponent(trailTitle)}`;
                 window.location.href = target;
                 return;
             }
@@ -461,7 +461,7 @@ function initModulesView() {
 
             const moduleTitleEl = card.querySelector('.module-title');
             const moduleTitle = moduleTitleEl ? moduleTitleEl.textContent.trim() : 'Trilha de Aprendizado';
-            const target = `trilha (1).html?module=${encodeURIComponent(moduleTitle)}`;
+            const target = `trilhas.html?module=${encodeURIComponent(moduleTitle)}`;
             window.location.href = target;
         });
 

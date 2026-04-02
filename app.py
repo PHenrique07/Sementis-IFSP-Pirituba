@@ -1,12 +1,15 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from crud import inserir_usuario, criar_tabelas, buscar_usuario_por_email
+from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
+    registrar_conclusao_atividade, listar_modulos, listar_trilhas_do_modulo,
+    listar_atividades_da_trilha)
 from passlib.hash import argon2
 from functools import wraps
 import os
 from datetime import datetime, timezone, timedelta
 import jwt
-
+from sqlmodel import Session, select, create_engine
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario
 
 app = Flask(__name__)
 
@@ -93,11 +96,11 @@ def serve_static(filename):
     else:
         return f"Arquivo não encontrado: {filename}", 404
 
-# Rota específica para o arquivo com espaço no nome
-@app.route('/trilha%20(1).html')
+# Rota específica para a página de trilhas
+@app.route('/trilhas.html')
 def trilha():
     """Serve a página de trilhas"""
-    return send_from_directory('.', 'trilha (1).html')
+    return send_from_directory('.', 'trilhas.html')
 
 # =====================================================================
 # --- ROTAS DE API ---
@@ -234,6 +237,21 @@ def perfil():
         "usuario_id": request.usuario_id,
         "tipo": request.usuario_tipo
     }), 200
+
+@app.route('/completar_atividade', methods=['POST'])
+@token_obrigatorio
+def completar_atividade(usuario_atual):
+    dados = request.get_json()
+    id_atv = dados.get('atividade_id')
+
+    with Session(engine) as session:
+        # Usando a sua função número 7 do crud.py!
+        sucesso = registrar_conclusao_atividade(session, usuario_atual.id, id_atv)
+        
+        if sucesso:
+            return jsonify({"mensagem": "Atividade concluída e recompensas entregues!"}), 200
+        else:
+            return jsonify({"erro": "Atividade não encontrada"}), 404
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)

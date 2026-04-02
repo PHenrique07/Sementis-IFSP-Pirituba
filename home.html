@@ -10,6 +10,7 @@
     <title>Sementis - Trilhas de Aprendizado</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/shared-navbar.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="home-page">
@@ -291,32 +292,10 @@
         </div>
     </main>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <div class="sidebar-logo">
-            <img src="assets/brand/logo_sementis_branco.png" alt="Sementis">
-        </div>
-        <div class="nav-items-wrapper">
-            <button class="nav-item active">
-                <img src="assets/icons/menu_rodape_tarefa.png" alt="Trilhas">
-                <span>Trilhas</span>
-            </button>
-            <button class="nav-item">
-                <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="Ligas">
-                <span>Ligas</span>
-            </button>
-            <button class="nav-item">
-                <img src="assets/icons/menu_rodape_alvo.png" alt="Missões">
-                <span>Missões</span>
-            </button>
-            <button class="nav-item">
-                <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil">
-                <span>Perfil</span>
-            </button>
-        </div>
-    </nav>
+    <div id="shared-navbar-root"></div>
 
     <script src="pwa/pwa-register.js"></script>
+    <script src="js/shared-navbar.js"></script>
     <script src="js/main.js"></script>
     <script src="js/home.js"></script>
 </body>

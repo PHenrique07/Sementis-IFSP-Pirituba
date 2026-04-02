@@ -1,0 +1,434 @@
+.leagues-page {
+    background-color: var(--color-primary);
+    min-height: 100vh;
+    padding-bottom: 88px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.leagues-page::before {
+    content: '';
+    position: fixed;
+    right: -220px;
+    bottom: -140px;
+    width: clamp(640px, 95vw, 1200px);
+    aspect-ratio: 1 / 1;
+    background-image: url('../assets/brand/logo_sementis_background_5__opacidade.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    opacity: 0.18;
+    transform: rotate(-24deg);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.leagues-header,
+.ranking-wrapper,
+.bottom-nav {
+    position: relative;
+    z-index: 1;
+}
+
+.leagues-header {
+    background: linear-gradient(180deg, #1b1b4d 0%, #2a2a66 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
+    padding: 16px 14px 14px;
+}
+
+.leagues-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.leagues-logo {
+    width: clamp(140px, 44vw, 200px);
+    height: auto;
+}
+
+.league-tier-pill {
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #2b305f;
+    background: linear-gradient(145deg, #d7e6ff 0%, #8cb3f5 100%);
+}
+
+.league-tier-pill.current-tier {
+    color: #1b2a14;
+    background: linear-gradient(145deg, #cfff9a 0%, #a9ff71 100%);
+    box-shadow: 0 0 0 2px rgba(169, 255, 113, 0.3), 0 6px 16px rgba(169, 255, 113, 0.32);
+}
+
+.league-track {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    background: rgba(113, 147, 214, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 10px 8px;
+}
+
+.league-track-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    border-radius: 10px;
+    position: relative;
+    overflow: visible;
+}
+
+.league-track-item.reached {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.league-track-item.current {
+    background: rgba(169, 255, 113, 0.3);
+    border: 2px solid rgba(169, 255, 113, 0.92);
+    box-shadow: 0 0 0 3px rgba(169, 255, 113, 0.22) inset, 0 0 24px rgba(169, 255, 113, 0.65);
+    transform: translateY(-1px) scale(1.04);
+}
+
+.league-track-item.current img {
+    filter: drop-shadow(0 0 10px rgba(169, 255, 113, 0.9));
+}
+
+.league-track-item.current::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 12px;
+    border: 2px solid rgba(169, 255, 113, 0.55);
+    box-shadow: 0 0 16px rgba(169, 255, 113, 0.45);
+    animation: currentTrophyPulse 1.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes currentTrophyPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.04);
+    }
+}
+
+.league-track-item img {
+    width: 34px;
+    height: 34px;
+}
+
+.league-track-item.upcoming img {
+    opacity: 0.55;
+}
+
+.ranking-wrapper {
+    width: min(100%, 780px);
+    margin: 0 auto;
+    padding: 14px 10px 24px;
+}
+
+.ranking-card {
+    background: linear-gradient(180deg, rgba(48, 48, 109, 0.98) 0%, rgba(39, 39, 94, 0.98) 100%);
+    border-radius: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+}
+
+.ranking-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ranking-row {
+    display: grid;
+    grid-template-columns: 40px 44px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ranking-row:last-child {
+    border-bottom: none;
+}
+
+.ranking-row.top-1,
+.ranking-row.top-2,
+.ranking-row.top-3 {
+    background: rgba(110, 142, 209, 0.14);
+}
+
+.rank-badge {
+    width: 38px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rank-badge img {
+    width: 34px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.rank-number {
+    width: 38px;
+    text-align: center;
+    font-size: 36px;
+    line-height: 1;
+    font-weight: 800;
+    color: var(--color-accent);
+}
+
+.player-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(94, 111, 178, 0.45);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.player-avatar img {
+    width: 27px;
+    height: 27px;
+    opacity: 0.95;
+}
+
+.player-meta h3 {
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #f5f7ff;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.player-xp {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-accent);
+    white-space: nowrap;
+}
+
+.bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+    background: var(--color-primary-dark);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.sidebar-logo {
+    display: none;
+}
+
+.nav-items-wrapper {
+    display: contents;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    color: #8d92bc;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.nav-item img {
+    width: 30px;
+    height: 30px;
+    transition: transform 0.2s ease;
+}
+
+.nav-item span {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.nav-item.active {
+    color: var(--color-accent);
+}
+
+.nav-item.active img {
+    transform: scale(1.08);
+}
+
+.nav-item:hover:not(.active) {
+    color: #fff;
+}
+
+@media (max-width: 420px) {
+    .ranking-row {
+        grid-template-columns: 34px 40px 1fr auto;
+        gap: 7px;
+        padding: 11px 8px;
+    }
+
+    .rank-number {
+        width: 34px;
+        font-size: 30px;
+    }
+
+    .player-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .player-avatar img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .player-meta h3 {
+        font-size: 14px;
+    }
+
+    .player-xp {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .leagues-page {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        grid-template-rows: auto 1fr;
+        padding-bottom: 0;
+    }
+
+    .leagues-header {
+        grid-column: 2;
+        grid-row: 1;
+        padding: 20px 42px 18px;
+    }
+
+    .ranking-wrapper {
+        grid-column: 2;
+        grid-row: 2;
+        width: min(100%, 980px);
+        padding: 24px 42px 42px;
+    }
+
+    .ranking-row {
+        grid-template-columns: 56px 52px 1fr auto;
+        gap: 14px;
+        padding: 14px 18px;
+    }
+
+    .rank-number {
+        width: 56px;
+        font-size: 44px;
+    }
+
+    .rank-badge {
+        width: 50px;
+        height: 60px;
+    }
+
+    .rank-badge img {
+        width: 44px;
+        height: 56px;
+    }
+
+    .player-avatar {
+        width: 52px;
+        height: 52px;
+    }
+
+    .player-avatar img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .player-meta h3 {
+        font-size: 18px;
+    }
+
+    .player-xp {
+        font-size: 21px;
+    }
+
+    .bottom-nav {
+        top: 0;
+        right: auto;
+        bottom: 0;
+        width: 250px;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        padding: 0;
+        border-top: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 4px 0 22px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar-logo {
+        display: block;
+        padding: 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .sidebar-logo img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .nav-items-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 0 12px;
+    }
+
+    .nav-item {
+        flex-direction: row;
+        gap: 14px;
+        padding: 14px 16px;
+        border-radius: 16px;
+    }
+
+    .nav-item span {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .nav-item.active {
+        background: rgba(169, 255, 113, 0.1);
+    }
+
+    .nav-item:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.06);
+    }
+}

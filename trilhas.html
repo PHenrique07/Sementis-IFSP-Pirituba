@@ -471,7 +471,7 @@
       padding: 0;
       border-top: none;
       border-right: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
+      box-shadow: 4px 0 22px rgba(0, 0, 0, 0.25);
     }
 
     .sidebar-logo {
@@ -521,6 +521,7 @@
     }
   }
 </style>
+<link rel="stylesheet" href="css/shared-navbar.css">
 </head>
 <body>
 
@@ -536,29 +537,7 @@
 
 <div class="trail-scene" id="scene"></div>
 
-<nav class="bottom-nav" aria-label="Navegacao principal">
-  <div class="sidebar-logo">
-    <img src="assets/brand/logo_sementis_branco.png" alt="Sementis">
-  </div>
-  <div class="nav-items-wrapper">
-    <a class="nav-item active" href="home.html" aria-current="page">
-      <img src="assets/icons/menu_rodape_tarefa.png" alt="Trilhas">
-      <span>Trilhas</span>
-    </a>
-    <a class="nav-item" href="home.html">
-      <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="Ligas">
-      <span>Ligas</span>
-    </a>
-    <a class="nav-item" href="home.html">
-      <img src="assets/icons/menu_rodape_alvo.png" alt="Missões">
-      <span>Missões</span>
-    </a>
-    <a class="nav-item" href="home.html">
-      <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil">
-      <span>Perfil</span>
-    </a>
-  </div>
-</nav>
+<div id="shared-navbar-root"></div>
 
 <script>
 function applyModuleTitle() {
@@ -586,23 +565,46 @@ const lessons = [
   { label: 'Conclusão',  state: 'locked' },
 ];
 
-// Horizontal anchors (fraction 0..1) — nice organic S-curve
-const X_ANCHORS = [0.25, 0.75, 0.72, 0.28, 0.25, 0.75, 0.28];
-const V_STEP    = 160;
-const PAD_TOP   = 80;
-const PAD_BOT   = 100;
+const PAD_TOP   = 88;
+const PAD_BOT   = 130;
+const PAD_SIDE  = 112;
+
+function seededNoise(n) {
+  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453123;
+  return x - Math.floor(x);
+}
+
+function getNodePoints(width) {
+  const points = [];
+  let y = PAD_TOP;
+
+  for (let i = 0; i < lessons.length; i++) {
+    if (i > 0) {
+      // Espaçamento maior e irregular para parecer mais natural entre os nós.
+      const baseStep = 260;
+      const randomStep = seededNoise(i * 4.17) * 66;
+      const waveStep = Math.sin(i * 0.82 + 0.4) * 18;
+      const step = Math.max(246, baseStep + randomStep + waveStep);
+      y += step;
+    }
+
+    const baseWave = Math.sin(i * 1.18 + 0.5) * 0.12 + Math.sin(i * 0.63 + 1.7) * 0.07;
+    const jitter = (seededNoise(i + 3.21) - 0.5) * 0.1;
+    const xNorm = 0.5 + baseWave + jitter;
+    const x = Math.max(PAD_SIDE, Math.min(width - PAD_SIDE, xNorm * width));
+
+    points.push({ x, y });
+  }
+
+  return points;
+}
 
 function build() {
   const scene = document.getElementById('scene');
   const W = Math.min(window.innerWidth, 460);
-  const H = PAD_TOP + V_STEP * (lessons.length - 1) + PAD_BOT;
+  const pts = getNodePoints(W);
+  const H = pts[pts.length - 1].y + PAD_BOT;
   scene.style.height = H + 'px';
-
-  // Centers
-  const pts = lessons.map((_, i) => ({
-    x: X_ANCHORS[i] * W,
-    y: PAD_TOP + i * V_STEP,
-  }));
 
   // ── SVG ────────────────────────────────────
   const svgNS = 'http://www.w3.org/2000/svg';
@@ -619,15 +621,14 @@ function build() {
     const a = pts[i], b = pts[i+1];
     const isDone = lessons[i].state === 'done';
 
-    // Catmull-style: pull control points toward the far side to get juicy S-curves
-    const flip = (i % 2 === 0) ? 1 : -1;
-    const bulge = W * 0.24 * flip;
-    const midY = (a.y + b.y) / 2;
-    const cp1x = a.x + bulge, cp1y = midY - V_STEP * 0.12;
-    const cp2x = b.x + bulge, cp2y = midY + V_STEP * 0.12;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const diameter = Math.hypot(dx, dy) || 1;
+    const radius = diameter / 2;
+    const sweepFlag = i % 2 === 0 ? 1 : 0;
 
     const p = document.createElementNS(svgNS, 'path');
-    p.setAttribute('d', `M${a.x},${a.y} C${cp1x},${cp1y} ${cp2x},${cp2y} ${b.x},${b.y}`);
+    p.setAttribute('d', `M${a.x},${a.y} A${radius},${radius} 0 0 ${sweepFlag} ${b.x},${b.y}`);
     p.setAttribute('class', isDone ? 'seg-done' : 'seg-locked');
     svg.appendChild(p);
   }
@@ -690,5 +691,6 @@ build();
 window.addEventListener('resize', build);
 </script>
 <script src="pwa/pwa-register.js"></script>
+<script src="js/shared-navbar.js"></script>
 </body>
 </html>
