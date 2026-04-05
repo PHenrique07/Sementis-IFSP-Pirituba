@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
     registrar_conclusao_atividade, listar_modulos, listar_trilhas_do_modulo,
-    listar_atividades_da_trilha)
+    listar_atividades_da_trilha, buscar_ranking_geral)
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -252,6 +252,26 @@ def completar_atividade(usuario_atual):
             return jsonify({"mensagem": "Atividade concluída e recompensas entregues!"}), 200
         else:
             return jsonify({"erro": "Atividade não encontrada"}), 404
+        
+@app.route('/ranking', methods=['GET'])
+def ranking():
+    #Retorna o ranking de XP para o Front-end
+    with Session(engine) as session:
+        usuarios = buscar_ranking_geral(session)
+        
+        # transformando a lista de obj em Jhonson&Jhonsons
+        lista_ranking = []
+        for user in usuarios:
+            lista_ranking.append({
+                "nome": user.nome,
+                "xp": user.xp,
+                #Calculo do nivel provisorio, ha de ser diascutido ainda
+                "nivel": (user.xp // 100) + 1, 
+                
+                "tipo": user.tipo_usuario
+            })
+            
+        return jsonify(lista_ranking), 200
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)

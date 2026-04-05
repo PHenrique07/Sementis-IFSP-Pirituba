@@ -67,20 +67,45 @@ def adicionar_pontuacao(session: Session, id_usuario: int, xp: int, moedas: int)
 
 # 7. Registrar a conclusão de uma atividade (a bolinha)
 def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividade: int):
-    # Busca a atividade (bolinha) para saber quanto de XP e moedas ela vale
-    atividade = session.get(Atividade, id_atividade)
+    # 1. Verifica se já existe esse progresso (Evita Farm de XP infinito)
+    ja_concluiu = session.exec(
+        select(ProgressoUsuario).where(
+            ProgressoUsuario.usuario_id == id_usuario, 
+            ProgressoUsuario.atividade_id == id_atividade
+        )
+    ).first()
     
-    if atividade:
-        # Registra que o usuário terminou essa bolinha específica
+    if ja_concluiu:
+        return {"status": "erro", "mensagem": "Atividade já concluída anteriormente"}
+
+    # 2. Busca a atividade
+    atividade = session.get(Atividade, id_atividade)
+    usuario = session.get(Usuario, id_usuario)
+    
+    if atividade and usuario:
+        # 3. Registra o progresso
         novo_progresso = ProgressoUsuario(usuario_id=id_usuario, atividade_id=id_atividade)
         session.add(novo_progresso)
         
-        # Chama a função do seu card para dar a recompensa!
-        adicionar_pontuacao(session, id_usuario, atividade.xp_recompensa, atividade.moedas_recompensa)
+        # 4. Dá a recompensa direto aqui (mais seguro)
+        usuario.xp += atividade.xp_recompensa
+        usuario.moedas += atividade.moedas_recompensa
+        
+        # 5. TODO: Lógica para desbloquear a PRÓXIMA atividade
+        # Você pode buscar a atividade com ordem = atual + 1 na mesma trilha
         
         session.commit()
-        return True
-    return False
+        return {"status": "sucesso", "xp": usuario.xp, "moedas": usuario.moedas}
+        
+    return {"status": "erro", "mensagem": "Usuário ou Atividade não encontrados"}
+
+def buscar_ranking_geral(session: Session, limite: int = 10):
+    """Retorna o top X usuários com mais XP"""
+    # select(Usuario) vai pegar a tabelaa de usuarios
+    # order_by(Usuario.xp.desc()) pega o maior XP para o menor
+    # limit(limite) pega so o top 10, definido no int ali encima
+    instrucao = select(Usuario).order_by(Usuario.xp.desc()).limit(limite)
+    return session.exec(instrucao).all()
 
 # ==========================================
 # FUNÇÕES DE LEITURA PARA O FRONT-END
