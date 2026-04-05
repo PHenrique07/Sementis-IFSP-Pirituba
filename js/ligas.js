@@ -1,4 +1,5 @@
- // 1. DADOS FALSOS (MOCK) - Simulando o que o banco vai devolver no futuro
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. DADOS FALSOS (MOCK) - Simulando o que o banco vai devolver no futuro
     const rankingFalso = [
         { nome: "UltraDoZap00", xp: 2150 },
         { nome: "MegaDoCafe13", xp: 2131 },
@@ -17,7 +18,7 @@
         const lista = document.getElementById('rankingList'); 
         
         if (!lista) return;
-        lista.innerHTML = ''; // Limpa antes de injetar
+        lista.innerHTML = ''; // Limpa os dados velhos antes de injetar os novos
 
         dados.forEach((usuario, index) => {
             const item = document.createElement('li');
