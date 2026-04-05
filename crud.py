@@ -67,7 +67,14 @@ def adicionar_pontuacao(session: Session, id_usuario: int, xp: int, moedas: int)
 
 # 7. Registrar a conclusão de uma atividade (a bolinha)
 def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividade: int):
-    # 1. Verifica se já existe esse progresso (Evita Farm de XP infinito)
+    # Busca a atividade e o usuário primeiro
+    atividade = session.get(Atividade, id_atividade)
+    usuario = session.get(Usuario, id_usuario)
+    
+    if not atividade or not usuario:
+        return {"status": "erro", "mensagem": "Usuário ou Atividade não encontrados"}
+
+    # 1. Verifica se já existe esse progresso no banco
     ja_concluiu = session.exec(
         select(ProgressoUsuario).where(
             ProgressoUsuario.usuario_id == id_usuario, 
@@ -75,29 +82,42 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
         )
     ).first()
     
-    if ja_concluiu:
-        return {"status": "erro", "mensagem": "Atividade já concluída anteriormente"}
+    try:
+        if ja_concluiu:
+            # === REFAZENDO A FASE (REPLAY) ===
+            # Ganha só 20% do XP e nenhuma moeda extra. Não cria progresso novo.
+            xp_reduzido = int(atividade.xp_recompensa * 0.2)
+            usuario.xp += xp_reduzido
+            mensagem = f"Fase refeita! Você ganhou {xp_reduzido} XP."
+            
+        else:
+            # === PRIMEIRA VEZ JOGANDO ===
+            # Dá a recompensa total e registra que ele passou de fase
+            usuario.xp += atividade.xp_recompensa
+            usuario.moedas += atividade.moedas_recompensa
+            
+            novo_progresso = ProgressoUsuario(usuario_id=id_usuario, atividade_id=id_atividade)
+            session.add(novo_progresso)
+            
+            mensagem = f"Fase concluída! Você ganhou {atividade.xp_recompensa} XP."
+            
+            # TODO: Lógica para desbloquear a PRÓXIMA atividade entra aqui no futuro
 
-    # 2. Busca a atividade
-    atividade = session.get(Atividade, id_atividade)
-    usuario = session.get(Usuario, id_usuario)
-    
-    if atividade and usuario:
-        # 3. Registra o progresso
-        novo_progresso = ProgressoUsuario(usuario_id=id_usuario, atividade_id=id_atividade)
-        session.add(novo_progresso)
-        
-        # 4. Dá a recompensa direto aqui (mais seguro)
-        usuario.xp += atividade.xp_recompensa
-        usuario.moedas += atividade.moedas_recompensa
-        
-        # 5. TODO: Lógica para desbloquear a PRÓXIMA atividade
-        # Você pode buscar a atividade com ordem = atual + 1 na mesma trilha
-        
+        # Salva tudo de uma vez só no banco de dados (Atomicidade)
+        session.add(usuario)
         session.commit()
-        return {"status": "sucesso", "xp": usuario.xp, "moedas": usuario.moedas}
         
-    return {"status": "erro", "mensagem": "Usuário ou Atividade não encontrados"}
+        return {
+            "status": "sucesso", 
+            "mensagem": mensagem, 
+            "xp_atual": usuario.xp, 
+            "moedas_atuais": usuario.moedas
+        }
+
+    except Exception as e:
+        # Se der qualquer erro no processo, cancela tudo para não bugar o XP
+        session.rollback()
+        return {"status": "erro", "mensagem": f"Erro interno: {str(e)}"}
 
 def buscar_ranking_geral(session: Session, limite: int = 10):
     """Retorna o top X usuários com mais XP"""
