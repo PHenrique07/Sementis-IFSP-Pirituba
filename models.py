@@ -53,3 +53,21 @@ class ProgressoUsuario(SQLModel, table=True):
     usuario_id: int = Field(foreign_key="usuario.id")
     atividade_id: int = Field(foreign_key="atividade.id") # Agora o progresso é por bolinha!
     data_conclusao: datetime = Field(default_factory=datetime.utcnow)
+
+
+# 6. Tabela da Loja (Itens que podem ser comprados)
+class ItemLoja(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    nome: str
+    descricao: str
+    preco: int
+    imagem: str | None = None # Caminho para o ícone do item
+    tipo: str = Field(default="cosmetico") # Pode ser "cosmetico", "poder", "avatar"
+
+# 7. Tabela de Inventário (O que cada usuário comprou)
+class InventarioUsuario(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    usuario_id: int = Field(foreign_key="usuario.id")
+    item_id: int = Field(foreign_key="itemloja.id")
+    data_compra: datetime = Field(default_factory=datetime.utcnow)
+    equipado: bool = Field(default=False) # Se o usuário está usando o item no momento
