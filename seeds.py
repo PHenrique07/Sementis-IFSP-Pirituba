@@ -24,8 +24,8 @@ def semear_banco():
         # 1. Criando Usuários para o Ranking
         usuarios = [
             Usuario(nome="Pedro", email="pedro@ifsp.edu.br", idade=19, senha=senha_padrao, tipo_usuario="aluno", xp=3200, moedas=500),
-            Usuario(nome="Lucas", email="lucas@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=2850, moedas=300),
-            Usuario(nome="Vini", email="vini@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=2900, moedas=350),
+            Usuario(nome="Lucas", email="lucas@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=28588880, moedas=300),
+            Usuario(nome="Vini", email="vini@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=2900000, moedas=350),
             Usuario(nome="Foltest", email="well@ifsp.edu.br", idade=67, senha=senha_padrao, tipo_usuario="aluno", xp=67, moedas=67),
             Usuario(nome="Skaisaici", email="admin@ifsp.edu.br", idade=40, senha=senha_padrao, tipo_usuario="professor", xp=9999, moedas=9999),
             Usuario(nome="Novato", email="novato@ifsp.edu.br", idade=18, senha=senha_padrao, tipo_usuario="aluno", xp=150, moedas=20),

@@ -1,19 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. DADOS FALSOS (MOCK) - Simulando o que o banco vai devolver no futuro
-    const rankingFalso = [
-        { nome: "UltraDoZap00", xp: 2150 },
-        { nome: "MegaDoCafe13", xp: 2131 },
-        { nome: "SigmaDaLive26", xp: 2112 },
-        { nome: "ChadDoPix39", xp: 2093 },
-        { nome: "NpcDoChaos52", xp: 2074 },
-        { nome: "BrainrotDoLobby65", xp: 2085 },
-        { nome: "NoobDaResenha78", xp: 2066 },
-        { nome: "TurboDoMeme91", xp: 2047 },
-        { nome: "EpicDaRanked04", xp: 2028 },
-        { nome: "CringeDoCaps17", xp: 2009 }
-    ];
-
-    // 2. FUNÇÃO QUE DESENHA NA TELA COM O CSS DO FOLTEST
+    // 1. FUNÇÃO QUE DESENHA NA TELA COM O CSS DO FOLTEST
     const exibirRanking = (dados) => {
         const lista = document.getElementById('rankingList'); 
         
@@ -56,32 +42,29 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ========================================================
-    // 3. EXECUÇÃO HOJE (COM DADOS FALSOS)
+    // 2. BUSCANDO OS DADOS REAIS DO BANCO DE DADOS (API)
     // ========================================================
-    exibirRanking(rankingFalso); 
-
-    // ========================================================
-    // 4. O FUTURO (QUANDO O LUCAS TERMINAR A API)
-    // 1. Apague a linha de cima: exibirRanking(rankingFalso);
-    // 2. Tire os comentários (/* e */) do bloco abaixo:
-    // ========================================================
-    
-    /*
     const buscarRankingAPI = async () => {
         const rota = 'http://127.0.0.1:5000/ranking'; 
         try {
             const response = await fetch(rota);
             if (!response.ok) throw new Error('Erro ao buscar dados da API');
 
+            // Recebe o JSON que o Lucas configurou no app.py
             const usuarios = await response.json();
-            exibirRanking(usuarios); // Chama a mesma função, mas com dados reais!
+            
+            // Garantia extra do Front-end: ordena do maior pro menor XP
+            usuarios.sort((a, b) => b.xp - a.xp);
+            
+            // Desenha a galera na tela
+            exibirRanking(usuarios); 
 
         } catch (erro) {
             console.error('Falha na requisição:', erro);
-            document.getElementById('rankingList').innerHTML = '<li style="color:white; text-align:center; padding: 20px;">Erro ao carregar o ranking.</li>';
+            document.getElementById('rankingList').innerHTML = '<li style="color:white; text-align:center; padding: 20px;">Erro ao carregar o ranking. A API está rodando?</li>';
         }
     };
 
+    // Dá o gatilho inicial para buscar os dados assim que a tela carregar
     buscarRankingAPI();
-    */
 });
