@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
 from datetime import datetime
+from datetime import date
 
 # 1. Tabela de Usuário (Mantida)
 class Usuario(SQLModel, table=True):
@@ -71,3 +72,31 @@ class InventarioUsuario(SQLModel, table=True):
     item_id: int = Field(foreign_key="itemloja.id")
     data_compra: datetime = Field(default_factory=datetime.utcnow)
     equipado: bool = Field(default=False) # Se o usuário está usando o item no momento
+
+
+# 8. Catálogo de Missões (A vitrine de todas as missões que existem no sementis)
+class Missao(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    titulo: str # Ex: "Complete sua próxima lição"
+    meta: int # Ex: 2 (quantidade de vezes que tem que fazer a ação)
+    xp_recompensa: int = Field(default=50)
+    moedas_recompensa: int = Field(default=10)
+    
+    # Uma tag interna para o seu CRUD saber quando essa missão deve andar
+    # Ex: "passar_fase", "login_diario", "acerto_perfeito"
+    tipo_acao: str 
+
+# 9. Progresso Diário (O save do aluno: quais missões ele tirou hoje e como ele tá indo)
+class ProgressoMissao(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    usuario_id: int = Field(foreign_key="usuario.id")
+    missao_id: int = Field(foreign_key="missao.id")
+    
+    # Salva o dia exato. Assim, meia-noite o sistema sabe que essas missões caducaram.
+    data_missao: date = Field(default_factory=date.today)
+    
+    # É aqui que o "1/2" ou "2/2" acontece:
+    progresso_atual: int = Field(default=0) 
+    
+    # True = Ele já bateu a meta e o XP já caiu na conta.
+    concluida: bool = Field(default=False)

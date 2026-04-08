@@ -1,5 +1,5 @@
 from sqlmodel import Session, SQLModel, create_engine
-from models import Usuario, Modulo, Trilha, Atividade, ItemLoja
+from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao
 from passlib.hash import argon2
 
 # Configuração igual a do app.py
@@ -65,6 +65,16 @@ def semear_banco():
             ItemLoja(nome="Coração Extra", descricao="Recupera 1 vida instantaneamente.", preco=50, tipo="consumivel", imagem="assets/loja/coracao.png")
         ]
         session.add_all(itens)
+
+# 5. Criando Catálogo de Missões Diárias 
+        missoes_catalogo = [
+            Missao(titulo="Complete sua próxima lição", meta=2, xp_recompensa=50, moedas_recompensa=10, tipo_acao="concluir_fase"),
+            Missao(titulo="Estude por 5 minutos seguidos", meta=5, xp_recompensa=20, moedas_recompensa=5, tipo_acao="tempo_estudo"),
+            Missao(titulo="Estude por 10 minutos seguidos", meta=10, xp_recompensa=50, moedas_recompensa=15, tipo_acao="tempo_estudo"),
+            Missao(titulo="Realize 3 lições perfeitas", meta=3, xp_recompensa=100, moedas_recompensa=30, tipo_acao="licao_perfeita"),
+            Missao(titulo="Faça seu login diário", meta=1, xp_recompensa=10, moedas_recompensa=5, tipo_acao="login")
+        ]
+        session.add_all(missoes_catalogo)
 
         session.commit()
         print("Sucesso! Banco de dados populado com usuários, módulos e itens da loja.")
