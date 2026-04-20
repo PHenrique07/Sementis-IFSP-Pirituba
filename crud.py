@@ -56,6 +56,7 @@ def adicionar_pontuacao(session: Session, id_usuario: int, xp: int, moedas: int)
     if usuario:
         # Soma os novos valores aos atuais
         usuario.xp += xp
+        usuario.xp_semanal += xp  # <-- Xp adicionado para a liga da semana
         usuario.moedas += moedas
         
         # Salva a alteração
@@ -119,36 +120,50 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
         session.rollback()
         return {"status": "erro", "mensagem": f"Erro interno: {str(e)}"}
 
-def buscar_ranking_geral(session: Session, limite: int = 10):
-    """Retorna o top X usuários com mais XP"""
+
+# 8. CÓDIGO LEGADO -> Ranking Geral de todos os usuários do site
+#Desativado para substituir pelo ranking por liga
+#def buscar_ranking_geral(session: Session, limite: int = 10):
+    #"""Retorna o top X usuários com mais XP"""
     # select(Usuario) vai pegar a tabelaa de usuarios
     # order_by(Usuario.xp.desc()) pega o maior XP para o menor
     # limit(limite) pega so o top 10, definido no int ali encima
-    instrucao = select(Usuario).order_by(Usuario.xp.desc()).limit(limite)
+    #instrucao = select(Usuario).order_by(Usuario.xp.desc()).limit(limite)
+    #return session.exec(instrucao).all()
+
+
+# 9. Ranking de cada liga (Ex: ranking da liga de bronze, prata, etc)
+def buscar_ranking_por_liga(session: Session, liga_id: int, limite: int = 50):
+    """
+    Retorna o ranking de uma liga específica, ordenado pelo XP da semana.
+    """
+    instrucao = select(Usuario).where(Usuario.liga_id == liga_id).order_by(Usuario.xp_semanal.desc()).limit(limite)
     return session.exec(instrucao).all()
+
+
 
 # ==========================================
 # FUNÇÕES DE LEITURA PARA O FRONT-END
 # ==========================================
 
-# 8. Listar os Módulos (Nível 1)
+# 10. Listar os Módulos (Nível 1)
 def listar_modulos(session: Session):
     instrucao = select(Modulo).order_by(Modulo.ordem)
     return session.exec(instrucao).all()
 
-# 9. Listar as Trilhas de um Módulo (Nível 2)
+# 11. Listar as Trilhas de um Módulo (Nível 2)
 def listar_trilhas_do_modulo(session: Session, id_modulo: int):
     instrucao = select(Trilha).where(Trilha.modulo_id == id_modulo).order_by(Trilha.ordem)
     return session.exec(instrucao).all()
 
-# 10. Listar as Atividades/Bolinhas de uma Trilha (Nível 3)
+# 12. Listar as Atividades/Bolinhas de uma Trilha (Nível 3)
 def listar_atividades_da_trilha(session: Session, id_trilha: int):
     instrucao = select(Atividade).where(Atividade.trilha_id == id_trilha).order_by(Atividade.ordem)
     return session.exec(instrucao).all()
 
 
 
-# 11. Sortear missões diárias para um usuário
+# 13. Sortear missões diárias para um usuário
 def sortear_missoes_diarias(session: Session, id_usuario: int, qtd_missoes: int = 3):
     """
     Busca as missões do dia para o usuário. Se ele não tiver, sorteia novas.
@@ -196,7 +211,7 @@ def sortear_missoes_diarias(session: Session, id_usuario: int, qtd_missoes: int 
     return lista_progresso
 
 
-# 12. Atualizar progressao de missão REVISAR DEPOIS
+# 14. Atualizar progressao de missão  -> REVISAR DEPOIS
 
 def atualizar_progresso_missao(session: Session, id_usuario: int, tipo_acao_realizada: str):
     """
@@ -230,6 +245,7 @@ def atualizar_progresso_missao(session: Session, id_usuario: int, tipo_acao_real
                 # 5. resgate automatico da recompensa (XP e Moedas)
                 usuario = session.get(Usuario, id_usuario)
                 usuario.xp += missao_catalogo.xp_recompensa
+                usuario.xp_semanal += missao_catalogo.xp_recompensa #xp semanal para as ligas
                 usuario.moedas += missao_catalogo.moedas_recompensa
                 session.add(usuario)
                 
@@ -246,3 +262,30 @@ def atualizar_progresso_missao(session: Session, id_usuario: int, tipo_acao_real
     
     # Retorna o que ele terminou pra tela dar algum retorno visual
     return missoes_concluidas_agora
+
+# 15. Subir os usuários de liga todo domingo  -> REVISAR DEPOIS
+def promover_usuarios_fim_de_semana(session: Session, qtd_promovidos: int = 10):
+    """
+    Sobe os X melhores de cada liga para a próxima e zera o XP semanal de todos.
+    qtd_promovidos: Define quantos sobem (Padrão: 10). Mude para testar mais fácil!
+    """
+    # Varre as ligas 1 (Bronze) e 2 (Prata). A 3 (Ouro) é o topo, não sobe mais.
+    for liga_atual in [1, 2]: 
+        instrucao = select(Usuario).where(Usuario.liga_id == liga_atual).order_by(Usuario.xp_semanal.desc())
+        usuarios_da_liga = session.exec(instrucao).all()
+        
+        # Pega os Top X e promove
+        for index, usuario in enumerate(usuarios_da_liga):
+            # Só sobe se estiver dentro do limite E se tiver jogado na semana (xp > 0)
+            if index < qtd_promovidos and usuario.xp_semanal > 0: 
+                usuario.liga_id += 1
+                session.add(usuario)
+
+    # A Guilhotina: Zera o XP da semana de todo mundo do banco
+    todos_usuarios = session.exec(select(Usuario)).all()
+    for usuario in todos_usuarios:
+        usuario.xp_semanal = 0
+        session.add(usuario)
+
+    session.commit()
+    return True

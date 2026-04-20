@@ -4,6 +4,7 @@ from datetime import datetime
 from datetime import date
 
 # 1. Tabela de Usuário (Mantida)
+
 class Usuario(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nome: str
@@ -17,6 +18,12 @@ class Usuario(SQLModel, table=True):
     vidas: int = Field(default=5)   
     ofensiva: int = Field(default=0) 
     xp: int = Field(default=0)
+    
+    # Ligas / Ranking
+    # 1 = Bronze, 2 = Prata, 3 = Ouro...
+    liga_id: int = Field(default=1) 
+    # Esse é o XP que vai ser zerado toda semana
+    xp_semanal: int = Field(default=0)
 
 # 2. Tabela de Módulos (ex: Módulo 1 - Sustentabilidade Básica)
 class Modulo(SQLModel, table=True):

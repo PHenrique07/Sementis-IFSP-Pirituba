@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+#Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
     registrar_conclusao_atividade, listar_modulos, listar_trilhas_do_modulo,
-    listar_atividades_da_trilha, buscar_ranking_geral)
+    listar_atividades_da_trilha, buscar_ranking_por_liga) 
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -256,6 +257,11 @@ def completar_atividade(usuario_atual):
 @app.route('/ranking', methods=['GET'])
 def ranking():
     #Retorna o ranking de XP para o Front-end
+
+#Pedro:
+#  1. Mudar a rota para /ranking/<int:liga_id>
+# 2. Usar a função buscar_ranking_por_liga(session, liga_id)
+# 3. Retornar no JSON o "id" e o "xp_semanal" em vez do xp total.
     with Session(engine) as session:
         usuarios = buscar_ranking_geral(session)
         
