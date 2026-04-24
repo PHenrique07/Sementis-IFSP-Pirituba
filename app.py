@@ -3,7 +3,8 @@ from flask_cors import CORS
 #Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
     registrar_conclusao_atividade, listar_modulos, listar_trilhas_do_modulo,
-    listar_atividades_da_trilha, buscar_ranking_por_liga) 
+    listar_atividades_da_trilha, buscar_ranking_por_liga, atualizar_progresso_missao,
+    sortear_missoes_diarias) 
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -193,7 +194,8 @@ def login():
                     "moedas": usuario.moedas,
                     "tipo": usuario.tipo_usuario,
                     "ofensiva": usuario.ofensiva,
-                    "vidas": usuario.vidas
+                    "vidas": usuario.vidas,
+                    "liga_id": usuario.liga_id
                 }
             }), 200
         else:
@@ -241,43 +243,62 @@ def perfil():
 
 @app.route('/completar_atividade', methods=['POST'])
 @token_obrigatorio
-def completar_atividade(usuario_atual):
+def completar_atividade():
+    # 1. Correção do Parâmetro: Usando o ID injetado pelo decorador
+    id_usuario = request.usuario_id 
+    
     dados = request.get_json()
     id_atv = dados.get('atividade_id')
 
-    with Session(engine) as session:
-        # Usando a sua função número 7 do crud.py!
-        sucesso = registrar_conclusao_atividade(session, usuario_atual.id, id_atv)
-        
-        if sucesso:
-            return jsonify({"mensagem": "Atividade concluída e recompensas entregues!"}), 200
-        else:
-            return jsonify({"erro": "Atividade não encontrada"}), 404
-        
-@app.route('/ranking', methods=['GET'])
-def ranking():
-    #Retorna o ranking de XP para o Front-end
+    if not id_atv:
+        return jsonify({"erro": "ID da atividade não fornecido"}), 400
 
-#Pedro:
-#  1. Mudar a rota para /ranking/<int:liga_id>
-# 2. Usar a função buscar_ranking_por_liga(session, liga_id)
-# 3. Retornar no JSON o "id" e o "xp_semanal" em vez do xp total.
     with Session(engine) as session:
-        usuarios = buscar_ranking_geral(session)
+        # 2. Registrar a conclusão (XP e Moedas da fase)
+        resultado = registrar_conclusao_atividade(session, id_usuario, id_atv)
         
-        # transformando a lista de obj em Jhonson&Jhonsons
+        if resultado.get("status") == "sucesso":
+            # 3. INTEGRAÇÃO: Chamar a função para o progresso da missão subir sozinho
+            # Usamos o tipo 'concluir_fase' que você cadastrou no seu seeds.py
+            missoes_concluidas = atualizar_progresso_missao(session, id_usuario, 'concluir_fase')
+            
+            # 4. RETORNO: Adicionamos as missões atualizadas no JSON para o Vini
+            resultado["missoes_completadas_agora"] = missoes_concluidas
+            
+            return jsonify(resultado), 200
+        else:
+            return jsonify({"erro": resultado.get("mensagem")}), 400
+
+#Rankings - Deve retornar o Json contendo id, nome, xp, nivel e o tipo do usuario
+@app.route('/ranking/<int:liga_id>', methods=['GET'])
+def ranking(liga_id):
+    with Session(engine) as session:
+        # Busca os usuários da liga específica usando sua função do crud.py
+        usuarios = buscar_ranking_por_liga(session, liga_id)
+        
         lista_ranking = []
         for user in usuarios:
             lista_ranking.append({
+                "id": user.id,
                 "nome": user.nome,
-                "xp": user.xp,
-                #Calculo do nivel provisorio, ha de ser diascutido ainda
-                "nivel": (user.xp // 100) + 1, 
-                
-                "tipo": user.tipo_usuario
+                "xp": user.xp_semanal 
             })
-            
+        
         return jsonify(lista_ranking), 200
+
+# --- Rota de Missões Diárias ---
+@app.route('/missoes', methods=['GET'])
+@token_obrigatorio
+def missoes():
+    # 1. Usa o ID do token (exigência do card)
+    id_usuario = request.usuario_id
+    
+    with Session(engine) as session:
+        # 2. Chama a função do crud (exigência do card)
+        missoes_do_dia = sortear_missoes_diarias(session, id_usuario)
+        
+        # 3. Retorna o JSON pro Front-end (exigência do card)
+        return jsonify(missoes_do_dia), 200
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)
