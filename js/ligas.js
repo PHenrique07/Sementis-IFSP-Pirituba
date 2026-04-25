@@ -1,3 +1,46 @@
+// Lógica para Trocar Liga e Destaque
+function updateLeagueHeader(league) {
+    const currentBadge = document.querySelector('.league-tier-pill.current-tier');
+    const trackItems = document.querySelectorAll('.league-track-item');
+    
+    // "Limpar" o estado
+    trackItems.forEach(item => {
+        item.classList.remove('reached', 'current');
+        item.classList.add('upcoming');
+        const img = item.querySelector('img');
+        if (item !== trackItems[0] && item !== trackItems[1] && item !== trackItems[2]) {
+            img.src = 'assets/ligas/liga_trofeu_bloqueado.png';
+        }
+    });
+    
+    let targetIndex = 0;
+    if (league === 'bronze') {
+        currentBadge.textContent = 'Liga Bronze';
+        targetIndex = 0;
+    } else if (league === 'prata') {
+        currentBadge.textContent = 'Liga Prata';
+        targetIndex = 1;
+    } else if (league === 'ouro') {
+        currentBadge.textContent = 'Liga Ouro';
+        targetIndex = 2;
+        // Troca o ícone de bloqueado para troféu se for o caso
+        const imgOuro = trackItems[2].querySelector('img');
+        imgOuro.src = 'assets/ligas/liga_medalha_ouro.png'; 
+    }
+    
+    for (let i = 0; i <= targetIndex; i++) {
+        trackItems[i].classList.remove('upcoming');
+        trackItems[i].classList.add('reached');
+        if (i === targetIndex) {
+            trackItems[i].classList.add('current');
+        }
+    }
+}
+
+// Chamada de Exemplo (para quando Vini for conferir a funcionalidade):
+// Podes mudar para 'bronze', 'prata' ou 'ouro'.
+updateLeagueHeader('prata');
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. FUNÇÃO QUE DESENHA NA TELA COM O CSS DO FOLTEST
     const exibirRanking = (dados) => {
@@ -37,6 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="player-xp">XP ${usuario.xp}</div>
             `;
             
+            // Lógica para injetar a zona invisível de rebaixamento no CSS (se baseando que temos muitos itens)
+            // No mock/API, dependendo da quantidade de itens, você pode ajustar onde o rebaixamento começa.
+            // Para manter igual o design CSS feito, a 89ª posição engatilha visualmente.
+            if (posicao === 89 && dados.length > 90) {
+                const anchor = document.createElement('div');
+                anchor.className = 'demotion-zone';
+                lista.appendChild(anchor);
+            }
+            
             lista.appendChild(item);
         });
     };
@@ -61,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (erro) {
             console.error('Falha na requisição:', erro);
-            document.getElementById('rankingList').innerHTML = '<li style="color:white; text-align:center; padding: 20px;">Erro ao carregar o ranking. A API está rodando?</li>';
+            document.getElementById('rankingList').innerHTML = '<li class="ranking-row" style="justify-content: center; color: var(--neon-secondary);">Erro ao carregar o ranking. A API está rodando?</li>';
         }
     };
 

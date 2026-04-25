@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a4a">
+    <meta name="application-name" content="Sementis">
+    <link rel="manifest" href="pwa/manifest.webmanifest">
+    <link rel="icon" href="assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <title>Sementis - Missões</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/shared-navbar.css">
+    <link rel="stylesheet" href="css/missions.css">
+</head>
+<body class="missions-page">
+    <!-- Navegação -->
+    <div id="shared-navbar-root"></div>
+
+    <div class="page-container">
+        <!-- Header Principal -->
+        <header class="main-header">
+            <div class="logo-container">
+                <img src="assets/brand/logo_sementis_branco.png" alt="Sementis Logo" class="header-logo">
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="missions-content">
+            <!-- Card de Destaque -->
+            <section class="highlight-card">
+                <div class="highlight-icon">
+                    <img src="assets/tarefas/tarefa_consumo_consciente.png" alt="Consumo Consciente">
+                </div>
+                <div class="highlight-info">
+                    <p class="highlight-subtitle">Patente II <span style="opacity: 0.7; margin-left: 4px;">• 4/8 Coroas</span></p>
+                    <p class="highlight-title">CONSUMO CONSCIENTE</p>
+                    <div class="rpg-progress-container special-highlight-progress">
+                        <div class="rpg-track">
+                            <div class="rpg-fill special-fill" style="width: 50%;"></div>
+                            <div class="rpg-nodes">
+                                <div class="rpg-node special-node" style="left: 25%;">
+                                    <img src="assets/tarefas/tarefa_concluida.png" alt="OK">
+                                </div>
+                                <div class="rpg-node special-node" style="left: 50%;">
+                                    <img src="assets/tarefas/tarefa_concluida.png" alt="OK">
+                                </div>
+                                <div class="rpg-node special-node locked" style="left: 75%;">
+                                    <img src="assets/tarefas/tarefa_bloqueada.png" alt="Bloqueado">
+                                </div>
+                                <div class="rpg-node final special-crown" style="left: 100%;">
+                                    <img src="assets/tarefas/tarefa_completa_selo.png" class="crown-glow highlight-mystery" alt="Coroa de Patente">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Card Máquina de Prêmios -->
+            <section class="prize-machine-card" onclick="window.location.href='loja.html'">
+                <div class="prize-content">
+                    <h3 class="prize-title">MÁQUINA DE PRÊMIOS</h3>
+                    <p class="prize-desc">Gaste suas coroas e tire a sorte para faturar prêmios exclusivos na lojinha!</p>
+                    <button class="prize-btn">
+                        <img src="assets/tarefas/botao_coletar_recompensa.png" alt="Coletar Recompensa">
+                    </button>
+                </div>
+                <div class="prize-image-wrap">
+                    <!-- Utilizando o background da lojinha de presentes/cápsulas -->
+                    <img class="prize-bg" src="assets/36fb276a-c300-4bf8-99dd-339a902c5488%20(1).jpg" alt="Máquina de Bolinhas">
+                </div>
+            </section>
+
+            <!-- Lista de Missões -->
+            <section class="missions-list">
+                <div class="section-header">
+                    <h2 class="section-title">MISSÕES DIÁRIAS</h2>
+                    <button class="info-btn" aria-label="Informações sobre Recompensas" onclick="toggleXpModal()">?</button>
+                </div>
+                
+                <!-- Missão Bronze -->
+                <div class="mission-item tier-bronze">
+                    <div class="mission-info">
+                        <p class="mission-title">COMPLETE SUA PRÓXIMA LIÇÃO</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 50%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node" style="left: 50%;"><img src="assets/tarefas/tarefa_concluida.png" alt="OK"></div>
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">1/2</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_bronze.png" alt="Missão Bronze">
+                    </div>
+                </div>
+
+                <!-- Missão Prata -->
+                <div class="mission-item tier-prata">
+                    <div class="mission-info">
+                        <p class="mission-title">ESTUDE POR 5 MINUTOS SEGUIDOS</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 20%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node" style="left: 20%;"><img src="assets/tarefas/tarefa_concluida.png" alt="OK"></div>
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">1/5</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_prata.png" alt="Missão Prata">
+                    </div>
+                </div>
+
+                <!-- Missão Ouro -->
+                <div class="mission-item tier-ouro">
+                    <div class="mission-info">
+                        <p class="mission-title">ESTUDE POR 15 MINUTOS SEGUIDOS</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 80%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node" style="left: 80%;"><img src="assets/tarefas/tarefa_concluida.png" alt="OK"></div>
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">12/15</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_ouro.png" alt="Missão Ouro">
+                    </div>
+                </div>
+
+                <!-- Missão Diamante -->
+                <div class="mission-item tier-diamante">
+                    <div class="mission-info">
+                        <p class="mission-title">REALIZE 5 LIÇÕES PERFEITAS</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">0/5</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_diamante.png" alt="Missão Diamante">
+                    </div>
+                </div>
+
+                <!-- Nova Missão Ouro -->
+                <div class="mission-item tier-ouro">
+                    <div class="mission-info">
+                        <p class="mission-title">ACERTE 5 QUESTÕES SEGUIDAS</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 40%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node" style="left: 20%;"><img src="assets/tarefas/tarefa_concluida.png" alt="OK"></div>
+                                    <div class="rpg-node" style="left: 40%;"><img src="assets/tarefas/tarefa_concluida.png" alt="OK"></div>
+                                    <div class="rpg-node" style="left: 60%;"><img src="assets/tarefas/tarefa_bloqueada.png" alt="Bloq"></div>
+                                    <div class="rpg-node" style="left: 80%;"><img src="assets/tarefas/tarefa_bloqueada.png" alt="Bloq"></div>
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">2/5</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_ouro.png" alt="Missão Ouro">
+                    </div>
+                </div>
+
+                <!-- Nova Missão Prata -->
+                <div class="mission-item tier-prata">
+                    <div class="mission-info">
+                        <p class="mission-title">REVISE 2 TÓPICOS ANTERIORES</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 50%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node" style="left: 50%;"><img src="assets/tarefas/tarefa_concluida.png" alt="OK"></div>
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">1/2</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_prata.png" alt="Missão Prata">
+                    </div>
+                </div>
+
+                <!-- Nova Missão Bronze -->
+                <div class="mission-item tier-bronze">
+                    <div class="mission-info">
+                        <p class="mission-title">ASSISTA A 1 VÍDEO EDUCATIVO</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">0/1</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_bronze.png" alt="Missão Bronze">
+                    </div>
+                </div>
+
+                <!-- Nova Missão Ouro -->
+                <div class="mission-item tier-ouro">
+                    <div class="mission-info">
+                        <p class="mission-title">AJUDE 3 AMIGOS COM ENERGIAS</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 66.6%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node" style="left: 33.3%;"><img src="assets/tarefas/tarefa_concluida.png" alt="OK"></div>
+                                    <div class="rpg-node" style="left: 66.6%;"><img src="assets/tarefas/tarefa_concluida.png" alt="OK"></div>
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">2/3</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_ouro.png" alt="Missão Ouro">
+                    </div>
+                </div>
+
+                <!-- Nova Missão Diamante -->
+                <div class="mission-item tier-diamante">
+                    <div class="mission-info">
+                        <p class="mission-title">GABARITE O TESTE FINAL DO MÓDULO</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_completa_selo.png" alt="Selo"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">0/1</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/missao_alvo_diamante.png" alt="Missão Diamante">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lista de Missões Bloqueadas -->
+            <section class="missions-list" style="margin-top: 20px;">
+                <h2 class="section-title">MISSÕES BLOQUEADAS 🔒</h2>
+                
+                <!-- Bloqueada 1 -->
+                <div class="mission-item tier-locked">
+                    <div class="mission-info">
+                        <p class="mission-title">ALCANCE UMA OFENSIVA DE 7 DIAS</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_bloqueada.png" alt="Blocked"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">Desbloqueia no Nível 5</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/liga_trofeu_bloqueado.png" alt="Missão Bloqueada">
+                    </div>
+                </div>
+
+                <!-- Bloqueada 2 -->
+                <div class="mission-item tier-locked">
+                    <div class="mission-info">
+                        <p class="mission-title">TERMINE A TRILHA DE RECICLAGEM</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_bloqueada.png" alt="Blocked"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">Faltam 3 lições</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/liga_trofeu_bloqueado.png" alt="Missão Bloqueada">
+                    </div>
+                </div>
+                
+                <!-- Bloqueada 3 -->
+                <div class="mission-item tier-locked">
+                    <div class="mission-info">
+                        <p class="mission-title">CONQUISTE O 1º LUGAR NA LIGA</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_bloqueada.png" alt="Blocked"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">Requer Liga de Prata</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/liga_trofeu_bloqueado.png" alt="Missão Bloqueada">
+                    </div>
+                </div>
+
+                <!-- Bloqueada 4 -->
+                <div class="mission-item tier-locked">
+                    <div class="mission-info">
+                        <p class="mission-title">DESBLOQUEIE A PLANTA MÁGICA</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_bloqueada.png" alt="Blocked"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">Requer Nível 15</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/liga_trofeu_bloqueado.png" alt="Missão Bloqueada">
+                    </div>
+                </div>
+
+                <!-- Bloqueada 5 -->
+                <div class="mission-item tier-locked">
+                    <div class="mission-info">
+                        <p class="mission-title">ACUMULE 500 MOEDAS RARAS</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_bloqueada.png" alt="Blocked"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">Requer Liga de Diamante</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/liga_trofeu_bloqueado.png" alt="Missão Bloqueada">
+                    </div>
+                </div>
+
+                <!-- Bloqueada 6 -->
+                <div class="mission-item tier-locked">
+                    <div class="mission-info">
+                        <p class="mission-title">COMPLETE 100 TAREFAS</p>
+                        <div class="rpg-progress-container">
+                            <div class="rpg-track">
+                                <div class="rpg-fill" style="width: 0%;"></div>
+                                <div class="rpg-nodes">
+                                    <div class="rpg-node final locked" style="left: 100%;"><img src="assets/tarefas/tarefa_bloqueada.png" alt="Blocked"></div>
+                                </div>
+                            </div>
+                            <span class="rpg-text">Faltam 50 tarefas</span>
+                        </div>
+                    </div>
+                    <div class="mission-icon">
+                        <img src="assets/ligas/liga_trofeu_bloqueado.png" alt="Missão Bloqueada">
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal de Recompensas de Missão -->
+    <div id="xpModal" class="xp-modal-overlay" onclick="toggleXpModal(event)">
+        <div class="xp-modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal-btn" onclick="toggleXpModal()">×</button>
+            <h3 class="xp-modal-title">Recompensas de Missão</h3>
+            <p class="xp-modal-desc">Cada tipo de missão garante uma quantidade diferente de Pontos de Experiência (XP).</p>
+            
+            <div class="xp-rewards-list">
+                <div class="xp-reward-item tier-bronze">
+                    <div class="xp-reward-icon">
+                        <img src="assets/ligas/missao_alvo_bronze.png" alt="Bronze">
+                    </div>
+                    <span class="xp-reward-name">Missão Bronze</span>
+                    <span class="xp-reward-value color-bronze">+50 XP</span>
+                </div>
+
+                <div class="xp-reward-item tier-prata">
+                    <div class="xp-reward-icon">
+                        <img src="assets/ligas/missao_alvo_prata.png" alt="Prata">
+                    </div>
+                    <span class="xp-reward-name">Missão Prata</span>
+                    <span class="xp-reward-value color-prata">+100 XP</span>
+                </div>
+
+                <div class="xp-reward-item tier-ouro">
+                    <div class="xp-reward-icon">
+                        <img src="assets/ligas/missao_alvo_ouro.png" alt="Ouro">
+                    </div>
+                    <span class="xp-reward-name">Missão Ouro</span>
+                    <span class="xp-reward-value color-ouro">+250 XP</span>
+                </div>
+
+                <div class="xp-reward-item tier-diamante">
+                    <div class="xp-reward-icon">
+                        <img src="assets/ligas/missao_alvo_diamante.png" alt="Diamante">
+                    </div>
+                    <span class="xp-reward-name">Missão Diamante</span>
+                    <span class="xp-reward-value color-diamante">+500 XP</span>
+                </div>
+
+                <div class="xp-reward-item" style="border: 1px solid rgba(169,255,113,0.4); background: rgba(26,26,58,0.8); box-shadow: 0 4px 15px rgba(169, 255, 113, 0.15);">
+                    <div class="xp-reward-icon" style="background-color: #ffe6ee;">
+                        <img src="assets/tarefas/tarefa_completa_selo.png" class="crown-glow" style="width: 32px; height: 32px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));" alt="Selo">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <span class="xp-reward-name" style="font-size: 1.1rem; color: #fff; text-shadow: 0 0 5px rgba(169, 255, 113, 0.5);">Subir de Patente</span>
+                        <span style="font-size: 0.75rem; color: #a9ff71; font-weight: 500; margin-top: 2px; max-width: 180px; line-height: 1.2;">Conclua missões especiais e acumule coroas!</span>
+                    </div>
+                    <span class="xp-reward-value" style="color:var(--color-accent); font-size: 1.2rem; text-shadow: 0 0 8px rgba(169,255,113,0.5); margin-left: auto;">👑</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function toggleXpModal(event) {
+            const modal = document.getElementById('xpModal');
+            if (modal.classList.contains('active')) {
+                modal.classList.remove('active');
+            } else {
+                modal.classList.add('active');
+            }
+        }
+    </script>
+    <script src="js/shared-navbar.js"></script>
+    <script src="pwa/pwa-register.js"></script>
+</body>
+</html>
+

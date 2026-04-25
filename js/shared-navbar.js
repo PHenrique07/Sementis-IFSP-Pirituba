@@ -2,6 +2,7 @@ function getActiveSection() {
   const page = (window.location.pathname.split('/').pop() || '').toLowerCase();
 
   if (page === 'ligas.html') return 'Ligas';
+  if (page === 'missions.html' || page === 'missoes.html') return 'Missoes';
   if (page === 'trilhas.html' || page === 'home.html' || page === '') return 'Trilhas';
   return 'Trilhas';
 }
@@ -9,6 +10,7 @@ function getActiveSection() {
 function buildSharedNavbar(activeSection) {
   const isTrilhas = activeSection === 'Trilhas';
   const isLigas = activeSection === 'Ligas';
+  const isMissoes = activeSection === 'Missoes';
 
   return `
 <nav class="bottom-nav" aria-label="Navegacao principal">
@@ -26,7 +28,7 @@ function buildSharedNavbar(activeSection) {
       <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="Ligas">
       <span>Ligas</span>
     </a>
-    <a class="nav-item" href="home.html">
+    <a class="nav-item ${isMissoes ? 'active' : ''}" href="missions.html" ${isMissoes ? 'aria-current="page"' : ''}>
       <img src="assets/icons/menu_rodape_alvo.png" alt="Missoes">
       <span>Missões</span>
     </a>
