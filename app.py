@@ -11,7 +11,7 @@ import os
 from datetime import datetime, timezone, timedelta
 import jwt
 from sqlmodel import Session, select, create_engine
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao
 
 app = Flask(__name__)
 
@@ -287,18 +287,29 @@ def ranking(liga_id):
         return jsonify(lista_ranking), 200
 
 # --- Rota de Missões Diárias ---
-@app.route('/missoes', methods=['GET'])
+@app.route('/missoes', methods=['GET']) # Pedro: Mudei um pouco pq tava dando um erro na hora de pegar a API
 @token_obrigatorio
 def missoes():
-    # 1. Usa o ID do token (exigência do card)
     id_usuario = request.usuario_id
     
     with Session(engine) as session:
-        # 2. Chama a função do crud (exigência do card)
         missoes_do_dia = sortear_missoes_diarias(session, id_usuario)
         
-        # 3. Retorna o JSON pro Front-end (exigência do card)
-        return jsonify(missoes_do_dia), 200
+        #Empacotar os dados exatamente como o JS do Vini espera
+        lista_missoes = []
+        for progresso in missoes_do_dia:
+            # Busca os detalhes (título, meta, xp) lá do catálogo principal de missões
+            missao_catalogo = session.get(Missao, progresso.missao_id)
+            
+            lista_missoes.append({
+                "id": progresso.id,
+                "nome": missao_catalogo.titulo,         # O JS do Vini pede 'nome'
+                "progresso": progresso.progresso_atual,
+                "meta": missao_catalogo.meta,
+                "xp": missao_catalogo.xp_recompensa
+            })
+            
+        return jsonify(lista_missoes), 200
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)

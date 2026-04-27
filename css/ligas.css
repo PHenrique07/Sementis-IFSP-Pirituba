@@ -144,7 +144,7 @@
     border-radius: 18px;
     border: 2px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
-    overflow: hidden;
+    overflow: visible;
 }
 
 .ranking-list {
@@ -166,12 +166,17 @@
     border-bottom: none;
 }
 
-.ranking-list .ranking-row:nth-child(-n+10) {
+/* =====================================================
+   ZONAS DE PROMOÇÃO E REBAIXAMENTO — via classe no JS
+   (substitui os seletores nth-child que quebravam
+    quando a divisória era inserida na lista)
+   ===================================================== */
+.ranking-row.promotion-highlight {
     background: linear-gradient(90deg, rgba(169, 255, 113, 0.18) 0%, rgba(169, 255, 113, 0.04) 50%, transparent 100%) !important;
     box-shadow: inset 4px 0 0 rgba(169, 255, 113, 0.9) !important;
 }
 
-.ranking-list .ranking-row:nth-last-child(-n+11) {
+.ranking-row.demotion-highlight {
     background: linear-gradient(90deg, rgba(255, 87, 87, 0.18) 0%, rgba(255, 87, 87, 0.04) 50%, transparent 100%) !important;
     box-shadow: inset 4px 0 0 rgba(255, 87, 87, 0.9) !important;
 }
@@ -249,14 +254,13 @@
 }
 
 .ranking-row.rank-highlight {
-    background: rgba(169, 255, 113, 0.15);
-    border: 1px solid rgba(169, 255, 113, 0.5);
-    border-radius: 8px;
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(169, 255, 113, 0.1);
+    background: rgba(169, 255, 113, 0.12);
+    border: 2px solid rgba(169, 255, 113, 0.92);
+    border-radius: 10px;
+    box-shadow: 0 0 0 3px rgba(169, 255, 113, 0.22) inset, 0 0 24px rgba(169, 255, 113, 0.65);
     z-index: 2;
     position: relative;
-    margin: 4px 0;
+    margin: 4px 0; /* só vertical, sem lateral */
 }
 
 .rank-badge {
@@ -519,3 +523,4 @@
         background: rgba(255, 255, 255, 0.06);
     }
 }
+
