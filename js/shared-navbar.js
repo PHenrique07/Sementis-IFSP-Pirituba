@@ -3,6 +3,7 @@ function getActiveSection() {
 
   if (page === 'ligas.html') return 'Ligas';
   if (page === 'missions.html' || page === 'missoes.html') return 'Missoes';
+  if (page === 'perfil.html') return 'Perfil';
   if (page === 'trilhas.html' || page === 'home.html' || page === '') return 'Trilhas';
   return 'Trilhas';
 }
@@ -11,6 +12,7 @@ function buildSharedNavbar(activeSection) {
   const isTrilhas = activeSection === 'Trilhas';
   const isLigas = activeSection === 'Ligas';
   const isMissoes = activeSection === 'Missoes';
+  const isPerfil = activeSection === 'Perfil';
 
   return `
 <nav class="bottom-nav" aria-label="Navegacao principal">
@@ -32,7 +34,7 @@ function buildSharedNavbar(activeSection) {
       <img src="assets/icons/menu_rodape_alvo.png" alt="Missoes">
       <span>Missões</span>
     </a>
-    <a class="nav-item" href="home.html">
+    <a class="nav-item ${isPerfil ? 'active' : ''}" href="perfil.html" ${isPerfil ? 'aria-current="page"' : ''}>
       <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil">
       <span>Perfil</span>
     </a>

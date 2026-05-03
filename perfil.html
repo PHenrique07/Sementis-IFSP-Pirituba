@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a4a">
+    <meta name="application-name" content="Sementis">
+    <link rel="manifest" href="pwa/manifest.webmanifest">
+    <link rel="icon" href="assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <title>Sementis - Perfil</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/shared-navbar.css">
+    <link rel="stylesheet" href="css/perfil.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="perfil-page">
+    <header class="perfil-header">
+        <h1 class="perfil-title">PERFIL</h1>
+        <button class="settings-btn" aria-label="Configurações">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </button>
+    </header>
+
+    <main class="perfil-content">
+        <section class="user-intro">
+            <div class="user-avatar-wrapper">
+                <div class="user-avatar-large" id="avatar-container" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0">
+                    <img src="assets/icons/icone_usuario.png" alt="Foto de Perfil" id="profile-picture">
+                    <div class="avatar-edit-overlay">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </div>
+                </div>
+                
+                <!-- Menu de Avatar -->
+                <div class="avatar-menu" id="avatar-menu">
+                    <button class="avatar-menu-btn" id="btn-add-photo">Adicionar foto</button>
+                    <button class="avatar-menu-btn danger" id="btn-remove-photo">Remover foto</button>
+                </div>
+                <input type="file" id="file-input-avatar" accept="image/*" style="display: none;">
+            </div>
+            <h2 class="user-name-large">Nome do Usuário</h2>
+            <button class="add-bio-btn">Adicionar Biografia</button>
+            <button class="pro-btn">SEJA PRO - Teste Grátis</button>
+        </section>
+
+        <section class="user-level-progress">
+            <div class="level-header">
+                <span class="level-title">LEVEL 12</span>
+            </div>
+            <div class="level-bar-container">
+                <div class="level-bar-fill" style="width: 83%"></div>
+            </div>
+            <div class="level-footer">
+                <span class="level-points">250/300</span>
+            </div>
+        </section>
+
+        <section class="user-stats-cards">
+            <div class="stat-card">
+                <img src="assets/ligas/liga_trofeu_prata.png" alt="Liga Prata">
+                <span class="stat-card-title">LIGA</span>
+                <span class="stat-card-value">PRATA</span>
+            </div>
+            <div class="stat-card">
+                <img src="assets/icons/icone_sequencia_fogo_prata.png" alt="Sequência" onerror="this.src='assets/icons/icone_sequencia_fogo.png';">
+                <span class="stat-card-title">SEQUÊNCIA</span>
+                <span class="stat-card-value">30</span>
+            </div>
+            <div class="stat-card">
+                <img src="assets/icons/icone_experiencia_prata.png" alt="Experiência">
+                <span class="stat-card-title">EXPERIÊNCIA</span>
+                <span class="stat-card-value">1.590</span>
+            </div>
+        </section>
+
+        <button class="share-btn">
+            <span>COMPARTILHE SEU PROGRESSO</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+
+        <section class="friends-section">
+            <div class="friends-header">
+                <h3 class="friends-title">AMIGOS</h3>
+                <button class="add-friends-btn">+ Adicionar Amigos</button>
+            </div>
+            <div class="friends-list">
+                <!-- Vazio ou placeholders podem vir aqui -->
+                <div class="friend-placeholder">
+                    <div class="friend-avatar-placeholder"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="shared-navbar-root"></div>
+
+    <!-- Modal Seja PRO -->
+    <div id="pro-modal" class="modal-overlay">
+        <div class="modal-content pro-modal-content">
+            <button class="close-modal-btn" aria-label="Fechar">&times;</button>
+            <div class="pro-modal-header">
+                <img src="assets/brand/logo_sementis_branco.png" alt="Sementis Logo">
+                <span class="pro-badge">PRO</span>
+            </div>
+            <h2 class="pro-title">Acelere seu aprendizado!</h2>
+            <ul class="pro-benefits">
+                <li>
+                    <img src="assets/icons/icone_vida.png" alt="Vidas infinitas">
+                    <span>Vidas infinitas</span>
+                </li>
+                <li>
+                    <img src="assets/icons/icone_moeda.png" alt="Moedas em dobro">
+                    <span>Moedas em dobro nas lições</span>
+                </li>
+                <li>
+                    <img src="assets/ligas/liga_trofeu_prata.png" alt="Ligas Exclusivas">
+                    <span>Acesso a Ligas Exclusivas</span>
+                </li>
+                <li>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2"><path d="M2 12l5.25 5 12.6-14"/></svg>
+                    <span>Sem anúncios</span>
+                </li>
+            </ul>
+            <button class="pro-trial-btn">INICIAR TESTE DE 14 DIAS GRÁTIS</button>
+            <p class="pro-terms">Após o teste, R$ 14,90/mês. Cancele quando quiser.</p>
+        </div>
+    </div>
+
+    <script src="pwa/pwa-register.js"></script>
+    <script src="js/shared-navbar.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/perfil.js"></script>
+</body>
+</html>
