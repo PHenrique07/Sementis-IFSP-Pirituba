@@ -177,3 +177,119 @@ function fazerLogout() {
     localStorage.removeItem("user"); // Limpa a gaveta
     window.location.reload(); // Atualiza a página
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+    const atualizarBarraDeXP = async () => {
+        console.log("1. Iniciando busca de dados na API...");
+        const rota = 'http://127.0.0.1:5000/api/perfil';
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            console.error("Token não encontrado! O usuário está logado?");
+            return;
+        }
+
+        try {
+            const response = await fetch(rota, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Erro na API ao buscar perfil');
+            
+            const dados = await response.json();
+            console.log("2. Dados recebidos do banco:", dados);
+
+            // --- MAPEANDO TODOS OS DADOS DA API ---
+            const nomeUsuario = dados.nome;
+            const xpAtual = dados.progresso_nivel.xp_no_nivel; 
+            const xpProximo = dados.progresso_nivel.xp_proximo_nivel;
+            const nivelAtual = dados.progresso_nivel.nivel_atual;
+            const xpTotal = dados.xp_total;
+            const ofensiva = dados.ofensiva;
+            
+            // --- LÓGICA DA LIGA ---
+            const ligaId = dados.liga_id || 1; // Se não vier nada, garante que é 1
+            let nomeLiga = "BRONZE";
+            let iconeLiga = "assets/ligas/liga_medalha_bronze.png";
+
+            if (ligaId === 2) {
+                nomeLiga = "PRATA";
+                iconeLiga = "assets/ligas/liga_trofeu_prata.png";
+            } else if (ligaId === 3) {
+                nomeLiga = "OURO";
+                iconeLiga = "assets/ligas/liga_trofeu_ouro.png";
+            } else if (ligaId === 4) {
+                nomeLiga = "DIAMANTE";
+                iconeLiga = "assets/ligas/liga_trofeu_diamante.png"; 
+            }
+
+            // Calculando a porcentagem da barra verde (o que já foi preenchido)
+            const porcentagem = (xpAtual / xpProximo) * 100;
+            
+            // Calculando o que FALTA para o texto da Home (100% - o que já tem)
+            const porcentagemFaltante = (100 - porcentagem).toFixed(0); 
+            
+            console.log(`3. Cálculo feito: Barra = ${porcentagem}%. Faltam = ${porcentagemFaltante}%`);
+
+            // Pequeno atraso para garantir que o HTML já renderizou tudo
+            setTimeout(() => {
+                
+                // --- 1. SELETORES DA TELA HOME ---
+                const homeBarra = document.getElementById('ui-progress-fill');
+                const homeTextoBarra = document.getElementById('ui-progress-text');
+                const homeNivel = document.getElementById('ui-user-level');
+                const homeNome = document.getElementById('ui-user-name');
+
+                // --- 2. SELETORES DA TELA DE PERFIL ---
+                const perfilNome = document.getElementById('perfil-user-name');
+                const perfilNivel = document.getElementById('perfil-user-level');
+                const perfilBarra = document.getElementById('perfil-progress-fill');
+                const perfilTextoBarra = document.getElementById('perfil-progress-text');
+                const perfilSequencia = document.getElementById('perfil-user-streak');
+                const perfilXpTotal = document.getElementById('perfil-user-xp-total');
+                const perfilLigaTexto = document.getElementById('perfil-user-liga-text');
+                const perfilLigaIcone = document.getElementById('perfil-user-liga-icon');
+
+                // ========================================================
+                // --- INJETANDO DADOS NA HOME (Se o usuário estiver lá) ---
+                // ========================================================
+                if (homeBarra) {
+                    console.log("4a. Tela Home detectada! Atualizando barra...");
+                    homeBarra.style.setProperty('width', `${porcentagem}%`, 'important');
+                }
+                if (homeTextoBarra) homeTextoBarra.textContent = `Faltam ${porcentagemFaltante}% para o próximo nível`;
+                if (homeNivel) homeNivel.textContent = `Nível ${nivelAtual}`; 
+                if (homeNome) homeNome.textContent = nomeUsuario;
+
+
+                // ==========================================================
+                // --- INJETANDO DADOS NO PERFIL (Se o usuário estiver lá) ---
+                // ==========================================================
+                if (perfilBarra) {
+                    console.log("4b. Tela de Perfil detectada! Atualizando barra...");
+                    perfilBarra.style.setProperty('width', `${porcentagem}%`, 'important');
+                }
+                // No perfil o texto é no formato "XP/MAX_XP"
+                if (perfilTextoBarra) perfilTextoBarra.textContent = `${xpAtual}/${xpProximo}`;
+                if (perfilNivel) perfilNivel.textContent = `LEVEL ${nivelAtual}`;
+                if (perfilNome) perfilNome.textContent = nomeUsuario;
+                if (perfilSequencia) perfilSequencia.textContent = ofensiva;
+                if (perfilXpTotal) perfilXpTotal.textContent = xpTotal;
+                if (perfilLigaTexto) perfilLigaTexto.textContent = nomeLiga;
+                if (perfilLigaIcone) perfilLigaIcone.src = iconeLiga;
+
+            }, 100); // 100 milissegundos de delay
+
+        } catch (erro) {
+            console.error('Erro geral ao carregar os dados do usuário:', erro);
+        }
+    };
+
+    // Executa a função ao carregar a página
+    atualizarBarraDeXP();
+});

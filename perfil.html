@@ -41,38 +41,48 @@
                 </div>
                 <input type="file" id="file-input-avatar" accept="image/*" style="display: none;">
             </div>
-            <h2 class="user-name-large">Nome do Usuário</h2>
+            <!-- ID adicionado aqui -->
+            <h2 class="user-name-large" id="perfil-user-name">Nome do Usuário</h2>
             <button class="add-bio-btn">Adicionar Biografia</button>
             <button class="pro-btn">SEJA PRO - Teste Grátis</button>
         </section>
 
         <section class="user-level-progress">
             <div class="level-header">
-                <span class="level-title">LEVEL 12</span>
+                <!-- ID adicionado aqui -->
+                <span class="level-title" id="perfil-user-level">LEVEL 12</span>
             </div>
             <div class="level-bar-container">
-                <div class="level-bar-fill" style="width: 83%"></div>
+                <!-- ID adicionado aqui -->
+                <div class="level-bar-fill" id="perfil-progress-fill" style="width: 83%"></div>
             </div>
             <div class="level-footer">
-                <span class="level-points">250/300</span>
+                <!-- ID adicionado aqui -->
+                <span class="level-points" id="perfil-progress-text">250/300</span>
             </div>
         </section>
 
         <section class="user-stats-cards">
-            <div class="stat-card">
-                <img src="assets/ligas/liga_trofeu_prata.png" alt="Liga Prata">
+           <div class="stat-card">
+                <!-- id="perfil-user-liga-icon" na imagem -->
+                <img id="perfil-user-liga-icon" src="assets/ligas/liga_medalha_bronze.png" alt="Liga">
+                
                 <span class="stat-card-title">LIGA</span>
-                <span class="stat-card-value">PRATA</span>
+                
+                <!--  id="perfil-user-liga-text" no texto -->
+                <span class="stat-card-value" id="perfil-user-liga-text">BRONZE</span>
             </div>
             <div class="stat-card">
                 <img src="assets/icons/icone_sequencia_fogo_prata.png" alt="Sequência" onerror="this.src='assets/icons/icone_sequencia_fogo.png';">
                 <span class="stat-card-title">SEQUÊNCIA</span>
-                <span class="stat-card-value">30</span>
+                <!-- ID adicionado aqui -->
+                <span class="stat-card-value" id="perfil-user-streak">30</span>
             </div>
             <div class="stat-card">
                 <img src="assets/icons/icone_experiencia_prata.png" alt="Experiência">
                 <span class="stat-card-title">EXPERIÊNCIA</span>
-                <span class="stat-card-value">1.590</span>
+                <!-- ID adicionado aqui -->
+                <span class="stat-card-value" id="perfil-user-xp-total">1.590</span>
             </div>
         </section>
 

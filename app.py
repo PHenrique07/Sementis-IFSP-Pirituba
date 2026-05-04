@@ -325,6 +325,7 @@ def obter_perfil():
             "nome": usuario.nome,
             "ofensiva": usuario.ofensiva,
             "xp_total": usuario.xp,
+            "liga_id": usuario.liga_id,
             "progresso_nivel": {
                 "nivel_atual": info_nivel["nivel"],
                 "xp_no_nivel": info_nivel["xp_atual_no_nivel"],
