@@ -3,6 +3,8 @@ from datetime import date
 # Importando todas as tabelas do models.py
 from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao
 
+import math
+
 # 1. Sqlite local
 sqlite_url = "sqlite:///sementis.db"
 engine = create_engine(sqlite_url, echo=True) 
@@ -289,3 +291,25 @@ def promover_usuarios_fim_de_semana(session: Session, qtd_promovidos: int = 10):
 
     session.commit()
     return True
+
+def calcular_nivel(xp_total):
+    base_xp = 100
+    incremento = 50
+    nivel = 1
+    xp_acumulado = 0
+    xp_necessario_proximo = base_xp
+
+    while xp_total >= (xp_acumulado + xp_necessario_proximo):
+        xp_acumulado += xp_necessario_proximo
+        nivel += 1
+        xp_necessario_proximo = base_xp + (nivel - 1) * incremento
+
+    xp_dentro_do_nivel = xp_total - xp_acumulado
+    porcentagem = (xp_dentro_do_nivel / xp_necessario_proximo) * 100
+
+    return {
+        "nivel": nivel,
+        "xp_atual_no_nivel": xp_dentro_do_nivel,
+        "xp_necessario_proximo": xp_necessario_proximo,
+        "porcentagem": round(porcentagem, 2)
+    }
