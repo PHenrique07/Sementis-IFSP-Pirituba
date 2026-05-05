@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, create_engine, Session, func, select
 from datetime import date
 # Importando todas as tabelas do models.py
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao
 
 import math
 
@@ -85,36 +85,44 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
         )
     ).first()
     
+    
+    primeira_vez = False 
+    
     try:
         if ja_concluiu:
             # === REFAZENDO A FASE (REPLAY) ===
             # Ganha só 20% do XP e nenhuma moeda extra. Não cria progresso novo.
             xp_reduzido = int(atividade.xp_recompensa * 0.2)
             usuario.xp += xp_reduzido
+            usuario.xp_semanal += xp_reduzido 
             mensagem = f"Fase refeita! Você ganhou {xp_reduzido} XP."
             
         else:
             # === PRIMEIRA VEZ JOGANDO ===
+            primeira_vez = True # Avisa o front-end que é vitória inédita
+            
             # Dá a recompensa total e registra que ele passou de fase
             usuario.xp += atividade.xp_recompensa
+            usuario.xp_semanal += atividade.xp_recompensa 
             usuario.moedas += atividade.moedas_recompensa
             
             novo_progresso = ProgressoUsuario(usuario_id=id_usuario, atividade_id=id_atividade)
             session.add(novo_progresso)
             
             mensagem = f"Fase concluída! Você ganhou {atividade.xp_recompensa} XP."
-            
-            # TODO: Lógica para desbloquear a PRÓXIMA atividade entra aqui no futuro
 
-        # Salva tudo de uma vez só no banco de dados (Atomicidade)
+        # Salva tudo de uma vez só no banco de dados (XP, moedas e progresso)
         session.add(usuario)
         session.commit()
         
+        # jogar na API
         return {
             "status": "sucesso", 
             "mensagem": mensagem, 
             "xp_atual": usuario.xp, 
-            "moedas_atuais": usuario.moedas
+            "moedas_atuais": usuario.moedas,
+            "vidas_atuais": usuario.vidas, # pra atualizar o Header
+            "primeira_vez": primeira_vez
         }
 
     except Exception as e:
@@ -292,6 +300,7 @@ def promover_usuarios_fim_de_semana(session: Session, qtd_promovidos: int = 10):
     session.commit()
     return True
 
+# 16. Calcular o nível do usuário com base no XP total
 def calcular_nivel(xp_total):
     base_xp = 100
     incremento = 50
@@ -313,3 +322,26 @@ def calcular_nivel(xp_total):
         "xp_necessario_proximo": xp_necessario_proximo,
         "porcentagem": round(porcentagem, 2)
     }
+
+
+
+# 17. Buscar as questões de uma atividade (para o quiz e minigame)
+def buscar_questoes_por_atividade(session: Session, id_atividade: int):
+    """
+    Puxa todas as questões de uma atividade específica.
+    """
+    # Faz o select puxando só as questões que tem o id daquela bolinha
+    instrucao = select(Questao).where(Questao.atividade_id == id_atividade)
+    questoes_encontradas = session.exec(instrucao).all()
+    
+    # Empacota num formato perfeito para só repassar pro Front-end
+    lista_pronta = []
+    for questao in questoes_encontradas:
+        lista_pronta.append({
+            "id": questao.id,
+            "atividade_id": questao.atividade_id,
+            "tipo_layout": questao.tipo_layout,
+            "conteudo": questao.conteudo # O JSON salvo
+        })
+        
+    return lista_pronta

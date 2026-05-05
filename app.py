@@ -249,7 +249,14 @@ def completar_atividade():
     
     dados = request.get_json()
     id_atv = dados.get('atividade_id')
-
+# ==========================================================================================
+    # TODO (CARD 3):
+    # 1. Puxar 'erros' e 'concluida_com_sucesso' do 'dados' (JSON do Vini).
+    # 2. Antes de dar o XP, puxar o Usuario do banco e subtrair os 'erros' das 'vidas'.
+    #    (Travar em zero pra vida não ficar negativa e dar um session.commit()).
+    # 3. Fazer um IF: Só rodar o bloco abaixo (que dá XP e moedas) SE concluida_com_sucesso == True.
+    # 4. Se for False, retornar JSON: {"status": "game_over", "vidas_atuais": usuario.vidas} pro Vini.
+    # ==========================================================================================
     if not id_atv:
         return jsonify({"erro": "ID da atividade não fornecido"}), 400
 

@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field
 from typing import Optional
 from datetime import datetime
 from datetime import date
+from sqlalchemy import Column, JSON
 
 # 1. Tabela de Usuário (Mantida)
 
@@ -107,3 +108,16 @@ class ProgressoMissao(SQLModel, table=True):
     
     # True = Ele já bateu a meta e o XP já caiu na conta.
     concluida: bool = Field(default=False)
+
+# 10. Tabela de Questões (conteúdo do Quiz)
+class Questao(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    
+    # Liga essa questão à bolinha da trilha (Atividade)
+    atividade_id: int = Field(foreign_key="atividade.id")
+    
+    # Diz pro JS do Vini qual tela do Tom ele tem que carregar
+    tipo_layout: str 
+    
+    # guarda o JSON inteiro (imagem, pergunta, respostas)
+    conteudo: dict = Field(default_factory=dict, sa_column=Column(JSON))

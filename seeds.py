@@ -1,5 +1,5 @@
 from sqlmodel import Session, SQLModel, create_engine
-from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao
+from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao
 from passlib.hash import argon2
 
 # Configuração igual a do app.py
@@ -18,7 +18,7 @@ def semear_banco():
             print("⚠️ DICA: Apague o arquivo 'sementis.db' e rode o seeds.py novamente.")
             return
 
-        print("🚜 Preparando a terra e plantando 45 usuários e novas missões...")
+        print("🚜 Preparando a terra e plantando 45 usuários, missões e questões de teste...")
 
         senha_padrao = argon2.using(memory_cost=65536, rounds=4, parallelism=4).hash("123456" + PEPPER)
 
@@ -125,9 +125,47 @@ def semear_banco():
             Missao(titulo="Gabarite o teste final do módulo", meta=1, xp_recompensa=1000, moedas_recompensa=250, tipo_acao="teste_final")
         ]
         session.add_all(missoes_catalogo)
+        
+        # ====================================================================
+        # 6. CRIANDO QUESTÕES DE TESTE (AQUÁRIO E EUTROFIZAÇÃO)
+        # ====================================================================
+        # Usando a atividade_id=1 que é "A Gota d'Água"
+        
+        questao_aquario = Questao(
+            atividade_id=1,
+            tipo_layout="simples",
+            conteudo={
+                "pergunta": "Como é chamado o fenômeno da imagem?",
+                "imagem_url": "/assets/img/quizzes/aquario.png",
+                "opcoes": [
+                    {"texto": "Eutrofização", "correta": True},
+                    {"texto": "Bioacumulação", "correta": False},
+                    {"texto": "Proliferação de Algas", "correta": False},
+                    {"texto": "Acidificação Oceânica", "correta": False}
+                ]
+            }
+        )
+
+        questao_grid = Questao(
+            atividade_id=1, 
+            tipo_layout="grid_multiplo",
+            conteudo={
+                "pergunta": "Selecione os efeitos que a Eutrofização causa no meio ambiente",
+                "opcoes": [
+                    {"texto": "PROLIFERAÇÃO DE ALGAS", "icone": "algas.png", "cor": "#8BC34A", "correta": True},
+                    {"texto": "REDUÇÃO DE OXIGÊNIO", "icone": "peixe.png", "cor": "#03A9F4", "correta": True},
+                    {"texto": "MORTE DE PEIXES", "icone": "esqueleto.png", "cor": "#9C27B0", "correta": True},
+                    {"texto": "ÁGUA TURVA", "icone": "onda.png", "cor": "#FFEB3B", "correta": True},
+                    {"texto": "DIFICULTA TRATAMENTO", "icone": "torneira.png", "cor": "#795548", "correta": False}
+                ]
+            }
+        )
+
+        session.add(questao_aquario)
+        session.add(questao_grid)
 
         session.commit()
-        print("Sucesso! Banco de dados populado com usuários e catálogo completo de missões.")
+        print("Sucesso! Banco de dados populado com usuários, catálogo de missões e questões de teste.")
 
 if __name__ == "__main__":
     semear_banco()
