@@ -522,6 +522,7 @@
   }
 </style>
 <link rel="stylesheet" href="css/shared-navbar.css">
+<link rel="stylesheet" href="css/quiz.css">
 </head>
 <body>
 
@@ -539,6 +540,7 @@
 
 <div id="shared-navbar-root"></div>
 
+<script src="js/quiz.js"></script>
 <script>
 function applyModuleTitle() {
   const titleEl = document.getElementById('trilhaTitle');
@@ -673,6 +675,30 @@ function build() {
     lbl.className = 'node-label';
     lbl.textContent = lesson.label;
     div.appendChild(lbl);
+
+    if (lesson.state === 'active' || lesson.label === 'Lição 1') {
+      div.onclick = () => {
+        const params = new URLSearchParams(window.location.search);
+        const moduleTitle = params.get('module');
+        
+        // Exibe logs no console para ajudar a depurar
+        console.log("Módulo atual:", moduleTitle);
+        
+        // Flexibilizando a checagem: se o título contiver "água", "agua", ou for nulo (acesso direto)
+        if (!moduleTitle || moduleTitle.toLowerCase().includes('água') || moduleTitle.toLowerCase().includes('agua')) {
+          console.log("Abrindo quiz!");
+          if (typeof openQuizModal === 'function') {
+            openQuizModal();
+          } else {
+            console.error("Função openQuizModal não encontrada. Verifique se quiz.js foi carregado corretamente.");
+            alert("Erro: O script do quiz não foi carregado.");
+          }
+        } else {
+          // Se for outro módulo, não abre o quiz
+          alert('Lição em desenvolvimento. Para testar o quiz, volte e selecione "Água e Vida"!');
+        }
+      };
+    }
 
     scene.appendChild(div);
   });

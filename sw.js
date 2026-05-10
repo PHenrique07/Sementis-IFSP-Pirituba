@@ -1,4 +1,4 @@
-const CACHE_VERSION = "sementis-pwa-v1";
+const CACHE_VERSION = "sementis-pwa-v2";
 const APP_SHELL_CACHE = `app-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 
@@ -16,13 +16,16 @@ const APP_SHELL_FILES = [
   "./css/home.css",
   "./css/ligas.css",
   "./css/shared-navbar.css",
+  "./css/quiz.css",
   "./js/main.js",
   "./js/login.js",
   "./js/home.js",
   "./js/shared-navbar.js",
+  "./js/quiz.js",
   "./pwa/pwa-register.js",
   "./assets/icons/pwa-icon.svg",
-  "./assets/brand/logo_sementis_branco.png"
+  "./assets/brand/logo_sementis_branco.png",
+  "./assets/img/quizzes/"
 ];
 
 self.addEventListener("install", (event) => {
