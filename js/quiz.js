@@ -35,9 +35,20 @@ function createQuizHTML() {
         <div class="quiz-progress">
           <div class="quiz-progress-bar" id="quizProgressBar"></div>
         </div>
-          <div class="quiz-stats" style="gap: 16px;">
-            <div class="quiz-stat"><img src="assets/icons/icone_moeda.png" alt="Moedas" style="width: 38px;"> <span>150</span></div>
-            <div class="quiz-stat"><img src="assets/icons/icone_vida.png" alt="❤️" style="width: 32px;"> <span id="healthDisplay">4</span></div>
+        <div class="quiz-stats">
+          <div class="quiz-stat"><img src="assets/icons/icone_vida.png" alt="❤️" style="width: 24px;"> <span id="healthDisplay">4</span></div>
+        </div>
+      </div>
+      
+      <div class="quiz-body" id="quizBody">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="quiz-footer" id="quizFooter">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  `;
 
   return overlay;
 }
@@ -66,7 +77,16 @@ function renderQuizGrid() {
   selectedGridItems.clear();
   document.getElementById('quizProgressBar').style.width = '33%';
   
-      <img src="assets/tarefas/tarefa_agua.png" alt="Módulo Água" style="width: 80px; margin-bottom: 16px;">
+  let gridHTML = `
+    <div class="quiz-badge">NOVO CONCEITO</div>
+    <div class="quiz-question">Selecione os defeitos que a Eutrofização causa no meio ambiente</div>
+    <div class="quiz-grid-container">
+      <div class="quiz-grid">
+  `;
+
+  quizGridItems.forEach(item => {
+    gridHTML += `
+      <div class="quiz-grid-item" data-id="${item.id}" onclick="toggleGridItem(${item.id}, this)">
         <img src="${item.img}" alt="Opção ${item.id}">
         <img src="assets/tarefas/tarefa_quiz_selo_item_selecionado.png" class="check" alt="Check">
       </div>
@@ -154,6 +174,7 @@ function renderQuizNormal() {
     </div>
   `;
   
+  let html = `
     <div class="quiz-question" style="font-size: 18px; margin-bottom: 24px;">Como é chamado o fenômeno da imagem?</div>
     <div class="quiz-normal-wrapper">
       <div class="quiz-image-container">
@@ -245,4 +266,3 @@ function updateHealthDisplay() {
   const healthEl = document.getElementById('healthDisplay');
   if (healthEl) healthEl.innerText = health;
 }
-
