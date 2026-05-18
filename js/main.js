@@ -174,8 +174,9 @@ document.addEventListener('click', (e) => {
 });
 
 function fazerLogout() {
-    localStorage.removeItem("user"); // Limpa a gaveta
-    window.location.reload(); // Atualiza a página
+    localStorage.removeItem("user"); 
+    localStorage.removeItem("token"); 
+    window.location.reload(); 
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
