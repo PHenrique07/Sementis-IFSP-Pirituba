@@ -12,11 +12,11 @@ def semear_banco():
     
     with Session(engine) as session:
         # Verifica se já tem usuários para não duplicar toda vez que rodar
-        usuario_existente = session.query(Usuario).first()
-        if usuario_existente:
-            print("🌱 O banco já possui dados. Sementeira cancelada para evitar duplicatas.")
-            print("⚠️ DICA: Apague o arquivo 'sementis.db' e rode o seeds.py novamente.")
-            return
+        #usuario_existente = session.query(Usuario).first()
+        #if usuario_existente:
+        #    print("🌱 O banco já possui dados. Sementeira cancelada para evitar duplicatas.")
+        #    print("⚠️ DICA: Apague o arquivo 'sementis.db' e rode o seeds.py novamente.")
+        #    return
 
         print("🚜 Preparando a terra e plantando 45 usuários, missões e questões de teste...")
 

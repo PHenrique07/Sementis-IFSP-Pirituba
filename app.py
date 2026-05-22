@@ -4,7 +4,7 @@ from flask_cors import CORS
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
     registrar_conclusao_atividade, listar_modulos, listar_trilhas_do_modulo,
     listar_atividades_da_trilha, buscar_ranking_por_liga, atualizar_progresso_missao,
-    sortear_missoes_diarias, calcular_nivel) 
+    sortear_missoes_diarias, calcular_nivel, buscar_questoes_por_atividade) 
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -231,46 +231,52 @@ def validar_token():
     except jwt.InvalidTokenError:
         return jsonify({"valido": False, "erro": "Token inválido"}), 401
 
-@app.route('/perfil', methods=['GET'])
-@token_obrigatorio
-def perfil():
-    """Exemplo de rota protegida que precisa de token"""
-    return jsonify({
-        "mensagem": f"Bem-vindo ao seu perfil, {request.usuario_nome}!",
-        "usuario_id": request.usuario_id,
-        "tipo": request.usuario_tipo
-    }), 200
-
 @app.route('/completar_atividade', methods=['POST'])
 @token_obrigatorio
 def completar_atividade():
-    # 1. Correção do Parâmetro: Usando o ID injetado pelo decorador
     id_usuario = request.usuario_id 
     
     dados = request.get_json()
+    if not dados:
+        return jsonify({"erro": "Corpo da requisição vazio"}), 400
+        
     id_atv = dados.get('atividade_id')
-# ==========================================================================================
-    # TODO (CARD 3):
-    # 1. Puxar 'erros' e 'concluida_com_sucesso' do 'dados' (JSON do Vini).
-    # 2. Antes de dar o XP, puxar o Usuario do banco e subtrair os 'erros' das 'vidas'.
-    #    (Travar em zero pra vida não ficar negativa e dar um session.commit()).
-    # 3. Fazer um IF: Só rodar o bloco abaixo (que dá XP e moedas) SE concluida_com_sucesso == True.
-    # 4. Se for False, retornar JSON: {"status": "game_over", "vidas_atuais": usuario.vidas} pro Vini.
-    # ==========================================================================================
+    erros = dados.get('erros', 0)  # Quantidade de erros cometidos no quiz
+    concluida_com_sucesso = dados.get('concluida_com_sucesso', False)  # Venceu ou deu Game Over
+
     if not id_atv:
         return jsonify({"erro": "ID da atividade não fornecido"}), 400
 
     with Session(engine) as session:
-        # 2. Registrar a conclusão (XP e Moedas da fase)
+        # 1. Puxar o Usuário do banco para atualizar as vidas
+        usuario = session.get(Usuario, id_usuario)
+        if not usuario:
+            return jsonify({"erro": "Usuário não encontrado"}), 404
+
+        # 2. Subtrair os erros das vidas do jogador (Garantindo que não fique negativo)
+        novas_vidas = usuario.vidas - erros
+        usuario.vidas = max(0, novas_vidas)
+        session.add(usuario)
+        session.commit()  # Salva o desconto de vidas imediatamente
+
+        # 3. IF principal: Se a fase NÃO foi concluída com sucesso (Game Over)
+        if not concluida_com_sucesso:
+            return jsonify({
+                "status": "game_over",
+                "mensagem": "O aluno perdeu todas as vidas ou não terminou o quiz.",
+                "vidas_atuais": usuario.vidas
+            }), 200
+
+        # 4. Caso tenha vencido com sucesso, roda o bloco de recompensas
         resultado = registrar_conclusao_atividade(session, id_usuario, id_atv)
         
         if resultado.get("status") == "sucesso":
-            # 3. INTEGRAÇÃO: Chamar a função para o progresso da missão subir sozinho
-            # Usamos o tipo 'concluir_fase' que você cadastrou no seu seeds.py
+            # Atualiza o progresso das missões diárias/semanais (tipo 'concluir_fase')
             missoes_concluidas = atualizar_progresso_missao(session, id_usuario, 'concluir_fase')
             
-            # 4. RETORNO: Adicionamos as missões atualizadas no JSON para o Vini
+            # Atualiza o objeto de retorno para o front-end com as novas informações
             resultado["missoes_completadas_agora"] = missoes_concluidas
+            resultado["vidas_atuais"] = usuario.vidas
             
             return jsonify(resultado), 200
         else:
@@ -340,6 +346,83 @@ def obter_perfil():
                 "porcentagem_barra": info_nivel["porcentagem"]
             }
         }), 200
+
+@app.route('/api/modulos/<int:modulo_id>/trilhas', methods=['GET'])
+@token_obrigatorio
+def obter_mapa_modulo(modulo_id):
+    id_usuario = request.usuario_id
+    
+    with Session(engine) as session:
+        # 1. Busca as trilhas do módulo usando a função do seu crud.py
+        trilhas = listar_trilhas_do_modulo(session, modulo_id)
+        if not trilhas:
+            return jsonify({"erro": "Nenhuma trilha encontrada para este módulo"}), 404
+            
+        # 2. Busca eficientemente as atividades que o usuário já concluiu neste módulo
+        ids_trilhas = [t.id for t in trilhas]
+        instrucao_progresso = (
+            select(ProgressoUsuario.atividade_id)
+            .join(Atividade)
+            .where(
+                ProgressoUsuario.usuario_id == id_usuario,
+                Atividade.trilha_id.in_(ids_trilhas)
+            )
+        )
+        # Salvamos em um set para buscas instantâneas por ID
+        atividades_concluidas_ids = set(session.exec(instrucao_progresso).all())
+
+        resposta_mapa = []
+        
+        # Variável para controlar se a primeira fase livre já foi liberada
+        primeira_fase_nao_concluida_encontrada = False
+
+        for trilha in trilhas:
+            # Busca as atividades específicas desta trilha usando a função do seu crud.py
+            atividades = listar_atividades_da_trilha(session, trilha.id)
+            
+            lista_atividades_formatadas = []
+            for atv in atividades:
+                # Regra de negócio para definir o status da "bolinha" no mapa do Vini
+                if atv.id in atividades_concluidas_ids:
+                    status = "concluida"
+                elif not primeira_fase_nao_concluida_encontrada:
+                    status = "liberada"
+                    primeira_fase_nao_concluida_encontrada = True
+                else:
+                    status = "bloqueada"
+                
+                lista_atividades_formatadas.append({
+                    "id": atv.id,
+                    "nome": atv.nome,
+                    "tipo": atv.tipo,
+                    "ordem": atv.ordem,
+                    "status": status,
+                    "xp_recompensa": atv.xp_recompensa,
+                    "moedas_recompensa": atv.moedas_recompensa
+                })
+            
+            resposta_mapa.append({
+                "trilha_id": trilha.id,
+                "trilha_nome": trilha.nome,
+                "trilha_ordem": trilha.ordem,
+                "atividades": lista_atividades_formatadas
+            })
+
+        return jsonify(resposta_mapa), 200
+
+@app.route("/api/atividades/<int:atividade_id>/questoes", methods=["GET"])
+@token_obrigatorio  # Mantendo a segurança para garantir que apenas alunos logados acessem as questões
+def obter_questoes_da_atividade(atividade_id):
+    with Session(engine) as session:
+        # 1. Chama a função do CRUD que criamos, que já limpa o JSON nativo do campo 'conteudo'
+        lista_questoes = buscar_questoes_por_atividade(session, atividade_id)
+        
+        # 2. Se a atividade não tiver nenhuma questão cadastrada no banco
+        if not lista_questoes:
+            return jsonify({"erro": "Nenhuma questão encontrada para esta atividade"}), 404
+            
+        # 3. Retorna o array de questões completo para o Vini salvar no storage do front-end
+        return jsonify(lista_questoes), 200
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)
