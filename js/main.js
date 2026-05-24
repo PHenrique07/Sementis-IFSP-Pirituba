@@ -294,3 +294,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Executa a função ao carregar a página
     atualizarBarraDeXP();
 });
+
+// ===== Integração com API (Finalizar Trilha) =====
+document.addEventListener('DOMContentLoaded', () => {
+   async function finalizarTrilha() {
+        const trilhaId = localStorage.getItem('ultima_fase_id');
+        const errosCount = localStorage.getItem('erros_cometidos') || 0;
+        
+        // CORREÇÃO 2b: Limpa o histórico de erros para a próxima lição
+        localStorage.setItem('erros_cometidos', 0); 
+        
+        const progressoData = { 
+            atividade_id: trilhaId, 
+            erros: parseInt(errosCount),
+            concluida_com_sucesso: true 
+        };
+        // ... resto do fetch continua igual ...
+
+        try {
+            const response = await fetch('/completar_atividade', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify(progressoData)
+            });
+
+            if (!response.ok) throw new Error("Erro no servidor");
+
+            alert("Progresso salvo online com sucesso!");
+
+        } catch (error) {
+            console.warn("Sem conexão. Salvando progresso localmente...");
+            let pendentes = JSON.parse(localStorage.getItem('sincronizacao_pendente')) || [];
+            pendentes.push(progressoData);
+            localStorage.setItem('sincronizacao_pendente', JSON.stringify(pendentes));
+            alert("Você está offline, mas seu progresso foi salvo no dispositivo!");
+        }
+
+        window.location.href = 'mapa.html';
+    }
+    window.finalizarTrilha = finalizarTrilha;
+});

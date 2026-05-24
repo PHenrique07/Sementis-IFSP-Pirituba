@@ -529,8 +529,8 @@
 <a class="back-btn" href="home.html" aria-label="Voltar para home">← Voltar</a>
 
 <div class="header">
-  <h1 id="trilhaTitle">Trilha de Aprendizado</h1>
-  <p>1 de 7 concluídas</p>
+  <h1 id="trilhaTitle">Carregando Trilha...</h1>
+  <p id="trilhaProgressText">0 de 0 concluídas</p>
   <div class="xp-bar-wrap">
     <div class="xp-bar-fill" id="xpFill"></div>
   </div>
@@ -542,30 +542,72 @@
 
 <script src="js/quiz.js"></script>
 <script>
-function applyModuleTitle() {
-  const titleEl = document.getElementById('trilhaTitle');
-  if (!titleEl) return;
+// ==============================================================
+// LÓGICA DINÂMICA: BUSCA AS FASES DA API DO LUCAS E DESENHA O MAPA
+// ==============================================================
+let lessons = [];
 
-  const params = new URLSearchParams(window.location.search);
-  const moduleTitle = params.get('module');
+// ==============================================================
+// 1. O TRADUTOR DE NOMES E BUSCA NA API
+// ==============================================================
+async function carregarMapaDinamico() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const nomeClicado = urlParams.get('module'); 
+  
+  // O TRADUTOR: Descobre qual ID o Lucas precisa baseado no nome da URL
+  let moduloId = '1'; 
+  if (nomeClicado) {
+      const nomeLimpo = nomeClicado.toLowerCase().trim();
+      if (nomeLimpo.includes('fundamento')) moduloId = '1';
+      if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) moduloId = '2';
+      if (nomeLimpo.includes('climática') || nomeLimpo.includes('climatica') || nomeLimpo.includes('mudança')) moduloId = '3';
+  }
+  
+  const token = localStorage.getItem('token');
 
-  if (moduleTitle && moduleTitle.trim()) {
-    titleEl.textContent = moduleTitle.trim();
-    document.title = `${moduleTitle.trim()} - Sementis`;
+  try {
+    const response = await fetch(`/api/modulos/${moduloId}/trilhas`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (!response.ok) throw new Error("Erro ao carregar dados do banco.");
+
+    const mapData = await response.json();
+
+    if (mapData && mapData.length > 0) {
+      const trilha = mapData[0]; 
+
+      const titleEl = document.getElementById('trilhaTitle');
+      if (titleEl) titleEl.textContent = trilha.trilha_nome;
+      document.title = `${trilha.trilha_nome} - Sementis`;
+
+      lessons = [];
+      lessons.push({ id: 'intro', label: 'Introdução', state: 'done', tipo: 'leitura' });
+
+      trilha.atividades.forEach(atv => {
+        let stateVisual = 'locked';
+        if (atv.status === 'liberada') stateVisual = 'active';
+        if (atv.status === 'concluida') stateVisual = 'done';
+
+        lessons.push({
+          id: atv.id.toString(),
+          label: atv.nome,
+          state: stateVisual,
+          tipo: atv.tipo // SALVAMOS O TIPO (QUIZ OU MINIGAME) AQUI!
+        });
+      });
+
+      const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
+      const totalFases = lessons.length - 1; 
+      const subtitulo = document.getElementById('trilhaProgressText');
+      if(subtitulo) subtitulo.textContent = `${concluidas} de ${totalFases} concluídas`;
+
+      build();
+    }
+  } catch (error) {
+    console.error("Erro na carga do mapa:", error);
   }
 }
-
-applyModuleTitle();
-
-const lessons = [
-  { label: 'Introdução', state: 'done'   },
-  { label: 'Lição 1',    state: 'active' },
-  { label: 'Lição 2',    state: 'locked' },
-  { label: 'Lição 3',    state: 'locked' },
-  { label: 'Lição 4',    state: 'locked' },
-  { label: 'Lição 5',    state: 'locked' },
-  { label: 'Conclusão',  state: 'locked' },
-];
 
 const PAD_TOP   = 88;
 const PAD_BOT   = 130;
@@ -582,7 +624,6 @@ function getNodePoints(width) {
 
   for (let i = 0; i < lessons.length; i++) {
     if (i > 0) {
-      // Espaçamento maior e irregular para parecer mais natural entre os nós.
       const baseStep = 260;
       const randomStep = seededNoise(i * 4.17) * 66;
       const waveStep = Math.sin(i * 0.82 + 0.4) * 18;
@@ -604,6 +645,9 @@ function getNodePoints(width) {
 function build() {
   const scene = document.getElementById('scene');
   const W = Math.min(window.innerWidth, 460);
+  
+  if(lessons.length === 0) return; // Segurança pra não bugar se a API não respondeu
+  
   const pts = getNodePoints(W);
   const H = pts[pts.length - 1].y + PAD_BOT;
   scene.style.height = H + 'px';
@@ -676,44 +720,53 @@ function build() {
     lbl.textContent = lesson.label;
     div.appendChild(lbl);
 
-    if (lesson.state === 'active' || lesson.label === 'Lição 1') {
+  if (lesson.state === 'active' || lesson.state === 'done') {
       div.onclick = () => {
-        const params = new URLSearchParams(window.location.search);
-        const moduleTitle = params.get('module');
+        if (lesson.id === 'intro') {
+          alert("Bem-vindo ao módulo! Clique na próxima bolinha para começar.");
+          return;
+        }
+
+        // SALVA OS DADOS PARA QUEM FOR LER DEPOIS
+        localStorage.setItem('ultima_fase_id', lesson.id);
+        localStorage.setItem('ultima_fase_tipo', lesson.tipo);
         
-        // Exibe logs no console para ajudar a depurar
-        console.log("Módulo atual:", moduleTitle);
-        
-        // Flexibilizando a checagem: se o título contiver "água", "agua", ou for nulo (acesso direto)
-        if (!moduleTitle || moduleTitle.toLowerCase().includes('água') || moduleTitle.toLowerCase().includes('agua')) {
-          console.log("Abrindo quiz!");
-          if (typeof openQuizModal === 'function') {
-            openQuizModal();
-          } else {
-            console.error("Função openQuizModal não encontrada. Verifique se quiz.js foi carregado corretamente.");
-            alert("Erro: O script do quiz não foi carregado.");
-          }
+        console.log(`Fase ID: ${lesson.id} | Tipo: ${lesson.tipo}`);
+
+        // ROTEAMENTO DINÂMICO
+        if (lesson.tipo === 'minigame') {
+            // AQUI ENTRA A LÓGICA DO SEU MINIGAME!
+            alert(`🎮 Iniciando Minigame: ${lesson.label}!\n(Em breve você será redirecionado para a tela do jogo)`);
+            // window.location.href = 'minigame.html';
         } else {
-          // Se for outro módulo, não abre o quiz
-          alert('Lição em desenvolvimento. Para testar o quiz, volte e selecione "Água e Vida"!');
+            // SE FOR QUIZ, ABRE A TELA PRETA NORMAL
+            if (typeof openQuizModal === 'function') {
+                openQuizModal();
+            } else {
+                alert("Erro: O script do quiz não foi carregado.");
+            }
         }
       };
+    } else {
+      div.onclick = () => alert("🔒 Complete a fase anterior para liberar esta lição!");
     }
 
     scene.appendChild(div);
   });
 
-  // XP bar animation
-  const done = lessons.filter(l => l.state === 'done').length;
-  const percentage = (done / lessons.length * 100).toFixed(0);
+  // Animação da Barra de XP verde
+  const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
+  const totalFases = Math.max(1, lessons.length - 1);
+  const percentage = (concluidas / totalFases * 100).toFixed(0);
 
   setTimeout(() => {
     const fillElement = document.getElementById('xpFill');
-    fillElement.style.width = percentage + '%';
+    if(fillElement) fillElement.style.width = percentage + '%';
   }, 500);
 }
 
-build();
+// Em vez de só rodar o build, agora ele busca da API primeiro
+carregarMapaDinamico();
 window.addEventListener('resize', build);
 </script>
 <script src="pwa/pwa-register.js"></script>

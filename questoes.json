@@ -1,0 +1,448 @@
+[
+    {
+        "_comentario_MÓDULO": "=====================================================================================",
+        "_comentario_NOME": "MÓDULO 1: FUNDAMENTOS",
+        "_comentario_COMO_CRIAR_MODULO": "Para criar um NOVO MÓDULO, copie todo este bloco (da primeira { até a última }), coloque uma vírgula após a chave final do último módulo e cole embaixo. Lembre-se de mudar a 'ordem' para 4, 5, etc.",
+        "modulo": {"nome": "Fundamentos", "descricao": "Conceitos básicos de sustentabilidade", "ordem": 1},
+        "trilha": "Trilha de Fundamentos",
+        "atividades": [
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 1: O DESPERTAR ---",
+                "_comentario_COMO_CRIAR_ATIVIDADE": "Para adicionar mais uma bolinha no mapa, copie este bloco da atividade, coloque uma vírgula e cole abaixo.",
+                "nome": "O Despertar", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "_comentario_QUESTAO": "Exemplo de Questão SIMPLES (Botões de texto)",
+                        "tipo": "simples", 
+                        "pergunta": "O que significa o 'R' de Reciclar nos 3 Rs da sustentabilidade?", 
+                        "opcoes": [
+                            {"texto": "Transformar o material usado em um novo produto", "correta": true}, 
+                            {"texto": "Reutilizar a mesma sacola plástica", "correta": false}, 
+                            {"texto": "Recusar produtos de plástico", "correta": false}
+                        ]
+                    },
+                    {
+                        "_comentario_QUESTAO": "Exemplo de Questão GRID (Com ícones de imagem)",
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Selecione APENAS os recursos naturais RENOVÁVEIS:", 
+                        "opcoes": [
+                            {"texto": "LUZ SOLAR", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "VENTO", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "PETRÓLEO", "icone": "tarefa_quiz_opcao7.png", "correta": false}, 
+                            {"texto": "CARVÃO", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "A Sustentabilidade baseia-se em 3 pilares principais. Quais são?", 
+                        "opcoes": [
+                            {"texto": "Social, Ambiental e Econômico", "correta": true}, 
+                            {"texto": "Político, Financeiro e Industrial", "correta": false}, 
+                            {"texto": "Natureza, Dinheiro e Lucro", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 2: PEGADA ECOLÓGICA ---",
+                "nome": "Pegada Ecológica", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que a 'Pegada Ecológica' mede?", 
+                        "opcoes": [
+                            {"texto": "A quantidade de recursos naturais que usamos para sustentar nosso estilo de vida", "correta": true}, 
+                            {"texto": "O tamanho do pé de animais em extinção", "correta": false}, 
+                            {"texto": "A quantidade de lixo jogada nos oceanos", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Ações que DIMINUEM sua Pegada Ecológica:", 
+                        "opcoes": [
+                            {"texto": "ANDAR DE BICICLETA", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "COMER MENOS CARNE", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "COMPRAR ROUPAS TODA SEMANA", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que é 'Compostagem'?", 
+                        "opcoes": [
+                            {"texto": "Transformar restos de alimentos orgânicos em adubo rico para plantas", "correta": true}, 
+                            {"texto": "Um processo industrial para derreter plástico", "correta": false}, 
+                            {"texto": "A queima de lixo em usinas termoelétricas", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 3: LIXO ZERO ---",
+                "nome": "Lixo Zero", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Qual material demora mais tempo para se decompor na natureza?", 
+                        "opcoes": [
+                            {"texto": "Vidro (milhares de anos)", "correta": true}, 
+                            {"texto": "Papel (3 a 6 meses)", "correta": false}, 
+                            {"texto": "Chiclete (5 anos)", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "O que NÃO deve ir para a lixeira reciclável comum?", 
+                        "opcoes": [
+                            {"texto": "PAPEL HIGIÊNICO USADO", "icone": "tarefa_quiz_opcao7.png", "correta": true}, 
+                            {"texto": "PILHAS E BATERIAS", "icone": "tarefa_quiz_opcao7.png", "correta": true}, 
+                            {"texto": "GARRAFA PET LIMPA", "icone": "tarefa_quiz_opcao1.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "No Brasil, qual é a cor da lixeira padrão para descarte de PAPEL?", 
+                        "opcoes": [
+                            {"texto": "Azul", "correta": true}, 
+                            {"texto": "Vermelha", "correta": false}, 
+                            {"texto": "Amarela", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 4: CONSUMO CONSCIENTE ---",
+                "nome": "Consumo Consciente", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que é Obsolescência Programada?", 
+                        "opcoes": [
+                            {"texto": "Produtos fabricados para quebrarem ou ficarem inúteis rapidamente", "correta": true}, 
+                            {"texto": "Um programa de TV sobre ecologia", "correta": false}, 
+                            {"texto": "A reciclagem automática de aparelhos eletrônicos", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Práticas de Consumo Consciente:", 
+                        "opcoes": [
+                            {"texto": "COMPRAR EM BRECHÓS", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "APOIAR COMÉRCIO LOCAL", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "TROCAR DE CELULAR TODO ANO", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que quer dizer a expressão 'Upcycling'?", 
+                        "opcoes": [
+                            {"texto": "Reutilizar um objeto dando a ele um valor ou utilidade maior que o original", "correta": true}, 
+                            {"texto": "Descartar lixo no espaço sideral", "correta": false}, 
+                            {"texto": "Andar de bicicleta para economizar gasolina", "correta": false}
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "_comentario_MÓDULO": "=====================================================================================",
+        "_comentario_NOME": "MÓDULO 2: ÁGUA E VIDA",
+        "modulo": {"nome": "Água e Vida", "descricao": "Conservação e uso consciente da água", "ordem": 2},
+        "trilha": "Guardiões da Água",
+        "atividades": [
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 1: A GOTA D'ÁGUA ---",
+                "nome": "A Gota d'Água", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "_comentario": "O Megazord do Foltest restaurado com as 7 imagens",
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Selecione os defeitos que a Eutrofização causa no meio ambiente", 
+                        "opcoes": [
+                            {"texto": "PROLIFERAÇÃO DE ALGAS", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "REDUÇÃO DE OXIGÊNIO (HIPÓXIA)", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "MORTE DE PEIXES / FAUNA AQUÁTICA", "icone": "tarefa_quiz_opcao3.png", "correta": true}, 
+                            {"texto": "ÁGUA TURVA / OPACA", "icone": "tarefa_quiz_opcao4.png", "correta": true}, 
+                            {"texto": "MAU CHEIRO (DECOMPOSIÇÃO)", "icone": "tarefa_quiz_opcao5.png", "correta": true}, 
+                            {"texto": "PERDA DE BIODIVERSIDADE", "icone": "tarefa_quiz_opcao6.png", "correta": true}, 
+                            {"texto": "PRODUÇÃO DE TOXINAS", "icone": "tarefa_quiz_opcao7.png", "correta": false} 
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Uma torneira pingando (1 gota por segundo) desperdiça cerca de quantos litros por dia?", 
+                        "opcoes": [
+                            {"texto": "46 litros", "correta": true}, 
+                            {"texto": "1 litro", "correta": false}, 
+                            {"texto": "Não desperdiça nada", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Qual destas atitudes mais economiza água no dia a dia?", 
+                        "opcoes": [
+                            {"texto": "Tomar banhos curtos de até 5 minutos", "correta": true}, 
+                            {"texto": "Lavar a calçada com mangueira", "correta": false}, 
+                            {"texto": "Dar descarga várias vezes sem necessidade", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 2: VAZAMENTO OCULTO ---",
+                "nome": "Vazamento Oculto", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Uma torneira pingando (1 gota por segundo) desperdiça cerca de quantos litros por dia?", 
+                        "opcoes": [
+                            {"texto": "46 litros", "correta": true}, 
+                            {"texto": "1 litro", "correta": false}, 
+                            {"texto": "Não desperdiça nada", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Sinais de que há um vazamento oculto em casa:", 
+                        "opcoes": [
+                            {"texto": "CONTA DE ÁGUA MUITO ALTA", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "PAREDES ÚMIDAS OU COM MOFO", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "RELÓGIO GIRANDO COM TUDO FECHADO", "icone": "tarefa_quiz_opcao3.png", "correta": true}, 
+                            {"texto": "PRESSÃO DA ÁGUA NORMAL", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Ao escovar os dentes por 5 minutos com a torneira aberta, quantos litros de água vão ralo abaixo?", 
+                        "opcoes": [
+                            {"texto": "Cerca de 12 litros", "correta": true}, 
+                            {"texto": "Apenas 1 litro", "correta": false}, 
+                            {"texto": "Mais de 100 litros", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 3: POLUIÇÃO DAS ÁGUAS ---",
+                "nome": "Poluição das Águas", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Um litro de óleo de cozinha descartado incorretamente no ralo pode poluir até:", 
+                        "opcoes": [
+                            {"texto": "25.000 litros de água", "correta": true}, 
+                            {"texto": "Apenas a água que está no encanamento", "correta": false}, 
+                            {"texto": "10 litros de água", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Selecione APENAS as consequências da Eutrofização:", 
+                        "opcoes": [
+                            {"texto": "PROLIFERAÇÃO DE ALGAS", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "REDUÇÃO DE OXIGÊNIO", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "MORTE DE PEIXES", "icone": "tarefa_quiz_opcao3.png", "correta": true}, 
+                            {"texto": "ÁGUA TURVA", "icone": "tarefa_quiz_opcao4.png", "correta": true}, 
+                            {"texto": "TRATAMENTO FÁCIL", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Qual a porcentagem de água doce facilmente disponível para consumo humano no planeta?", 
+                        "opcoes": [
+                            {"texto": "Menos de 1%", "correta": true}, 
+                            {"texto": "Cerca de 50%", "correta": false}, 
+                            {"texto": "Quase 97%", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 4: PEGADA HÍDRICA ---",
+                "nome": "Pegada Hídrica", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que é a 'Água Virtual' ou 'Pegada Hídrica'?", 
+                        "opcoes": [
+                            {"texto": "A água usada de forma invisível durante a produção de bens e alimentos", "correta": true}, 
+                            {"texto": "A água que compramos engarrafada no mercado", "correta": false}, 
+                            {"texto": "A água usada para resfriar servidores de internet", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Quais itens exigem MAIS de 1.000 litros de água para serem produzidos?", 
+                        "opcoes": [
+                            {"texto": "1 KG DE CARNE BOVINA (15 mil L)", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "1 CALÇA JEANS (10 mil L)", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "1 MAÇÃ (70 L)", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Qual a melhor forma de reaproveitar a água da máquina de lavar roupas?", 
+                        "opcoes": [
+                            {"texto": "Lavar o quintal, a calçada e o carro", "correta": true}, 
+                            {"texto": "Usar para cozinhar alimentos", "correta": false}, 
+                            {"texto": "Dar para os animais de estimação beberem", "correta": false}
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "_comentario_MÓDULO": "=====================================================================================",
+        "_comentario_NOME": "MÓDULO 3: MUDANÇAS CLIMÁTICAS",
+        "modulo": {"nome": "Mudanças Climáticas", "descricao": "Entenda o aquecimento global", "ordem": 3},
+        "trilha": "Heróis do Clima",
+        "atividades": [
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 1: O EFEITO ESTUFA ---",
+                "nome": "O Efeito Estufa", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que é o Efeito Estufa?", 
+                        "opcoes": [
+                            {"texto": "Um fenômeno natural vital para manter a Terra aquecida, mas intensificado pela poluição", "correta": true}, 
+                            {"texto": "Uma doença causada pela poluição do ar", "correta": false}, 
+                            {"texto": "Um tipo de construção de vidro para proteger plantas do frio", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Quais são os principais Gases de Efeito Estufa (GEE)?", 
+                        "opcoes": [
+                            {"texto": "DIÓXIDO DE CARBONO (CO2)", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "METANO (CH4)", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "GÁS OXIGÊNIO (O2)", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Qual atividade humana é a maior responsável pela emissão de CO2 no Brasil?", 
+                        "opcoes": [
+                            {"texto": "Desmatamento e queimadas, especialmente na Amazônia", "correta": true}, 
+                            {"texto": "O uso de aerossóis e desodorantes", "correta": false}, 
+                            {"texto": "A respiração humana e animal", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 2: AQUECIMENTO GLOBAL ---",
+                "nome": "Aquecimento Global", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Qual a principal diferença entre Clima e Tempo?", 
+                        "opcoes": [
+                            {"texto": "Tempo é o estado diário (chove ou sol), clima é a média de anos e décadas", "correta": true}, 
+                            {"texto": "São exatamente a mesma coisa", "correta": false}, 
+                            {"texto": "Clima é medido em horas, tempo é medido em séculos", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Consequências Diretas do Aquecimento Global:", 
+                        "opcoes": [
+                            {"texto": "DERRETIMENTO DAS GELEIRAS", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "AUMENTO DO NÍVEL DO MAR", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "EVENTOS EXTREMOS (SECAS/ENCHENTES)", "icone": "tarefa_quiz_opcao3.png", "correta": true}, 
+                            {"texto": "RESFRIAMENTO DO EQUADOR", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que foi o Acordo de Paris?", 
+                        "opcoes": [
+                            {"texto": "Um tratado global onde países se uniram para limitar o aumento da temperatura do planeta", "correta": true}, 
+                            {"texto": "Uma lei que proíbe o uso de carros a diesel na Europa", "correta": false}, 
+                            {"texto": "Um pacto para limpar o Rio Sena", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 3: O IMPACTO NA NATUREZA ---",
+                "nome": "O Impacto na Natureza", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que é o Branqueamento de Corais?", 
+                        "opcoes": [
+                            {"texto": "A morte dos recifes devido ao aumento da temperatura e acidez da água do oceano", "correta": true}, 
+                            {"texto": "Uma técnica humana para limpar o fundo do mar", "correta": false}, 
+                            {"texto": "Um processo natural de renovação do ecossistema marinho", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Animais gravemente ameaçados pelo degelo do Ártico:", 
+                        "opcoes": [
+                            {"texto": "URSOS POLARES", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "FOCAS", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "LEÕES AFRICANOS", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "Por que a Floresta Amazônica é crucial contra as mudanças climáticas?", 
+                        "opcoes": [
+                            {"texto": "Ela atua como um 'sumidouro', sugando e armazenando bilhões de toneladas de CO2", "correta": true}, 
+                            {"texto": "Ela reflete a luz do sol de volta para o espaço esfriando o continente", "correta": false}, 
+                            {"texto": "As árvores geram vento que dispersa a poluição", "correta": false}
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comentario_ATIVIDADE": "--- BOLINHA 4: AÇÃO CLIMÁTICA ---",
+                "nome": "Ação Climática", 
+                "tipo": "quiz",
+                "questoes": [
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que são Combustíveis Fósseis?", 
+                        "opcoes": [
+                            {"texto": "Fontes de energia ricas em carbono originadas da decomposição de organismos há milhões de anos (Petróleo, Carvão)", "correta": true}, 
+                            {"texto": "Combustíveis criados em laboratório a partir de fósseis de dinossauros", "correta": false}, 
+                            {"texto": "Combustíveis limpos extraídos de plantas modernas", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "grid_multiplo", 
+                        "pergunta": "Atitudes que ajudam a combater o Aquecimento Global:", 
+                        "opcoes": [
+                            {"texto": "USAR TRANSPORTE PÚBLICO OU BICICLETA", "icone": "tarefa_quiz_opcao1.png", "correta": true}, 
+                            {"texto": "PLANTAR ÁRVORES NATIVAS", "icone": "tarefa_quiz_opcao2.png", "correta": true}, 
+                            {"texto": "USAR PLÁSTICO DESCARTÁVEL", "icone": "tarefa_quiz_opcao7.png", "correta": false}
+                        ]
+                    },
+                    {
+                        "tipo": "simples", 
+                        "pergunta": "O que significa ser 'Carbono Neutro'?", 
+                        "opcoes": [
+                            {"texto": "Alcançar o equilíbrio onde a quantidade de CO2 emitida é igual a que é removida da atmosfera", "correta": true}, 
+                            {"texto": "Uma empresa que não usa nenhuma gota de combustível fóssil", "correta": false}, 
+                            {"texto": "Respirar sem liberar dióxido de carbono", "correta": false}
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

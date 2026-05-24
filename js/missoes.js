@@ -110,3 +110,94 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     buscarMissoes();
 });
+
+// ===== Integração com API (Corrigir Questão) =====
+document.addEventListener('DOMContentLoaded', () => {
+    let contadorCoracoes = document.getElementById('coracoes');
+    let numeroSelecionado = 0;
+    let jogoBloqueado = false;
+
+    // Inicializa o contador de erros caso não exista
+    if (!localStorage.getItem('erros_cometidos')) {
+        localStorage.setItem('erros_cometidos', 0);
+    }
+
+    function corrigirQuestao(idQuestao, respostaUsuario, respostaCorreta, botaoAlvo, numeroDeQuestoes) {
+        if (jogoBloqueado) return;
+        jogoBloqueado = true; // Bloqueia imediatamente após o clique
+
+        // 1. BUSCA AS VIDAS DIRETO DA FONTE DA VERDADE (localStorage)
+        let dadosUsuario = JSON.parse(localStorage.getItem('user')) || { vidas: 4 };
+        let vidasAtuais = parseInt(dadosUsuario.vidas);
+
+        let contadorCoracoes = document.getElementById('coracoes');
+
+        if (respostaUsuario === respostaCorreta) {
+            numeroSelecionado += 1;
+            botaoAlvo.style.backgroundColor = 'green';
+            jogoBloqueado = false; // Desbloqueia se acertou e o jogo continua
+        }  else {
+            numeroSelecionado += 1;
+            botaoAlvo.style.backgroundColor = 'red';
+            
+            // Subtrai a vida com segurança visual
+            vidasAtuais -= 1; 
+            if (vidasAtuais < 0) vidasAtuais = 0; 
+
+            // Atualiza o localStorage
+            dadosUsuario.vidas = vidasAtuais;
+            localStorage.setItem('user', JSON.stringify(dadosUsuario));
+
+            // Atualiza o HTML
+            if (contadorCoracoes) {
+                contadorCoracoes.textContent = vidasAtuais; 
+            }
+
+            // Guarda o erro
+            let erros = parseInt(localStorage.getItem('erros_cometidos') || 0);
+            localStorage.setItem('erros_cometidos', erros + 1);
+
+            // CORREÇÃO 1: Destrava o jogo após 800ms para ele poder tentar outra alternativa!
+            setTimeout(() => {
+                jogoBloqueado = false;
+            }, 800);
+        }
+
+        // 4. VERIFICAÇÃO DE GAME OVER
+        if (vidasAtuais <= 0) {
+            const trilhaId = localStorage.getItem('ultima_fase_id');
+            const errosCount = localStorage.getItem('erros_cometidos') || 0;
+            
+            fetch('/completar_atividade', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    atividade_id: trilhaId,
+                    erros: parseInt(errosCount),
+                    concluida_com_sucesso: false
+                })
+           }).finally(() => {
+                // CORREÇÃO 2a: Zera os erros após morrer
+                localStorage.setItem('erros_cometidos', 0); 
+                alert("Game Over! Você ficou sem corações.");
+                window.location.href = 'mapa.html';
+            });
+            return; 
+        }
+
+        // Quando responder à última pergunta
+        if (numeroDeQuestoes <= numeroSelecionado) {
+            if (typeof window.finalizarTrilha === 'function') {
+                window.finalizarTrilha();
+            } else {
+                console.warn('Função finalizarTrilha não encontrada no escopo global!');
+            }
+            return; 
+        }
+    }
+
+    window.corrigirQuestao = corrigirQuestao;
+});

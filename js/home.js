@@ -17,13 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initAchievements();
     animateProgressBars();
     initModulesView();
-    initStatItems();   // <-- Movido para cá! (Estava solto no código)
-    initDailyGoal();   // <-- Movido para cá! (Estava solto no código)
+    initStatItems();   
+    initDailyGoal();   
     
     // 3. Roda a animação de entrada
-    playWelcomeAnimation(); // <-- Movido para cá!
+    playWelcomeAnimation(); 
 
-    // Torna as funções de navegação globais para o HTML conseguir chamar, se precisar
+    // ==========================================
+    // A CORREÇÃO ENTRA AQUI: 
+    // Se a página for o mapa de trilhas, puxa os botões do banco!
+    if (window.location.pathname.includes('trilhas.html') || window.location.search.includes('module=')) {
+        carregarTrilha(1); // O 1 é o ID do Módulo Água e Vida
+    }
+    // ==========================================
+
     window.showHomeView = showHomeView;
     window.showModulesView = showModulesView;
 
@@ -476,3 +483,70 @@ function initModulesView() {
         }
     });
 }
+
+// ===== Integração com API (Carregar Trilha) =====
+async function carregarTrilha(moduloId = 1) { 
+    try {
+        const response = await fetch(`/api/modulos/${moduloId}/trilhas`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        const mapData = await response.json();
+        const botoes = document.querySelectorAll('.botao-fase');
+
+        const concluidasLocal = JSON.parse(localStorage.getItem('fases_concluidas')) || [];
+
+        let todasAtividades = [];
+        if (Array.isArray(mapData)) {
+            mapData.forEach(trilha => {
+                if (trilha.atividades) {
+                    todasAtividades = todasAtividades.concat(trilha.atividades);
+                }
+            });
+        }
+
+        todasAtividades.forEach((atividade, index) => {
+            const botao = botoes[index];
+            if (!botao) return;
+            const imgFase = botao.querySelector('.imagem-da-fase');
+
+            const isLocalConcluida = concluidasLocal.includes(atividade.id);
+            const status = isLocalConcluida ? 'concluida' : atividade.status;
+
+            if (status === 'liberada' || status === 'concluida') {
+                    imgFase.src = `assets/liberado${atividade.id}.png`; 
+                    imgFase.style.filter = "none";
+                    
+                    // Verifica o tipo antes de abrir o quiz
+                    botao.onclick = () => {
+                        localStorage.setItem('ultima_fase_id', atividade.id);
+                        localStorage.setItem('ultima_fase_tipo', atividade.tipo); // Salva o tipo também
+
+                        if (atividade.tipo === 'leitura') {
+                            // Para leitura, abre o quiz mesmo assim (tem questões embutidas)
+                            // Se quiser uma tela de leitura separada no futuro, mude aqui!
+                            if (typeof openQuizModal === 'function') openQuizModal();
+                        } else if (atividade.tipo === 'quiz') {
+                            if (typeof openQuizModal === 'function') openQuizModal();
+                        } else if (atividade.tipo === 'minigame') {
+                            // Minigame ainda não implementado
+                            alert(`Minigame "${atividade.nome}" em breve!`);
+                        } else {
+                            if (typeof openQuizModal === 'function') openQuizModal();
+                        }
+                    };
+                    
+                    botao.style.cursor = "pointer";
+                } else  {
+                imgFase.src = "assets/cadeado.png"; 
+                botao.onclick = null;
+                botao.style.cursor = "not-allowed";
+            }
+        });
+    } catch (error) {
+        console.error("Erro ao carregar a trilha:", error);
+    }
+}
+window.carregarTrilha = carregarTrilha;
