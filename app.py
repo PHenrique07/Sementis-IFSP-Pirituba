@@ -15,6 +15,9 @@ from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao
 
 app = Flask(__name__)
 
+# Caminho absoluto da pasta do projeto — resolve o problema do PythonAnywhere
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 SECRET_KEY = "chave_super_secreta_2026_GRATIA!"
 
 # =====================================================================
@@ -86,15 +89,15 @@ def token_obrigatorio(f):
 @app.route('/')
 def index():
     """Serve a página inicial"""
-    return send_from_directory('.', 'index.html')
+    return send_from_directory(BASE_DIR, 'index.html')
 
 # Rota para servir qualquer arquivo estático
 @app.route('/<path:filename>')
 def serve_static(filename):
     """Serve arquivos CSS, JS, imagens, etc."""
-    # Verifica se o arquivo existe
-    if os.path.exists(filename):
-        return send_from_directory('.', filename)
+    caminho_completo = os.path.join(BASE_DIR, filename)
+    if os.path.exists(caminho_completo):
+        return send_from_directory(BASE_DIR, filename)
     else:
         return f"Arquivo não encontrado: {filename}", 404
 
@@ -102,7 +105,7 @@ def serve_static(filename):
 @app.route('/trilhas.html')
 def trilha():
     """Serve a página de trilhas"""
-    return send_from_directory('.', 'trilhas.html')
+    return send_from_directory(BASE_DIR, 'trilhas.html')
 
 # =====================================================================
 # --- ROTAS DE API ---
@@ -429,7 +432,7 @@ def obter_questoes_da_atividade(atividade_id):
 def serve_estaticos(pasta, filename):
     # Se a pasta for uma das pastas de assets, serve o arquivo direto
     if pasta in ['css', 'js', 'assets', 'pwa']:
-        return send_from_directory(pasta, filename)
+        return send_from_directory(os.path.join(BASE_DIR, pasta), filename)
     return "Pasta não encontrada", 404
 
 # --- Rota Universal: Serve todas as páginas HTML ---
@@ -439,9 +442,10 @@ def serve_html(filename):
     if not filename.endswith('.html'):
         filename += '.html'
     
-    # Verifica se o arquivo existe na raiz
-    if os.path.exists(filename):
-        return send_from_directory('.', filename)
+    # Verifica se o arquivo existe na raiz do projeto
+    caminho_completo = os.path.join(BASE_DIR, filename)
+    if os.path.exists(caminho_completo):
+        return send_from_directory(BASE_DIR, filename)
     
     return f"Página não encontrada: {filename}", 404
 
