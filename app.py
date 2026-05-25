@@ -424,21 +424,26 @@ def obter_questoes_da_atividade(atividade_id):
         # 3. Retorna o array de questões completo para o Vini salvar no storage do front-end
         return jsonify(lista_questoes), 200
     
-@app.route('/css/<path:filename>')
-def serve_css(filename):
-    return send_from_directory('css', filename)
+# --- Rota Universal: Serve arquivos estáticos de pastas específicas ---
+@app.route('/<pasta>/<path:filename>')
+def serve_estaticos(pasta, filename):
+    # Se a pasta for uma das pastas de assets, serve o arquivo direto
+    if pasta in ['css', 'js', 'assets', 'pwa']:
+        return send_from_directory(pasta, filename)
+    return "Pasta não encontrada", 404
 
-@app.route('/js/<path:filename>')
-def serve_js(filename):
-    return send_from_directory('js', filename)
-
-@app.route('/assets/<path:filename>')
-def serve_assets(filename):
-    return send_from_directory('assets', filename)
-
-@app.route('/pwa/<path:filename>')
-def serve_pwa(filename):
-    return send_from_directory('pwa', filename)
+# --- Rota Universal: Serve todas as páginas HTML ---
+@app.route('/<path:filename>')
+def serve_html(filename):
+    # Se o nome não tiver .html, adiciona
+    if not filename.endswith('.html'):
+        filename += '.html'
+    
+    # Verifica se o arquivo existe na raiz
+    if os.path.exists(filename):
+        return send_from_directory('.', filename)
+    
+    return f"Página não encontrada: {filename}", 404
 
 
 if __name__ == '__main__':
