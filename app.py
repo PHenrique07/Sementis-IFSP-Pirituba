@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 #Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
@@ -423,6 +423,23 @@ def obter_questoes_da_atividade(atividade_id):
             
         # 3. Retorna o array de questões completo para o Vini salvar no storage do front-end
         return jsonify(lista_questoes), 200
+    
+@app.route('/css/<path:filename>')
+def serve_css(filename):
+    return send_from_directory('css', filename)
+
+@app.route('/js/<path:filename>')
+def serve_js(filename):
+    return send_from_directory('js', filename)
+
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    return send_from_directory('assets', filename)
+
+@app.route('/pwa/<path:filename>')
+def serve_pwa(filename):
+    return send_from_directory('pwa', filename)
+
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)
