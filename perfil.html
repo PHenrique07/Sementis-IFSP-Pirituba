@@ -6,11 +6,11 @@
     <meta name="theme-color" content="#1a1a4a">
     <meta name="application-name" content="Sementis">
     <link rel="manifest" href="pwa/manifest.webmanifest">
-    <link rel="icon" href="assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
     <title>Sementis - Perfil</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/shared-navbar.css">
-    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/shared-navbar.css">
+    <link rel="stylesheet" href="/css/perfil.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="perfil-page">
@@ -28,7 +28,7 @@
         <section class="user-intro">
             <div class="user-avatar-wrapper">
                 <div class="user-avatar-large" id="avatar-container" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0">
-                    <img src="assets/icons/icone_usuario.png" alt="Foto de Perfil" id="profile-picture">
+                    <img src="/assets/icons/icone_usuario.png" alt="Foto de Perfil" id="profile-picture">
                     <div class="avatar-edit-overlay">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                     </div>
@@ -65,7 +65,7 @@
         <section class="user-stats-cards">
            <div class="stat-card">
                 <!-- id="perfil-user-liga-icon" na imagem -->
-                <img id="perfil-user-liga-icon" src="assets/ligas/liga_medalha_bronze.png" alt="Liga">
+                <img id="perfil-user-liga-icon" src="/assets/ligas/liga_medalha_bronze.png" alt="Liga">
                 
                 <span class="stat-card-title">LIGA</span>
                 
@@ -73,13 +73,13 @@
                 <span class="stat-card-value" id="perfil-user-liga-text">BRONZE</span>
             </div>
             <div class="stat-card">
-                <img src="assets/icons/icone_sequencia_fogo_prata.png" alt="Sequência" onerror="this.src='assets/icons/icone_sequencia_fogo.png';">
+                <img src="/assets/icons/icone_sequencia_fogo_prata.png" alt="Sequência" onerror="this.src='/assets/icons/icone_sequencia_fogo.png';">
                 <span class="stat-card-title">SEQUÊNCIA</span>
                 <!-- ID adicionado aqui -->
                 <span class="stat-card-value" id="perfil-user-streak">30</span>
             </div>
             <div class="stat-card">
-                <img src="assets/icons/icone_experiencia_prata.png" alt="Experiência">
+                <img src="/assets/icons/icone_experiencia_prata.png" alt="Experiência">
                 <span class="stat-card-title">EXPERIÊNCIA</span>
                 <!-- ID adicionado aqui -->
                 <span class="stat-card-value" id="perfil-user-xp-total">1.590</span>
@@ -115,21 +115,21 @@
         <div class="modal-content pro-modal-content">
             <button class="close-modal-btn" aria-label="Fechar">&times;</button>
             <div class="pro-modal-header">
-                <img src="assets/brand/logo_sementis_branco.png" alt="Sementis Logo">
+                <img src="/assets/brand/logo_sementis_branco.png" alt="Sementis Logo">
                 <span class="pro-badge">PRO</span>
             </div>
             <h2 class="pro-title">Acelere seu aprendizado!</h2>
             <ul class="pro-benefits">
                 <li>
-                    <img src="assets/icons/icone_vida.png" alt="Vidas infinitas">
+                    <img src="/assets/icons/icone_vida.png" alt="Vidas infinitas">
                     <span>Vidas infinitas</span>
                 </li>
                 <li>
-                    <img src="assets/icons/icone_moeda.png" alt="Moedas em dobro">
+                    <img src="/assets/icons/icone_moeda.png" alt="Moedas em dobro">
                     <span>Moedas em dobro nas lições</span>
                 </li>
                 <li>
-                    <img src="assets/ligas/liga_trofeu_prata.png" alt="Ligas Exclusivas">
+                    <img src="/assets/ligas/liga_trofeu_prata.png" alt="Ligas Exclusivas">
                     <span>Acesso a Ligas Exclusivas</span>
                 </li>
                 <li>
@@ -143,8 +143,8 @@
     </div>
 
     <script src="pwa/pwa-register.js"></script>
-    <script src="js/shared-navbar.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/perfil.js"></script>
+    <script src="/js/shared-navbar.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/perfil.js"></script>
 </body>
 </html>
