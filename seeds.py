@@ -17,13 +17,19 @@ def semear_banco():
             return
 
         print("🚜 Plantando o currículo educacional completo do Sementis...")
+        
+        # Hashes de senha
         senha_padrao = argon2.using(memory_cost=65536, rounds=4, parallelism=4).hash("123456" + PEPPER)
+        senha_pedro = argon2.using(memory_cost=65536, rounds=4, parallelism=4).hash("1073@Pedro" + PEPPER)
 
         # ====================================================================
         # 1. RANKING E USUÁRIOS
         # ====================================================================
         usuarios = [
-            Usuario(nome="Pedro Santos", email="pedro@ifsp.edu.br", idade=19, senha=senha_padrao, tipo_usuario="aluno", xp=3200, moedas=500, xp_semanal=950, liga_id=1),
+            # Seu usuário de teste blindado
+            Usuario(nome="Pedro Henrique Santos da Silva", email="pedroteste@gmail.com", idade=19, senha=senha_pedro, tipo_usuario="aluno", xp=3200, moedas=500, xp_semanal=950, liga_id=1),
+            
+            # Restante dos usuários
             Usuario(nome="Lucas", email="lucas@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=28588880, moedas=300, xp_semanal=820, liga_id=1),
             Usuario(nome="Vini", email="vini@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=2900000, moedas=350, xp_semanal=700, liga_id=1),
             Usuario(nome="Ster Leite", email="ster@leite.com", idade=22, senha=senha_padrao, tipo_usuario="aluno", xp=0, moedas=100, xp_semanal=0, liga_id=1),
@@ -74,7 +80,7 @@ def semear_banco():
         session.add_all(usuarios)
 
         # ====================================================================
-        # 2. LOJA E MISSÕES
+        # 2. LOJA E MISSÕES DE TESTE (Escadinha de Fases)
         # ====================================================================
         session.add_all([
             ItemLoja(nome="Avatar Semente", descricao="Um avatar especial de semente brotando.", preco=100, tipo="avatar", imagem="assets/loja/avatar_semente.png"),
@@ -83,15 +89,12 @@ def semear_banco():
         ])
 
         session.add_all([
-            Missao(titulo="Faça seu login diário", meta=1, xp_recompensa=20, moedas_recompensa=5, tipo_acao="login"),
-            Missao(titulo="Complete sua próxima lição", meta=2, xp_recompensa=50, moedas_recompensa=10, tipo_acao="concluir_fase"),
-            Missao(titulo="Assista a 1 vídeo educativo", meta=1, xp_recompensa=80, moedas_recompensa=15, tipo_acao="video"),
-            Missao(titulo="Revise 2 tópicos anteriores", meta=2, xp_recompensa=100, moedas_recompensa=30, tipo_acao="revisao"),
-            Missao(titulo="Estude por 10 minutos seguidos", meta=10, xp_recompensa=150, moedas_recompensa=40, tipo_acao="tempo_estudo"),
-            Missao(titulo="Acerte 5 questões seguidas", meta=5, xp_recompensa=250, moedas_recompensa=60, tipo_acao="acertos_seguidos"),
-            Missao(titulo="Ajude 3 amigos com energias", meta=3, xp_recompensa=300, moedas_recompensa=80, tipo_acao="social"),
-            Missao(titulo="Realize 5 lições perfeitas", meta=5, xp_recompensa=500, moedas_recompensa=100, tipo_acao="licao_perfeita"),
-            Missao(titulo="Gabarite o teste final do módulo", meta=1, xp_recompensa=1000, moedas_recompensa=250, tipo_acao="teste_final")
+            Missao(titulo="Aqueça os Motores", meta=1, xp_recompensa=50, moedas_recompensa=10, tipo_acao="concluir_fase"),
+            Missao(titulo="Passos Firmes", meta=2, xp_recompensa=100, moedas_recompensa=20, tipo_acao="concluir_fase"),
+            Missao(titulo="Realizar 3 Atividades", meta=3, xp_recompensa=150, moedas_recompensa=30, tipo_acao="concluir_fase"),
+            Missao(titulo="Foco no Objetivo", meta=4, xp_recompensa=200, moedas_recompensa=40, tipo_acao="concluir_fase"),
+            Missao(titulo="Maratona de Aprendizado", meta=5, xp_recompensa=300, moedas_recompensa=60, tipo_acao="concluir_fase"),
+            Missao(titulo="Mestre das Lições", meta=10, xp_recompensa=800, moedas_recompensa=150, tipo_acao="concluir_fase")
         ])
 
         # ====================================================================

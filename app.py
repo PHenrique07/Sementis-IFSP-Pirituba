@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 #Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
@@ -14,6 +14,9 @@ from sqlmodel import Session, select, create_engine
 from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao
 
 app = Flask(__name__)
+
+# Caminho absoluto da pasta do projeto — resolve o problema do PythonAnywhere
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SECRET_KEY = "chave_super_secreta_2026_GRATIA!"
 
@@ -86,15 +89,15 @@ def token_obrigatorio(f):
 @app.route('/')
 def index():
     """Serve a página inicial"""
-    return send_from_directory('.', 'index.html')
+    return send_from_directory(BASE_DIR, 'index.html')
 
 # Rota para servir qualquer arquivo estático
 @app.route('/<path:filename>')
 def serve_static(filename):
     """Serve arquivos CSS, JS, imagens, etc."""
-    # Verifica se o arquivo existe
-    if os.path.exists(filename):
-        return send_from_directory('.', filename)
+    caminho_completo = os.path.join(BASE_DIR, filename)
+    if os.path.exists(caminho_completo):
+        return send_from_directory(BASE_DIR, filename)
     else:
         return f"Arquivo não encontrado: {filename}", 404
 
@@ -102,7 +105,7 @@ def serve_static(filename):
 @app.route('/trilhas.html')
 def trilha():
     """Serve a página de trilhas"""
-    return send_from_directory('.', 'trilhas.html')
+    return send_from_directory(BASE_DIR, 'trilhas.html')
 
 # =====================================================================
 # --- ROTAS DE API ---
@@ -423,6 +426,29 @@ def obter_questoes_da_atividade(atividade_id):
             
         # 3. Retorna o array de questões completo para o Vini salvar no storage do front-end
         return jsonify(lista_questoes), 200
+    
+# --- Rota Universal: Serve arquivos estáticos de pastas específicas ---
+@app.route('/<pasta>/<path:filename>')
+def serve_estaticos(pasta, filename):
+    # Se a pasta for uma das pastas de assets, serve o arquivo direto
+    if pasta in ['css', 'js', 'assets', 'pwa']:
+        return send_from_directory(os.path.join(BASE_DIR, pasta), filename)
+    return "Pasta não encontrada", 404
+
+# --- Rota Universal: Serve todas as páginas HTML ---
+@app.route('/<path:filename>')
+def serve_html(filename):
+    # Se o nome não tiver .html, adiciona
+    if not filename.endswith('.html'):
+        filename += '.html'
+    
+    # Verifica se o arquivo existe na raiz do projeto
+    caminho_completo = os.path.join(BASE_DIR, filename)
+    if os.path.exists(caminho_completo):
+        return send_from_directory(BASE_DIR, filename)
+    
+    return f"Página não encontrada: {filename}", 404
+
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)
