@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, create_engine, Session, func, select
 from datetime import date
 import os
 # Importando todas as tabelas do models.py
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario
 
 import math
 
@@ -348,3 +348,65 @@ def buscar_questoes_por_atividade(session: Session, id_atividade: int):
         })
         
     return lista_pronta
+
+
+# 18. Listar o progresso geral dos módulos 
+def listar_progresso_geral_modulos(session: Session, usuario_id: int):
+    """
+    Retorna a lista de módulos com o progresso específico de um usuário,
+    calculando quantas atividades ele já concluiu versus o total.
+    """
+    modulos = session.exec(select(Modulo).order_by(Modulo.ordem)).all()
+    progresso_geral = []
+    
+    for modulo in modulos:
+        trilhas = session.exec(select(Trilha).where(Trilha.modulo_id == modulo.id)).all()
+        total_atividades = 0
+        concluidas = 0
+        
+        for trilha in trilhas:
+            total = session.exec(select(func.count(Atividade.id)).where(Atividade.trilha_id == trilha.id)).one()
+            total_atividades += total
+            
+            qtd_concluida = session.exec(
+                select(func.count(ProgressoUsuario.id))
+                .join(Atividade, ProgressoUsuario.atividade_id == Atividade.id)
+                .where(Atividade.trilha_id == trilha.id)
+                .where(ProgressoUsuario.usuario_id == usuario_id)
+            ).one()
+            concluidas += qtd_concluida
+            
+        progresso_geral.append({
+            "modulo_id": modulo.id,
+            "nome": modulo.nome,
+            "total_atividades": total_atividades,
+            "atividades_concluidas": concluidas,
+            "porcentagem": round((concluidas / total_atividades) * 100, 2) if total_atividades > 0 else 0
+        })
+    return progresso_geral
+
+
+# 19. Listar o inventário do usuário 
+def listar_inventario(session: Session, usuario_id: int):
+    """
+    Devolve todos os itens e avatares que o aluno possui no inventário.
+    """
+    instrucao = (
+        select(ItemLoja, InventarioUsuario)
+        .join(InventarioUsuario, ItemLoja.id == InventarioUsuario.item_id)
+        .where(InventarioUsuario.usuario_id == usuario_id)
+    )
+    resultados = session.exec(instrucao).all()
+    
+    lista_inventario = []
+    for item, inv in resultados:
+        lista_inventario.append({
+            "inventario_id": inv.id,
+            "item_id": item.id,
+            "nome": item.nome,
+            "tipo": item.tipo,
+            "tier_raridade": item.tier_raridade,
+            "imagem_url": item.imagem,
+            "equipado": inv.equipado
+        })
+    return lista_inventario
