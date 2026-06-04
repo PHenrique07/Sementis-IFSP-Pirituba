@@ -19,12 +19,17 @@ class Usuario(SQLModel, table=True):
     vidas: int = Field(default=5)   
     ofensiva: int = Field(default=0) 
     xp: int = Field(default=0)
-    
+    freezes: int = Field(default=0)
     # Ligas / Ranking
     # 1 = Bronze, 2 = Prata, 3 = Ouro...
     liga_id: int = Field(default=1) 
     # Esse é o XP que vai ser zerado toda semana
     xp_semanal: int = Field(default=0)
+
+
+    #campo do avatar do usuário
+    avatar_atual_id: int | None = Field(default=None, foreign_key="avatar.id")
+
 
 # 2. Tabela de Módulos (ex: Módulo 1 - Sustentabilidade Básica)
 class Modulo(SQLModel, table=True):
