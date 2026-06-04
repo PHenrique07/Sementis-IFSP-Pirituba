@@ -1,9 +1,12 @@
 import json
+import os
 from sqlmodel import Session, SQLModel, create_engine, select
 from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao
 from passlib.hash import argon2
 
-sqlite_url = "sqlite:///sementis.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "sementis.db")
+sqlite_url = f"sqlite:///{DB_PATH}"
 engine = create_engine(sqlite_url, echo=False)
 PEPPER = "Sementis_nao_esta_com_nada_go_Gratia!"
 
@@ -101,7 +104,7 @@ def semear_banco():
         # 3. O NOVO MOTOR DE INSERÇÃO (Lendo do JSON)
         # ====================================================================
         try:
-            with open('questoes.json', 'r', encoding='utf-8') as file:
+            with open(os.path.join(BASE_DIR, 'questoes.json'), 'r', encoding='utf-8') as file:
                 conteudo_educacional = json.load(file)
         except Exception as e:
             print(f"❌ Erro ao ler o arquivo 'questoes.json'. Certifique-se de que ele está na mesma pasta. Erro: {e}")
@@ -145,6 +148,8 @@ def semear_banco():
                     }
                     if "imagem_url" in q_info:
                         conteudo["imagem_url"] = q_info["imagem_url"]
+                    if "curiosidade" in q_info:
+                        conteudo["curiosidade"] = q_info["curiosidade"]
 
                     questoes_db.append(Questao(
                         atividade_id=atv.id,

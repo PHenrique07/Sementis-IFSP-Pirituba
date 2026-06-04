@@ -565,17 +565,34 @@ async function carregarMapaDinamico() {
   
   const token = localStorage.getItem('token');
 
+  if (!token) {
+    const titleEl = document.getElementById('trilhaTitle');
+    const subtitulo = document.getElementById('trilhaProgressText');
+    if (titleEl) titleEl.textContent = '❌ Sessão expirada';
+    if (subtitulo) subtitulo.textContent = 'Por favor, faça login novamente';
+    return;
+  }
+
   try {
-    const response = await fetch(`/api/modulos/${moduloId}/trilhas`, {
+    const url = `/api/modulos/${moduloId}/trilhas`;
+    console.log('📡 Carregando trilhas:', url);
+    console.log('🔐 Token enviado:', token.substring(0, 20) + '...');
+
+    const response = await fetch(url, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
 
-    if (!response.ok) throw new Error("Erro ao carregar dados do banco.");
+    if (!response.ok) {
+      const errorText = await response.text();
+      const errorMsg = `Erro ${response.status}: ${errorText || 'Erro ao carregar dados do banco.'}`;
+      console.error('❌', errorMsg);
+      throw new Error(errorMsg);
+    }
 
     const mapData = await response.json();
 
     if (mapData && mapData.length > 0) {
-      const trilha = mapData[0]; 
+      const trilha = mapData[0];
 
       const titleEl = document.getElementById('trilhaTitle');
       if (titleEl) titleEl.textContent = trilha.trilha_nome;
@@ -593,19 +610,28 @@ async function carregarMapaDinamico() {
           id: atv.id.toString(),
           label: atv.nome,
           state: stateVisual,
-          tipo: atv.tipo // SALVAMOS O TIPO (QUIZ OU MINIGAME) AQUI!
+          tipo: atv.tipo
         });
       });
 
       const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
-      const totalFases = lessons.length - 1; 
+      const totalFases = lessons.length - 1;
       const subtitulo = document.getElementById('trilhaProgressText');
       if(subtitulo) subtitulo.textContent = `${concluidas} de ${totalFases} concluídas`;
 
       build();
+    } else {
+      const titleEl = document.getElementById('trilhaTitle');
+      const subtitulo = document.getElementById('trilhaProgressText');
+      if (titleEl) titleEl.textContent = 'ℹ️ Nenhuma trilha encontrada';
+      if (subtitulo) subtitulo.textContent = 'Este módulo não tem trilhas disponíveis';
     }
   } catch (error) {
     console.error("Erro na carga do mapa:", error);
+    const titleEl = document.getElementById('trilhaTitle');
+    const subtitulo = document.getElementById('trilhaProgressText');
+    if (titleEl) titleEl.textContent = '❌ Erro ao carregar';
+    if (subtitulo) subtitulo.textContent = error.message || 'Verifique sua conexão';
   }
 }
 
@@ -665,7 +691,7 @@ function build() {
 
   for (let i = 0; i < pts.length - 1; i++) {
     const a = pts[i], b = pts[i+1];
-    const isDone = lessons[i].state === 'done';
+    const isDone = lessons[i+1] && lessons[i+1].state !== 'locked';
 
     const dx = b.x - a.x;
     const dy = b.y - a.y;

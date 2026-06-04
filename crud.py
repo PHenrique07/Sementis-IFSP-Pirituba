@@ -1,13 +1,16 @@
 from sqlmodel import SQLModel, create_engine, Session, func, select
 from datetime import date
+import os
 # Importando todas as tabelas do models.py
 from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao
 
 import math
 
-# 1. Sqlite local
-sqlite_url = "sqlite:///sementis.db"
-engine = create_engine(sqlite_url, echo=True) 
+# 1. Sqlite local (sempre no mesmo lugar do projeto)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "sementis.db")
+sqlite_url = f"sqlite:///{DB_PATH}"
+engine = create_engine(sqlite_url, echo=True)
 
 # 2. Função para criar as tabelas no banco
 def criar_tabelas():
