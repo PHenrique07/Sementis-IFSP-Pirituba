@@ -736,8 +736,7 @@ function build() {
         // ROTEAMENTO DINÂMICO
         if (lesson.tipo === 'minigame') {
             // AQUI ENTRA A LÓGICA DO SEU MINIGAME!
-            alert(`🎮 Iniciando Minigame: ${lesson.label}!\n(Em breve você será redirecionado para a tela do jogo)`);
-            // window.location.href = 'minigame.html';
+            window.location.href = './FlapFish/index.html';
         } else {
             // SE FOR QUIZ, ABRE A TELA PRETA NORMAL
             if (typeof openQuizModal === 'function') {
