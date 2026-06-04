@@ -28,8 +28,7 @@ class Usuario(SQLModel, table=True):
 
 
     #campo do avatar do usuário
-    avatar_atual_id: int | None = Field(default=None, foreign_key="avatar.id")
-
+avatar_atual_id: int | None = Field(default=None, foreign_key="itemloja.id")
 
 # 2. Tabela de Módulos (ex: Módulo 1 - Sustentabilidade Básica)
 class Modulo(SQLModel, table=True):
