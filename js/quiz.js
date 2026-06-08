@@ -89,6 +89,12 @@ async function openQuizModal() {
     }
 
     if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+        return;
+      }
       throw new Error(`Erro do servidor! Status: ${response.status}`);
     }
 
@@ -402,8 +408,17 @@ function dispararVitoria() {
       concluida_com_sucesso: true
     })
   })
-    .then((response) => response.json())
-    .then(() => {
+    .then((response) => {
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+        return;
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (!data) return;
       localStorage.setItem("erros_cometidos", 0);
       window.location.reload();
     })
@@ -466,6 +481,12 @@ function renderGameOverScreen() {
       erros: parseInt(errosCount, 10),
       concluida_com_sucesso: false
     })
+  }).then((response) => {
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
   }).catch(console.error);
 
   localStorage.setItem("erros_cometidos", 0);

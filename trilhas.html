@@ -583,6 +583,13 @@ async function carregarMapaDinamico() {
     });
 
     if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        alert("Sua sessão expirou ou é inválida. Por favor, faça login novamente.");
+        window.location.href = 'login.html';
+        return;
+      }
       const errorText = await response.text();
       const errorMsg = `Erro ${response.status}: ${errorText || 'Erro ao carregar dados do banco.'}`;
       console.error('❌', errorMsg);

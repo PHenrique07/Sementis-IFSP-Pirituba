@@ -200,7 +200,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
 
-            if (!response.ok) throw new Error('Erro na API ao buscar perfil');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                throw new Error('Erro na API ao buscar perfil');
+            }
             
             const dados = await response.json();
             console.log("2. Dados recebidos do banco:", dados);
@@ -321,7 +329,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(progressoData)
             });
 
-            if (!response.ok) throw new Error("Erro no servidor");
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                throw new Error("Erro no servidor");
+            }
 
             alert("Progresso salvo online com sucesso!");
 

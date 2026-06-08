@@ -16,7 +16,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cache: 'no-store'
             });
 
-            if (!response.ok) throw new Error('Erro ao buscar dados da API');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                throw new Error('Erro ao buscar dados da API');
+            }
 
             let missoes = await response.json();
             
@@ -179,6 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     erros: parseInt(errosCount),
                     concluida_com_sucesso: false
                 })
+           }).then((response) => {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                }
            }).finally(() => {
                 // CORREÇÃO 2a: Zera os erros após morrer
                 localStorage.setItem('erros_cometidos', 0); 

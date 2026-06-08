@@ -493,6 +493,17 @@ async function carregarTrilha(moduloId = 1) {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
             }
         });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+                return;
+            }
+            throw new Error("Erro ao carregar a trilha");
+        }
+
         const mapData = await response.json();
         const botoes = document.querySelectorAll('.botao-fase');
 

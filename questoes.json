@@ -138,10 +138,10 @@
             "pergunta": "Selecione escolhas de consumo consciente para uma feira da escola:",
             "curiosidade": "Comprar menos, reutilizar e escolher produtos locais costuma reduzir embalagem, transporte e desperdicio.",
             "opcoes": [
-              { "texto": "Visitar brechos", "icone": "tarefa_consumo_consciente.png", "correta": true },
-              { "texto": "Valorizar produtores locais", "icone": "tarefa_horta.png", "correta": true },
-              { "texto": "Usar descartaveis sem necessidade", "icone": "tarefa_descartaveis.png", "correta": false },
-              { "texto": "Levar ecobag", "icone": "tarefa_ecobag.png", "correta": true }
+              { "texto": "Visitar brechos", "icone": "brecho.png", "correta": true },
+              { "texto": "Valorizar produtores locais", "icone": "local.png", "correta": true },
+              { "texto": "Usar descartaveis sem necessidade", "icone": "descart.png", "correta": false },
+              { "texto": "Levar ecobag", "icone": "ecobag.png", "correta": true }
             ]
           },
           {
