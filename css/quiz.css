@@ -260,9 +260,11 @@ body.quiz-lock-scroll {
 
 .quiz-choice-layout {
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: 1fr;
   align-items: start;
   gap: clamp(16px, 3vw, 28px);
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 /* ── Layout de grid (coluna única, card mais largo) ──────── */
