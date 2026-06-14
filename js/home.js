@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 1. CARREGA OS DADOS DO USUÁRIO PRIMEIRO DE TUDO!
     carregarDadosUsuario();
+    carregarProgressoModulos();
+    carregarProgressoModulos(); // <-- NOVA CHAMADA AQUI!
 
     // 2. Inicia as interações dos botões e menus
     initBottomNav();
@@ -526,13 +528,12 @@ async function carregarTrilha(moduloId = 1) {
 
                         if (atividade.tipo === 'leitura') {
                             // Para leitura, abre o quiz mesmo assim (tem questões embutidas)
-                            // Se quiser uma tela de leitura separada no futuro, mude aqui!
                             if (typeof openQuizModal === 'function') openQuizModal();
                         } else if (atividade.tipo === 'quiz') {
                             if (typeof openQuizModal === 'function') openQuizModal();
                         } else if (atividade.tipo === 'minigame') {
-                            // Minigame ainda não implementado
-                            alert(`Minigame "${atividade.nome}" em breve!`);
+                            // Modificado para chamar a função que abre o modal no trilhas.html
+                            if (typeof abrirJogo === 'function') abrirJogo();
                         } else {
                             if (typeof openQuizModal === 'function') openQuizModal();
                         }
@@ -550,3 +551,116 @@ async function carregarTrilha(moduloId = 1) {
     }
 }
 window.carregarTrilha = carregarTrilha;
+
+// ==========================================
+// INTEGRAÇÃO: Progresso das Barras Verdes
+// ==========================================
+async function carregarProgressoModulos() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/api/modulos/progresso', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        
+        if (!response.ok) throw new Error("Falha na API");
+        const modulos = await response.json();
+
+        // Pega todos os cards de módulo da tela
+        const cards = document.querySelectorAll('.module-card');
+        
+        cards.forEach(card => {
+            // Busca o título para saber de qual módulo é este card
+            const tituloElement = card.querySelector('.module-title, h3');
+            if (!tituloElement) return;
+            
+            const nomeModulo = tituloElement.textContent.trim();
+            
+            // Encontra no JSON que veio do Python os dados desse módulo específico
+            const dadosModulo = modulos.find(m => m.nome.toLowerCase() === nomeModulo.toLowerCase());
+            
+            if (dadosModulo) {
+                // 1. Atualizar a largura da barra verde
+                const barra = card.querySelector('.progress-fill, .progress-bar, div[style*="width"]');
+                if (barra) {
+                    // Dá um pequeno atraso para a animação inicial não quebrar
+                    setTimeout(() => {
+                        barra.style.width = `${dadosModulo.porcentagem}%`;
+                    }, 800);
+                }
+                
+                // 2. Atualizar o texto ("X/Y lições completas")
+                // Como não tenho as classes exatas do seu HTML, o script varre todos os textos pequenos do card
+                const elementosTexto = card.querySelectorAll('p, span, small');
+                elementosTexto.forEach(el => {
+                    if (el.textContent.includes('lições') || el.textContent.includes('/')) {
+                        el.textContent = `${dadosModulo.atividades_concluidas}/${dadosModulo.total_atividades} lições completas`;
+                    }
+                });
+            }
+        });
+        console.log("Barras de progresso atualizadas com o banco!");
+    } catch (erro) {
+        console.error("Erro ao atualizar barras de módulos:", erro);
+    }
+}
+
+// ==========================================
+// INTEGRAÇÃO: Progresso das Barras Verdes
+// ==========================================
+async function carregarProgressoModulos() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/api/modulos/progresso', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        
+        if (!response.ok) throw new Error("Falha na API");
+        const modulos = await response.json();
+
+        // Pega todos os cards de módulo da tela Home
+        const cards = document.querySelectorAll('.module-card');
+        
+        cards.forEach(card => {
+            const tituloElement = card.querySelector('.module-title');
+            if (!tituloElement) return;
+            
+            const nomeModulo = tituloElement.textContent.trim();
+            
+            // O TRADUTOR: Mapeia o nome do HTML para o ID do Módulo no Banco
+            // Porque o nome no HTML ("Água e Vida") é diferente do banco ("Água")
+            const nomeLimpo = nomeModulo.toLowerCase();
+            let idMapeado = 1; // Padrão: Fundamentos
+            if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
+            if (nomeLimpo.includes('clima')) idMapeado = 3;
+            
+            // Encontra no JSON do Python os dados exatos usando o ID
+            const dadosModulo = modulos.find(m => m.modulo_id === idMapeado);
+            
+            if (dadosModulo) {
+                // 1. Atualizar a largura da barra verde
+                const barra = card.querySelector('.module-progress-fill');
+                if (barra) {
+                    setTimeout(() => {
+                        barra.style.width = `${dadosModulo.porcentagem}%`;
+                    }, 500); // Animação suave 
+                }
+                
+                // 2. Atualizar o texto ("X/Y lições completas")
+                const textoLicoes = card.querySelector('.module-progress-text');
+                if (textoLicoes) {
+                    // Respeitar se o módulo estiver explicitamente bloqueado visualmente ainda
+                    if (!textoLicoes.classList.contains('locked-text')) {
+                        textoLicoes.textContent = `${dadosModulo.atividades_concluidas}/${dadosModulo.total_atividades} lições completas`;
+                    }
+                }
+            }
+        });
+        console.log("Barras de progresso atualizadas com o banco!");
+    } catch (erro) {
+        console.error("Erro ao atualizar barras de módulos:", erro);
+    }
+}

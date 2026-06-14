@@ -4,7 +4,7 @@ from flask_cors import CORS
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
     registrar_conclusao_atividade, listar_modulos, listar_trilhas_do_modulo,
     listar_atividades_da_trilha, buscar_ranking_por_liga, atualizar_progresso_missao,
-    sortear_missoes_diarias, calcular_nivel, buscar_questoes_por_atividade) 
+    sortear_missoes_diarias, calcular_nivel, buscar_questoes_por_atividade, listar_progresso_geral_modulos) 
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -427,11 +427,23 @@ def obter_questoes_da_atividade(atividade_id):
         # 3. Retorna o array de questões completo para o Vini salvar no storage do front-end
         return jsonify(lista_questoes), 200
     
+
+
+# --- Rota de Progresso dos Módulos ---
+@app.route('/api/modulos/progresso', methods=['GET'])
+@token_obrigatorio
+def obter_progresso_modulos():
+    id_usuario = request.usuario_id
+    with Session(engine) as session:
+        progresso = listar_progresso_geral_modulos(session, id_usuario)
+        return jsonify(progresso), 200
+
 # --- Rota Universal: Serve arquivos estáticos de pastas específicas ---
+
 @app.route('/<pasta>/<path:filename>')
 def serve_estaticos(pasta, filename):
-    # Se a pasta for uma das pastas de assets, serve o arquivo direto
-    if pasta in ['css', 'js', 'assets', 'pwa']:
+    # Se a pasta for uma das pastas de assets ou a do minigame, serve o arquivo direto
+    if pasta in ['css', 'js', 'assets', 'pwa', 'FlapFish']:
         return send_from_directory(os.path.join(BASE_DIR, pasta), filename)
     return "Pasta não encontrada", 404
 
