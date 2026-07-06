@@ -1,0 +1,246 @@
+[
+  {
+    "_comentario_MODULO": "MODULO 1: FUNDAMENTOS",
+    "modulo": {
+      "nome": "Fundamentos",
+      "descricao": "Conceitos basicos de sustentabilidade",
+      "ordem": 1
+    },
+    "trilha": "Trilha de Fundamentos",
+    "atividades": [
+      {
+        "nome": "O Despertar",
+        "tipo": "quiz",
+        "questoes": [
+          {
+            "tipo": "simples",
+            "pergunta": "A turma quer organizar um evento na escola sem desperdicar recursos. Qual decisao combina melhor com sustentabilidade?",
+            "curiosidade": "Sustentabilidade e usar os recursos de hoje sem impedir que outras pessoas tambem tenham acesso a eles no futuro.",
+            "opcoes": [
+              { "texto": "Planejar compras, reutilizar materiais e evitar desperdicio", "correta": true },
+              { "texto": "Comprar tudo novo porque fica mais bonito nas fotos", "correta": false },
+              { "texto": "Cancelar toda tecnologia para nao causar impacto", "correta": false }
+            ]
+          },
+          {
+            "tipo": "grid_multiplo",
+            "pergunta": "Selecione fontes de energia renovaveis para abastecer a escola:",
+            "curiosidade": "Sol e vento se renovam naturalmente em pouco tempo. Carvao e petroleo levam milhoes de anos para se formar.",
+            "opcoes": [
+              { "texto": "Luz solar", "icone": "energia_solar.png", "correta": true },
+              { "texto": "Vento", "icone": "energia_vento.png", "correta": true },
+              { "texto": "Carvao mineral", "icone": "carvao_mineral.png", "correta": false },
+              { "texto": "Petroleo", "icone": "petroleo.png", "correta": false }
+            ]
+          },
+          {
+            "tipo": "simples",
+            "pergunta": "Um projeto sustentavel precisa cuidar de tres lados ao mesmo tempo. Quais sao eles?",
+            "curiosidade": "Uma solucao so e sustentavel quando faz sentido para as pessoas, para o ambiente e para a economia.",
+            "opcoes": [
+              { "texto": "Social, ambiental e economico", "correta": true },
+              { "texto": "Tecnologico, politico e industrial", "correta": false },
+              { "texto": "Lucro, propaganda e velocidade", "correta": false }
+            ]
+          }
+        ]
+      },
+      {
+        "nome": "Pegada Ecologica",
+        "tipo": "quiz",
+        "questoes": [
+          {
+            "tipo": "simples",
+            "pergunta": "Voce abriu o painel de impacto da sua rotina. O que a pegada ecologica mostra?",
+            "curiosidade": "A pegada ecologica ajuda a visualizar quanta natureza e necessaria para sustentar um estilo de vida.",
+            "opcoes": [
+              { "texto": "O rastro de recursos naturais usado pelos seus habitos", "correta": true },
+              { "texto": "O tamanho das suas pisadas em areas verdes", "correta": false },
+              { "texto": "A quantidade de carros passando na sua rua", "correta": false }
+            ]
+          },
+          {
+            "tipo": "grid_multiplo",
+            "pergunta": "Escolha atitudes que reduzem a pegada ecologica da turma:",
+            "curiosidade": "Transporte ativo, menos desperdicio e consumo mais consciente reduzem pressao sobre agua, energia e solo.",
+            "opcoes": [
+              { "texto": "Ir de bike", "icone": "ir_de_bike.png", "correta": true },
+              { "texto": "Comer sem desperdicar", "icone": "comer_sem_desperdicio.png", "correta": true },
+              { "texto": "Comprar por impulso", "icone": "consumismo.jpeg", "correta": false },
+              { "texto": "Reutilizar materiais", "icone": "reutilizar_materiais.png", "correta": true }
+            ]
+          },
+          {
+            "tipo": "simples",
+            "pergunta": "Sobrou casca de fruta depois do lanche coletivo. Qual acao transforma esse residuo em recurso?",
+            "curiosidade": "A compostagem transforma restos organicos em adubo e diminui bastante o lixo enviado para aterros.",
+            "opcoes": [
+              { "texto": "Colocar na composteira da escola", "correta": true },
+              { "texto": "Misturar com plastico reciclavel", "correta": false },
+              { "texto": "Queimar os restos no patio", "correta": false }
+            ]
+          }
+        ]
+      },
+      {
+        "nome": "Lixo Zero",
+        "tipo": "quiz",
+        "questoes": [
+          {
+            "tipo": "simples",
+            "pergunta": "Voce recebeu uma sacola plastica por 15 minutos de uso. O que pode acontecer se ela for descartada errado?",
+            "curiosidade": "Plasticos podem permanecer por seculos no ambiente e se quebrar em microplasticos.",
+            "opcoes": [
+              { "texto": "Pode ficar centenas de anos poluindo o ambiente", "correta": true },
+              { "texto": "Desaparece em poucos dias com a chuva", "correta": false },
+              { "texto": "Vira adubo natural rapidamente", "correta": false }
+            ]
+          },
+          {
+            "tipo": "grid_multiplo",
+            "pergunta": "O mutirao vai separar o lixo. O que nao deve ir para a reciclagem comum?",
+            "curiosidade": "Pilhas, baterias e residuos de banheiro precisam de descarte especifico para nao contaminar pessoas e materiais reciclaveis.",
+            "opcoes": [
+              { "texto": "Papel higienico", "icone": "papel_higienico.png", "correta": true },
+              { "texto": "Pilhas usadas", "icone": "pilha.png", "correta": true },
+              { "texto": "Caixa de leite limpa", "icone": "caixa_de_leite.png", "correta": false },
+              { "texto": "Garrafa PET limpa", "icone": "garrfa_pet.png", "correta": false }
+            ]
+          },
+          {
+            "tipo": "simples",
+            "pergunta": "No desafio das lixeiras coloridas, em qual cor geralmente vai o metal?",
+            "curiosidade": "No padrao mais usado no Brasil: azul e papel, vermelho e plastico, amarelo e metal, verde e vidro.",
+            "opcoes": [
+              { "texto": "Amarela", "correta": true },
+              { "texto": "Verde", "correta": false },
+              { "texto": "Azul", "correta": false }
+            ]
+          }
+        ]
+      },
+      {
+        "nome": "Consumo Consciente",
+        "tipo": "quiz",
+        "questoes": [
+          {
+            "tipo": "simples",
+            "pergunta": "Seu celular ainda funciona, mas a propaganda tenta convencer voce a trocar agora. Qual atitude e mais consciente?",
+            "curiosidade": "Aparelhos eletronicos usam metais, energia e transporte. Fazer durar mais reduz lixo eletronico.",
+            "opcoes": [
+              { "texto": "Cuidar, consertar e trocar so quando precisar", "correta": true },
+              { "texto": "Comprar o modelo novo sempre que lancar", "correta": false },
+              { "texto": "Jogar o antigo no lixo comum", "correta": false }
+            ]
+          },
+          {
+            "tipo": "grid_multiplo",
+            "pergunta": "Selecione escolhas de consumo consciente para uma feira da escola:",
+            "curiosidade": "Comprar menos, reutilizar e escolher produtos locais costuma reduzir embalagem, transporte e desperdicio.",
+            "opcoes": [
+              { "texto": "Visitar brechos", "icone": "brecho.png", "correta": true },
+              { "texto": "Valorizar produtores locais", "icone": "local.png", "correta": true },
+              { "texto": "Usar descartaveis sem necessidade", "icone": "descart.png", "correta": false },
+              { "texto": "Levar ecobag", "icone": "ecobag.png", "correta": true }
+            ]
+          },
+          {
+            "tipo": "simples",
+            "pergunta": "Uma garrafa vazia virou vaso para a horta. Como chamamos essa transformacao?",
+            "curiosidade": "Upcycling e dar novo valor a um material que poderia virar lixo, sem passar por um processo industrial pesado.",
+            "opcoes": [
+              { "texto": "Upcycling", "correta": true },
+              { "texto": "Greenwashing", "correta": false },
+              { "texto": "Descarte comum", "correta": false }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comentario_MODULO": "MODULO 2: AGUA E VIDA",
+    "modulo": {
+      "nome": "Agua e Vida",
+      "descricao": "Conservacao e uso consciente da agua",
+      "ordem": 2
+    },
+    "trilha": "Guardioes da Agua",
+    "atividades": [
+      {
+        "nome": "A Gota d'Agua",
+        "tipo": "quiz",
+        "questoes": [
+          {
+            "tipo": "grid_multiplo",
+            "pergunta": "O rio perto da escola ficou verde e com mau cheiro. Selecione sinais comuns de eutrofizacao:",
+            "curiosidade": "Eutrofizacao acontece quando excesso de nutrientes favorece algas, reduz oxigenio e prejudica peixes.",
+            "opcoes": [
+              { "texto": "Excesso de algas", "icone": "excesso_algas.png", "correta": true },
+              { "texto": "Pouco oxigenio", "icone": "pouco02.png", "correta": true },
+              { "texto": "Morte de peixes", "icone": "peixe_morto.png", "correta": true },
+              { "texto": "Agua mais limpa", "icone": "agua_limpa.png", "correta": false }
+            ]
+          },
+          {
+            "tipo": "simples",
+            "pergunta": "Uma torneira da escola fica pingando o dia inteiro. Qual atitude protege melhor a agua?",
+            "curiosidade": "Vazamentos pequenos parecem inofensivos, mas podem desperdicar muitos litros ao longo de dias e semanas.",
+            "opcoes": [
+              { "texto": "Avisar a manutencao e fechar bem a torneira", "correta": true },
+              { "texto": "Ignorar porque sao apenas algumas gotas", "correta": false },
+              { "texto": "Abrir mais para o barulho parar", "correta": false }
+            ]
+          },
+          {
+            "tipo": "simples",
+            "pergunta": "Durante o banho, qual escolha economiza agua sem prejudicar a higiene?",
+            "curiosidade": "Fechar o chuveiro enquanto se ensaboa reduz o consumo e mantem o banho eficiente.",
+            "opcoes": [
+              { "texto": "Fechar o chuveiro ao se ensaboar", "correta": true },
+              { "texto": "Deixar a agua correndo o tempo todo", "correta": false },
+              { "texto": "Aumentar o banho para a agua esquentar mais", "correta": false }
+            ]
+          }
+        ]
+      },
+      {
+        "nome": "Pegada Hidrica",
+        "tipo": "quiz",
+        "questoes": [
+          {
+            "tipo": "simples",
+            "pergunta": "Voce comprou uma camiseta nova. O que e a agua virtual escondida nesse produto?",
+            "curiosidade": "Agua virtual e a agua usada em etapas que nao vemos, como plantar algodao, produzir, tingir e transportar.",
+            "opcoes": [
+              { "texto": "A agua usada para produzir algo antes de chegar ate voce", "correta": true },
+              { "texto": "Um aplicativo que simula rios em 3D", "correta": false },
+              { "texto": "A agua que vem dentro da embalagem", "correta": false }
+            ]
+          },
+          {
+            "tipo": "grid_multiplo",
+            "pergunta": "Selecione itens que podem carregar grande pegada hidrica:",
+            "curiosidade": "Carne bovina e jeans costumam exigir muita agua durante producao, cultivo, criacao ou processamento.",
+            "opcoes": [
+              { "texto": "Carne bovina", "icone": "carne_bovina.png", "correta": true },
+              { "texto": "Calca jeans", "icone": "calço_jeans.png", "correta": true },
+              { "texto": "Caderno reutilizado", "icone": "caderno_reutilizado.png", "correta": false },
+              { "texto": "Garrafa retornavel", "icone": "garrafa_reutilizada.png", "correta": false }
+            ]
+          },
+          {
+            "tipo": "simples",
+            "pergunta": "A cantina quer reduzir desperdicio de agua. Qual ideia pode virar missao da turma?",
+            "curiosidade": "Monitorar vazamentos e reaproveitar agua quando seguro sao medidas simples que criam cultura de cuidado.",
+            "opcoes": [
+              { "texto": "Criar uma ronda para identificar vazamentos", "correta": true },
+              { "texto": "Lavar o patio todos os dias com mangueira", "correta": false },
+              { "texto": "Deixar torneiras abertas para limpar mais rapido", "correta": false }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

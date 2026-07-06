@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#1a1a4a">
 <meta name="application-name" content="Sementis">
 <link rel="manifest" href="pwa/manifest.webmanifest">
-<link rel="icon" href="assets/icons/pwa-icon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
 <title>Trilha de Aprendizado - Sementis</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
@@ -520,16 +520,108 @@
       top: 18px;
     }
   }
+  
+  /* ── ESTILOS DO MODAL DO JOGO ────────────────── */
+  .modal-escondido {
+      display: none; 
+  }
+
+  .modal-visivel {
+      display: flex;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 15, 30, 0.9); 
+      justify-content: center;
+      align-items: center;
+      
+  }
+
+  .conteudo-modal {
+      position: relative;
+      background-color: var(--bg-dark); 
+      border-radius: 20px;
+      box-shadow: 0px 15px 50px rgba(0,0,0,0.6);
+      width: 90vw;
+      height: 85vh;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .cabecalho-modal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background-color: rgba(0, 0, 0, 0.15);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .info-cabecalho {
+      display: flex;
+      flex-direction: column;
+  }
+
+  .label-cabecalho {
+      font-size: 11px;
+      color: var(--green);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+  }
+
+  .titulo-modal {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      margin-top: 2px;
+  }
+
+  .btn-fechar-jogo {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+  }
+
+  .btn-fechar-jogo:hover {
+      background-color: #FF4B4B;
+      transform: scale(1.1);
+  }
+
+  .corpo-modal {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #000; 
+      padding: 0;
+  }
 </style>
-<link rel="stylesheet" href="css/shared-navbar.css">
+<link rel="stylesheet" href="/css/shared-navbar.css">
+<link rel="stylesheet" href="/css/quiz.css">
 </head>
 <body>
 
 <a class="back-btn" href="home.html" aria-label="Voltar para home">← Voltar</a>
 
 <div class="header">
-  <h1 id="trilhaTitle">Trilha de Aprendizado</h1>
-  <p>1 de 7 concluídas</p>
+  <h1 id="trilhaTitle">Carregando Trilha...</h1>
+  <p id="trilhaProgressText">0 de 0 concluídas</p>
   <div class="xp-bar-wrap">
     <div class="xp-bar-fill" id="xpFill"></div>
   </div>
@@ -539,31 +631,165 @@
 
 <div id="shared-navbar-root"></div>
 
+<!-- O Modal do Jogo (inicia escondido) -->
+<div id="modal-jogo" class="modal-escondido">
+    <div class="conteudo-modal">
+        <div class="cabecalho-modal">
+            <div class="info-cabecalho">
+                <span class="label-cabecalho">Desafio Final</span>
+                <span class="titulo-modal">🕹️ Flappy Fish</span>
+            </div>
+            <button onclick="fecharJogo()" class="btn-fechar-jogo">&times;</button>
+        </div>
+        <div class="corpo-modal">
+           <iframe id="iframe-flapfish" src="" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+
+<script src="/js/quiz.js"></script>
 <script>
-function applyModuleTitle() {
-  const titleEl = document.getElementById('trilhaTitle');
-  if (!titleEl) return;
-
-  const params = new URLSearchParams(window.location.search);
-  const moduleTitle = params.get('module');
-
-  if (moduleTitle && moduleTitle.trim()) {
-    titleEl.textContent = moduleTitle.trim();
-    document.title = `${moduleTitle.trim()} - Sementis`;
-  }
+// ==============================================================
+// FUNÇÕES DO MODAL DO JOGO
+// ==============================================================
+function abrirJogo() {
+    document.getElementById('modal-jogo').className = 'modal-visivel';
+    // Adicione essa linha abaixo para carregar o jogo SÓ quando abrir a tela
+    document.getElementById('iframe-flapfish').src = "/FlapFish/index.html";
+}
+function fecharJogo() {
+    document.getElementById('modal-jogo').className = 'modal-escondido';
+    document.getElementById('iframe-flapfish').src = "/FlapFish/index.html"; // recarrega
+    
+    // Mostra um aviso pro usuário saber que precisa voltar depois
+    alert("Jogo fechado. Para salvar seu progresso e ganhar XP, vença o Flappy Fish!");
 }
 
-applyModuleTitle();
+// Para o iframe conseguir avisar a tela principal que o jogador venceu
+window.addEventListener("message", function(event) {
+    if (event.data === "vitoria_flapfish") {
+        document.getElementById('modal-jogo').className = 'modal-escondido';
+        
+        // Simula a vitória como se fosse um Quiz chamando o backend
+        const trilhaId = localStorage.getItem('ultima_fase_id');
+        fetch("/completar_atividade", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+              atividade_id: trilhaId,
+              erros: 0,
+              concluida_com_sucesso: true
+            })
+        })
+        .then(() => {
+            alert("Parabéns! Desafio Final concluído. Você ganhou XP e Moedas!");
+            window.location.href = "home.html"; // Volta pra home pra mostrar o novo XP
+        });
+    }
+});
 
-const lessons = [
-  { label: 'Introdução', state: 'done'   },
-  { label: 'Lição 1',    state: 'active' },
-  { label: 'Lição 2',    state: 'locked' },
-  { label: 'Lição 3',    state: 'locked' },
-  { label: 'Lição 4',    state: 'locked' },
-  { label: 'Lição 5',    state: 'locked' },
-  { label: 'Conclusão',  state: 'locked' },
-];
+// ==============================================================
+// LÓGICA DINÂMICA: BUSCA AS FASES DA API DO LUCAS E DESENHA O MAPA
+// ==============================================================
+let lessons = [];
+
+// ==============================================================
+// 1. O TRADUTOR DE NOMES E BUSCA NA API
+// ==============================================================
+async function carregarMapaDinamico() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const nomeClicado = urlParams.get('module'); 
+  
+  // O TRADUTOR: Descobre qual ID o Lucas precisa baseado no nome da URL
+  let moduloId = '1'; 
+  if (nomeClicado) {
+      const nomeLimpo = nomeClicado.toLowerCase().trim();
+      if (nomeLimpo.includes('fundamento')) moduloId = '1';
+      if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) moduloId = '2';
+      if (nomeLimpo.includes('climática') || nomeLimpo.includes('climatica') || nomeLimpo.includes('mudança')) moduloId = '3';
+  }
+  
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    const titleEl = document.getElementById('trilhaTitle');
+    const subtitulo = document.getElementById('trilhaProgressText');
+    if (titleEl) titleEl.textContent = '❌ Sessão expirada';
+    if (subtitulo) subtitulo.textContent = 'Por favor, faça login novamente';
+    return;
+  }
+
+  try {
+    const url = `/api/modulos/${moduloId}/trilhas`;
+    console.log('📡 Carregando trilhas:', url);
+    console.log('🔐 Token enviado:', token.substring(0, 20) + '...');
+
+    const response = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        alert("Sua sessão expirou ou é inválida. Por favor, faça login novamente.");
+        window.location.href = 'login.html';
+        return;
+      }
+      const errorText = await response.text();
+      const errorMsg = `Erro ${response.status}: ${errorText || 'Erro ao carregar dados do banco.'}`;
+      console.error('❌', errorMsg);
+      throw new Error(errorMsg);
+    }
+
+    const mapData = await response.json();
+
+    if (mapData && mapData.length > 0) {
+      const trilha = mapData[0];
+
+      const titleEl = document.getElementById('trilhaTitle');
+      if (titleEl) titleEl.textContent = trilha.trilha_nome;
+      document.title = `${trilha.trilha_nome} - Sementis`;
+
+      lessons = [];
+      lessons.push({ id: 'intro', label: 'Introdução', state: 'done', tipo: 'leitura' });
+
+      trilha.atividades.forEach(atv => {
+        let stateVisual = 'locked';
+        if (atv.status === 'liberada') stateVisual = 'active';
+        if (atv.status === 'concluida') stateVisual = 'done';
+
+        lessons.push({
+          id: atv.id.toString(),
+          label: atv.nome,
+          state: stateVisual,
+          tipo: atv.tipo
+        });
+      });
+
+      const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
+      const totalFases = lessons.length - 1;
+      const subtitulo = document.getElementById('trilhaProgressText');
+      if(subtitulo) subtitulo.textContent = `${concluidas} de ${totalFases} concluídas`;
+
+      build();
+    } else {
+      const titleEl = document.getElementById('trilhaTitle');
+      const subtitulo = document.getElementById('trilhaProgressText');
+      if (titleEl) titleEl.textContent = 'ℹ️ Nenhuma trilha encontrada';
+      if (subtitulo) subtitulo.textContent = 'Este módulo não tem trilhas disponíveis';
+    }
+  } catch (error) {
+    console.error("Erro na carga do mapa:", error);
+    const titleEl = document.getElementById('trilhaTitle');
+    const subtitulo = document.getElementById('trilhaProgressText');
+    if (titleEl) titleEl.textContent = '❌ Erro ao carregar';
+    if (subtitulo) subtitulo.textContent = error.message || 'Verifique sua conexão';
+  }
+}
 
 const PAD_TOP   = 88;
 const PAD_BOT   = 130;
@@ -580,7 +806,6 @@ function getNodePoints(width) {
 
   for (let i = 0; i < lessons.length; i++) {
     if (i > 0) {
-      // Espaçamento maior e irregular para parecer mais natural entre os nós.
       const baseStep = 260;
       const randomStep = seededNoise(i * 4.17) * 66;
       const waveStep = Math.sin(i * 0.82 + 0.4) * 18;
@@ -602,6 +827,9 @@ function getNodePoints(width) {
 function build() {
   const scene = document.getElementById('scene');
   const W = Math.min(window.innerWidth, 460);
+  
+  if(lessons.length === 0) return; // Segurança pra não bugar se a API não respondeu
+  
   const pts = getNodePoints(W);
   const H = pts[pts.length - 1].y + PAD_BOT;
   scene.style.height = H + 'px';
@@ -619,7 +847,7 @@ function build() {
 
   for (let i = 0; i < pts.length - 1; i++) {
     const a = pts[i], b = pts[i+1];
-    const isDone = lessons[i].state === 'done';
+    const isDone = lessons[i+1] && lessons[i+1].state !== 'locked';
 
     const dx = b.x - a.x;
     const dy = b.y - a.y;
@@ -674,23 +902,54 @@ function build() {
     lbl.textContent = lesson.label;
     div.appendChild(lbl);
 
+  if (lesson.state === 'active' || lesson.state === 'done') {
+      div.onclick = () => {
+        if (lesson.id === 'intro') {
+          alert("Bem-vindo ao módulo! Clique na próxima bolinha para começar.");
+          return;
+        }
+
+        // SALVA OS DADOS PARA QUEM FOR LER DEPOIS
+        localStorage.setItem('ultima_fase_id', lesson.id);
+        localStorage.setItem('ultima_fase_tipo', lesson.tipo);
+        
+        console.log(`Fase ID: ${lesson.id} | Tipo: ${lesson.tipo}`);
+
+        // ROTEAMENTO DINÂMICO
+        if (lesson.tipo === 'minigame') {
+            abrirJogo(); // CHAMA A FUNÇÃO NOVA QUE ABRE O MODAL
+        } else {
+            // SE FOR QUIZ, ABRE A TELA PRETA NORMAL
+            if (typeof openQuizModal === 'function') {
+                openQuizModal();
+            } else {
+                alert("Erro: O script do quiz não foi carregado.");
+            }
+        }
+      };
+    } else {
+      div.onclick = () => alert("🔒 Complete a fase anterior para liberar esta lição!");
+    }
+
     scene.appendChild(div);
   });
 
-  // XP bar animation
-  const done = lessons.filter(l => l.state === 'done').length;
-  const percentage = (done / lessons.length * 100).toFixed(0);
+  // Animação da Barra de XP verde
+  const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
+  const totalFases = Math.max(1, lessons.length - 1);
+  const percentage = (concluidas / totalFases * 100).toFixed(0);
 
   setTimeout(() => {
     const fillElement = document.getElementById('xpFill');
-    fillElement.style.width = percentage + '%';
+    if(fillElement) fillElement.style.width = percentage + '%';
   }, 500);
 }
 
-build();
+// Em vez de só rodar o build, agora ele busca da API primeiro
+carregarMapaDinamico();
 window.addEventListener('resize', build);
 </script>
 <script src="pwa/pwa-register.js"></script>
-<script src="js/shared-navbar.js"></script>
+<script src="/js/shared-navbar.js"></script>
 </body>
 </html>

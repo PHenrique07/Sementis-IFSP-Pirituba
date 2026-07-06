@@ -239,3 +239,93 @@ input {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-gray-500);
 }
+
+/* ===== Menu de Perfil no Navbar (Auth Actions) ===== */
+.user-profile-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.user-greeting {
+    color: var(--color-white);
+    font-weight: 500;
+}
+
+.profile-dropdown-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-icon-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition-base);
+    background-color: rgba(255, 255, 255, 0.08); /* Fundo sutil */
+    padding: 6px;
+    border: 2px solid transparent;
+}
+
+/* Efeito clássico verde ao passar o mouse */
+.profile-icon-btn:hover {
+    background-color: rgba(169, 255, 113, 0.15); /* var(--color-accent) com opacidade */
+    border-color: var(--color-accent);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-glow); /* Cria o brilho verde característico da marca */
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-primary-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 170px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px);
+    transition: var(--transition-base);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.profile-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.profile-dropdown .dropdown-item {
+    padding: 14px 20px;
+    color: var(--color-gray-100);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+    width: 100%;
+    outline: none;
+    font-family: inherit;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Separação sutil */
+}
+
+.profile-dropdown .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.profile-dropdown .dropdown-item:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-accent);
+}

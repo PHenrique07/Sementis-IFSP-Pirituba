@@ -1,0 +1,1304 @@
+/* ============================================================
+   SEMENTIS — Quiz Overlay  ·  Redesign Premium
+   Tema: Escuro futurista com glassmorphism e gamificação
+   Fonte: Poppins (via Google Fonts)
+   ============================================================ */
+
+/* ── Bloqueio de scroll do body ──────────────────────────── */
+body.quiz-lock-scroll {
+  overflow: hidden;
+}
+
+/* ============================================================
+   1 · OVERLAY — Tela cheia com gradiente e brilho radial
+   ============================================================ */
+.quiz-overlay {
+  /* Variáveis de tema (sobrescritas via JS por questão) */
+  --quiz-bg:          #27275e;
+  --quiz-bg-dark:     #1a1a4a;
+  --quiz-bg-light:    #3a3a7a;
+  --quiz-accent:      #a9ff71;
+  --quiz-accent-dark: #7acc44;
+  --quiz-panel:       #1a1a4a;
+  --quiz-panel-soft:  #24245c;
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+
+  /* Gradiente escuro + brilho radial de acento */
+  background:
+    radial-gradient(ellipse 80% 50% at 18% 6%, color-mix(in srgb, var(--quiz-accent) 14%, transparent), transparent 60%),
+    radial-gradient(circle at 80% 100%, rgba(100, 80, 200, 0.10), transparent 50%),
+    linear-gradient(175deg, var(--quiz-bg-dark) 0%, var(--quiz-bg) 55%, #16163e 100%);
+
+  /* Slide-up com fade */
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    transform 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity   0.30s ease;
+  pointer-events: none;
+}
+
+/* Marca-d'água decorativa no canto inferior direito */
+.quiz-overlay::before {
+  content: "";
+  position: absolute;
+  right: -200px;
+  bottom: -160px;
+  width: min(780px, 90vw);
+  aspect-ratio: 1;
+  background: url("../assets/brand/logo_sementis_background_5__opacidade.png") center / contain no-repeat;
+  opacity: 0.12;
+  transform: rotate(-22deg);
+  pointer-events: none;
+  filter: blur(1.5px);
+}
+
+/* Estado aberto */
+.quiz-overlay.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ============================================================
+   2 · CONTAINER — Grid de 3 linhas (header, body, footer)
+   ============================================================ */
+.quiz-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: transparent;
+}
+
+/* ============================================================
+   3 · HEADER — Barra superior com progresso e vidas
+   ============================================================ */
+.quiz-header {
+  display: grid;
+  grid-template-columns: 44px auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px clamp(14px, 3vw, 28px);
+  background: rgba(22, 22, 62, 0.96);
+  border-bottom: 1px solid rgba(169, 255, 113, 0.14);
+  box-shadow:
+    0 1px 0 rgba(169, 255, 113, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.30);
+}
+
+@media (min-width: 1200px) {
+  .quiz-header {
+    padding-left: calc((100% - 1120px) / 2 + 28px);
+    padding-right: calc((100% - 1120px) / 2 + 28px);
+  }
+}
+
+/* ── Botão fechar ────────────────────────────────────────── */
+.quiz-close-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform  0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.quiz-close-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.10);
+  transform: scale(1.06);
+}
+
+.quiz-close-btn:active {
+  transform: scale(0.94);
+}
+
+/* ── Informações da missão (label + nome) ────────────────── */
+.quiz-header-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.quiz-mission-label,
+.quiz-eyebrow {
+  color: var(--quiz-accent);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  line-height: 1.3;
+}
+
+.quiz-mission-name {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Barra de progresso ──────────────────────────────────── */
+.quiz-progress-wrap {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.quiz-progress {
+  height: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.32);
+}
+
+.quiz-progress-bar {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--quiz-accent-dark), var(--quiz-accent));
+  box-shadow: 0 0 14px rgba(169, 255, 113, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quiz-step {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+/* ── Vidas (corações) ────────────────────────────────────── */
+.quiz-lives {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-left: 6px;
+}
+
+.quiz-lives img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+/* Classe aplicada via JS ao perder vida */
+.quiz-lives img.heart-pop {
+  animation: heartPop 0.45s ease-out;
+}
+
+/* ============================================================
+   4 · CORPO DO QUIZ — Área scrollável com conteúdo centralizado
+   ============================================================ */
+.quiz-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(16px, 3vw, 28px);
+  padding: clamp(20px, 3.5vw, 38px);
+  scrollbar-color: var(--quiz-bg-light) transparent;
+}
+
+/* Scrollbar customizada */
+.quiz-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.quiz-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quiz-body::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.quiz-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ============================================================
+   5 · LAYOUTS — Disposição dos painéis de cena e questão
+   ============================================================ */
+
+/* ── Layout de escolha (2 colunas: cena | card) ──────────── */
+.quiz-layout {
+  width: min(980px, 100%);
+}
+
+.quiz-choice-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: clamp(16px, 3vw, 28px);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ── Layout de grid (coluna única, card mais largo) ──────── */
+.quiz-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(16px, 3vw, 28px);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Animação de entrada para cada layout */
+.quiz-entering {
+  animation: quizEnter 0.4s ease-out both;
+}
+
+/* ============================================================
+   6 · PAINEL DE CENA — Card com ícone central e legenda
+   ============================================================ */
+.quiz-scene {
+  width: 100%;
+  min-height: 320px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(169, 255, 113, 0.15);
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(100, 80, 200, 0.12), transparent 70%),
+    linear-gradient(180deg, rgba(58, 58, 122, 0.92), rgba(26, 26, 74, 0.96));
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+/* Marca d'água na cena */
+.scene-watermark {
+  position: absolute;
+  inset: auto -60px -72px auto;
+  width: 280px;
+  opacity: 0.16;
+  transform: rotate(-18deg);
+  pointer-events: none;
+}
+
+/* Círculo de foco com brilho */
+.scene-focus {
+  width: 172px;
+  height: 172px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(169, 255, 113, 0.14), rgba(169, 255, 113, 0.04));
+  box-shadow:
+    0 0 0 14px rgba(169, 255, 113, 0.06),
+    0 0 0 30px rgba(169, 255, 113, 0.02),
+    0 0 60px rgba(169, 255, 113, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Badge (ícone) dentro do foco */
+.scene-badge {
+  width: min(128px, 72%);
+  height: auto;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.36));
+  transition: transform 0.3s ease;
+}
+
+.scene-focus:hover .scene-badge {
+  transform: scale(1.06);
+}
+
+/* Legenda da cena — barra inferior */
+.quiz-scene > span {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2;
+  padding: 11px 14px;
+  border-radius: 12px;
+  color: #ffffff;
+  background: rgba(22, 22, 62, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* ============================================================
+   7 · PAINEL DE CARD — Glassmorphism com borda de acento
+   ============================================================ */
+.quiz-card-panel {
+  width: min(720px, 100%);
+  padding: clamp(20px, 3vw, 32px);
+  border-radius: 18px;
+  background:
+    linear-gradient(170deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01) 80%),
+    rgba(26, 26, 74, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(169, 255, 113, 0.14);
+  box-shadow:
+    0 22px 52px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Classe de shake no painel ao errar */
+.quiz-card-panel.quiz-shake {
+  animation: quizShake 0.42s ease-out;
+}
+
+/* ── Pergunta ────────────────────────────────────────────── */
+.quiz-question {
+  margin: 8px 0 24px;
+  color: #ffffff;
+  font-size: clamp(19px, 2.1vw, 27px);
+  line-height: 1.22;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================
+   8 · OPÇÕES NORMAIS — Cards brancos com sombra 3D
+   ============================================================ */
+.quiz-options {
+  display: grid;
+  gap: 12px;
+}
+
+.quiz-option {
+  width: 100%;
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 2.5px solid rgba(200, 200, 220, 0.20);
+  border-radius: 14px;
+  color: #1a1a4a;
+  background: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #b3bbd0;
+  transition:
+    transform    0.16s ease,
+    border-color 0.16s ease,
+    box-shadow   0.16s ease,
+    background   0.16s ease;
+  overflow-wrap: anywhere;
+}
+
+/* Marcador circular (A, B, C…) */
+.opt-marker {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #1a1a4a;
+  background: #edf1f7;
+  font-size: 15px;
+  font-weight: 900;
+  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+/* Hover — sobe levemente */
+.quiz-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 0 #a9b1c6;
+}
+
+/* Pressionado — desce 3px */
+.quiz-option:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #b3bbd0;
+}
+
+/* Selecionado */
+.quiz-option.selected {
+  border-color: var(--quiz-accent);
+  background: #eefee4;
+  box-shadow: 0 4px 0 var(--quiz-accent-dark);
+}
+
+.quiz-option.selected .opt-marker {
+  background: color-mix(in srgb, var(--quiz-accent) 25%, #edf1f7);
+}
+
+/* Resposta correta */
+.quiz-option.correct-answer {
+  border-color: var(--quiz-accent);
+  background: #e8fdd8;
+  box-shadow: 0 4px 0 var(--quiz-accent-dark);
+  animation: pulseGlow 1.2s ease-in-out 2;
+}
+
+.quiz-option.correct-answer .opt-marker {
+  color: #1a1a4a;
+  background: var(--quiz-accent);
+  transform: scale(1.08);
+}
+
+/* Resposta errada */
+.quiz-option.wrong-answer {
+  border-color: #ff6680;
+  background: #ffeef3;
+  box-shadow: 0 4px 0 #d94466;
+}
+
+.quiz-option.wrong-answer .opt-marker {
+  color: #ffffff;
+  background: #ef476f;
+  animation: quizShake 0.4s ease-out;
+}
+
+/* ============================================================
+   9 · GRID DE ITENS — Cards escuros com imagem + label
+   ============================================================ */
+.quiz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.quiz-grid-item {
+  min-height: 168px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 8px;
+  padding: 12px;
+  border: 2.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  color: #ffffff;
+  background: var(--quiz-panel-soft);
+  font: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #0f0f34;
+  transition:
+    transform    0.16s ease,
+    border-color 0.16s ease,
+    background   0.16s ease,
+    box-shadow   0.16s ease;
+}
+
+/* Hover */
+.quiz-grid-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 7px 0 #0c0c2e;
+}
+
+/* Pressionado */
+.quiz-grid-item:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #0f0f34;
+}
+
+/* Selecionado */
+.quiz-grid-item.selected {
+  border-color: var(--quiz-accent);
+  background: #2d2d6e;
+  box-shadow:
+    0 4px 0 var(--quiz-accent-dark),
+    0 0 20px rgba(169, 255, 113, 0.12);
+}
+
+/* Correto */
+.quiz-grid-item.correct-answer {
+  border-color: var(--quiz-accent);
+  background: #2a3d26;
+  box-shadow:
+    0 4px 0 var(--quiz-accent-dark),
+    0 0 24px rgba(169, 255, 113, 0.18);
+}
+
+/* Errado */
+.quiz-grid-item.wrong-answer {
+  border-color: #ff6680;
+  background: #3d1a28;
+  box-shadow: 0 4px 0 #8a1a36;
+}
+
+/* ── Área de arte do grid ────────────────────────────────── */
+.grid-art {
+  position: relative;
+  height: 108px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.grid-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.quiz-grid-item:hover .grid-main-img {
+  transform: scale(1.05);
+}
+
+/* ── Selos de estado (selecionado / correto) ─────────────── */
+.grid-state {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  display: none;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.35));
+  z-index: 2;
+}
+
+.quiz-grid-item.selected .grid-selected { display: block; }
+.quiz-grid-item.correct-answer .grid-selected { display: none; }
+.quiz-grid-item.correct-answer .grid-correct { display: block; }
+
+/* ── Label do grid ───────────────────────────────────────── */
+.grid-label {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================
+   10 · FOOTER — Barra de ação com modos de cor
+   ============================================================ */
+.quiz-footer {
+  padding: 14px clamp(14px, 3vw, 28px);
+  background: rgba(22, 22, 62, 0.96);
+  border-top: 1px solid rgba(169, 255, 113, 0.12);
+  box-shadow:
+    0 -1px 0 rgba(169, 255, 113, 0.06),
+    0 -8px 30px rgba(0, 0, 0, 0.28);
+  transition: background 0.3s ease;
+}
+
+/* Modos de cor do footer */
+.quiz-footer.correct-mode  { background: #163d2e; }
+.quiz-footer.wrong-mode    { background: #471c35; }
+.quiz-footer.reward-mode   { background: rgba(26, 26, 74, 0.98); }
+.quiz-footer.gameover-mode { background: #3a1222; }
+
+/* ── Barra flex (texto helper + botão) ───────────────────── */
+.quiz-footer-bar {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.quiz-helper {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* ── Botão principal ─────────────────────────────────────── */
+.quiz-btn {
+  min-width: 180px;
+  min-height: 52px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 999px;
+  color: #1a1a4a;
+  background: var(--quiz-accent);
+  box-shadow:
+    0 4px 0 var(--quiz-accent-dark),
+    0 0 20px rgba(169, 255, 113, 0.22);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    filter    0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.quiz-btn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow:
+    0 5px 0 var(--quiz-accent-dark),
+    0 0 28px rgba(169, 255, 113, 0.30);
+}
+
+.quiz-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--quiz-accent-dark);
+}
+
+/* Botão branco nos modos correct / wrong / reward / gameover */
+.correct-mode .quiz-btn,
+.wrong-mode .quiz-btn,
+.reward-mode .quiz-btn,
+.gameover-mode .quiz-btn {
+  color: #1a1a4a;
+  background: #ffffff;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.18);
+}
+
+.correct-mode .quiz-btn:hover,
+.wrong-mode .quiz-btn:hover,
+.reward-mode .quiz-btn:hover,
+.gameover-mode .quiz-btn:hover {
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.22);
+}
+
+/* ============================================================
+   11 · FEEDBACK — Painel de resposta correta / errada
+   ============================================================ */
+.quiz-feedback {
+  width: min(1120px, 100%);
+  margin: 0 auto 14px;
+  display: none;
+  grid-template-columns: 50px 1fr;
+  align-items: start;
+  gap: 14px;
+  animation: quizSlideUp 0.3s ease-out;
+}
+
+/* Exibir nos modos correto e errado */
+.correct-mode .quiz-feedback,
+.wrong-mode .quiz-feedback {
+  display: grid;
+}
+
+/* ── Ícone do feedback ───────────────────────────────────── */
+.feedback-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--quiz-accent);
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(169, 255, 113, 0.20);
+}
+
+.feedback-icon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* Feedback no modo correto — ícone escuro */
+.correct-mode .feedback-icon {
+  background: var(--quiz-accent);
+}
+
+.correct-mode .feedback-icon img {
+  filter: brightness(0.15);
+}
+
+/* Feedback no modo errado — vermelho */
+.wrong-mode .feedback-icon {
+  background: #ef476f;
+  box-shadow: 0 4px 14px rgba(239, 71, 111, 0.25);
+}
+
+.wrong-mode .feedback-icon img {
+  filter: brightness(10);
+}
+
+/* ── Textos do feedback ──────────────────────────────────── */
+.feedback-title {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.feedback-subtitle {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.feedback-curiosity {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.45;
+  padding-left: 12px;
+  border-left: 3px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================================
+   12 · TELA DE RECOMPENSA — Medalha + estatísticas + confete
+   ============================================================ */
+.quiz-reward {
+  position: relative;
+  width: min(620px, 100%);
+  padding: clamp(28px, 5vw, 48px);
+  border-radius: 22px;
+  background:
+    linear-gradient(170deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 70%),
+    rgba(26, 26, 74, 0.80);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(169, 255, 113, 0.18);
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Brilho radial atrás da medalha */
+.reward-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  transform: translate(-50%, -60%);
+  background: radial-gradient(circle, rgba(169, 255, 113, 0.16), transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Medalha com anéis de brilho */
+.reward-medal {
+  position: relative;
+  z-index: 1;
+  width: 132px;
+  height: 132px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(169, 255, 113, 0.14), rgba(169, 255, 113, 0.04));
+  box-shadow:
+    0 0 0 12px rgba(169, 255, 113, 0.06),
+    0 0 0 26px rgba(169, 255, 113, 0.03),
+    0 0 52px rgba(169, 255, 113, 0.10);
+  animation: bounceIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.reward-medal img {
+  width: 104px;
+  height: auto;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.32));
+}
+
+/* Textos da recompensa */
+.quiz-reward .quiz-eyebrow {
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.quiz-reward h2 {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 28px;
+  color: #ffffff;
+  font-size: clamp(24px, 4.5vw, 38px);
+  line-height: 1.08;
+  font-weight: 900;
+}
+
+/* ── Estatísticas (3 colunas) ────────────────────────────── */
+.reward-stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.reward-stats div {
+  padding: 18px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.reward-stats div:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.reward-stats strong,
+.reward-stats span {
+  display: block;
+}
+
+.reward-stats strong {
+  color: var(--quiz-accent);
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.reward-stats span {
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Efeito de confete (pseudo-elementos) ────────────────── */
+.quiz-reward::before,
+.quiz-reward::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.quiz-reward::before {
+  top: -12px;
+  left: 18%;
+  background: var(--quiz-accent);
+  box-shadow:
+    30px  10px 0 #ff6680,
+    65px -5px  0 #5cb8ff,
+    100px 15px 0 #ffd166,
+    140px 0    0 var(--quiz-accent),
+    180px 8px  0 #ef476f,
+    220px -8px 0 #5cb8ff,
+    260px 14px 0 #ffd166;
+  animation: confettiDrop 2.4s ease-in-out infinite;
+}
+
+.quiz-reward::after {
+  top: -8px;
+  right: 22%;
+  background: #ffd166;
+  box-shadow:
+    -25px  12px 0 var(--quiz-accent),
+    -60px  -3px 0 #ef476f,
+    -95px  18px 0 #5cb8ff,
+    -135px 5px  0 #ffd166,
+    -175px -6px 0 var(--quiz-accent),
+    -210px 10px 0 #ff6680;
+  animation: confettiDrop 2.8s 0.3s ease-in-out infinite;
+}
+
+/* ============================================================
+   13 · TELA DE GAME OVER — Missão interrompida
+   ============================================================ */
+.quiz-gameover {
+  width: min(540px, 100%);
+  padding: clamp(32px, 5vw, 52px) clamp(24px, 4vw, 42px);
+  border-radius: 22px;
+  background:
+    linear-gradient(170deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01) 70%),
+    rgba(40, 18, 34, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(239, 71, 111, 0.20);
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.40),
+    0 0 40px rgba(239, 71, 111, 0.06);
+  text-align: center;
+}
+
+/* Ícone do game over (coração partido) */
+.gameover-icon {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(239, 71, 111, 0.16), transparent 70%);
+  box-shadow:
+    0 0 0 12px rgba(239, 71, 111, 0.06),
+    0 0 0 26px rgba(239, 71, 111, 0.03);
+  animation: pulseGlowRed 2.2s ease-in-out infinite;
+}
+
+.gameover-icon img {
+  width: 72px;
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(239, 71, 111, 0.30));
+}
+
+.quiz-gameover h2 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 900;
+  line-height: 1.12;
+}
+
+.quiz-gameover p {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   14 · ANIMAÇÕES — Keyframes do sistema de quiz
+   ============================================================ */
+
+/* Slide-up com fade (feedback) */
+@keyframes quizSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Entrada de questão (scale + fade) */
+@keyframes quizEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Vibração de erro */
+@keyframes quizShake {
+  0%, 100% { transform: translateX(0); }
+  15%      { transform: translateX(-6px); }
+  30%      { transform: translateX(5px); }
+  45%      { transform: translateX(-4px); }
+  60%      { transform: translateX(3px); }
+  75%      { transform: translateX(-2px); }
+  90%      { transform: translateX(1px); }
+}
+
+/* Perda de vida (coração) */
+@keyframes heartPop {
+  0%   { transform: scale(1);    opacity: 1; }
+  20%  { transform: scale(1.35); opacity: 1; }
+  50%  { transform: scale(0.7);  opacity: 0.6; }
+  70%  { transform: scale(1.1);  opacity: 0.8; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+/* Queda de confete */
+@keyframes confettiDrop {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(calc(100% + 200px)) rotate(420deg);
+    opacity: 0;
+  }
+}
+
+/* Bounce-in da medalha */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulso de brilho (resposta correta / nó ativo) */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 4px 0 var(--quiz-accent-dark), 0 0 0 rgba(169, 255, 113, 0);
+  }
+  50% {
+    box-shadow: 0 4px 0 var(--quiz-accent-dark), 0 0 22px rgba(169, 255, 113, 0.28);
+  }
+}
+
+/* Pulso de brilho vermelho (game over) */
+@keyframes pulseGlowRed {
+  0%, 100% {
+    box-shadow:
+      0 0 0 12px rgba(239, 71, 111, 0.06),
+      0 0 0 26px rgba(239, 71, 111, 0.03);
+  }
+  50% {
+    box-shadow:
+      0 0 0 14px rgba(239, 71, 111, 0.10),
+      0 0 0 30px rgba(239, 71, 111, 0.05),
+      0 0 38px rgba(239, 71, 111, 0.12);
+  }
+}
+
+/* ============================================================
+   15 · RESPONSIVO — Breakpoints adaptativos
+   ============================================================ */
+
+/* ── 860px — Header compacto ─────────────────────────────── */
+@media (max-width: 860px) {
+  .quiz-header {
+    grid-template-columns: 42px 1fr auto;
+    gap: 10px;
+  }
+
+  /* Missão vai para baixo, progresso ocupa linha completa */
+  .quiz-header-info {
+    display: none;
+  }
+
+  .quiz-progress-wrap {
+    grid-column: 2 / 3;
+  }
+}
+
+/* ── 760px — Layouts empilhados ──────────────────────────── */
+@media (max-width: 760px) {
+  .quiz-choice-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-scene {
+    width: 100%;
+    min-height: 220px;
+  }
+
+  .scene-focus {
+    width: 130px;
+    height: 130px;
+  }
+
+  .scene-badge {
+    width: min(100px, 70%);
+  }
+
+  /* Footer empilhado */
+  .quiz-footer-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .quiz-btn {
+    width: 100%;
+  }
+
+  /* Estatísticas da recompensa empilhadas */
+  .reward-stats {
+    grid-template-columns: 1fr;
+  }
+
+  /* Grid de feedback compacto */
+  .quiz-feedback {
+    gap: 12px;
+  }
+
+  .feedback-title {
+    font-size: 19px;
+  }
+}
+
+/* ── 460px — Mobile compacto ─────────────────────────────── */
+@media (max-width: 460px) {
+  .quiz-header,
+  .quiz-footer {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .quiz-body {
+    padding: 14px;
+  }
+
+  .quiz-card-panel {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .quiz-question {
+    font-size: 18px;
+    margin-bottom: 18px;
+  }
+
+  /* Opções compactas */
+  .quiz-option {
+    grid-template-columns: 34px 1fr;
+    min-height: 58px;
+    padding: 10px 12px;
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .opt-marker {
+    width: 34px;
+    height: 34px;
+    font-size: 13px;
+  }
+
+  /* Grid 2 colunas no mobile */
+  .quiz-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .quiz-grid-item {
+    min-height: 145px;
+    padding: 10px;
+  }
+
+  .grid-main-img {
+    width: min(70px, 80%);
+  }
+
+  .grid-label {
+    font-size: 11px;
+    min-height: 32px;
+  }
+
+  /* Cena compacta */
+  .quiz-scene {
+    min-height: 180px;
+    border-radius: 14px;
+  }
+
+  .scene-focus {
+    width: 100px;
+    height: 100px;
+  }
+
+  .scene-badge {
+    width: min(78px, 68%);
+  }
+
+  /* Recompensa compacta */
+  .reward-medal {
+    width: 100px;
+    height: 100px;
+  }
+
+  .reward-medal img {
+    width: 78px;
+  }
+
+  .quiz-reward h2 {
+    font-size: 22px;
+  }
+
+  .reward-stats strong {
+    font-size: 24px;
+  }
+
+  /* Game over compacto */
+  .gameover-icon {
+    width: 88px;
+    height: 88px;
+  }
+
+  .gameover-icon img {
+    width: 56px;
+  }
+
+  .quiz-gameover h2 {
+    font-size: 20px;
+  }
+
+  /* Feedback compacto */
+  .feedback-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .feedback-icon img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .feedback-title {
+    font-size: 17px;
+  }
+
+  .quiz-btn {
+    min-height: 48px;
+    font-size: 13px;
+  }
+}

@@ -18,6 +18,11 @@
   display: none;
 }
 
+.sidebar-logo a {
+  display: block;
+  cursor: pointer;
+}
+
 .nav-items-wrapper {
   display: contents;
 }

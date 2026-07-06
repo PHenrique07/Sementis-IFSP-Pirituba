@@ -6,33 +6,35 @@
     <meta name="theme-color" content="#1a1a4a">
     <meta name="application-name" content="Sementis">
     <link rel="manifest" href="pwa/manifest.webmanifest">
-    <link rel="icon" href="assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
     <title>Sementis - Trilhas de Aprendizado</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/home.css">
-    <link rel="stylesheet" href="css/shared-navbar.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/css/shared-navbar.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="home-page">
     <!-- Header -->
     <header class="home-header">
         <div class="header-top">
-            <img src="assets/brand/logo_sementis_branco.png" alt="Sementis Logo" class="header-logo">
+            <a href="index.html" aria-label="Ir para a pagina inicial" class="header-logo-link">
+                <img src="/assets/brand/logo_sementis_branco.png" alt="Sementis Logo" class="header-logo">
+            </a>
             <div class="user-stats">
                 <div class="stat-item">
-                    <img src="assets/icons/icone_sequencia_fogo.png" alt="Sequência" class="stat-icon">
+                    <img src="/assets/icons/icone_sequencia_fogo.png" alt="Sequência" class="stat-icon">
                     <span class="stat-value">7</span>
                 </div>
                 <div class="stat-item">
-                    <img src="assets/icons/icone_moeda.png" alt="Moedas" class="stat-icon">
+                    <img src="/assets/icons/icone_moeda.png" alt="Moedas" class="stat-icon">
                     <span class="stat-value">250</span>
                 </div>
                 <div class="stat-item">
-                    <img src="assets/icons/icone_vida.png" alt="Vidas" class="stat-icon">
+                    <img src="/assets/icons/icone_vida.png" alt="Vidas" class="stat-icon">
                     <span class="stat-value">5</span>
                 </div>
                 <button class="profile-btn">
-                    <img src="assets/icons/icone_usuario.png" alt="Perfil">
+                    <img src="/assets/icons/icone_usuario.png" alt="Perfil">
                 </button>
             </div>
         </div>
@@ -40,17 +42,17 @@
         <div class="user-progress">
             <div class="user-info">
                 <div class="user-avatar">
-                    <img src="assets/icons/icone_usuario.png" alt="Avatar">
+                    <img src="/assets/icons/icone_usuario.png" alt="Avatar">
                 </div>
                 <div class="user-details">
-                    <h2 class="user-name">Estudante</h2>
-                    <p class="user-level">Nível 5 - Bronze</p>
+                    <h2 class="user-name" id="ui-user-name">Estudante</h2>
+                    <p class="user-level" id="ui-user-level">Nível 5 - Bronze</p>
                 </div>
             </div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 60%"></div>
+                <div class="progress-fill" id="ui-progress-fill"></div>
             </div>
-            <span class="progress-text">60% para o próximo nível</span>
+            <span class="progress-text" id="ui-progress-text">60% para o próximo nível</span>
         </div>
     </header>
 
@@ -65,7 +67,7 @@
                 <!-- Module 1: Básico -->
                 <div class="module-card" data-module="basico">
                     <div class="module-icon-wrapper">
-                        <img src="assets/tarefas/tarefa_basico1.png" alt="Básico" class="module-icon">
+                        <img src="/assets/tarefas/tarefa_basico1.png" alt="Básico" class="module-icon">
                     </div>
                     <h3 class="module-title">Fundamentos</h3>
                     <p class="module-description">Conceitos básicos de sustentabilidade</p>
@@ -78,16 +80,16 @@
                 </div>
 
                 <!-- Module 2: Água -->
-                <div class="module-card active" data-module="agua">
+                <div class="module-card" data-module="agua">
                     <div class="module-icon-wrapper">
-                        <img src="assets/tarefas/tarefa_agua.png" alt="Água" class="module-icon">
+                        <img src="/assets/tarefas/tarefa_agua.png" alt="Água" class="module-icon">
                         <div class="module-pulse"></div>
                     </div>
                     <h3 class="module-title">Água e Vida</h3>
                     <p class="module-description">Conservação e uso consciente da água</p>
                     <div class="module-progress">
                         <div class="module-progress-bar">
-                            <div class="module-progress-fill" style="width: 60%"></div>
+                            <div class="module-progress-fill"></div>
                         </div>
                         <span class="module-progress-text">3/5 lições completas</span>
                     </div>
@@ -96,22 +98,22 @@
                 <!-- Module 3: Clima -->
                 <div class="module-card" data-module="clima">
                     <div class="module-icon-wrapper">
-                        <img src="assets/tarefas/tarefa_clima.png" alt="Clima" class="module-icon">
+                        <img src="/assets/tarefas/tarefa_clima.png" alt="Clima" class="module-icon">
                     </div>
                     <h3 class="module-title">Mudanças Climáticas</h3>
                     <p class="module-description">Entenda o aquecimento global</p>
                     <div class="module-progress">
                         <div class="module-progress-bar">
-                            <div class="module-progress-fill" style="width: 0%"></div>
+                            <div class="module-progress-fill"></div>
                         </div>
                         <span class="module-progress-text">0/5 lições completas</span>
                     </div>
                 </div>
 
                 <!-- Module 4: Consumo Consciente -->
-                <div class="module-card locked" data-module="consumo">
+                <div class="module-card" data-module="consumo">
                     <div class="module-icon-wrapper">
-                        <img src="assets/tarefas/tarefa_bloqueada.png" alt="Bloqueado" class="module-icon">
+                        <img src="/assets/tarefas/tarefa_bloqueada.png" alt="Bloqueado" class="module-icon">
                     </div>
                     <h3 class="module-title">Consumo Consciente</h3>
                     <p class="module-description">Aprenda a consumir com responsabilidade</p>
@@ -121,9 +123,9 @@
                 </div>
 
                 <!-- Module 5: Horta -->
-                <div class="module-card locked" data-module="horta">
+                <div class="module-card" data-module="horta">
                     <div class="module-icon-wrapper">
-                        <img src="assets/tarefas/tarefa_bloqueada.png" alt="Bloqueado" class="module-icon">
+                        <img src="/assets/tarefas/tarefa_bloqueada.png" alt="Bloqueado" class="module-icon">
                     </div>
                     <h3 class="module-title">Horta Sustentável</h3>
                     <p class="module-description">Cultive seu próprio alimento</p>
@@ -138,13 +140,13 @@
         <div class="content-wrapper" style="display: none;">
             <section class="daily-goal">
                 <div class="goal-card">
-                    <img src="assets/icons/menu_rodape_alvo.png" alt="Meta Diária" class="goal-icon">
+                    <img src="/assets/icons/menu_rodape_alvo.png" alt="Meta Diária" class="goal-icon">
                     <div class="goal-info">
                         <h3>Meta Diária</h3>
                         <p>Complete 3 lições hoje</p>
                         <div class="goal-progress">
                             <div class="goal-progress-bar">
-                                <div class="goal-progress-fill" style="width: 33%"></div>
+                                <div class="goal-progress-fill"></div>
                             </div>
                             <span class="goal-count">1/3</span>
                         </div>
@@ -167,9 +169,9 @@
                 </div>
 
                 <div class="trail-map" id="homeTrailMap">
-                    <div class="trail-step completed align-left" data-module="basico" data-trail="basico">
+                    <div class="trail-step align-left" data-module="basico" data-trail="basico">
                         <div class="trail-node">
-                            <img src="assets/tarefas/tarefa_basico1.png" alt="Fundamentos" class="trail-icon">
+                            <img src="/assets/tarefas/tarefa_basico1.png" alt="Fundamentos" class="trail-icon">
                             <span class="trail-badge">Concluída</span>
                         </div>
                         <div class="trail-info">
@@ -177,16 +179,16 @@
                             <p class="trail-step-description">Conceitos básicos de sustentabilidade</p>
                             <div class="trail-mini-progress">
                                 <div class="trail-mini-progress-bar">
-                                    <div class="trail-mini-progress-fill" style="width: 100%"></div>
+                                    <div class="trail-mini-progress-fill"></div>
                                 </div>
                                 <span class="trail-mini-progress-text">5/5 lições</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="trail-step active align-right" data-module="agua" data-trail="agua">
+                    <div class="trail-step align-right" data-module="agua" data-trail="agua">
                         <div class="trail-node">
-                            <img src="assets/tarefas/tarefa_agua.png" alt="Água e Vida" class="trail-icon">
+                            <img src="/assets/tarefas/tarefa_agua.png" alt="Água e Vida" class="trail-icon">
                             <span class="trail-badge">Agora</span>
                         </div>
                         <div class="trail-info">
@@ -194,16 +196,16 @@
                             <p class="trail-step-description">Conservação e uso consciente da água</p>
                             <div class="trail-mini-progress">
                                 <div class="trail-mini-progress-bar">
-                                    <div class="trail-mini-progress-fill" style="width: 60%"></div>
+                                    <div class="trail-mini-progress-fill"></div>
                                 </div>
                                 <span class="trail-mini-progress-text">3/5 lições</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="trail-step available align-left" data-module="clima" data-trail="clima">
+                    <div class="trail-step align-left" data-module="clima" data-trail="clima">
                         <div class="trail-node">
-                            <img src="assets/tarefas/tarefa_clima.png" alt="Mudanças Climáticas" class="trail-icon">
+                            <img src="/assets/tarefas/tarefa_clima.png" alt="Mudanças Climáticas" class="trail-icon">
                             <span class="trail-badge neutral">Liberada</span>
                         </div>
                         <div class="trail-info">
@@ -211,16 +213,16 @@
                             <p class="trail-step-description">Entenda o aquecimento global</p>
                             <div class="trail-mini-progress">
                                 <div class="trail-mini-progress-bar">
-                                    <div class="trail-mini-progress-fill" style="width: 0%"></div>
+                                    <div class="trail-mini-progress-fill"></div>
                                 </div>
                                 <span class="trail-mini-progress-text">0/5 lições</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="trail-step locked align-right" data-module="consumo" data-trail="consumo">
+                    <div class="trail-step align-right" data-module="consumo" data-trail="consumo">
                         <div class="trail-node">
-                            <img src="assets/tarefas/tarefa_bloqueada.png" alt="Consumo Consciente" class="trail-icon">
+                            <img src="/assets/tarefas/tarefa_bloqueada.png" alt="Consumo Consciente" class="trail-icon">
                             <span class="trail-badge locked">Bloqueada</span>
                         </div>
                         <div class="trail-info">
@@ -233,9 +235,9 @@
                         </div>
                     </div>
 
-                    <div class="trail-step locked align-left" data-module="horta" data-trail="horta">
+                    <div class="trail-step align-left" data-module="horta" data-trail="horta">
                         <div class="trail-node">
-                            <img src="assets/tarefas/tarefa_bloqueada.png" alt="Horta Sustentável" class="trail-icon">
+                            <img src="/assets/tarefas/tarefa_bloqueada.png" alt="Horta Sustentável" class="trail-icon">
                             <span class="trail-badge locked">Bloqueada</span>
                         </div>
                         <div class="trail-info">
@@ -255,14 +257,14 @@
                 <h2 class="section-title">Mini-Jogos Rápidos</h2>
                 <div class="games-grid">
                     <div class="game-quick-card">
-                        <img src="assets/jogos/flappy-fish/jogo_flappy_fish_peixe.png" alt="Flappy Fish" class="game-thumb">
+                        <img src="/assets/jogos/flappy-fish/jogo_flappy_fish_peixe.png" alt="Flappy Fish" class="game-thumb">
                         <div class="game-overlay">
                             <h3>Flappy Fish</h3>
                             <p>Desvie da poluição</p>
                         </div>
                     </div>
                     <div class="game-quick-card">
-                        <img src="assets/jogos/garbage-recycle/jogo_garbage_recycle_cesto_lixo_reciclavel.png" alt="Garbage Recycle" class="game-thumb">
+                        <img src="/assets/jogos/garbage-recycle/jogo_garbage_recycle_cesto_lixo_reciclavel.png" alt="Garbage Recycle" class="game-thumb">
                         <div class="game-overlay">
                             <h3>Garbage Recycle</h3>
                             <p>Separe o lixo</p>
@@ -276,15 +278,15 @@
                 <h2 class="section-title">Conquistas Recentes</h2>
                 <div class="achievements-grid">
                     <div class="achievement-card">
-                        <img src="assets/ligas/liga_medalha_bronze.png" alt="Medalha Bronze">
+                        <img src="/assets/ligas/liga_medalha_bronze.png" alt="Medalha Bronze">
                         <p>Primeira Lição</p>
                     </div>
                     <div class="achievement-card">
-                        <img src="assets/ligas/missao_alvo_bronze.png" alt="Missão Bronze">
+                        <img src="/assets/ligas/missao_alvo_bronze.png" alt="Missão Bronze">
                         <p>3 Dias Seguidos</p>
                     </div>
                     <div class="achievement-card locked-achievement">
-                        <img src="assets/ligas/liga_trofeu_bloqueado.png" alt="Bloqueado">
+                        <img src="/assets/ligas/liga_trofeu_bloqueado.png" alt="Bloqueado">
                         <p>Bloqueado</p>
                     </div>
                 </div>
@@ -295,8 +297,8 @@
     <div id="shared-navbar-root"></div>
 
     <script src="pwa/pwa-register.js"></script>
-    <script src="js/shared-navbar.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/home.js"></script>
+    <script src="/js/shared-navbar.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/home.js"></script>
 </body>
 </html>

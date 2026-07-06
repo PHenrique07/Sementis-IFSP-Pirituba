@@ -1,17 +1,22 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
+#Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
     registrar_conclusao_atividade, listar_modulos, listar_trilhas_do_modulo,
-    listar_atividades_da_trilha)
+    listar_atividades_da_trilha, buscar_ranking_por_liga, atualizar_progresso_missao,
+    sortear_missoes_diarias, calcular_nivel, buscar_questoes_por_atividade, listar_progresso_geral_modulos) 
 from passlib.hash import argon2
 from functools import wraps
 import os
 from datetime import datetime, timezone, timedelta
 import jwt
 from sqlmodel import Session, select, create_engine
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao
 
 app = Flask(__name__)
+
+# Caminho absoluto da pasta do projeto — resolve o problema do PythonAnywhere
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SECRET_KEY = "chave_super_secreta_2026_GRATIA!"
 
@@ -84,15 +89,15 @@ def token_obrigatorio(f):
 @app.route('/')
 def index():
     """Serve a página inicial"""
-    return send_from_directory('.', 'index.html')
+    return send_from_directory(BASE_DIR, 'index.html')
 
 # Rota para servir qualquer arquivo estático
 @app.route('/<path:filename>')
 def serve_static(filename):
     """Serve arquivos CSS, JS, imagens, etc."""
-    # Verifica se o arquivo existe
-    if os.path.exists(filename):
-        return send_from_directory('.', filename)
+    caminho_completo = os.path.join(BASE_DIR, filename)
+    if os.path.exists(caminho_completo):
+        return send_from_directory(BASE_DIR, filename)
     else:
         return f"Arquivo não encontrado: {filename}", 404
 
@@ -100,7 +105,7 @@ def serve_static(filename):
 @app.route('/trilhas.html')
 def trilha():
     """Serve a página de trilhas"""
-    return send_from_directory('.', 'trilhas.html')
+    return send_from_directory(BASE_DIR, 'trilhas.html')
 
 # =====================================================================
 # --- ROTAS DE API ---
@@ -192,7 +197,8 @@ def login():
                     "moedas": usuario.moedas,
                     "tipo": usuario.tipo_usuario,
                     "ofensiva": usuario.ofensiva,
-                    "vidas": usuario.vidas
+                    "vidas": usuario.vidas,
+                    "liga_id": usuario.liga_id
                 }
             }), 200
         else:
@@ -228,30 +234,233 @@ def validar_token():
     except jwt.InvalidTokenError:
         return jsonify({"valido": False, "erro": "Token inválido"}), 401
 
-@app.route('/perfil', methods=['GET'])
-@token_obrigatorio
-def perfil():
-    """Exemplo de rota protegida que precisa de token"""
-    return jsonify({
-        "mensagem": f"Bem-vindo ao seu perfil, {request.usuario_nome}!",
-        "usuario_id": request.usuario_id,
-        "tipo": request.usuario_tipo
-    }), 200
-
 @app.route('/completar_atividade', methods=['POST'])
 @token_obrigatorio
-def completar_atividade(usuario_atual):
+def completar_atividade():
+    id_usuario = request.usuario_id 
+    
     dados = request.get_json()
+    if not dados:
+        return jsonify({"erro": "Corpo da requisição vazio"}), 400
+        
     id_atv = dados.get('atividade_id')
+    erros = dados.get('erros', 0)  # Quantidade de erros cometidos no quiz
+    concluida_com_sucesso = dados.get('concluida_com_sucesso', False)  # Venceu ou deu Game Over
+
+    if not id_atv:
+        return jsonify({"erro": "ID da atividade não fornecido"}), 400
 
     with Session(engine) as session:
-        # Usando a sua função número 7 do crud.py!
-        sucesso = registrar_conclusao_atividade(session, usuario_atual.id, id_atv)
+        # 1. Puxar o Usuário do banco para atualizar as vidas
+        usuario = session.get(Usuario, id_usuario)
+        if not usuario:
+            return jsonify({"erro": "Usuário não encontrado"}), 404
+
+        # 2. Subtrair os erros das vidas do jogador (Garantindo que não fique negativo)
+        novas_vidas = usuario.vidas - erros
+        usuario.vidas = max(0, novas_vidas)
+        session.add(usuario)
+        session.commit()  # Salva o desconto de vidas imediatamente
+
+        # 3. IF principal: Se a fase NÃO foi concluída com sucesso (Game Over)
+        if not concluida_com_sucesso:
+            return jsonify({
+                "status": "game_over",
+                "mensagem": "O aluno perdeu todas as vidas ou não terminou o quiz.",
+                "vidas_atuais": usuario.vidas
+            }), 200
+
+        # 4. Caso tenha vencido com sucesso, roda o bloco de recompensas
+        resultado = registrar_conclusao_atividade(session, id_usuario, id_atv)
         
-        if sucesso:
-            return jsonify({"mensagem": "Atividade concluída e recompensas entregues!"}), 200
+        if resultado.get("status") == "sucesso":
+            # Atualiza o progresso das missões diárias/semanais (tipo 'concluir_fase')
+            missoes_concluidas = atualizar_progresso_missao(session, id_usuario, 'concluir_fase')
+            
+            # Atualiza o objeto de retorno para o front-end com as novas informações
+            resultado["missoes_completadas_agora"] = missoes_concluidas
+            resultado["vidas_atuais"] = usuario.vidas
+            
+            return jsonify(resultado), 200
         else:
-            return jsonify({"erro": "Atividade não encontrada"}), 404
+            return jsonify({"erro": resultado.get("mensagem")}), 400
+
+#Rankings - Deve retornar o Json contendo id, nome, xp, nivel e o tipo do usuario
+@app.route('/ranking/<int:liga_id>', methods=['GET'])
+def ranking(liga_id):
+    with Session(engine) as session:
+        # Busca os usuários da liga específica usando sua função do crud.py
+        usuarios = buscar_ranking_por_liga(session, liga_id)
+        
+        lista_ranking = []
+        for user in usuarios:
+            lista_ranking.append({
+                "id": user.id,
+                "nome": user.nome,
+                "xp": user.xp_semanal 
+            })
+        
+        return jsonify(lista_ranking), 200
+
+# --- Rota de Missões Diárias ---
+@app.route('/missoes', methods=['GET']) # Pedro: Mudei um pouco pq tava dando um erro na hora de pegar a API
+@token_obrigatorio
+def missoes():
+    id_usuario = request.usuario_id
+    
+    with Session(engine) as session:
+        missoes_do_dia = sortear_missoes_diarias(session, id_usuario)
+        
+        #Empacotar os dados exatamente como o JS do Vini espera
+        lista_missoes = []
+        for progresso in missoes_do_dia:
+            # Busca os detalhes (título, meta, xp) lá do catálogo principal de missões
+            missao_catalogo = session.get(Missao, progresso.missao_id)
+            
+            lista_missoes.append({
+                "id": progresso.id,
+                "nome": missao_catalogo.titulo,         # O JS do Vini pede 'nome'
+                "progresso": progresso.progresso_atual,
+                "meta": missao_catalogo.meta,
+                "xp": missao_catalogo.xp_recompensa
+            })
+            
+        return jsonify(lista_missoes), 200
+    
+@app.route('/api/perfil', methods=['GET'])
+@token_obrigatorio
+def obter_perfil():
+    id_usuario = request.usuario_id
+    with Session(engine) as session:
+        usuario = session.get(Usuario, id_usuario)
+        if not usuario:
+            return jsonify({"erro": "Usuário não encontrado"}), 404
+        
+        info_nivel = calcular_nivel(usuario.xp)
+        return jsonify({
+            "nome": usuario.nome,
+            "ofensiva": usuario.ofensiva,
+            "xp_total": usuario.xp,
+            "liga_id": usuario.liga_id,
+            "progresso_nivel": {
+                "nivel_atual": info_nivel["nivel"],
+                "xp_no_nivel": info_nivel["xp_atual_no_nivel"],
+                "xp_proximo_nivel": info_nivel["xp_necessario_proximo"],
+                "porcentagem_barra": info_nivel["porcentagem"]
+            }
+        }), 200
+
+@app.route('/api/modulos/<int:modulo_id>/trilhas', methods=['GET'])
+@token_obrigatorio
+def obter_mapa_modulo(modulo_id):
+    id_usuario = request.usuario_id
+    
+    with Session(engine) as session:
+        # 1. Busca as trilhas do módulo usando a função do seu crud.py
+        trilhas = listar_trilhas_do_modulo(session, modulo_id)
+        if not trilhas:
+            return jsonify({"erro": "Nenhuma trilha encontrada para este módulo"}), 404
+            
+        # 2. Busca eficientemente as atividades que o usuário já concluiu neste módulo
+        ids_trilhas = [t.id for t in trilhas]
+        instrucao_progresso = (
+            select(ProgressoUsuario.atividade_id)
+            .join(Atividade)
+            .where(
+                ProgressoUsuario.usuario_id == id_usuario,
+                Atividade.trilha_id.in_(ids_trilhas)
+            )
+        )
+        # Salvamos em um set para buscas instantâneas por ID
+        atividades_concluidas_ids = set(session.exec(instrucao_progresso).all())
+
+        resposta_mapa = []
+        
+        # Variável para controlar se a primeira fase livre já foi liberada
+        primeira_fase_nao_concluida_encontrada = False
+
+        for trilha in trilhas:
+            # Busca as atividades específicas desta trilha usando a função do seu crud.py
+            atividades = listar_atividades_da_trilha(session, trilha.id)
+            
+            lista_atividades_formatadas = []
+            for atv in atividades:
+                # Regra de negócio para definir o status da "bolinha" no mapa do Vini
+                if atv.id in atividades_concluidas_ids:
+                    status = "concluida"
+                elif not primeira_fase_nao_concluida_encontrada:
+                    status = "liberada"
+                    primeira_fase_nao_concluida_encontrada = True
+                else:
+                    status = "bloqueada"
+                
+                lista_atividades_formatadas.append({
+                    "id": atv.id,
+                    "nome": atv.nome,
+                    "tipo": atv.tipo,
+                    "ordem": atv.ordem,
+                    "status": status,
+                    "xp_recompensa": atv.xp_recompensa,
+                    "moedas_recompensa": atv.moedas_recompensa
+                })
+            
+            resposta_mapa.append({
+                "trilha_id": trilha.id,
+                "trilha_nome": trilha.nome,
+                "trilha_ordem": trilha.ordem,
+                "atividades": lista_atividades_formatadas
+            })
+
+        return jsonify(resposta_mapa), 200
+
+@app.route("/api/atividades/<int:atividade_id>/questoes", methods=["GET"])
+@token_obrigatorio  # Mantendo a segurança para garantir que apenas alunos logados acessem as questões
+def obter_questoes_da_atividade(atividade_id):
+    with Session(engine) as session:
+        # 1. Chama a função do CRUD que criamos, que já limpa o JSON nativo do campo 'conteudo'
+        lista_questoes = buscar_questoes_por_atividade(session, atividade_id)
+        
+        # 2. Se a atividade não tiver nenhuma questão cadastrada no banco
+        if not lista_questoes:
+            return jsonify({"erro": "Nenhuma questão encontrada para esta atividade"}), 404
+            
+        # 3. Retorna o array de questões completo para o Vini salvar no storage do front-end
+        return jsonify(lista_questoes), 200
+    
+
+
+# --- Rota de Progresso dos Módulos ---
+@app.route('/api/modulos/progresso', methods=['GET'])
+@token_obrigatorio
+def obter_progresso_modulos():
+    id_usuario = request.usuario_id
+    with Session(engine) as session:
+        progresso = listar_progresso_geral_modulos(session, id_usuario)
+        return jsonify(progresso), 200
+
+# --- Rota Universal: Serve arquivos estáticos de pastas específicas ---
+
+@app.route('/<pasta>/<path:filename>')
+def serve_estaticos(pasta, filename):
+    # Se a pasta for uma das pastas de assets ou a do minigame, serve o arquivo direto
+    if pasta in ['css', 'js', 'assets', 'pwa', 'FlapFish']:
+        return send_from_directory(os.path.join(BASE_DIR, pasta), filename)
+    return "Pasta não encontrada", 404
+
+# --- Rota Universal: Serve todas as páginas HTML ---
+@app.route('/<path:filename>')
+def serve_html(filename):
+    # Se o nome não tiver .html, adiciona
+    if not filename.endswith('.html'):
+        filename += '.html'
+    
+    # Verifica se o arquivo existe na raiz do projeto
+    caminho_completo = os.path.join(BASE_DIR, filename)
+    if os.path.exists(caminho_completo):
+        return send_from_directory(BASE_DIR, filename)
+    
+    return f"Página não encontrada: {filename}", 404
+
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)

@@ -1,0 +1,733 @@
+/* 
+  Estilos Específicos para a Página de Missões 
+  Mantém o padrão de cores e bordas arredondadas do estilo Duolingo
+*/
+
+.missions-page {
+    background-color: var(--color-primary, #27275e);
+    min-height: 100vh;
+    padding-bottom: 80px; /* Espaço para o bottom-nav */
+}
+
+/* Layout Desktop */
+@media (min-width: 1024px) {
+    .missions-page {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        padding-bottom: 0;
+    }
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .page-container {
+        padding: 40px;
+    }
+}
+
+/* Header */
+.main-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.header-logo {
+    height: 45px;
+    object-fit: contain;
+}
+
+@media (min-width: 1024px) {
+    .main-header {
+        display: none; /* Logo já está na sidebar no desktop */
+    }
+}
+
+/* Main Content */
+.missions-content {
+    padding: 0 20px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+@media (min-width: 1024px) {
+    .missions-content {
+        max-width: 1100px;
+        padding-top: 40px;
+    }
+}
+
+/* Card Destaque (Consumo Consciente) */
+.highlight-card {
+    background-color: #16162a; /* Azul bem escuro, quase preto */
+    border-radius: 999px; /* Formato de pílula */
+    display: flex;
+    align-items: center;
+    padding: 8px 24px 8px 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    margin-top: 10px;
+    margin-bottom: 24px;
+}
+
+/* Card: Máquina de Prêmios (Gacha) */
+.prize-machine-card {
+    background: #1a1a3a;
+    border-radius: 24px; 
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    display: block; /* Mudamos de flex para block para a imagem ditar a altura */
+    width: 100%; 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.prize-machine-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    padding: 2px;
+    background: linear-gradient(90deg, #ffde59, transparent, #a9ff71);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.prize-machine-card:hover {
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 12px 25px rgba(255, 222, 89, 0.3); 
+}
+
+.prize-machine-card:hover::before {
+    opacity: 0.8;
+}
+
+.prize-image-wrap {
+    position: relative; /* Agora não é mais absoluto, ele dita o tamanho do card! */
+    width: 100%; 
+    display: block;
+    z-index: 1;
+    line-height: 0; /* Remove aquele espaço extra de 4px de imagens */
+}
+
+.prize-bg {
+    width: 100%;
+    height: auto; /* A mágica acontece aqui: mantém proporção exata da imagem */
+    display: block;
+    object-fit: contain; 
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.prize-machine-card:hover .prize-bg {
+    transform: scale(1.05); 
+}
+
+.prize-content {
+    position: absolute; /* O texto flutua por cima da imagem */
+    inset: 0;
+    padding: 30px; 
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza verticalmente e protege as bordas */
+    gap: 12px; 
+    width: 60%; /* Cobre apenas o lado esquerdo */
+    height: 100%;
+    background: linear-gradient(90deg, rgba(26,26,58,0.95) 0%, rgba(26,26,58,0.85) 45%, transparent 100%);
+    box-sizing: border-box;
+}
+
+.prize-title {
+    color: #ffde59; 
+    font-size: 1.4rem; 
+    font-weight: 800;
+    margin: 0;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.prize-desc {
+    color: #ffffff;
+    font-size: 0.95rem; 
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+    max-width: 80%; 
+}
+
+.prize-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+    width: fit-content;
+}
+
+.prize-btn img {
+    height: 48px; 
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+}
+
+.prize-btn:hover {
+    transform: scale(1.08); 
+    filter: brightness(1.15) drop-shadow(0 4px 8px rgba(169, 255, 113, 0.5));
+}
+
+/* RESPONSIVIDADE (Mobile e Desktop) para a Máquina Gacha */
+@media (max-width: 768px) {
+    .prize-machine-card {
+        display: flex; /* Transforma o card numa coluna no celular */
+        flex-direction: column-reverse; /* Inverte a ordem: Imagem fica em cima, Textos ficam embaixo! */
+        border-radius: 18px;
+    }
+
+    .prize-machine-card:active {
+        transform: scale(0.97); /* Efeito de transição de clique no mobile (botão amassa) */
+    }
+
+    .prize-content {
+        position: relative; /* Remove o absolute, agora o texto não sobrepõe a imagem */
+        width: 100%;
+        padding: 24px 20px;
+        background: #1a1a3a; /* Cor sólida para o bloco de texto ficar embaixo */
+        align-items: center; 
+        text-align: center;
+        gap: 8px;
+        justify-content: center;
+        border-radius: 0 0 18px 18px; /* Arredonda só o final da caixa de cor de texto pra bater com o card principal */
+    }
+
+    .prize-image-wrap {
+        border-radius: 18px 18px 0 0; /* Arredonda imagem no topo */
+        overflow: hidden;
+    }
+
+    .prize-title {
+        font-size: 1.25rem;
+    }
+
+    .prize-desc {
+        max-width: 100%; 
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+        line-height: 1.4;
+    }
+
+    .prize-btn {
+        margin-top: 10px;
+        align-self: center; 
+    }
+    
+    .prize-btn img {
+        height: 48px; /* Traz o botão de volta ao tamanho legal para polegares */
+    }
+}
+
+.highlight-icon {
+    width: 76px; /* Aumentando círculo do ícone */
+    height: 76px; /* Aumentando círculo do ícone para mais simetria no header */
+    background-color: #ffe6ee; /* Rosinha claro igual da imagem */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    z-index: 2;
+    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.25); /* Leve sombra em volta */
+}
+
+.highlight-icon img {
+    width: 52px; /* Ajustando tamanho proporcional da imagem da sacola */
+    height: 52px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.highlight-info {
+    flex-grow: 1;
+    padding: 0 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.highlight-subtitle {
+    color: var(--color-accent, #a9ff71);
+    font-size: 0.65rem;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.highlight-title {
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 800;
+    margin: 0 0 0 0; /* Colado na barra para deixá-la mais no centro */
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Modificadores Especiais p/ barra RPG do Cabeçalho */
+.special-highlight-progress {
+    margin-top: 2px; /* Reduzindo espaço superior para subir a barra */
+    padding-right: 10px; /* Mais espaço para não encostar a coroa final na borda */
+}
+.special-highlight-progress .rpg-track {
+    height: 14px;
+    background-color: rgba(255, 255, 255, 0.08); /* Track mais clara para destaque */
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+.special-fill {
+    background: linear-gradient(90deg, #66ff00, #a9ff71);
+    box-shadow: 0 0 15px rgba(169, 255, 113, 0.6);
+}
+.special-node {
+    width: 28px;
+    height: 28px;
+    box-shadow: 0 0 8px rgba(169, 255, 113, 0.4);
+    background-color: #1a1a3a;
+}
+.special-node img {
+    width: 22px;
+    height: 22px;
+}
+.special-crown {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    z-index: 4;
+}
+.crown-glow {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 8px rgba(169, 255, 113, 0.8));
+    animation: crownFloat 2s ease-in-out infinite;
+}
+
+.highlight-mystery {
+    margin-left: 2px;
+    margin-top: 2px;
+}
+
+@keyframes crownFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+/* Título da Seção e Botão Info */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.info-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--color-accent, #a9ff71);
+    color: var(--color-primary-dark, #1a1a4a);
+    font-weight: 800;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    outline: none;
+}
+
+.info-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(169, 255, 113, 0.5);
+}
+
+/* Lista de Missões */
+.missions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+@media (min-width: 768px) {
+    .missions-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+    }
+
+    .section-header,
+    .missions-list > .section-title {
+        grid-column: 1 / -1; /* Ocupa toda a linha superior */
+        margin-bottom: 10px;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+}
+
+/* Item de Missão */
+.mission-item {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    position: relative;
+    padding: 15px;
+    border-radius: 20px;
+    background: rgba(26, 26, 58, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mission-item:hover {
+    transform: translateY(-3px);
+    background: rgba(26, 26, 58, 0.6);
+}
+
+.mission-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mission-title {
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Barra Gamificada estilo RPG com Bolinhas (Nodes) */
+.rpg-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.rpg-track {
+    flex-grow: 1;
+    height: 12px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 6px;
+    position: relative;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+    margin-right: 18px; /* Espaço para o selo final não vazar o card */
+}
+
+.rpg-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 10px rgba(169, 255, 113, 0.5); 
+}
+
+.rpg-nodes {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 0;
+    z-index: 2;
+}
+
+.rpg-node {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    background-color: #1a1a3a;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.rpg-node img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.rpg-node.final {
+    width: 36px;
+    height: 36px;
+    background-color: transparent;
+    z-index: 3;
+}
+
+.rpg-node.final img {
+    width: 36px;
+    height: 36px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+}
+
+.rpg-node.locked img {
+    filter: grayscale(100%) opacity(0.6);
+}
+
+.rpg-text {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #ffffff;
+    min-width: 40px;
+    text-align: right;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Ícones de Alvo com Efeitos de Liga */
+.mission-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.mission-icon img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+/* Modificadores de Aura (Glow) para as Missões */
+.tier-bronze .mission-icon img {
+    filter: drop-shadow(0 0 12px rgba(205, 127, 50, 0.6));
+}
+.tier-bronze { border-left: 5px solid #cd7f32; padding-left: 10px; }
+.tier-bronze .rpg-fill { background-color: #cd7f32; box-shadow: 0 0 10px rgba(205, 127, 50, 0.6); }
+
+.tier-prata .mission-icon img {
+    filter: drop-shadow(0 0 12px rgba(192, 192, 192, 0.6));
+}
+.tier-prata { border-left: 5px solid #c0c0c0; padding-left: 10px; }
+.tier-prata .rpg-fill { background-color: #c0c0c0; box-shadow: 0 0 10px rgba(192, 192, 192, 0.6); }
+
+.tier-ouro .mission-icon img {
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+}
+.tier-ouro { border-left: 5px solid #ffd700; padding-left: 10px; }
+.tier-ouro .rpg-fill { background-color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+
+.tier-diamante .mission-icon img {
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.8));
+}
+.tier-diamante { border-left: 5px solid #00ffff; padding-left: 10px; }
+.tier-diamante .rpg-fill { background-color: #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.6); }
+
+/* Missões Bloqueadas (Locked) */
+.tier-locked {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-left: 5px solid #555566;
+    filter: grayscale(80%);
+}
+.tier-locked:hover {
+    transform: none; /* Remove efeito de pular */
+    background: rgba(26, 26, 58, 0.4);
+}
+.tier-locked .mission-title {
+    color: #8d92bc;
+    margin-bottom: 2px;
+}
+.tier-locked .mission-icon img {
+    filter: none;
+}
+.tier-locked .rpg-progress-container {
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.tier-locked .rpg-track {
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    width: calc(100% - 18px); /* Garante largura 100% para o tracker alinhando os nós de forma simétrica */
+    flex: none;
+}
+.tier-locked .rpg-text {
+    color: #a0a5cc;
+    text-shadow: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-align: left;
+    width: 100%;
+    margin-top: -2px;
+}
+
+/* Modal de XP Recompensas */
+.xp-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.xp-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.xp-modal-content {
+    background-color: var(--color-primary, #27275e);
+    width: 90%;
+    max-width: 400px;
+    border-radius: 24px;
+    padding: 30px 20px;
+    position: relative;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: scale(0.8) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.xp-modal-overlay.active .xp-modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.close-modal-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.xp-modal-title {
+    color: white;
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.xp-modal-desc {
+    color: #a0a5cc;
+    font-size: 0.9rem;
+    text-align: center;
+    margin: 0 0 25px 0;
+    line-height: 1.4;
+}
+
+.xp-rewards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.xp-reward-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(26, 26, 58, 0.6);
+    padding: 12px 15px;
+    border-radius: 16px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.xp-reward-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.xp-reward-icon img {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+.xp-reward-name {
+    color: white;
+    font-weight: 600;
+    font-size: 1.05rem;
+    flex-grow: 1;
+}
+
+.xp-reward-value {
+    font-weight: 800;
+    font-size: 1.15rem;
+    padding: 6px 12px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Cores das Recompensas */
+.color-bronze { color: #cd7f32; box-shadow: 0 0 10px rgba(205, 127, 50, 0.1); }
+.color-prata { color: #c0c0c0; box-shadow: 0 0 10px rgba(192, 192, 192, 0.1); }
+.color-ouro { color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
+.color-diamante { color: #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.1); text-shadow: 0 0 8px rgba(0, 255, 255, 0.4); }

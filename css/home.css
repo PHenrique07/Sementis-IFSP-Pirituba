@@ -71,6 +71,10 @@
     width: auto;
 }
 
+.header-logo-link {
+    display: inline-flex;
+}
+
 .user-stats {
     display: flex;
     align-items: center;
@@ -859,6 +863,11 @@
 
 .sidebar-logo {
     display: none;
+}
+
+.sidebar-logo a {
+    display: block;
+    cursor: pointer;
 }
 
 .nav-items-wrapper {

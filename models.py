@@ -1,8 +1,11 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
 from datetime import datetime
+from datetime import date
+from sqlalchemy import Column, JSON
 
 # 1. Tabela de Usuário (Mantida)
+
 class Usuario(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nome: str
@@ -16,6 +19,16 @@ class Usuario(SQLModel, table=True):
     vidas: int = Field(default=5)   
     ofensiva: int = Field(default=0) 
     xp: int = Field(default=0)
+    freezes: int = Field(default=0)
+    # Ligas / Ranking
+    # 1 = Bronze, 2 = Prata, 3 = Ouro...
+    liga_id: int = Field(default=1) 
+    # Esse é o XP que vai ser zerado toda semana
+    xp_semanal: int = Field(default=0)
+
+
+    #campo do avatar do usuário
+    avatar_atual_id: int | None = Field(default=None, foreign_key="itemloja.id")
 
 # 2. Tabela de Módulos (ex: Módulo 1 - Sustentabilidade Básica)
 class Modulo(SQLModel, table=True):
@@ -53,3 +66,62 @@ class ProgressoUsuario(SQLModel, table=True):
     usuario_id: int = Field(foreign_key="usuario.id")
     atividade_id: int = Field(foreign_key="atividade.id") # Agora o progresso é por bolinha!
     data_conclusao: datetime = Field(default_factory=datetime.utcnow)
+
+
+# 6. Tabela da Loja (Itens que podem ser comprados)
+class ItemLoja(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    nome: str
+    descricao: str
+    preco: int
+    imagem: str | None = None # Caminho para o ícone do item
+    tipo: str = Field(default="cosmetico") # Pode ser "cosmetico", "poder", "avatar"
+
+# 7. Tabela de Inventário (O que cada usuário comprou)
+class InventarioUsuario(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    usuario_id: int = Field(foreign_key="usuario.id")
+    item_id: int = Field(foreign_key="itemloja.id")
+    data_compra: datetime = Field(default_factory=datetime.utcnow)
+    equipado: bool = Field(default=False) # Se o usuário está usando o item no momento
+
+
+# 8. Catálogo de Missões (A vitrine de todas as missões que existem no sementis)
+class Missao(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    titulo: str # Ex: "Complete sua próxima lição"
+    meta: int # Ex: 2 (quantidade de vezes que tem que fazer a ação)
+    xp_recompensa: int = Field(default=50)
+    moedas_recompensa: int = Field(default=10)
+    
+    # Uma tag interna para o seu CRUD saber quando essa missão deve andar
+    # Ex: "passar_fase", "login_diario", "acerto_perfeito"
+    tipo_acao: str 
+
+# 9. Progresso Diário (O save do aluno: quais missões ele tirou hoje e como ele tá indo)
+class ProgressoMissao(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    usuario_id: int = Field(foreign_key="usuario.id")
+    missao_id: int = Field(foreign_key="missao.id")
+    
+    # Salva o dia exato. Assim, meia-noite o sistema sabe que essas missões caducaram.
+    data_missao: date = Field(default_factory=date.today)
+    
+    # É aqui que o "1/2" ou "2/2" acontece:
+    progresso_atual: int = Field(default=0) 
+    
+    # True = Ele já bateu a meta e o XP já caiu na conta.
+    concluida: bool = Field(default=False)
+
+# 10. Tabela de Questões (conteúdo do Quiz)
+class Questao(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    
+    # Liga essa questão à bolinha da trilha (Atividade)
+    atividade_id: int = Field(foreign_key="atividade.id")
+    
+    # Diz pro JS do Vini qual tela do Tom ele tem que carregar
+    tipo_layout: str 
+    
+    # guarda o JSON inteiro (imagem, pergunta, respostas)
+    conteudo: dict = Field(default_factory=dict, sa_column=Column(JSON))
