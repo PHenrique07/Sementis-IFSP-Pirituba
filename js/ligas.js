@@ -42,6 +42,9 @@ if (dadosUsuario) {
     if (campoSequencia) campoSequencia.textContent = sequencia;
     if (campoVida) campoVida.textContent = vida;
     if (campoLiga) campoLiga.textContent = `Liga ${ligaInicial}`; 
+} else {
+    // Redireciona o usuário para o login caso não esteja autenticado
+    window.location.href = '/login.html';
 }
 
 // ========================================================
@@ -78,7 +81,8 @@ function updateLeagueHeader(league) {
 // ========================================================
 const buscarRankingAPI = async (ligaId) => {
     const tempoReal = new Date().getTime();
-    const rota = `http://127.0.0.1:5000/ranking/${ligaId}?v=${tempoReal}`; 
+    // Caminho relativo para funcionar tanto no PC quanto no Deploy
+    const rota = `/ranking/${ligaId}?v=${tempoReal}`; 
     
     try {
         const response = await fetch(rota, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
@@ -152,7 +156,7 @@ const buscarRankingAPI = async (ligaId) => {
     }
 };
 
-/// ========================================================
+// ========================================================
 // 4. INICIALIZAÇÃO E CLIQUES
 // ========================================================
 document.addEventListener('DOMContentLoaded', () => {
