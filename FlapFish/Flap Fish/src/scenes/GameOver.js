@@ -26,9 +26,7 @@ export class GameOver extends Phaser.Scene{
         voltarBotao.setInteractive({ cursor: 'pointer' });
 
         voltarBotao.on('pointerdown', () => {
-            // Faz o navegador sair do jogo e voltar para o site das trilhas
-            // O "../" serve para sair da pasta do jogo e achar o trilhas.html do lado de fora
-            window.location.href = '../trilhas.html'; 
+            window.close(); 
         });
     }
 }
