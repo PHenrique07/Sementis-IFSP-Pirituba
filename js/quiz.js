@@ -11,6 +11,59 @@ let selectedGridItems = new Set();
 let normalSelection = null;
 let normalCorrect = false;
 
+function shuffleArray(items) {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function shuffleQuestionOptions(questao) {
+  if (!questao?.conteudo?.opcoes || !Array.isArray(questao.conteudo.opcoes)) {
+    return questao;
+  }
+
+  return {
+    ...questao,
+    conteudo: {
+      ...questao.conteudo,
+      opcoes: shuffleArray(questao.conteudo.opcoes)
+    }
+  };
+}
+
+function escapeHtml(text) {
+  if (typeof text !== "string") return "";
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function renderFeedbackSource(fonte, fonteUrl) {
+  if (!fonte) return "";
+
+  const fonteLimpa = escapeHtml(fonte);
+  const urlValida =
+    typeof fonteUrl === "string" && /^https?:\/\//i.test(fonteUrl.trim())
+      ? fonteUrl.trim()
+      : "";
+
+  if (!urlValida) {
+    return `<div class="feedback-source">Fonte pedagógica: ${fonteLimpa}</div>`;
+  }
+
+  return `
+    <a class="feedback-source" href="${escapeHtml(urlValida)}" target="_blank" rel="noopener noreferrer">
+      Fonte pedagógica: ${fonteLimpa}
+    </a>
+  `;
+}
+
 // ── TEMAS POR CONTEÚDO ──────────────────────────────────────────
 const quizThemes = [
   {
@@ -56,6 +109,17 @@ const quizThemes = [
     icon: "assets/tarefas/tarefa_basico1.png",
     scene: "floresta",
     intro: "Fortaleça as bases para entender as próximas trilhas."
+  },
+  {
+    key: "clima",
+    words: ["clima", "climaticas", "estufa", "aquecimento", "carbono", "emissoes", "ipcc"],
+    title: "Desafio Climático",
+    label: "Missão clima",
+    accent: "#ff6b6b",
+    soft: "#ffe3e3",
+    icon: "assets/tarefas/tarefa_clima.png",
+    scene: "floresta",
+    intro: "Enfrente as causas e impactos das mudanças no clima."
   }
 ];
 
@@ -103,7 +167,7 @@ async function openQuizModal() {
       if (typeof questao.conteudo === "string") {
         questao.conteudo = JSON.parse(questao.conteudo);
       }
-      return questao;
+      return shuffleQuestionOptions(questao);
     });
 
     indiceQuestaoAtual = 0;
@@ -305,6 +369,9 @@ function showFeedback(isCorrect) {
   const checkBtn = document.getElementById("quizCheckBtn");
   const questaoAtual = questoesAtuais[indiceQuestaoAtual];
   const curiosity = questaoAtual.conteudo.curiosidade || "Toda escolha sustentável fica mais forte quando você entende o motivo por trás dela.";
+  const sourceHtml = isCorrect
+    ? renderFeedbackSource(questaoAtual.conteudo.fonte, questaoAtual.conteudo.fonte_url)
+    : "";
 
   footer.className = isCorrect ? "quiz-footer correct-mode" : "quiz-footer wrong-mode";
   feedback.innerHTML = `
@@ -315,6 +382,7 @@ function showFeedback(isCorrect) {
       <div class="feedback-title">${isCorrect ? "Boa decisão!" : "Ajuste de rota"}</div>
       <div class="feedback-subtitle">${isCorrect ? "Você protegeu a missão e ganhou impulso." : "Leia a dica e tente de novo com outro olhar."}</div>
       <div class="feedback-curiosity">${curiosity}</div>
+      ${sourceHtml}
     </div>
   `;
 

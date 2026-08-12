@@ -1,6 +1,7 @@
 import json
 import os
-from sqlmodel import Session, SQLModel, create_engine, select
+import sys
+from sqlmodel import Session, SQLModel, create_engine, delete, select
 from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao
 from passlib.hash import argon2
 
@@ -10,13 +11,127 @@ sqlite_url = f"sqlite:///{DB_PATH}"
 engine = create_engine(sqlite_url, echo=False)
 PEPPER = "Sementis_nao_esta_com_nada_go_Gratia!"
 
+
+def carregar_conteudo_educacional():
+    """Carrega e valida a fonte única do conteúdo pedagógico."""
+    with open(os.path.join(BASE_DIR, "questoes.json"), "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def criar_questoes_db(dados_atividade, atividade_id):
+    """Converte as questões do JSON para os registros do banco."""
+    questoes_db = []
+    for q_info in dados_atividade["questoes"]:
+        conteudo = {
+            "pergunta": q_info["pergunta"],
+            "opcoes": q_info["opcoes"],
+        }
+        for campo in ("imagem_url", "curiosidade", "fonte", "fonte_url"):
+            if campo in q_info:
+                conteudo[campo] = q_info[campo]
+
+        questoes_db.append(Questao(
+            atividade_id=atividade_id,
+            tipo_layout=q_info["tipo"],
+            conteudo=conteudo,
+        ))
+    return questoes_db
+
+
+def sincronizar_conteudo_educacional():
+    """Atualiza somente módulos, atividades e questões, preservando usuários e progresso."""
+    try:
+        conteudo_educacional = carregar_conteudo_educacional()
+    except Exception as e:
+        print(f"❌ Erro ao ler o arquivo 'questoes.json': {e}")
+        return
+
+    SQLModel.metadata.create_all(engine)
+    with Session(engine) as session:
+        for dados_modulo in conteudo_educacional:
+            dados_modulo_json = dados_modulo["modulo"]
+            modulo = session.exec(
+                select(Modulo).where(Modulo.ordem == dados_modulo_json["ordem"])
+            ).first()
+
+            if not modulo:
+                modulo = Modulo(
+                    nome=dados_modulo_json["nome"],
+                    descricao=dados_modulo_json["descricao"],
+                    ordem=dados_modulo_json["ordem"],
+                    imagem_capa=dados_modulo_json.get("imagem_capa"),
+                )
+                session.add(modulo)
+                session.flush()
+
+            modulo.nome = dados_modulo_json["nome"]
+            modulo.descricao = dados_modulo_json["descricao"]
+            modulo.imagem_capa = dados_modulo_json.get("imagem_capa")
+
+            trilha = session.exec(
+                select(Trilha)
+                .where(Trilha.modulo_id == modulo.id)
+                .order_by(Trilha.ordem)
+            ).first()
+            if not trilha:
+                trilha = Trilha(nome=dados_modulo["trilha"], ordem=1, modulo_id=modulo.id)
+                session.add(trilha)
+                session.flush()
+
+            trilha.nome = dados_modulo["trilha"]
+            atividades = session.exec(
+                select(Atividade)
+                .where(Atividade.trilha_id == trilha.id)
+                .where(Atividade.tipo == "quiz")
+                .order_by(Atividade.ordem)
+            ).all()
+
+            atividades_por_ordem = {atividade.ordem: atividade for atividade in atividades}
+            for ordem, dados_atividade in enumerate(dados_modulo["atividades"], start=1):
+                atividade = atividades_por_ordem.get(ordem)
+                if not atividade:
+                    atividade = Atividade(
+                        nome=dados_atividade["nome"],
+                        tipo=dados_atividade["tipo"],
+                        ordem=ordem,
+                        xp_recompensa=100,
+                        moedas_recompensa=25,
+                        trilha_id=trilha.id,
+                    )
+                    session.add(atividade)
+                    session.flush()
+
+                atividade.nome = dados_atividade["nome"]
+                atividade.tipo = dados_atividade["tipo"]
+                session.exec(delete(Questao).where(Questao.atividade_id == atividade.id))
+                session.add_all(criar_questoes_db(dados_atividade, atividade.id))
+
+            desafio_final = session.exec(
+                select(Atividade)
+                .where(Atividade.trilha_id == trilha.id)
+                .where(Atividade.ordem == 5)
+            ).first()
+            if not desafio_final:
+                session.add(Atividade(
+                    nome="Desafio Final",
+                    tipo="minigame",
+                    ordem=5,
+                    xp_recompensa=300,
+                    moedas_recompensa=100,
+                    trilha_id=trilha.id,
+                ))
+
+            session.commit()
+
+    print("✅ Conteúdo educacional sincronizado sem alterar usuários ou progresso.")
+
 def semear_banco():
     SQLModel.metadata.create_all(engine)
     
     with Session(engine) as session:
         if session.exec(select(Usuario)).first():
             print("🌱 O banco já possui dados. Sementeira cancelada para evitar duplicatas.")
-            print("⚠️ DICA: Apague o arquivo 'sementis.db' e rode o seeds.py novamente.")
+            print("⚠️ DICA: Para atualizar apenas as questões, rode: python seeds.py --atualizar-conteudo")
             return
 
         print("🚜 Plantando o currículo educacional completo do Sementis...")
@@ -104,8 +219,7 @@ def semear_banco():
         # 3. O NOVO MOTOR DE INSERÇÃO (Lendo do JSON)
         # ====================================================================
         try:
-            with open(os.path.join(BASE_DIR, 'questoes.json'), 'r', encoding='utf-8') as file:
-                conteudo_educacional = json.load(file)
+            conteudo_educacional = carregar_conteudo_educacional()
         except Exception as e:
             print(f"❌ Erro ao ler o arquivo 'questoes.json'. Certifique-se de que ele está na mesma pasta. Erro: {e}")
             return
@@ -115,7 +229,8 @@ def semear_banco():
             modulo = Modulo(
                 nome=dados_modulo["modulo"]["nome"], 
                 descricao=dados_modulo["modulo"]["descricao"], 
-                ordem=dados_modulo["modulo"]["ordem"]
+                ordem=dados_modulo["modulo"]["ordem"],
+                imagem_capa=dados_modulo["modulo"].get("imagem_capa")
             )
             session.add(modulo)
             session.commit()
@@ -139,24 +254,7 @@ def semear_banco():
                 session.add(atv)
                 session.commit()
 
-                # Cria as Questões
-                questoes_db = []
-                for q_info in dados_atividade["questoes"]:
-                    conteudo = {
-                        "pergunta": q_info["pergunta"],
-                        "opcoes": q_info["opcoes"]
-                    }
-                    if "imagem_url" in q_info:
-                        conteudo["imagem_url"] = q_info["imagem_url"]
-                    if "curiosidade" in q_info:
-                        conteudo["curiosidade"] = q_info["curiosidade"]
-
-                    questoes_db.append(Questao(
-                        atividade_id=atv.id,
-                        tipo_layout=q_info["tipo"],
-                        conteudo=conteudo
-                    ))
-                session.add_all(questoes_db)
+                session.add_all(criar_questoes_db(dados_atividade, atv.id))
                 ordem_fase += 1
 
             # Cria a Fase 5 (Minigame de Chefe) no final de cada módulo
@@ -174,4 +272,7 @@ def semear_banco():
         print("✅ Sucesso Absoluto! Banco de dados educacional populado usando JSON!")
 
 if __name__ == "__main__":
-    semear_banco()
+    if "--atualizar-conteudo" in sys.argv:
+        sincronizar_conteudo_educacional()
+    else:
+        semear_banco()

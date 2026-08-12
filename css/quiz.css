@@ -789,6 +789,22 @@ body.quiz-lock-scroll {
   border-left: 3px solid rgba(255, 255, 255, 0.12);
 }
 
+.feedback-source {
+  display: inline-block;
+  margin-top: 8px;
+  color: #d6ffbd;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.feedback-source:hover,
+.feedback-source:focus-visible {
+  color: #ffffff;
+}
+
 /* ============================================================
    12 · TELA DE RECOMPENSA — Medalha + estatísticas + confete
    ============================================================ */

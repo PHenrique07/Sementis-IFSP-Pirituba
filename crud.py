@@ -347,6 +347,11 @@ def buscar_questoes_por_atividade(session: Session, id_atividade: int):
             "conteudo": questao.conteudo # O JSON salvo
         })
         
+    import random
+    if len(lista_pronta) > 5:
+        lista_pronta = random.sample(lista_pronta, 5)
+    else:
+        random.shuffle(lista_pronta)
     return lista_pronta
 
 
