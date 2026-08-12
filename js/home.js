@@ -40,45 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== Atualiza Dados do Usuário no Dashboard =====
+// ===== Atualiza Dados do Usuário no Dashboard =====
 function carregarDadosUsuario() {
-    // 1. Puxa a gaveta
-    const usuarioSalvo = localStorage.getItem('user');
-
-    if (usuarioSalvo) {
-        const dadosUsuario = JSON.parse(usuarioSalvo);
-
-        // 2. Extrai as informações que vieram do Python
-        const nome = dadosUsuario.nome;
-        const moedas = dadosUsuario.moedas;
-        const sequencia = dadosUsuario.ofensiva; 
-        const vida = dadosUsuario.vidas;         
-
-        // 3. Seleciona os lugares na tela (Ajustado para o HTML real do Tom)
-        const campoNome = document.querySelector('.user-name');
-        
-        // No HTML, ofensiva, moedas e vidas usam a mesma classe (.stat-value)
-        // Então usamos querySelectorAll para pegar todos eles em forma de lista [0, 1, 2]
-        const estatisticas = document.querySelectorAll('.stat-value');
-
-        // 4. Altera os valores se os campos existirem na página
-        if (campoNome && nome) campoNome.textContent = nome;
-        
-        // Verifica se a lista de estatísticas achou os 3 itens lá no topo
-        if (estatisticas.length >= 3) {
-            // estatisticas[0] é o primeiro ícone (Fogo/Sequência)
-            if (sequencia !== undefined) estatisticas[0].textContent = sequencia;
-            
-            // estatisticas[1] é o segundo ícone (Moedas)
-            if (moedas !== undefined) estatisticas[1].textContent = moedas;
-            
-            // estatisticas[2] é o terceiro ícone (Coração/Vidas)
-            if (vida !== undefined) estatisticas[2].textContent = vida;
-        }
-
-        console.log("Dashboard Sementis sincronizado com sucesso!");
-    } else {
-        console.warn("Nenhum usuário encontrado no Local Storage.");
-    }
+    // FUNÇÃO NEUTRALIZADA! 
+    // O carregamento do Header e do Perfil agora é feito exclusivamente 
+    // pela função atualizarBarraDeXP() dentro do main.js, 
+    // que busca os dados em tempo real direto da API do banco de dados.
+    console.log("Deixando o main.js cuidar do carregamento dos dados do usuário...");
 }
 
 // ===== Bottom Navigation =====

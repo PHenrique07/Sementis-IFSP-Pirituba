@@ -3,7 +3,7 @@ from datetime import date
 import os
 # Importando todas as tabelas do models.py
 from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario
-
+from datetime import date, timedelta
 import math
 
 # 1. Sqlite local (sempre no mesmo lugar do projeto)
@@ -22,12 +22,12 @@ def criar_tabelas():
 # ==========================================
 
 # 3. Função para inserir um usuário
-def inserir_usuario(nome: str, email: str, idade: int, senha: str, tipo_usuario: str):
+def inserir_usuario(nome: str, email: str, data_nascimento: date, senha: str, tipo_usuario: str):
     with Session(engine) as session:
         novo_usuario = Usuario(
             nome=nome, 
             email=email, 
-            idade=idade, 
+            data_nascimento=data_nascimento, 
             senha=senha,
             tipo_usuario=tipo_usuario
         )
@@ -88,7 +88,6 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
         )
     ).first()
     
-    
     primeira_vez = False 
     
     try:
@@ -114,7 +113,10 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
             
             mensagem = f"Fase concluída! Você ganhou {atividade.xp_recompensa} XP."
 
-        # Salva tudo de uma vez só no banco de dados (XP, moedas e progresso)
+        # === ATUALIZAÇÃO DA OFENSIVA AQUI ===
+        # Chama a função que criamos para gerenciar os dias seguidos
+        nova_ofensiva = atualizar_ofensiva(session, id_usuario, completou_tarefa=True)
+        # Salva tudo de uma vez só no banco de dados (XP, moedas, progresso e ofensiva)
         session.add(usuario)
         session.commit()
         
@@ -125,6 +127,7 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
             "xp_atual": usuario.xp, 
             "moedas_atuais": usuario.moedas,
             "vidas_atuais": usuario.vidas, # pra atualizar o Header
+            "ofensiva_atual": nova_ofensiva, # <-- Retornando a ofensiva para o front-end
             "primeira_vez": primeira_vez
         }
 
@@ -132,7 +135,6 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
         # Se der qualquer erro no processo, cancela tudo para não bugar o XP
         session.rollback()
         return {"status": "erro", "mensagem": f"Erro interno: {str(e)}"}
-
 
 # 8. CÓDIGO LEGADO -> Ranking Geral de todos os usuários do site
 #Desativado para substituir pelo ranking por liga
@@ -415,3 +417,45 @@ def listar_inventario(session: Session, usuario_id: int):
             "equipado": inv.equipado
         })
     return lista_inventario
+
+
+#20. Atualizar a ofensiva do usuário com base na data da última atividade
+def atualizar_ofensiva(session: Session, id_usuario: int, completou_tarefa: bool = False):
+    """Atualiza ou zera a ofensiva do usuário com base na data da última atividade."""
+    usuario = session.get(Usuario, id_usuario)
+    if not usuario:
+        return 0
+
+    hoje = date.today()
+    ontem = hoje - timedelta(days=1)
+
+    # 1. Se nunca jogou na vida
+    if usuario.ultima_atividade is None:
+        if completou_tarefa:
+            usuario.ofensiva = 1
+            usuario.ultima_atividade = hoje
+        # Se for só o login (completou_tarefa = False), mantém 0 e não altera a data
+
+    else:
+        # 2. Se a função foi chamada porque ele venceu uma fase
+        if completou_tarefa:
+            if usuario.ultima_atividade == ontem:
+                usuario.ofensiva += 1 # Combo!
+            elif usuario.ultima_atividade < ontem:
+                usuario.ofensiva = 1  # Quebrou a sequência, recomeça
+            # Se for hoje, não soma, mas mantém o que tem
+            
+            usuario.ultima_atividade = hoje # Atualiza o "save" dele
+            
+        # 3. Se a função foi chamada só para carregar o perfil (Login)
+        else:
+            if usuario.ultima_atividade < ontem:
+                # O aluno ficou mais de 1 dia sem jogar. Zera pra mostrar no front-end.
+                # Nota: Não alteramos a ultima_atividade aqui, senão ele ganha um "dia grátis".
+                usuario.ofensiva = 0 
+
+    session.add(usuario)
+    session.commit()
+    session.refresh(usuario)
+    
+    return usuario.ofensiva

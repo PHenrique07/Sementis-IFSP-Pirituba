@@ -4,7 +4,7 @@ from flask_cors import CORS
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
     registrar_conclusao_atividade, listar_modulos, listar_trilhas_do_modulo,
     listar_atividades_da_trilha, buscar_ranking_por_liga, atualizar_progresso_missao,
-    sortear_missoes_diarias, calcular_nivel, buscar_questoes_por_atividade, listar_progresso_geral_modulos) 
+    sortear_missoes_diarias, calcular_nivel, buscar_questoes_por_atividade, listar_progresso_geral_modulos, atualizar_ofensiva) 
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -327,28 +327,6 @@ def missoes():
             
         return jsonify(lista_missoes), 200
     
-@app.route('/api/perfil', methods=['GET'])
-@token_obrigatorio
-def obter_perfil():
-    id_usuario = request.usuario_id
-    with Session(engine) as session:
-        usuario = session.get(Usuario, id_usuario)
-        if not usuario:
-            return jsonify({"erro": "Usuário não encontrado"}), 404
-        
-        info_nivel = calcular_nivel(usuario.xp)
-        return jsonify({
-            "nome": usuario.nome,
-            "ofensiva": usuario.ofensiva,
-            "xp_total": usuario.xp,
-            "liga_id": usuario.liga_id,
-            "progresso_nivel": {
-                "nivel_atual": info_nivel["nivel"],
-                "xp_no_nivel": info_nivel["xp_atual_no_nivel"],
-                "xp_proximo_nivel": info_nivel["xp_necessario_proximo"],
-                "porcentagem_barra": info_nivel["porcentagem"]
-            }
-        }), 200
 
 @app.route('/api/modulos/<int:modulo_id>/trilhas', methods=['GET'])
 @token_obrigatorio
@@ -461,7 +439,37 @@ def serve_html(filename):
     
     return f"Página não encontrada: {filename}", 404
 
+@app.route('/api/perfil', methods=['GET'])
+@token_obrigatorio
+def obter_perfil():
+    id_usuario = request.usuario_id
+    with Session(engine) as session:
+        # === A MÁGICA ACONTECE AQUI ===
+        # Executa a regra de negócio do Pedro para atualizar/zerar a ofensiva
+        # ANTES de carregar o perfil para a tela.
+        atualizar_ofensiva(session, id_usuario) 
 
+        usuario = session.get(Usuario, id_usuario)
+        if not usuario:
+            return jsonify({"erro": "Usuário não encontrado"}), 404
+
+        info_nivel = calcular_nivel(usuario.xp)
+        return jsonify({
+            "nome": usuario.nome,
+            "ofensiva": usuario.ofensiva,
+            "moedas": usuario.moedas,     
+            "vidas": usuario.vidas,        # <-- ADICIONE ISSO
+            "xp_total": usuario.xp,
+            "liga_id": usuario.liga_id,
+            "progresso_nivel": {
+                "nivel_atual": info_nivel["nivel"],
+                "xp_no_nivel": info_nivel["xp_atual_no_nivel"],
+                "xp_proximo_nivel": info_nivel["xp_necessario_proximo"],
+                "porcentagem_barra": info_nivel["porcentagem"]
+            }
+        }), 200
+
+    
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)
     app.run(debug=True)

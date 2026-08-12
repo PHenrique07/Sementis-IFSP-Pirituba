@@ -11,7 +11,7 @@ class Usuario(SQLModel, table=True):
     nome: str
     email: str = Field(unique=True, index=True)
     senha: str
-    idade: int
+    data_nascimento: date
     tipo_usuario: str
     
     # Gamificação
@@ -25,6 +25,8 @@ class Usuario(SQLModel, table=True):
     liga_id: int = Field(default=1) 
     # Esse é o XP que vai ser zerado toda semana
     xp_semanal: int = Field(default=0)
+
+    ultima_atividade: date | None = Field(default=None)
 
 
     #campo do avatar do usuário
