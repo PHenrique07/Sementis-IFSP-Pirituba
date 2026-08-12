@@ -26,6 +26,8 @@ class Usuario(SQLModel, table=True):
     # Esse é o XP que vai ser zerado toda semana
     xp_semanal: int = Field(default=0)
 
+    ultima_atividade: date | None = Field(default=None)
+
 
     #campo do avatar do usuário
     avatar_atual_id: int | None = Field(default=None, foreign_key="itemloja.id")
