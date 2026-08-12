@@ -22,13 +22,5 @@ export class GameOver extends Phaser.Scene{
             this.scene.start('Game');
         });
         // Criando um botão de voltar para a trilha
-        let voltarBotao = this.add.text(400, 550, 'Voltar para a Trilha', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
-        voltarBotao.setInteractive({ cursor: 'pointer' });
-
-        voltarBotao.on('pointerdown', () => {
-            // Faz o navegador sair do jogo e voltar para o site das trilhas
-            // O "../" serve para sair da pasta do jogo e achar o trilhas.html do lado de fora
-            window.location.href = '../trilhas.html'; 
-        });
     }
 }
