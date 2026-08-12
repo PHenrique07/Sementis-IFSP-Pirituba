@@ -353,3 +353,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.finalizarTrilha = finalizarTrilha;
 });
+//Parte da verificação de ofensiva do dia, para manter a sequencia do usuario
+document.addEventListener('DOMContentLoaded', () => {
+    verificarOfenciva();
+    async function verificarOfenciva(){
+        const rota = 'rota para a API muito foda e do balacubaco que vai falar se o usuario fez a ofenciva do dia passo e de hoje';
+        const response = await fetch(rota, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Erro na API de verificar ofensiva');
+        const dados = await response.json();
+        const ofensivaOntem=dados.ofensivaOntem;//mudar o nome da variavel para o que a api retornar
+        const ofensivaHoje=dados.ofensivaHoje;//mudar o nome da variavel para o que a api retornar
+        const podeFazerOfensiva=dados.podeFazerOfensiva;//mudar o nome da variavel para o que a api retornar
+        const contadorOfensiva=document.getElementById('perfil-user-streak');
+        if(ofensivaOntem && !ofensivaHoje){
+            alert("Você não fez a ofensiva de hoje! Lembre-se de fazer para manter sua sequência!");
+        }
+        if(!ofensivaOntem && !ofensivaHoje){
+            alert("Você não fez a ofensiva de ontem e nem a de hoje! Você perdeu a sequência!");
+            contadorOfensiva.textContent = 0;
+        }
+        else if(ofensivaOntem && ofensivaHoje){
+            contadorOfensiva.textContent = parseInt(contadorOfensiva.textContent) + 1;
+        }
+        else if(!ofensivaOntem && ofensivaHoje){
+            contadorOfensiva.textContent = 1;
+        }
+        mudarDadosOfensiva(contadorOfensiva, podeFazerOfensiva);
+    }
+})
+async function mudarDadosOfensiva(contadorOfensiva, podeFazerOfensiva){
+    if(contadorOfensiva.textContent>0 && podeFazerOfensiva){
+        const dados = { ofensivaHoje: true, contadorOfensiva: parseInt(contadorOfensiva.textContent), podeFazerOfenciava: false};
+    }
+    else{
+        const dados = {ofensivaHoje: false, contadorOfensiva: 0};
+    }
+    try {
+    const resposta = await fetch("'rota para enviar à API muito foda e do balacubaco que vai falar se o usuario fez a ofenciva do dia passo e de hoje'", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dados)
+    });
+    console.log("Dados enviados para a API:", dados);
+    } catch (erro) {
+    console.error("Erro:", erro);
+  }
+
+}
