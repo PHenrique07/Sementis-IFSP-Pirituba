@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import date, timedelta
 from sqlmodel import Session, SQLModel, create_engine, select
 from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao
 from passlib.hash import argon2
@@ -21,6 +22,11 @@ def semear_banco():
 
         print("🚜 Plantando o currículo educacional completo do Sementis...")
         
+        # Datas simuladas para testar a mecânica de Ofensiva
+        hoje = date.today()
+        ontem = hoje - timedelta(days=1)
+        antes_de_ontem = hoje - timedelta(days=2)
+        
         # Hashes de senha
         senha_padrao = argon2.using(memory_cost=65536, rounds=4, parallelism=4).hash("123456" + PEPPER)
         senha_pedro = argon2.using(memory_cost=65536, rounds=4, parallelism=4).hash("1073@Pedro" + PEPPER)
@@ -29,13 +35,13 @@ def semear_banco():
         # 1. RANKING E USUÁRIOS
         # ====================================================================
         usuarios = [
-            # Seu usuário de teste blindado
-            Usuario(nome="Pedro Henrique Santos da Silva", email="pedroteste@gmail.com", idade=19, senha=senha_pedro, tipo_usuario="aluno", xp=3200, moedas=500, xp_semanal=950, liga_id=1),
+            # Seu usuário de teste blindado (Jogou ontem, ofensiva 5 -> Vai virar 6 quando jogar hoje)
+            Usuario(nome="Pedro Henrique Santos da Silva", email="pedroteste@gmail.com", idade=19, senha=senha_pedro, tipo_usuario="aluno", xp=3200, moedas=500, xp_semanal=950, liga_id=1, ofensiva=5, ultima_atividade=ontem),
             
-            # Restante dos usuários
-            Usuario(nome="Lucas", email="lucas@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=28588880, moedas=300, xp_semanal=820, liga_id=1),
-            Usuario(nome="Vini", email="vini@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=2900000, moedas=350, xp_semanal=700, liga_id=1),
-            Usuario(nome="Ster Leite", email="ster@leite.com", idade=22, senha=senha_padrao, tipo_usuario="aluno", xp=0, moedas=100, xp_semanal=0, liga_id=1),
+            # Restante dos usuários com datas diferentes para teste
+            Usuario(nome="Lucas", email="lucas@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=28588880, moedas=300, xp_semanal=820, liga_id=1, ofensiva=12, ultima_atividade=hoje),
+            Usuario(nome="Vini", email="vini@ifsp.edu.br", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=2900000, moedas=350, xp_semanal=700, liga_id=1, ofensiva=3, ultima_atividade=antes_de_ontem), # Vai zerar a ofensiva
+            Usuario(nome="Ster Leite", email="ster@leite.com", idade=22, senha=senha_padrao, tipo_usuario="aluno", xp=0, moedas=100, xp_semanal=0, liga_id=1, ofensiva=0, ultima_atividade=None),
             Usuario(nome="Novato", email="novato@ifsp.edu.br", idade=18, senha=senha_padrao, tipo_usuario="aluno", xp=150, moedas=20, xp_semanal=300, liga_id=1),
             Usuario(nome="Ana", email="ana@teste.com", idade=19, senha=senha_padrao, tipo_usuario="aluno", xp=100, moedas=10, xp_semanal=280, liga_id=1),
             Usuario(nome="Bia", email="bia@teste.com", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=100, moedas=10, xp_semanal=260, liga_id=1),
@@ -48,7 +54,7 @@ def semear_banco():
             Usuario(nome="Igor", email="igor@teste.com", idade=21, senha=senha_padrao, tipo_usuario="aluno", xp=100, moedas=10, xp_semanal=120, liga_id=1),
             Usuario(nome="João", email="joao@teste.com", idade=19, senha=senha_padrao, tipo_usuario="aluno", xp=100, moedas=10, xp_semanal=100, liga_id=1),
             
-            Usuario(nome="Foltest", email="well@ifsp.edu.br", idade=67, senha=senha_padrao, tipo_usuario="aluno", xp=67, moedas=67, xp_semanal=1500, liga_id=2),
+            Usuario(nome="Foltest", email="well@ifsp.edu.br", idade=67, senha=senha_padrao, tipo_usuario="aluno", xp=67, moedas=67, xp_semanal=1500, liga_id=2, ofensiva=1, ultima_atividade=ontem),
             Usuario(nome="Osorio", email="osorio@quebrada.com", idade=21, senha=senha_padrao, tipo_usuario="aluno", xp=2750, moedas=100, xp_semanal=1450, liga_id=2),
             Usuario(nome="Gozatti", email="gozatti@bostec.edu.br", idade=19, senha=senha_padrao, tipo_usuario="aluno", xp=150, moedas=20, xp_semanal=1200, liga_id=2),
             Usuario(nome="Leo", email="leo@teste.com", idade=20, senha=senha_padrao, tipo_usuario="aluno", xp=500, moedas=50, xp_semanal=1100, liga_id=2),

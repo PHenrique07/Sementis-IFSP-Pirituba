@@ -115,8 +115,7 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
 
         # === ATUALIZAÇÃO DA OFENSIVA AQUI ===
         # Chama a função que criamos para gerenciar os dias seguidos
-        nova_ofensiva = atualizar_ofensiva(session, id_usuario)
-
+        nova_ofensiva = atualizar_ofensiva(session, id_usuario, completou_tarefa=True)
         # Salva tudo de uma vez só no banco de dados (XP, moedas, progresso e ofensiva)
         session.add(usuario)
         session.commit()
@@ -416,32 +415,40 @@ def listar_inventario(session: Session, usuario_id: int):
 
 
 #20. Atualizar a ofensiva do usuário com base na data da última atividade
-def atualizar_ofensiva(session: Session, id_usuario: int):
+def atualizar_ofensiva(session: Session, id_usuario: int, completou_tarefa: bool = False):
     """Atualiza ou zera a ofensiva do usuário com base na data da última atividade."""
     usuario = session.get(Usuario, id_usuario)
     if not usuario:
         return 0
 
     hoje = date.today()
-    ontem = hoje - timedelta(days=1)    
+    ontem = hoje - timedelta(days=1)
 
-    # 1. Primeira vez jogando
+    # 1. Se nunca jogou na vida
     if usuario.ultima_atividade is None:
-        usuario.ofensiva = 1
-        
-    # 2. Já jogou hoje, não muda nada
-    elif usuario.ultima_atividade == hoje:
-        pass 
-        
-    # 3. Jogou ontem, combo! Soma 1
-    elif usuario.ultima_atividade == ontem:
-        usuario.ofensiva += 1
-        
-    # 4. Quebrou a sequência, recomeça
-    else:
-        usuario.ofensiva = 1
+        if completou_tarefa:
+            usuario.ofensiva = 1
+            usuario.ultima_atividade = hoje
+        # Se for só o login (completou_tarefa = False), mantém 0 e não altera a data
 
-    usuario.ultima_atividade = hoje
+    else:
+        # 2. Se a função foi chamada porque ele venceu uma fase
+        if completou_tarefa:
+            if usuario.ultima_atividade == ontem:
+                usuario.ofensiva += 1 # Combo!
+            elif usuario.ultima_atividade < ontem:
+                usuario.ofensiva = 1  # Quebrou a sequência, recomeça
+            # Se for hoje, não soma, mas mantém o que tem
+            
+            usuario.ultima_atividade = hoje # Atualiza o "save" dele
+            
+        # 3. Se a função foi chamada só para carregar o perfil (Login)
+        else:
+            if usuario.ultima_atividade < ontem:
+                # O aluno ficou mais de 1 dia sem jogar. Zera pra mostrar no front-end.
+                # Nota: Não alteramos a ultima_atividade aqui, senão ele ganha um "dia grátis".
+                usuario.ofensiva = 0 
+
     session.add(usuario)
     session.commit()
     session.refresh(usuario)

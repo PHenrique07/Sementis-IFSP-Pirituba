@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initScrollEffects();
     initAnimations();
+    
+    // Chama a função para buscar os dados de perfil e injetar na página
+    atualizarBarraDeXP();
 });
 
 // ===== Navigation =====
@@ -179,129 +182,145 @@ function fazerLogout() {
     window.location.reload(); 
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+// ========================================================
+// --- NOVA FUNÇÃO: ATUALIZAR HEADER SUPERIOR ---
+// ========================================================
+function atualizarHeaderSuperior(ofensiva, moedas, vidas) {
+    // ATENÇÃO VINI: Verifique se esses IDs estão iguais aos do seu HTML
+    const headerOfensiva = document.getElementById('header-ofensiva');
+    const headerMoedas = document.getElementById('header-moedas');
+    const headerVidas = document.getElementById('header-vidas');
 
-    const atualizarBarraDeXP = async () => {
-        console.log("1. Iniciando busca de dados na API...");
-        const rota = 'http://127.0.0.1:5000/api/perfil';
-        const token = localStorage.getItem('token');
+    if (headerOfensiva) headerOfensiva.textContent = ofensiva;
+    if (headerMoedas) headerMoedas.textContent = moedas;
+    if (headerVidas) headerVidas.textContent = vidas;
+}
 
-        if (!token) {
-            console.error("Token não encontrado! O usuário está logado?");
-            return;
+
+const atualizarBarraDeXP = async () => {
+    console.log("1. Iniciando busca de dados na API...");
+    const rota = '/api/perfil';
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        console.error("Token não encontrado! O usuário está logado?");
+        return;
+    }
+
+    try {
+        const response = await fetch(rota, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+                return;
+            }
+            throw new Error('Erro na API ao buscar perfil');
+        }
+        
+        const dados = await response.json();
+        console.log("2. Dados recebidos do banco:", dados);
+
+        // --- MAPEANDO TODOS OS DADOS DA API ---
+        const nomeUsuario = dados.nome;
+        const xpAtual = dados.progresso_nivel.xp_no_nivel; 
+        const xpProximo = dados.progresso_nivel.xp_proximo_nivel;
+        const nivelAtual = dados.progresso_nivel.nivel_atual;
+        const xpTotal = dados.xp_total;
+        
+        // Dados de Economia e Retenção
+        const ofensiva = dados.ofensiva;
+        const moedas = dados.moedas;
+        const vidas = dados.vidas;
+        
+        // --- LÓGICA DA LIGA ---
+        const ligaId = dados.liga_id || 1; // Se não vier nada, garante que é 1
+        let nomeLiga = "BRONZE";
+        let iconeLiga = "assets/ligas/liga_medalha_bronze.png";
+
+        if (ligaId === 2) {
+            nomeLiga = "PRATA";
+            iconeLiga = "assets/ligas/liga_trofeu_prata.png";
+        } else if (ligaId === 3) {
+            nomeLiga = "OURO";
+            iconeLiga = "assets/ligas/liga_trofeu_ouro.png";
+        } else if (ligaId === 4) {
+            nomeLiga = "DIAMANTE";
+            iconeLiga = "assets/ligas/liga_trofeu_diamante.png"; 
         }
 
-        try {
-            const response = await fetch(rota, {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
-                }
-            });
+        // Calculando a porcentagem da barra verde (o que já foi preenchido)
+        const porcentagem = (xpAtual / xpProximo) * 100;
+        
+        // Calculando o que FALTA para o texto da Home (100% - o que já tem)
+        const porcentagemFaltante = (100 - porcentagem).toFixed(0); 
+        
+        console.log(`3. Cálculo feito: Barra = ${porcentagem}%. Faltam = ${porcentagemFaltante}%`);
 
-            if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                    window.location.href = 'login.html';
-                    return;
-                }
-                throw new Error('Erro na API ao buscar perfil');
+        // Pequeno atraso para garantir que o HTML já renderizou tudo
+        setTimeout(() => {
+            
+            // --- CHAMADA DA NOVA FUNÇÃO DO HEADER ---
+            atualizarHeaderSuperior(ofensiva, moedas, vidas);
+            
+            // --- 1. SELETORES DA TELA HOME ---
+            const homeBarra = document.getElementById('ui-progress-fill');
+            const homeTextoBarra = document.getElementById('ui-progress-text');
+            const homeNivel = document.getElementById('ui-user-level');
+            const homeNome = document.getElementById('ui-user-name');
+
+            // --- 2. SELETORES DA TELA DE PERFIL ---
+            const perfilNome = document.getElementById('perfil-user-name');
+            const perfilNivel = document.getElementById('perfil-user-level');
+            const perfilBarra = document.getElementById('perfil-progress-fill');
+            const perfilTextoBarra = document.getElementById('perfil-progress-text');
+            const perfilSequencia = document.getElementById('perfil-user-streak');
+            const perfilXpTotal = document.getElementById('perfil-user-xp-total');
+            const perfilLigaTexto = document.getElementById('perfil-user-liga-text');
+            const perfilLigaIcone = document.getElementById('perfil-user-liga-icon');
+
+            // ========================================================
+            // --- INJETANDO DADOS NA HOME (Se o usuário estiver lá) ---
+            // ========================================================
+            if (homeBarra) {
+                console.log("4a. Tela Home detectada! Atualizando barra...");
+                homeBarra.style.setProperty('width', `${porcentagem}%`, 'important');
             }
-            
-            const dados = await response.json();
-            console.log("2. Dados recebidos do banco:", dados);
+            if (homeTextoBarra) homeTextoBarra.textContent = `Faltam ${porcentagemFaltante}% para o próximo nível`;
+            if (homeNivel) homeNivel.textContent = `Nível ${nivelAtual}`; 
+            if (homeNome) homeNome.textContent = nomeUsuario;
 
-            // --- MAPEANDO TODOS OS DADOS DA API ---
-            const nomeUsuario = dados.nome;
-            const xpAtual = dados.progresso_nivel.xp_no_nivel; 
-            const xpProximo = dados.progresso_nivel.xp_proximo_nivel;
-            const nivelAtual = dados.progresso_nivel.nivel_atual;
-            const xpTotal = dados.xp_total;
-            const ofensiva = dados.ofensiva;
-            
-            // --- LÓGICA DA LIGA ---
-            const ligaId = dados.liga_id || 1; // Se não vier nada, garante que é 1
-            let nomeLiga = "BRONZE";
-            let iconeLiga = "assets/ligas/liga_medalha_bronze.png";
 
-            if (ligaId === 2) {
-                nomeLiga = "PRATA";
-                iconeLiga = "assets/ligas/liga_trofeu_prata.png";
-            } else if (ligaId === 3) {
-                nomeLiga = "OURO";
-                iconeLiga = "assets/ligas/liga_trofeu_ouro.png";
-            } else if (ligaId === 4) {
-                nomeLiga = "DIAMANTE";
-                iconeLiga = "assets/ligas/liga_trofeu_diamante.png"; 
+            // ==========================================================
+            // --- INJETANDO DADOS NO PERFIL (Se o usuário estiver lá) ---
+            // ==========================================================
+            if (perfilBarra) {
+                console.log("4b. Tela de Perfil detectada! Atualizando barra...");
+                perfilBarra.style.setProperty('width', `${porcentagem}%`, 'important');
             }
+            // No perfil o texto é no formato "XP/MAX_XP"
+            if (perfilTextoBarra) perfilTextoBarra.textContent = `${xpAtual}/${xpProximo}`;
+            if (perfilNivel) perfilNivel.textContent = `LEVEL ${nivelAtual}`;
+            if (perfilNome) perfilNome.textContent = nomeUsuario;
+            if (perfilSequencia) perfilSequencia.textContent = ofensiva;
+            if (perfilXpTotal) perfilXpTotal.textContent = xpTotal;
+            if (perfilLigaTexto) perfilLigaTexto.textContent = nomeLiga;
+            if (perfilLigaIcone) perfilLigaIcone.src = iconeLiga;
 
-            // Calculando a porcentagem da barra verde (o que já foi preenchido)
-            const porcentagem = (xpAtual / xpProximo) * 100;
-            
-            // Calculando o que FALTA para o texto da Home (100% - o que já tem)
-            const porcentagemFaltante = (100 - porcentagem).toFixed(0); 
-            
-            console.log(`3. Cálculo feito: Barra = ${porcentagem}%. Faltam = ${porcentagemFaltante}%`);
+        }, 100); // 100 milissegundos de delay
 
-            // Pequeno atraso para garantir que o HTML já renderizou tudo
-            setTimeout(() => {
-                
-                // --- 1. SELETORES DA TELA HOME ---
-                const homeBarra = document.getElementById('ui-progress-fill');
-                const homeTextoBarra = document.getElementById('ui-progress-text');
-                const homeNivel = document.getElementById('ui-user-level');
-                const homeNome = document.getElementById('ui-user-name');
-
-                // --- 2. SELETORES DA TELA DE PERFIL ---
-                const perfilNome = document.getElementById('perfil-user-name');
-                const perfilNivel = document.getElementById('perfil-user-level');
-                const perfilBarra = document.getElementById('perfil-progress-fill');
-                const perfilTextoBarra = document.getElementById('perfil-progress-text');
-                const perfilSequencia = document.getElementById('perfil-user-streak');
-                const perfilXpTotal = document.getElementById('perfil-user-xp-total');
-                const perfilLigaTexto = document.getElementById('perfil-user-liga-text');
-                const perfilLigaIcone = document.getElementById('perfil-user-liga-icon');
-
-                // ========================================================
-                // --- INJETANDO DADOS NA HOME (Se o usuário estiver lá) ---
-                // ========================================================
-                if (homeBarra) {
-                    console.log("4a. Tela Home detectada! Atualizando barra...");
-                    homeBarra.style.setProperty('width', `${porcentagem}%`, 'important');
-                }
-                if (homeTextoBarra) homeTextoBarra.textContent = `Faltam ${porcentagemFaltante}% para o próximo nível`;
-                if (homeNivel) homeNivel.textContent = `Nível ${nivelAtual}`; 
-                if (homeNome) homeNome.textContent = nomeUsuario;
-
-
-                // ==========================================================
-                // --- INJETANDO DADOS NO PERFIL (Se o usuário estiver lá) ---
-                // ==========================================================
-                if (perfilBarra) {
-                    console.log("4b. Tela de Perfil detectada! Atualizando barra...");
-                    perfilBarra.style.setProperty('width', `${porcentagem}%`, 'important');
-                }
-                // No perfil o texto é no formato "XP/MAX_XP"
-                if (perfilTextoBarra) perfilTextoBarra.textContent = `${xpAtual}/${xpProximo}`;
-                if (perfilNivel) perfilNivel.textContent = `LEVEL ${nivelAtual}`;
-                if (perfilNome) perfilNome.textContent = nomeUsuario;
-                if (perfilSequencia) perfilSequencia.textContent = ofensiva;
-                if (perfilXpTotal) perfilXpTotal.textContent = xpTotal;
-                if (perfilLigaTexto) perfilLigaTexto.textContent = nomeLiga;
-                if (perfilLigaIcone) perfilLigaIcone.src = iconeLiga;
-
-            }, 100); // 100 milissegundos de delay
-
-        } catch (erro) {
-            console.error('Erro geral ao carregar os dados do usuário:', erro);
-        }
-    };
-
-    // Executa a função ao carregar a página
-    atualizarBarraDeXP();
-});
+    } catch (erro) {
+        console.error('Erro geral ao carregar os dados do usuário:', erro);
+    }
+};
 
 // ===== Integração com API (Finalizar Trilha) =====
 document.addEventListener('DOMContentLoaded', () => {
@@ -317,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
             erros: parseInt(errosCount),
             concluida_com_sucesso: true 
         };
-        // ... resto do fetch continua igual ...
 
         try {
             const response = await fetch('/completar_atividade', {
@@ -339,7 +357,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error("Erro no servidor");
             }
 
-            alert("Progresso salvo online com sucesso!");
+            // === A MÁGICA ENTRA AQUI ===
+            // 1. Transforma a resposta do back-end em JSON
+            const resultado = await response.json();
+            
+            // 2. Pega os dados exatos que o banco do Pedro calculou
+            const novaOfensiva = resultado.ofensiva_atual;
+            const moedasAtuais = resultado.moedas_atuais;
+            const vidasAtuais = resultado.vidas_atuais;
+
+            // 3. Atualiza o número do foguinho no perfil (se a pessoa estiver na tela de perfil)
+            const contadorOfensiva = document.getElementById('perfil-user-streak');
+            if (contadorOfensiva) {
+                contadorOfensiva.textContent = novaOfensiva;
+            }
+            
+            // 4. Atualiza o Header Superior na hora, sem precisar recarregar a página!
+            atualizarHeaderSuperior(novaOfensiva, moedasAtuais, vidasAtuais);
+
+            alert(`Progresso salvo online com sucesso! 🔥 Sua ofensiva agora é de ${novaOfensiva} dia(s).`);
 
         } catch (error) {
             console.warn("Sem conexão. Salvando progresso localmente...");
@@ -353,56 +389,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.finalizarTrilha = finalizarTrilha;
 });
-//Parte da verificação de ofensiva do dia, para manter a sequencia do usuario
-document.addEventListener('DOMContentLoaded', () => {
-    verificarOfenciva();
-    async function verificarOfenciva(){
-        const rota = 'rota para a API muito foda e do balacubaco que vai falar se o usuario fez a ofenciva do dia passo e de hoje';
-        const response = await fetch(rota, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + token,
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) throw new Error('Erro na API de verificar ofensiva');
-        const dados = await response.json();
-        const ofensivaOntem=dados.ofensivaOntem;//mudar o nome da variavel para o que a api retornar
-        const ofensivaHoje=dados.ofensivaHoje;//mudar o nome da variavel para o que a api retornar
-        const podeFazerOfensiva=dados.podeFazerOfensiva;//mudar o nome da variavel para o que a api retornar
-        const contadorOfensiva=document.getElementById('perfil-user-streak');
-        if(ofensivaOntem && !ofensivaHoje){
-            alert("Você não fez a ofensiva de hoje! Lembre-se de fazer para manter sua sequência!");
-        }
-        if(!ofensivaOntem && !ofensivaHoje){
-            alert("Você não fez a ofensiva de ontem e nem a de hoje! Você perdeu a sequência!");
-            contadorOfensiva.textContent = 0;
-        }
-        else if(ofensivaOntem && ofensivaHoje){
-            contadorOfensiva.textContent = parseInt(contadorOfensiva.textContent) + 1;
-        }
-        else if(!ofensivaOntem && ofensivaHoje){
-            contadorOfensiva.textContent = 1;
-        }
-        mudarDadosOfensiva(contadorOfensiva, podeFazerOfensiva);
-    }
-})
-async function mudarDadosOfensiva(contadorOfensiva, podeFazerOfensiva){
-    if(contadorOfensiva.textContent>0 && podeFazerOfensiva){
-        const dados = { ofensivaHoje: true, contadorOfensiva: parseInt(contadorOfensiva.textContent), podeFazerOfenciava: false};
-    }
-    else{
-        const dados = {ofensivaHoje: false, contadorOfensiva: 0};
-    }
-    try {
-    const resposta = await fetch("'rota para enviar à API muito foda e do balacubaco que vai falar se o usuario fez a ofenciva do dia passo e de hoje'", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dados)
-    });
-    console.log("Dados enviados para a API:", dados);
-    } catch (erro) {
-    console.error("Erro:", erro);
-  }
-
-}
