@@ -11,7 +11,7 @@ class Usuario(SQLModel, table=True):
     nome: str
     email: str = Field(unique=True, index=True)
     senha: str
-    idade: int
+    data_nascimento: date
     tipo_usuario: str
     
     # Gamificação

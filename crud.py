@@ -22,12 +22,12 @@ def criar_tabelas():
 # ==========================================
 
 # 3. Função para inserir um usuário
-def inserir_usuario(nome: str, email: str, idade: int, senha: str, tipo_usuario: str):
+def inserir_usuario(nome: str, email: str, data_nascimento: date, senha: str, tipo_usuario: str):
     with Session(engine) as session:
         novo_usuario = Usuario(
             nome=nome, 
             email=email, 
-            idade=idade, 
+            data_nascimento=data_nascimento, 
             senha=senha,
             tipo_usuario=tipo_usuario
         )
