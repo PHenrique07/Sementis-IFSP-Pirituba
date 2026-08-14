@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2. Coleta os dados das "prateleiras" (IDs) do HTML do Tom
             const nomeDigitado = document.getElementById("registerName").value;
             const emailDigitado = document.getElementById("registerEmail").value;
-            const dataDigitada = document.getElementById("registerAge").value;
+            const idadeDigitada = document.getElementById("registerAge").value;
             const senhaDigitada = document.getElementById("registerPassword").value;
             const confirmaSenha = document.getElementById("registerConfirmPassword").value;
             
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const usuario = {
                 nome: nomeDigitado,
                 email: emailDigitado,
-                data: dataDigitada, // O banco exige número inteiro
+                idade: idadeDigitada, // O banco exige número inteiro
                 senha: senhaDigitada,
                 tipo_usuario: tipoUsuarioSelecionado
             };
