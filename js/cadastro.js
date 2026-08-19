@@ -13,7 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2. Coleta os dados das "prateleiras" (IDs) do HTML do Tom
             const nomeDigitado = document.getElementById("registerName").value;
             const emailDigitado = document.getElementById("registerEmail").value;
-            const idadeDigitada = document.getElementById("registerAge").value;
+            
+            // ATENÇÃO VINI: Verifique com o Tom se ele manteve o ID "registerAge" 
+            // no HTML quando mudou o campo para data. Se ele trocou, atualize aqui!
+            const dataNascimentoDigitada = document.getElementById("registerAge").value;
+            
             const senhaDigitada = document.getElementById("registerPassword").value;
             const confirmaSenha = document.getElementById("registerConfirmPassword").value;
             
@@ -31,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const usuario = {
                 nome: nomeDigitado,
                 email: emailDigitado,
-                idade: parseInt(idadeDigitada), // O banco exige número inteiro
+                data_nascimento: dataNascimentoDigitada, // Enviando a string da data direto (ex: "2005-10-23")
                 senha: senhaDigitada,
                 tipo_usuario: tipoUsuarioSelecionado
             };
