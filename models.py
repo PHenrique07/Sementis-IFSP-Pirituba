@@ -127,3 +127,18 @@ class Questao(SQLModel, table=True):
     
     # guarda o JSON inteiro (imagem, pergunta, respostas)
     conteudo: dict = Field(default_factory=dict, sa_column=Column(JSON))
+
+# 11. Tabela de Turmas (Gerenciadas por Professores)
+class Turma(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    nome: str
+    codigo_convite: str = Field(unique=True, index=True)
+    professor_id: int = Field(foreign_key="usuario.id")
+    data_criacao: datetime = Field(default_factory=datetime.utcnow)
+
+# 12. Tabela Associativa TurmaAluno (Muitos-Para-Muitos)
+class TurmaAluno(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    turma_id: int = Field(foreign_key="turma.id")
+    aluno_id: int = Field(foreign_key="usuario.id")
+    data_entrada: datetime = Field(default_factory=datetime.utcnow)

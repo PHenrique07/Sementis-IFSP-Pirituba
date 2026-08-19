@@ -1,8 +1,11 @@
 from sqlmodel import SQLModel, create_engine, Session, func, select
 from datetime import date
 import os
+import secrets
+import string
+from sqlalchemy.exc import IntegrityError
 # Importando todas as tabelas do models.py
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno
 from datetime import date, timedelta
 import math
 
@@ -49,11 +52,126 @@ def contar_total_usuarios():
         total = session.exec(select(func.count(Usuario.id))).one()
         return total    
 
+
+# FUNÇÕES DE TURMAS
+# 6. Criar uma turma
+def criar_turma(session: Session, nome_turma: str, professor_id: int):
+    professor = session.get(Usuario, professor_id)
+    if not professor or professor.tipo_usuario != "professor":
+        return {"status": "erro", "mensagem": "Professor não encontrado ou tipo de usuário inválido"}
+
+    alfabeto_convite = string.ascii_letters + string.digits
+    for _ in range(10):
+        codigo_convite = "".join(secrets.choice(alfabeto_convite) for _ in range(6))
+        codigo_existente = session.exec(
+            select(Turma).where(Turma.codigo_convite == codigo_convite)
+        ).first()
+        if codigo_existente:
+            continue
+
+        turma = Turma(
+            nome=nome_turma,
+            codigo_convite=codigo_convite,
+            professor_id=professor_id
+        )
+        session.add(turma)
+        try:
+            session.commit()
+            session.refresh(turma)
+            return turma
+        except IntegrityError as erro:
+            session.rollback()
+
+            codigo_criado_por_outra_transacao = session.exec(
+                select(Turma).where(Turma.codigo_convite == codigo_convite)
+            ).first()
+            mensagem_erro = str(getattr(erro, "orig", erro)).lower()
+            if codigo_criado_por_outra_transacao or "codigo_convite" in mensagem_erro:
+                continue
+
+            return {"status": "erro", "mensagem": "Erro de banco de dados ao criar turma"}
+
+    return {"status": "erro", "mensagem": "Não foi possível gerar um código de convite único"}
+
+
+# 7. Entrar em uma turma
+def entrar_na_turma(session: Session, aluno_id: int, codigo_convite: str):
+    aluno = session.get(Usuario, aluno_id)
+    if not aluno or aluno.tipo_usuario != "aluno":
+        return {"status": "erro", "mensagem": "Aluno não encontrado ou tipo de usuário inválido"}
+
+    turma = session.exec(
+        select(Turma).where(Turma.codigo_convite == codigo_convite)
+    ).first()
+    if not turma:
+        return {"status": "erro", "mensagem": "Código de convite inválido"}
+
+    matricula_existente = session.exec(
+        select(TurmaAluno).where(
+            TurmaAluno.turma_id == turma.id,
+            TurmaAluno.aluno_id == aluno_id
+        )
+    ).first()
+    if matricula_existente:
+        return {"status": "erro", "mensagem": "Aluno já está matriculado nesta turma"}
+
+    matricula = TurmaAluno(turma_id=turma.id, aluno_id=aluno_id)
+    session.add(matricula)
+    try:
+        session.commit()
+        session.refresh(matricula)
+        return matricula
+    except IntegrityError as erro:
+        session.rollback()
+
+        matricula_criada_por_outra_transacao = session.exec(
+            select(TurmaAluno).where(
+                TurmaAluno.turma_id == turma.id,
+                TurmaAluno.aluno_id == aluno_id
+            )
+        ).first()
+        mensagem_erro = str(getattr(erro, "orig", erro)).lower()
+        if matricula_criada_por_outra_transacao or (
+            "turma_id" in mensagem_erro and "aluno_id" in mensagem_erro
+        ):
+            return {"status": "erro", "mensagem": "Aluno já está matriculado nesta turma"}
+
+        return {"status": "erro", "mensagem": "Erro de banco de dados ao realizar matrícula"}
+
+
+# 8. Listar turmas do professor
+def listar_turmas_do_professor(session: Session, professor_id: int):
+    professor = session.get(Usuario, professor_id)
+    if not professor or professor.tipo_usuario != "professor":
+        return {"status": "erro", "mensagem": "Professor não encontrado ou tipo de usuário inválido"}
+
+    instrucao = (
+        select(Turma)
+        .where(Turma.professor_id == professor_id)
+        .order_by(Turma.nome, Turma.id)
+    )
+    return session.exec(instrucao).all()
+
+
+# 9. Listar alunos da turma
+def listar_alunos_da_turma(session: Session, turma_id: int):
+    turma = session.get(Turma, turma_id)
+    if not turma:
+        return {"status": "erro", "mensagem": "Turma não encontrada"}
+
+    instrucao = (
+        select(Usuario)
+        .join(TurmaAluno, TurmaAluno.aluno_id == Usuario.id)
+        .where(TurmaAluno.turma_id == turma_id)
+        .order_by(Usuario.xp_semanal.desc(), Usuario.id)
+    )
+    return session.exec(instrucao).all()
+
 # ==========================================
 # FUNÇÕES DE GAMIFICAÇÃO E PROGRESSO (CARDS)
 # ==========================================
 
-# 6. Função para adicionar XP e moedas ao usuário
+# 10. Função para adicionar XP e moedas ao usuário
 def adicionar_pontuacao(session: Session, id_usuario: int, xp: int, moedas: int):
     # Busca o usuário no banco
     usuario = session.get(Usuario, id_usuario)
@@ -71,7 +189,7 @@ def adicionar_pontuacao(session: Session, id_usuario: int, xp: int, moedas: int)
         return usuario
     return None
 
-# 7. Registrar a conclusão de uma atividade (a bolinha)
+# 11. Registrar a conclusão de uma atividade (a bolinha)
 def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividade: int):
     # Busca a atividade e o usuário primeiro
     atividade = session.get(Atividade, id_atividade)
@@ -136,7 +254,7 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
         session.rollback()
         return {"status": "erro", "mensagem": f"Erro interno: {str(e)}"}
 
-# 8. CÓDIGO LEGADO -> Ranking Geral de todos os usuários do site
+# 12. CÓDIGO LEGADO -> Ranking Geral de todos os usuários do site
 #Desativado para substituir pelo ranking por liga
 #def buscar_ranking_geral(session: Session, limite: int = 10):
     #"""Retorna o top X usuários com mais XP"""
@@ -147,7 +265,7 @@ def registrar_conclusao_atividade(session: Session, id_usuario: int, id_atividad
     #return session.exec(instrucao).all()
 
 
-# 9. Ranking de cada liga (Ex: ranking da liga de bronze, prata, etc)
+# 13. Ranking de cada liga (Ex: ranking da liga de bronze, prata, etc)
 def buscar_ranking_por_liga(session: Session, liga_id: int, limite: int = 50):
     """
     Retorna o ranking de uma liga específica, ordenado pelo XP da semana.
@@ -161,24 +279,24 @@ def buscar_ranking_por_liga(session: Session, liga_id: int, limite: int = 50):
 # FUNÇÕES DE LEITURA PARA O FRONT-END
 # ==========================================
 
-# 10. Listar os Módulos (Nível 1)
+# 14. Listar os Módulos (Nível 1)
 def listar_modulos(session: Session):
     instrucao = select(Modulo).order_by(Modulo.ordem)
     return session.exec(instrucao).all()
 
-# 11. Listar as Trilhas de um Módulo (Nível 2)
+# 15. Listar as Trilhas de um Módulo (Nível 2)
 def listar_trilhas_do_modulo(session: Session, id_modulo: int):
     instrucao = select(Trilha).where(Trilha.modulo_id == id_modulo).order_by(Trilha.ordem)
     return session.exec(instrucao).all()
 
-# 12. Listar as Atividades/Bolinhas de uma Trilha (Nível 3)
+# 16. Listar as Atividades/Bolinhas de uma Trilha (Nível 3)
 def listar_atividades_da_trilha(session: Session, id_trilha: int):
     instrucao = select(Atividade).where(Atividade.trilha_id == id_trilha).order_by(Atividade.ordem)
     return session.exec(instrucao).all()
 
 
 
-# 13. Sortear missões diárias para um usuário
+# 17. Sortear missões diárias para um usuário
 def sortear_missoes_diarias(session: Session, id_usuario: int, qtd_missoes: int = 3):
     """
     Busca as missões do dia para o usuário. Se ele não tiver, sorteia novas.
@@ -226,7 +344,7 @@ def sortear_missoes_diarias(session: Session, id_usuario: int, qtd_missoes: int 
     return lista_progresso
 
 
-# 14. Atualizar progressao de missão  -> REVISAR DEPOIS
+# 18. Atualizar progressao de missão  -> REVISAR DEPOIS
 
 def atualizar_progresso_missao(session: Session, id_usuario: int, tipo_acao_realizada: str):
     """
@@ -278,7 +396,7 @@ def atualizar_progresso_missao(session: Session, id_usuario: int, tipo_acao_real
     # Retorna o que ele terminou pra tela dar algum retorno visual
     return missoes_concluidas_agora
 
-# 15. Subir os usuários de liga todo domingo  -> REVISAR DEPOIS
+# 19. Subir os usuários de liga todo domingo  -> REVISAR DEPOIS
 def promover_usuarios_fim_de_semana(session: Session, qtd_promovidos: int = 10):
     """
     Sobe os X melhores de cada liga para a próxima e zera o XP semanal de todos.
@@ -305,7 +423,7 @@ def promover_usuarios_fim_de_semana(session: Session, qtd_promovidos: int = 10):
     session.commit()
     return True
 
-# 16. Calcular o nível do usuário com base no XP total
+# 20. Calcular o nível do usuário com base no XP total
 def calcular_nivel(xp_total):
     base_xp = 100
     incremento = 50
@@ -330,7 +448,7 @@ def calcular_nivel(xp_total):
 
 
 
-# 17. Buscar as questões de uma atividade (para o quiz e minigame)
+# 21. Buscar as questões de uma atividade (para o quiz e minigame)
 def buscar_questoes_por_atividade(session: Session, id_atividade: int):
     """
     Puxa todas as questões de uma atividade específica.
@@ -357,7 +475,7 @@ def buscar_questoes_por_atividade(session: Session, id_atividade: int):
     return lista_pronta
 
 
-# 18. Listar o progresso geral dos módulos 
+# 22. Listar o progresso geral dos módulos 
 def listar_progresso_geral_modulos(session: Session, usuario_id: int):
     """
     Retorna a lista de módulos com o progresso específico de um usuário,
@@ -393,7 +511,7 @@ def listar_progresso_geral_modulos(session: Session, usuario_id: int):
     return progresso_geral
 
 
-# 19. Listar o inventário do usuário 
+# 23. Listar o inventário do usuário 
 def listar_inventario(session: Session, usuario_id: int):
     """
     Devolve todos os itens e avatares que o aluno possui no inventário.
@@ -419,7 +537,7 @@ def listar_inventario(session: Session, usuario_id: int):
     return lista_inventario
 
 
-#20. Atualizar a ofensiva do usuário com base na data da última atividade
+# 24. Atualizar a ofensiva do usuário com base na data da última atividade
 def atualizar_ofensiva(session: Session, id_usuario: int, completou_tarefa: bool = False):
     """Atualiza ou zera a ofensiva do usuário com base na data da última atividade."""
     usuario = session.get(Usuario, id_usuario)
