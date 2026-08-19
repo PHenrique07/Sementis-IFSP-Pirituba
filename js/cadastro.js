@@ -35,7 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const usuario = {
                 nome: nomeDigitado,
                 email: emailDigitado,
+<<<<<<< HEAD
                 data_nascimento: dataNascimentoDigitada, // Enviando a string da data direto (ex: "2005-10-23")
+=======
+                data: dataDigitada, // O banco exige número inteiro
+>>>>>>> 51d35a444fa765529dd17aa292e0f34a58e2de1a
                 senha: senhaDigitada,
                 tipo_usuario: tipoUsuarioSelecionado
             };
