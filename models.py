@@ -11,25 +11,24 @@ class Usuario(SQLModel, table=True):
     nome: str
     email: str = Field(unique=True, index=True)
     senha: str
-    data_nascimento: date
+    # data_nascimento substitui o campo legado 'idade'
+    data_nascimento: Optional[date] = Field(default=None)
     tipo_usuario: str
-    
+
     # Gamificação
-    moedas: int = Field(default=0)  
-    vidas: int = Field(default=5)   
-    ofensiva: int = Field(default=0) 
+    moedas: int = Field(default=0)
+    vidas: int = Field(default=5)
+    ofensiva: int = Field(default=0)
     xp: int = Field(default=0)
     freezes: int = Field(default=0)
-    # Ligas / Ranking
-    # 1 = Bronze, 2 = Prata, 3 = Ouro...
-    liga_id: int = Field(default=1) 
-    # Esse é o XP que vai ser zerado toda semana
+    # Ligas / Ranking — 1=Bronze, 2=Prata, 3=Ouro...
+    liga_id: int = Field(default=1)
+    # XP zerado toda semana (liga)
     xp_semanal: int = Field(default=0)
 
-    ultima_atividade: date | None = Field(default=None)
+    ultima_atividade: Optional[date] = Field(default=None)
 
-
-    #campo do avatar do usuário
+    # Avatar atual do usuário
     avatar_atual_id: int | None = Field(default=None, foreign_key="itemloja.id")
 
 # 2. Tabela de Módulos (ex: Módulo 1 - Sustentabilidade Básica)

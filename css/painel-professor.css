@@ -1,0 +1,745 @@
+﻿/* ===================================================================
+   PAINEL DO PROFESSOR — CSS
+   Usa as variáveis globais de styles.css
+=================================================================== */
+
+/* ---- Layout base ---- */
+.professor-page {
+    min-height: 100vh;
+    background: var(--color-primary-dark);
+    font-family: var(--font-family);
+    color: var(--color-white);
+}
+
+/* ---- Header ---- */
+.prof-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #1f1f5a 100%);
+    border-bottom: 1px solid rgba(169, 255, 113, 0.15);
+    padding: 0 24px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.prof-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.prof-header-logo {
+    height: 38px;
+    width: auto;
+}
+
+.prof-header-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255,255,255,0.15);
+}
+
+.prof-header-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(169, 255, 113, 0.12);
+    border: 1px solid rgba(169, 255, 113, 0.3);
+    border-radius: var(--radius-full);
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-accent);
+    letter-spacing: 0.3px;
+}
+
+.prof-header-badge svg {
+    flex-shrink: 0;
+}
+
+.prof-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.prof-user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-gray-300);
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.prof-btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fc8181;
+    border-radius: var(--radius-full);
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.prof-btn-logout:hover {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.6);
+    color: #fff;
+}
+
+/* ---- Main Content ---- */
+.prof-main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+/* ---- Page Title Row ---- */
+.prof-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 36px;
+}
+
+.prof-page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--color-white);
+}
+
+.prof-page-title span {
+    color: var(--color-accent);
+}
+
+/* ---- Botão Nova Turma ---- */
+.btn-nova-turma {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-accent);
+    color: var(--color-primary-dark);
+    border: none;
+    border-radius: var(--radius-full);
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 15px rgba(169, 255, 113, 0.25);
+}
+
+.btn-nova-turma:hover {
+    background: var(--color-accent-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+/* ---- Estado vazio ---- */
+.prof-empty {
+    text-align: center;
+    padding: 70px 20px;
+    color: var(--color-gray-400);
+    display: none;
+}
+
+.prof-empty svg {
+    opacity: 0.3;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+.prof-empty h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--color-gray-300);
+}
+
+.prof-empty p {
+    font-size: 14px;
+}
+
+/* ---- Grid de turmas ---- */
+.turmas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* ---- Card de Turma ---- */
+.turma-card {
+    background: linear-gradient(135deg, rgba(39,39,94,0.9) 0%, rgba(30,30,75,0.9) 100%);
+    border: 1px solid rgba(169, 255, 113, 0.12);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+    animation: cardEntrada 0.35s ease both;
+}
+
+@keyframes cardEntrada {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.turma-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.turma-card:hover {
+    border-color: rgba(169, 255, 113, 0.35);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(169,255,113,0.1);
+}
+
+.turma-card:hover::before {
+    opacity: 1;
+}
+
+/* Nome da turma */
+.turma-card-nome {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.turma-card-nome svg {
+    color: var(--color-accent);
+    flex-shrink: 0;
+}
+
+/* Código de convite */
+.turma-codigo-wrapper {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(169, 255, 113, 0.2);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.turma-codigo-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-gray-400);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.turma-codigo-valor {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-accent);
+    letter-spacing: 3px;
+    font-family: 'Courier New', monospace;
+}
+
+.btn-copiar {
+    background: rgba(169, 255, 113, 0.1);
+    border: 1px solid rgba(169, 255, 113, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+    color: var(--color-accent);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.btn-copiar:hover {
+    background: rgba(169, 255, 113, 0.2);
+    border-color: var(--color-accent);
+}
+
+.btn-copiar.copiado {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: var(--color-success);
+    color: var(--color-success);
+}
+
+/* Footer do card */
+.turma-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 14px;
+    margin-top: 4px;
+}
+
+.turma-alunos-count {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--color-gray-400);
+    font-weight: 500;
+}
+
+.turma-alunos-count svg {
+    color: var(--color-gray-500);
+}
+
+.turma-data {
+    font-size: 12px;
+    color: var(--color-gray-500);
+}
+
+.btn-ver-ranking {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: rgba(169, 255, 113, 0.08);
+    border: 1px solid rgba(169, 255, 113, 0.2);
+    border-radius: var(--radius-full);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-ver-ranking:hover {
+    background: rgba(169, 255, 113, 0.18);
+    border-color: var(--color-accent);
+}
+
+/* =====================================================================
+   MODAL SHARED — Nova Turma e Ranking
+===================================================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-base);
+    padding: 20px;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-card {
+    background: linear-gradient(135deg, #27275e 0%, #1e1e50 100%);
+    border: 1px solid rgba(169, 255, 113, 0.2);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 460px;
+    padding: 32px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    transform: scale(0.92) translateY(10px);
+    transition: all var(--transition-base);
+}
+
+.modal-overlay.open .modal-card {
+    transform: scale(1) translateY(0);
+}
+
+/* Modal grande para ranking */
+.modal-card--wide {
+    max-width: 700px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.modal-icon {
+    background: rgba(169, 255, 113, 0.12);
+    border: 1px solid rgba(169, 255, 113, 0.25);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    color: var(--color-accent);
+    flex-shrink: 0;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: 4px;
+}
+
+.modal-header p {
+    font-size: 13px;
+    color: var(--color-gray-400);
+}
+
+.modal-close {
+    margin-left: auto;
+    background: rgba(255,255,255,0.06);
+    border: none;
+    color: var(--color-gray-400);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.modal-close:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--color-white);
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-gray-300);
+    letter-spacing: 0.3px;
+}
+
+.input-group input {
+    background: rgba(0,0,0,0.35);
+    border: 1.5px solid rgba(169, 255, 113, 0.2);
+    border-radius: var(--radius-md);
+    padding: 13px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-white);
+    font-family: var(--font-family);
+    transition: border-color var(--transition-fast);
+    width: 100%;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(169,255,113,0.1);
+}
+
+.input-group input::placeholder {
+    color: var(--color-gray-500);
+    font-weight: 400;
+}
+
+.modal-msg {
+    min-height: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    padding: 0;
+    transition: all var(--transition-fast);
+}
+
+.modal-msg--erro {
+    color: #fc8181;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.2);
+    padding: 10px 14px;
+}
+
+.modal-msg--sucesso {
+    color: #6ee7b7;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.2);
+    padding: 10px 14px;
+}
+
+.btn-modal-confirm {
+    background: var(--color-accent);
+    color: var(--color-primary-dark);
+    border: none;
+    border-radius: var(--radius-full);
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 50px;
+}
+
+.btn-modal-confirm:hover:not(:disabled) {
+    background: var(--color-accent-dark);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+}
+
+.btn-modal-confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(39,39,94,0.4);
+    border-top-color: var(--color-primary-dark);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* =====================================================================
+   RANKING TABLE
+===================================================================== */
+.ranking-scroll {
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-light) transparent;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ranking-table thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-gray-400);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0 12px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.ranking-table tbody tr {
+    transition: background var(--transition-fast);
+    border-radius: var(--radius-md);
+}
+
+.ranking-table tbody tr:hover {
+    background: rgba(169,255,113,0.04);
+}
+
+.ranking-table tbody td {
+    padding: 14px 12px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+}
+
+/* Posição */
+.rank-pos {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--color-gray-500);
+    width: 40px;
+}
+
+.rank-pos.pos-1 { color: #FFD700; }
+.rank-pos.pos-2 { color: #C0C0C0; }
+.rank-pos.pos-3 { color: #CD7F32; }
+
+/* Avatar + nome */
+.rank-aluno {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rank-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-white);
+    flex-shrink: 0;
+    border: 2px solid rgba(169,255,113,0.2);
+}
+
+.rank-nome {
+    font-weight: 600;
+    color: var(--color-white);
+    font-size: 14px;
+}
+
+.rank-nivel {
+    font-size: 11px;
+    color: var(--color-gray-400);
+    font-weight: 500;
+    margin-top: 1px;
+}
+
+/* XP Badge */
+.rank-xp {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--color-accent);
+}
+
+/* Ofensiva */
+.rank-ofensiva {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fb923c;
+}
+
+/* Liga badge */
+.liga-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+}
+
+.liga-1 { background: rgba(205,127,50,0.18); color: #CD7F32; }
+.liga-2 { background: rgba(192,192,192,0.15); color: #C0C0C0; }
+.liga-3 { background: rgba(255,215,0,0.15);   color: #FFD700; }
+.liga-4 { background: rgba(130,203,255,0.15); color: #82cbff; }
+
+/* Estado vazio ranking */
+.ranking-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-gray-400);
+    font-size: 14px;
+}
+
+/* Skeleton loader */
+.skeleton-row td {
+    padding: 14px 12px;
+}
+
+.skeleton-bar {
+    height: 16px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+    from { background-position: 200% 0; }
+    to   { background-position: -200% 0; }
+}
+
+/* =====================================================================
+   BOTÃO FLUTUANTE ENTRAR EM TURMA (home.html — aluno)
+===================================================================== */
+.btn-join-class {
+    position: fixed;
+    bottom: 90px;        /* acima da navbar inferior */
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--color-accent);
+    color: var(--color-primary-dark);
+    border: none;
+    border-radius: var(--radius-full);
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font-family);
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(169,255,113,0.35);
+    transition: all var(--transition-base);
+}
+
+.btn-join-class:hover {
+    background: var(--color-accent-dark);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-glow);
+}
+
+/* =====================================================================
+   RESPONSIVO
+===================================================================== */
+@media (max-width: 600px) {
+    .prof-main { padding: 24px 16px 80px; }
+    .prof-page-title { font-size: 20px; }
+    .prof-user-name { display: none; }
+    .turmas-grid { grid-template-columns: 1fr; }
+    .ranking-table thead th:nth-child(4),
+    .ranking-table tbody td:nth-child(4) { display: none; }
+    .modal-card { padding: 24px 18px; }
+    .btn-join-class span { display: none; }
+    .btn-join-class { padding: 14px; border-radius: 50%; }
+}
