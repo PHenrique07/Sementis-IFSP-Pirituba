@@ -1,4 +1,4 @@
-const CACHE_VERSION = "sementis-pwa-v4";
+const CACHE_VERSION = "sementis-pwa-v5";
 const APP_SHELL_CACHE = `app-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 
@@ -8,6 +8,8 @@ const APP_SHELL_FILES = [
   "./login.html",
   "./home.html",
   "./trilhas.html",
+  "./painel-professor.html",
+  "./turma-professor.html",
   "./ligas.html",
   "./pwa/manifest.webmanifest",
   "./css/styles.css",
@@ -17,11 +19,15 @@ const APP_SHELL_FILES = [
   "./css/ligas.css",
   "./css/shared-navbar.css",
   "./css/quiz.css",
+  "./css/painel-professor.css",
+  "./css/turma-professor.css",
   "./js/main.js",
   "./js/login.js",
   "./js/home.js",
   "./js/shared-navbar.js",
   "./js/quiz.js",
+  "./js/painel-professor.js",
+  "./js/turma-professor.js",
   "./pwa/pwa-register.js",
   "./assets/icons/pwa-icon.svg",
   "./assets/brand/logo_sementis_branco.png",

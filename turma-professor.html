@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a4a">
+    <title>Turma — Sementis</title>
+    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/turma-professor.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="turma-professor-page">
+    <header class="turma-topbar">
+        <a href="painel-professor.html" class="back-link" aria-label="Voltar para minhas turmas">
+            <span aria-hidden="true">←</span> Minhas turmas
+        </a>
+        <a href="index.html" class="turma-logo-link"><img src="/assets/brand/logo_sementis_branco.png" alt="Sementis"></a>
+        <div class="turma-professor-name" id="professor-nome"></div>
+    </header>
+
+    <main class="turma-main">
+        <section class="turma-hero" aria-labelledby="turma-nome">
+            <div>
+                <span class="hero-eyebrow">Espaço da turma</span>
+                <h1 id="turma-nome">Carregando turma...</h1>
+                <p id="turma-descricao">Acompanhe avisos, engajamento e desempenho da turma.</p>
+            </div>
+            <div class="turma-convite">
+                <span>Código de convite</span>
+                <strong id="codigo-convite">—</strong>
+                <button id="copiar-convite" type="button">Copiar código</button>
+            </div>
+        </section>
+
+        <section class="kpi-grid" aria-label="Indicadores da turma">
+            <article class="kpi-card"><span class="kpi-icon">👥</span><div><span>Alunos na turma</span><strong id="kpi-alunos">—</strong><small>matriculados</small></div></article>
+            <article class="kpi-card kpi-card--green"><span class="kpi-icon">✦</span><div><span>Ativos na semana</span><strong id="kpi-ativos">—</strong><small>com XP recente</small></div></article>
+            <article class="kpi-card kpi-card--blue"><span class="kpi-icon">⚡</span><div><span>XP médio semanal</span><strong id="kpi-xp">—</strong><small>por aluno</small></div></article>
+            <article class="kpi-card kpi-card--orange"><span class="kpi-icon">◎</span><div><span>Progresso médio</span><strong id="kpi-progresso">—</strong><small>das atividades</small></div></article>
+        </section>
+
+        <section class="turma-layout">
+            <div class="turma-primary-column">
+                <section class="panel mural-panel">
+                    <div class="panel-heading">
+                        <div><span class="section-eyebrow">Comunicação</span><h2>Mural da turma</h2></div>
+                        <button class="btn-primary" id="abrir-aviso" type="button">+ Novo aviso</button>
+                    </div>
+                    <div class="avisos-lista" id="avisos-lista"></div>
+                </section>
+
+                <section class="panel desempenho-panel">
+                    <div class="panel-heading"><div><span class="section-eyebrow">Acompanhamento</span><h2>Desempenho dos alunos</h2></div><span class="panel-note">Dados reais de XP e progresso</span></div>
+                    <div class="alunos-table-wrap">
+                        <table class="alunos-table">
+                            <thead><tr><th>Aluno</th><th>Progresso</th><th>XP semanal</th><th>Ofensiva</th></tr></thead>
+                            <tbody id="alunos-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="turma-aside">
+                <section class="panel chart-panel">
+                    <div class="panel-heading"><div><span class="section-eyebrow">Visão geral</span><h2>Progresso da turma</h2></div></div>
+                    <div class="donut-chart" id="donut-chart"><div><strong id="donut-value">0%</strong><span>em dia</span></div></div>
+                    <ul class="chart-legend" id="chart-legend"></ul>
+                </section>
+                <section class="panel chart-panel">
+                    <div class="panel-heading"><div><span class="section-eyebrow">Ritmo semanal</span><h2>XP por aluno</h2></div></div>
+                    <div class="bar-chart" id="bar-chart" aria-label="Gráfico de XP semanal por aluno"></div>
+                </section>
+            </aside>
+        </section>
+    </main>
+
+    <div class="aviso-modal" id="aviso-modal" aria-hidden="true">
+        <form class="aviso-form" id="aviso-form">
+            <div class="modal-heading"><div><span class="section-eyebrow">Novo aviso</span><h2>Publicar no mural</h2></div><button type="button" class="modal-close" id="fechar-aviso" aria-label="Fechar">×</button></div>
+            <label for="aviso-titulo">Título</label><input id="aviso-titulo" maxlength="90" required placeholder="Ex.: Atividade para esta semana">
+            <label for="aviso-mensagem">Mensagem</label><textarea id="aviso-mensagem" maxlength="700" required placeholder="Escreva o recado para a turma..."></textarea>
+            <p id="aviso-erro" class="form-error" role="alert"></p>
+            <button class="btn-primary btn-publicar" type="submit">Publicar aviso</button>
+        </form>
+    </div>
+    <script src="/js/turma-professor.js"></script>
+</body>
+</html>

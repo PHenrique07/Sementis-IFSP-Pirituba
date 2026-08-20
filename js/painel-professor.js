@@ -1,4 +1,4 @@
-﻿// ===== Painel do Professor — JavaScript =====
+// ===== Painel do Professor — JavaScript =====
 
 // ---- Autenticação: garante que só professores acessam ----
 const token = localStorage.getItem('token');
@@ -91,6 +91,9 @@ function criarCardTurma(turma, idx) {
     card.className = 'turma-card';
     card.style.animationDelay = `${idx * 60}ms`;
     card.dataset.turmaId = turma.id;
+    card.tabIndex = 0;
+    card.setAttribute('role', 'link');
+    card.setAttribute('aria-label', `Abrir a turma ${turma.nome}`);
 
     const nomeLiga = (id) => ({ 1: 'Bronze', 2: 'Prata', 3: 'Ouro', 4: 'Diamante' }[id] || 'Bronze');
 
@@ -110,7 +113,7 @@ function criarCardTurma(turma, idx) {
                 <span class="turma-codigo-label">Código de Convite</span>
                 <span class="turma-codigo-valor" id="codigo-${turma.id}">${escHtml(turma.codigo_convite)}</span>
             </div>
-            <button class="btn-copiar" id="btn-copiar-${turma.id}" onclick="copiarCodigo(${turma.id}, '${escHtml(turma.codigo_convite)}')" title="Copiar código">
+            <button class="btn-copiar" id="btn-copiar-${turma.id}" type="button" onclick="event.stopPropagation(); copiarCodigo(${turma.id}, '${escHtml(turma.codigo_convite)}')" title="Copiar código">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -131,17 +134,32 @@ function criarCardTurma(turma, idx) {
         </div>
 
         <div style="margin-top:14px;">
-            <button class="btn-ver-ranking" onclick="abrirRanking(${turma.id}, '${escHtml(turma.nome)}')">
+            <button class="btn-ver-ranking" type="button" onclick="event.stopPropagation(); abrirTurma(${turma.id})">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                 </svg>
-                Ver Ranking
+                Abrir turma
             </button>
         </div>
     `;
 
+    card.addEventListener('click', (event) => {
+        if (!event.target.closest('button')) abrirTurma(turma.id);
+    });
+    card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            abrirTurma(turma.id);
+        }
+    });
+
     return card;
 }
+
+function abrirTurma(turmaId) {
+    window.location.href = `turma-professor.html?turma=${encodeURIComponent(turmaId)}`;
+}
+window.abrirTurma = abrirTurma;
 
 // =====================================================================
 // COPIAR CÓDIGO

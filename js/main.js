@@ -133,6 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const authContainer = document.getElementById("auth-actions");
 
         if (authContainer) {
+            const destinoPrincipal = user.tipo === 'professor' ? 'painel-professor.html' : 'home.html';
+            const rotuloPrincipal = user.tipo === 'professor' ? 'Ir para Painel' : 'Ir para Home';
             // 4. Troca os botões pelo nome do usuário
             // encapsula a opcao de ir para home, e sair dentro do icon de perfil mencionado
             authContainer.innerHTML = `
@@ -141,9 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="profile-dropdown-container">
                         <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil" class="profile-icon-btn" onclick="toggleProfileDropdown(event)" title="Opções de Perfil">
                         <div class="profile-dropdown" id="profileDropdown">
-                            <a href="home.html" class="dropdown-item" style="display:flex; align-items:center; gap:8px;">
+                            <a href="${destinoPrincipal}" class="dropdown-item" style="display:flex; align-items:center; gap:8px;">
                                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                                Ir para Home
+                                ${rotuloPrincipal}
                             </a>
                             <button onclick="fazerLogout()" class="dropdown-item" style="display:flex; align-items:center; gap:8px;">
                                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>

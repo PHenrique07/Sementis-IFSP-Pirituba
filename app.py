@@ -12,8 +12,8 @@ from functools import wraps
 import os
 from datetime import datetime, timezone, timedelta
 import jwt
-from sqlmodel import Session, select, create_engine
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao
+from sqlmodel import Session, select, create_engine, func
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma
 
 app = Flask(__name__)
 
@@ -575,6 +575,123 @@ def ranking_turma(turma_id):
         }), 200
 
 
+def buscar_turma_do_professor(session, turma_id, professor_id):
+    """Retorna a turma somente quando ela pertence ao professor autenticado."""
+    turma = session.get(Turma, turma_id)
+    if not turma or turma.professor_id != professor_id:
+        return None
+    return turma
+
+
+@app.route('/api/professor/turmas/<int:turma_id>/visao-geral', methods=['GET'])
+@token_obrigatorio
+def visao_geral_turma(turma_id):
+    """Painel de dados da turma, preparado para receber métricas mais detalhadas futuramente."""
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
+
+    with Session(engine) as session:
+        turma = buscar_turma_do_professor(session, turma_id, request.usuario_id)
+        if not turma:
+            return jsonify({"erro": "Turma não encontrada ou sem permissão."}), 404
+
+        alunos = listar_alunos_da_turma(session, turma_id)
+        if isinstance(alunos, dict):
+            return jsonify(alunos), 400
+
+        total_atividades = session.exec(select(func.count(Atividade.id))).one() or 0
+        alunos_formatados = []
+        for aluno in alunos:
+            concluidas = session.exec(
+                select(func.count(ProgressoUsuario.id))
+                .where(ProgressoUsuario.usuario_id == aluno.id)
+            ).one() or 0
+            progresso = round((concluidas / total_atividades) * 100) if total_atividades else 0
+            alunos_formatados.append({
+                "id": aluno.id,
+                "nome": aluno.nome,
+                "xp_total": aluno.xp,
+                "xp_semanal": aluno.xp_semanal,
+                "ofensiva": aluno.ofensiva,
+                "progresso": progresso,
+                "nivel": calcular_nivel(aluno.xp)["nivel"],
+            })
+
+        alunos_ativos = sum(1 for aluno in alunos_formatados if aluno["xp_semanal"] > 0)
+        media_xp = round(sum(aluno["xp_semanal"] for aluno in alunos_formatados) / len(alunos_formatados)) if alunos_formatados else 0
+        media_progresso = round(sum(aluno["progresso"] for aluno in alunos_formatados) / len(alunos_formatados)) if alunos_formatados else 0
+        distribuicao = {
+            "em_dia": sum(1 for aluno in alunos_formatados if aluno["progresso"] >= 70),
+            "atencao": sum(1 for aluno in alunos_formatados if 30 <= aluno["progresso"] < 70),
+            "inicio": sum(1 for aluno in alunos_formatados if aluno["progresso"] < 30),
+        }
+
+        avisos = session.exec(
+            select(AvisoTurma)
+            .where(AvisoTurma.turma_id == turma.id)
+            .order_by(AvisoTurma.data_publicacao.desc())
+        ).all()
+
+        return jsonify({
+            "turma": {
+                "id": turma.id,
+                "nome": turma.nome,
+                "codigo_convite": turma.codigo_convite,
+                "data_criacao": turma.data_criacao.strftime("%d/%m/%Y"),
+            },
+            "kpis": {
+                "total_alunos": len(alunos_formatados),
+                "alunos_ativos": alunos_ativos,
+                "media_xp_semanal": media_xp,
+                "media_progresso": media_progresso,
+            },
+            "distribuicao_progresso": distribuicao,
+            "alunos": alunos_formatados,
+            "avisos": [{
+                "id": aviso.id,
+                "titulo": aviso.titulo,
+                "mensagem": aviso.mensagem,
+                "data_publicacao": aviso.data_publicacao.strftime("%d/%m às %H:%M"),
+            } for aviso in avisos],
+        }), 200
+
+
+@app.route('/api/professor/turmas/<int:turma_id>/avisos', methods=['POST'])
+@token_obrigatorio
+def publicar_aviso_turma(turma_id):
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
+
+    dados = request.get_json() or {}
+    titulo = (dados.get("titulo") or "").strip()
+    mensagem = (dados.get("mensagem") or "").strip()
+    if not titulo or not mensagem:
+        return jsonify({"erro": "Título e mensagem são obrigatórios."}), 400
+    if len(titulo) > 90 or len(mensagem) > 700:
+        return jsonify({"erro": "O aviso excede o tamanho permitido."}), 400
+
+    with Session(engine) as session:
+        turma = buscar_turma_do_professor(session, turma_id, request.usuario_id)
+        if not turma:
+            return jsonify({"erro": "Turma não encontrada ou sem permissão."}), 404
+
+        aviso = AvisoTurma(
+            turma_id=turma.id,
+            professor_id=request.usuario_id,
+            titulo=titulo,
+            mensagem=mensagem,
+        )
+        session.add(aviso)
+        session.commit()
+        session.refresh(aviso)
+        return jsonify({
+            "id": aviso.id,
+            "titulo": aviso.titulo,
+            "mensagem": aviso.mensagem,
+            "data_publicacao": aviso.data_publicacao.strftime("%d/%m às %H:%M"),
+        }), 201
+
+
 # =====================================================================
 # --- ROTA DO ALUNO: ENTRAR EM TURMA ---
 # =====================================================================
@@ -609,4 +726,4 @@ def aluno_entrar_turma():
 
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)
-    app.run(debug=True)
+    app.run(debug=True)

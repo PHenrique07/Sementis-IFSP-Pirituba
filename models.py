@@ -141,3 +141,12 @@ class TurmaAluno(SQLModel, table=True):
     turma_id: int = Field(foreign_key="turma.id")
     aluno_id: int = Field(foreign_key="usuario.id")
     data_entrada: datetime = Field(default_factory=datetime.utcnow)
+
+# 13. Avisos publicados pelo professor no mural da turma
+class AvisoTurma(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    turma_id: int = Field(foreign_key="turma.id")
+    professor_id: int = Field(foreign_key="usuario.id")
+    titulo: str
+    mensagem: str
+    data_publicacao: datetime = Field(default_factory=datetime.utcnow)
