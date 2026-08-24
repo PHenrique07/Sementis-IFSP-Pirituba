@@ -7,6 +7,8 @@
     const seletores = {
         formulario: '#formCriarTurma, #criarTurmaForm, form[data-acao="criar-turma"]',
         nome: '#nomeTurma, #turmaNome, input[name="nome"]',
+        formularioEntrar: '#formEntrarTurma, #entrarTurmaForm, form[data-acao="entrar-turma"]',
+        codigoConvite: '#codigoConvite, #codigoTurma, input[name="codigo_convite"]',
         lista: '#listaTurmas, #turmasList, [data-lista="turmas"]',
         ranking: '#rankingTurma, #rankingList, [data-ranking="turma"]'
     };
@@ -14,6 +16,19 @@
     // Le o token salvo no navegador; nao recebe argumentos nem altera o estado.
     function obterToken() {
         return localStorage.getItem('token');
+    }
+
+    // Le o tipo do usuario salvo no navegador com seguranca.
+    function obterTipoUsuario() {
+        const usuarioSalvo = localStorage.getItem('user');
+        if (!usuarioSalvo) return null;
+
+        try {
+            const usuario = JSON.parse(usuarioSalvo);
+            return usuario && (usuario.tipo || usuario.tipo_usuario) || null;
+        } catch (erro) {
+            return null;
+        }
     }
 
     // Remove os dados de autenticacao e envia o usuario para a tela de login.
@@ -56,8 +71,9 @@
     function obterLista(resposta, chave) {
         if (Array.isArray(resposta)) return resposta;
         if (!resposta || typeof resposta !== 'object') return [];
-        if (Array.isArray(resposta[chave])) return resposta[chave];
-        if (Array.isArray(resposta.data)) return resposta.data;
+        if (resposta && Array.isArray(resposta.data)) {
+            return resposta.data;
+        }
         return [];
     }
 
@@ -131,10 +147,17 @@
         });
     }
 
-    // Consulta as turmas da API e solicita sua renderizacao; registra erros no console.
-    async function carregarTurmas() {
+    // Consulta as turmas conforme o tipo de usuario e solicita sua renderizacao.
+    async function carregarTurmas(tipoUsuario) {
+            const tipo = tipoUsuario || obterTipoUsuario();
+            if (tipo !== 'aluno' && tipo !== 'professor') {
+                console.error('Tipo de usuario ausente ou desconhecido.');
+                return;
+            }
+        const rota = tipo === 'aluno' ? '/api/turmas/minhas' : '/api/turmas';
+
         try {
-            const dados = await requisicaoApi('/api/turmas', { method: 'GET' });
+            const dados = await requisicaoApi(rota, { method: 'GET' });
             if (dados) renderizarTurmas(dados);
         } catch (erro) {
             console.error('Erro ao carregar turmas:', erro);
@@ -156,10 +179,37 @@
             });
             if (dados) {
                 evento.currentTarget.reset();
-                await carregarTurmas();
+                await carregarTurmas('professor');
             }
         } catch (erro) {
             console.error('Erro ao criar turma:', erro);
+        }
+    }
+
+    // Recebe o codigo de convite informado pelo aluno e solicita sua entrada na turma.
+    async function entrarNaTurma(evento) {
+        evento.preventDefault();
+        const campoCodigo = document.querySelector(seletores.codigoConvite);
+        const codigoDigitado = campoCodigo ? campoCodigo.value.trim() : '';
+
+        // Evita enviar uma requisicao quando o campo nao foi preenchido.
+        if (!codigoDigitado) {
+            alert('Informe o codigo de convite da turma.');
+            return;
+        }
+
+        try {
+            const dados = await requisicaoApi('/api/turmas/entrar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigo_convite: codigoDigitado })
+            });
+            if (dados) {
+                evento.currentTarget.reset();
+                await carregarTurmas('aluno');
+            }
+        } catch (erro) {
+            console.error('Erro ao entrar na turma:', erro);
         }
     }
 
@@ -180,6 +230,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         const formulario = document.querySelector(seletores.formulario);
         if (formulario) formulario.addEventListener('submit', criarTurma);
+        const formularioEntrar = document.querySelector(seletores.formularioEntrar);
+        if (formularioEntrar) formularioEntrar.addEventListener('submit', entrarNaTurma);
 
         // Recebe cada clique do documento e carrega o ranking da turma identificada no alvo.
         document.addEventListener('click', (evento) => {
