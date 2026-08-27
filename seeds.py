@@ -3,7 +3,7 @@ import os
 import sys
 from sqlmodel import Session, SQLModel, create_engine, delete, select
 from datetime import date, timedelta
-from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao
+from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao, Turma, TurmaAluno
 from passlib.hash import argon2
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -220,6 +220,74 @@ def semear_banco():
             Missao(titulo="Maratona de Aprendizado", meta=5, xp_recompensa=300, moedas_recompensa=60, tipo_acao="concluir_fase"),
             Missao(titulo="Mestre das Lições", meta=10, xp_recompensa=800, moedas_recompensa=150, tipo_acao="concluir_fase")
         ])
+
+
+       # ====================================================================
+        # 4. TURMAS E VÍNCULOS (EQUIPE IFSP E PROF. ALBANO)
+        # ====================================================================
+        print("🏫 Criando professores, turmas e matriculando os alunos...")
+
+        # 1. Busca os alunos oficiais (Sementis Team) pelos emails do seed
+        pedro = session.exec(select(Usuario).where(Usuario.email == "pedroteste@gmail.com")).first()
+        lucas = session.exec(select(Usuario).where(Usuario.email == "lucas@ifsp.edu.br")).first()
+        vini = session.exec(select(Usuario).where(Usuario.email == "vini@ifsp.edu.br")).first()
+        well = session.exec(select(Usuario).where(Usuario.email == "well@ifsp.edu.br")).first()
+        
+        # Busca o professor administrador já criado lá em cima
+        prof_admin = session.exec(select(Usuario).where(Usuario.email == "admin@ifsp.edu.br")).first()
+
+        # 2. Cria o Professor Albano do zero
+        albano = Usuario(
+            nome="Prof. Albano", 
+            email="albano@ifsp.edu.br", 
+            senha=senha_padrao, # Usa o mesmo hash de "123456" dos outros
+            tipo_usuario="professor", 
+            xp=5000, 
+            moedas=1000, 
+            xp_semanal=500, 
+            liga_id=3
+        )
+        session.add(albano)
+        session.flush() # Gera o ID do Albano no banco
+
+        if prof_admin and pedro and lucas and vini and well:
+            
+            # 3. Cria a turma da Equipe IFSP (Admin)
+            turma_ifsp = Turma(
+                nome="Equipe IFSP - Sementis", 
+                codigo_convite="IFSP26", 
+                professor_id=prof_admin.id
+            )
+            
+            # 4. Cria a turma do Albano
+            turma_albano = Turma(
+                nome="Desenvolvimento Web - Albano", 
+                codigo_convite="ALB123", 
+                professor_id=albano.id
+            )
+            
+            session.add_all([turma_ifsp, turma_albano])
+            session.flush() # Gera os IDs das duas turmas
+
+            # 5. Cria as matrículas
+            matriculas = [
+                # Equipe inteira na turma principal
+                TurmaAluno(turma_id=turma_ifsp.id, aluno_id=pedro.id),
+                TurmaAluno(turma_id=turma_ifsp.id, aluno_id=lucas.id),
+                TurmaAluno(turma_id=turma_ifsp.id, aluno_id=vini.id),
+                TurmaAluno(turma_id=turma_ifsp.id, aluno_id=well.id),
+                
+                # Somente você e o Foltest na turma do Albano para testar
+                TurmaAluno(turma_id=turma_albano.id, aluno_id=pedro.id),
+                TurmaAluno(turma_id=turma_albano.id, aluno_id=well.id)
+            ]
+            
+            session.add_all(matriculas)
+            session.commit()
+            print("✅ Turmas geradas! Prof. Albano criado e membros matriculados com sucesso.")
+        else:
+            print("⚠️ Aviso: Não foi possível criar as turmas pois faltou encontrar algum usuário base.")
+
 
         # ====================================================================
         # 3. O NOVO MOTOR DE INSERÇÃO (Lendo do JSON)

@@ -138,7 +138,7 @@ def cadastro():
         novo_user = inserir_usuario(
             nome=dados.get('nome'),
             email=dados.get('email'),
-            idade=dados.get('idade'),
+            data_nascimento=dados.get('data_nascimento'),
             senha=senha_segura, 
             tipo_usuario=dados.get('tipo_usuario')
         )
