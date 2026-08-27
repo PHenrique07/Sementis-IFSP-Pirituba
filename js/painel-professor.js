@@ -48,6 +48,7 @@ let turmasCache = [];
 // CARREGAR TURMAS
 // =====================================================================
 async function carregarTurmas() {
+    if (typeof showLoading === 'function') showLoading('Carregando Turmas', 'Buscando turmas e dados dos alunos 🌱');
     try {
         const res = await apiFetch('/api/professor/turmas');
         if (!res) return;
@@ -63,6 +64,8 @@ async function carregarTurmas() {
         renderizarTurmas(turmasCache);
     } catch (err) {
         console.error('Erro de conexão ao carregar turmas:', err);
+    } finally {
+        if (typeof hideLoading === 'function') hideLoading();
     }
 }
 
@@ -415,6 +418,243 @@ function setLoadingBtn(textEl, spinnerEl, btn, on, labelOff = '') {
 }
 
 // =====================================================================
+// SEMENTIS LIVE (ARENA MULTIPLAYER AO VIVO — ESTILO KAHOOT)
+// =====================================================================
+let topicosLiveCache = [];
+let topicoSelecionadoLive = 'todos';
+
+function trocarAbaPainel(aba) {
+    const viewTurmas = document.getElementById('view-turmas');
+    const viewLive   = document.getElementById('view-live');
+    const btnTurmas  = document.getElementById('nav-btn-turmas');
+    const btnLive    = document.getElementById('nav-btn-live');
+
+    if (aba === 'live') {
+        if (viewTurmas) viewTurmas.style.display = 'none';
+        if (viewLive)   viewLive.style.display   = 'block';
+        if (btnTurmas)  btnTurmas.classList.remove('active');
+        if (btnLive)    btnLive.classList.add('active');
+        carregarTopicosLive();
+        carregarSalasRecentesLive();
+    } else {
+        if (viewTurmas) viewTurmas.style.display = 'block';
+        if (viewLive)   viewLive.style.display   = 'none';
+        if (btnTurmas)  btnTurmas.classList.add('active');
+        if (btnLive)    btnLive.classList.remove('active');
+    }
+}
+window.trocarAbaPainel = trocarAbaPainel;
+
+async function carregarTopicosLive() {
+    try {
+        const res = await apiFetch('/api/live/topicos');
+        if (!res) return;
+        topicosLiveCache = await res.json();
+        renderizarTopicosLive(topicosLiveCache);
+        renderizarTopicosModal(topicosLiveCache);
+    } catch (err) {
+        console.error('Erro ao carregar tópicos live:', err);
+    }
+}
+
+function renderizarTopicosLive(topicos) {
+    const grid = document.getElementById('live-topics-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    topicos.forEach(topico => {
+        const card = document.createElement('div');
+        card.className = 'topic-quick-card';
+        card.onclick = () => abrirModalLive(topico.id);
+        card.innerHTML = `
+            <div class="topic-quick-icon">${topico.icone}</div>
+            <div class="topic-quick-info">
+                <h4>${topico.titulo}</h4>
+                <p>${topico.descricao}</p>
+                <span class="topic-count-tag">${topico.total_questoes} questões disponíveis</span>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderizarTopicosModal(topicos) {
+    const grid = document.getElementById('modal-topics-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    topicos.forEach(topico => {
+        const chip = document.createElement('div');
+        chip.className = `modal-topic-chip ${topico.id === topicoSelecionadoLive ? 'selected' : ''}`;
+        chip.dataset.id = topico.id;
+        chip.onclick = () => selecionarTopicoModal(topico.id);
+        chip.innerHTML = `
+            <span class="modal-topic-chip-icon">${topico.icone}</span>
+            <div>
+                <div class="modal-topic-chip-name">${topico.titulo}</div>
+                <small style="color:#9999c0; font-size:11px;">${topico.total_questoes} q.</small>
+            </div>
+        `;
+        grid.appendChild(chip);
+    });
+}
+
+function selecionarTopicoModal(id) {
+    topicoSelecionadoLive = id;
+    document.querySelectorAll('.modal-topic-chip').forEach(chip => {
+        chip.classList.toggle('selected', chip.dataset.id === id);
+    });
+}
+window.selecionarTopicoModal = selecionarTopicoModal;
+
+function abrirModalLive(topicoId = null) {
+    if (topicoId) {
+        topicoSelecionadoLive = topicoId;
+    }
+    if (topicosLiveCache.length === 0) {
+        carregarTopicosLive();
+    } else {
+        renderizarTopicosModal(topicosLiveCache);
+    }
+
+    const modal = document.getElementById('modal-criar-live');
+    const msgEl = document.getElementById('modal-criar-live-msg');
+    const inputNome = document.getElementById('input-nome-live');
+
+    if (msgEl) limparMsg(msgEl);
+    if (inputNome) inputNome.value = '';
+
+    if (modal) {
+        modal.classList.add('open', 'active');
+        if (inputNome) setTimeout(() => inputNome.focus(), 150);
+    }
+}
+window.abrirModalLive = abrirModalLive;
+
+function fecharModalLive() {
+    const modal = document.getElementById('modal-criar-live');
+    if (modal) modal.classList.remove('open', 'active');
+    const spinner = document.getElementById('btn-live-spinner');
+    const btn = document.getElementById('btn-confirmar-criar-live');
+    if (spinner) spinner.style.display = 'none';
+    if (btn) btn.disabled = false;
+}
+window.fecharModalLive = fecharModalLive;
+
+// Evento para fechar modal ao clicar no fundo
+const modalCriarLiveEl = document.getElementById('modal-criar-live');
+if (modalCriarLiveEl) {
+    modalCriarLiveEl.addEventListener('click', (e) => {
+        if (e.target === modalCriarLiveEl) fecharModalLive();
+    });
+}
+
+async function executarCriacaoSalaLive() {
+    const inputNome = document.getElementById('input-nome-live');
+    const selectQtd = document.getElementById('select-qtd-questoes');
+    const selectTempo = document.getElementById('select-tempo-questao');
+    const msgEl = document.getElementById('modal-criar-live-msg');
+    const btn = document.getElementById('btn-confirmar-criar-live');
+    const spinner = document.getElementById('btn-live-spinner');
+
+    const nome = (inputNome ? inputNome.value : '').trim();
+    const qtd_perguntas = parseInt(selectQtd ? selectQtd.value : 5);
+    const tempo_por_pergunta = parseInt(selectTempo ? selectTempo.value : 20);
+
+    limparMsg(msgEl);
+    if (spinner) spinner.style.display = 'block';
+    if (btn) btn.disabled = true;
+    if (typeof showLoading === 'function') showLoading('Criando Sala ao Vivo', 'Preparando o telão e sorteando perguntas sustentáveis ⚡');
+
+    try {
+        const res = await apiFetch('/api/live/criar-sala', {
+            method: 'POST',
+            body: JSON.stringify({
+                nome: nome || undefined,
+                topico: topicoSelecionadoLive,
+                qtd_perguntas,
+                tempo_por_pergunta
+            })
+        });
+
+        if (!res) {
+            if (typeof hideLoading === 'function') hideLoading();
+            setMsg(msgEl, 'Erro de autenticação. Faça login novamente.');
+            if (spinner) spinner.style.display = 'none';
+            if (btn) btn.disabled = false;
+            return;
+        }
+
+        const dados = await res.json();
+        if (!res.ok) {
+            if (typeof hideLoading === 'function') hideLoading();
+            setMsg(msgEl, dados.erro || 'Erro ao criar sala temporária.');
+            if (spinner) spinner.style.display = 'none';
+            if (btn) btn.disabled = false;
+            return;
+        }
+
+        // Redireciona imediatamente para o Telão do Apresentador!
+        fecharModalLive();
+        window.location.href = `live-host.html?pin=${dados.pin}`;
+    } catch (err) {
+        if (typeof hideLoading === 'function') hideLoading();
+        console.error('Erro ao criar sala live:', err);
+        setMsg(msgEl, 'Erro de conexão com o servidor.');
+        if (spinner) spinner.style.display = 'none';
+        if (btn) btn.disabled = false;
+    }
+}
+window.executarCriacaoSalaLive = executarCriacaoSalaLive;
+
+async function carregarSalasRecentesLive() {
+    const list = document.getElementById('live-recent-list');
+    if (!list) return;
+
+    try {
+        const res = await apiFetch('/api/live/minhas-salas');
+        if (!res) return;
+        const salas = await res.json();
+
+        if (!Array.isArray(salas) || salas.length === 0) {
+            list.innerHTML = `
+                <div class="live-recent-empty">
+                    <p>Nenhuma sala ao vivo ativa no momento. Crie uma nova sala para começar!</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = '';
+        salas.forEach(sala => {
+            const item = document.createElement('div');
+            item.className = 'live-recent-item';
+            item.innerHTML = `
+                <div class="live-recent-info">
+                    <h4>${escHtml(sala.nome)}</h4>
+                    <span>PIN: <strong style="color:var(--color-accent); font-family:monospace; font-size:16px;">${sala.pin}</strong> • ${sala.total_participantes} alunos • Status: ${sala.status}</span>
+                </div>
+                <a href="live-host.html?pin=${sala.pin}" class="btn-ver-ranking" style="padding:10px 18px;">
+                    Abrir Telão 📺
+                </a>
+            `;
+            list.appendChild(item);
+        });
+    } catch (e) {
+        console.error('Erro ao carregar salas recentes:', e);
+    }
+}
+
+// Fechar modal ao clicar fora ou com tecla ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        fecharModalLive();
+    }
+});
+
+// =====================================================================
 // INICIALIZAÇÃO
 // =====================================================================
 carregarTurmas();
+carregarTopicosLive();
+

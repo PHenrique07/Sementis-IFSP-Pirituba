@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0e1c10">
+    <title>Sementis Live — Telão do Apresentador</title>
+    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/live-host.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body class="host-body">
+
+    <!-- ===== TOPBAR DO TELÃO ===== -->
+    <header class="host-topbar">
+        <div class="host-topbar-left">
+            <a href="painel-professor.html" class="host-brand" title="Voltar ao Painel">
+                <img src="/assets/brand/logo_sementis_branco.png" alt="Sementis" class="host-logo">
+            </a>
+            <div class="live-pill">
+                <span class="live-dot"></span>
+                <span>SEMENTIS LIVE</span>
+            </div>
+            <span class="host-room-title" id="topbar-room-title">Carregando sala...</span>
+        </div>
+
+        <div class="host-topbar-center">
+            <div class="host-pin-badge" id="topbar-pin-badge" title="Clique para copiar link de entrada" onclick="copiarLinkEntrada()">
+                <span class="pin-label">PIN:</span>
+                <strong class="pin-digits" id="topbar-pin-val">------</strong>
+                <!-- SVG copiar -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </div>
+        </div>
+
+        <div class="host-topbar-right">
+            <button class="host-tool-btn" id="btn-sound" title="Alternar Som" onclick="toggleSound()">
+                <!-- SVG som ativo (substituído via JS) -->
+                <svg id="sound-icon-svg-on" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                <svg id="sound-icon-svg-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            </button>
+            <button class="host-tool-btn" id="btn-fullscreen" title="Tela Cheia" onclick="toggleFullscreen()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+            <a href="painel-professor.html" class="host-tool-btn host-tool-btn--exit" title="Sair da Sala">
+                <!-- SVG X -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- ===== CONTAINER PRINCIPAL ===== -->
+    <main class="host-stage" id="host-stage">
+
+        <!-- ========================================================
+             1. TELA: LOBBY DE ENTRADA (AGUARDANDO ALUNOS)
+        ======================================================== -->
+        <section class="screen lobby-screen" id="screen-lobby">
+            <div class="lobby-banner">
+                <div class="lobby-join-instructions">
+                    <p class="join-instruction-subtitle">Acesse no celular ou computador:</p>
+                    <div class="join-url-box" onclick="copiarLinkEntrada()" title="Clique para copiar">
+                        <span class="join-url" id="join-url-display">sementis.app/arena</span>
+                        <span class="join-copy-tag">Copiar</span>
+                    </div>
+                </div>
+
+                <div class="lobby-pin-card">
+                    <span class="lobby-pin-label">CÓDIGO PIN DA SALA</span>
+                    <div class="lobby-pin-boxes" id="lobby-pin-boxes">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header do Lobby: Contagem e Botão Iniciar -->
+            <div class="lobby-control-bar">
+                <div class="lobby-players-count">
+                    <!-- SVG pessoas -->
+                    <span class="count-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </span>
+                    <span id="lobby-count-text">0 Alunos conectados</span>
+                </div>
+
+                <div class="lobby-actions">
+                    <button class="btn-secondary-host" id="btn-add-bot" onclick="adicionarBotTeste()" title="Adicionar aluno bot para teste">
+                        <!-- SVG robô -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+                        + Aluno Teste
+                    </button>
+                    <button class="btn-start-game" id="btn-start-game" onclick="iniciarPartida()">
+                        <span>Iniciar Jogo!</span>
+                        <!-- SVG folha semente -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid de Alunos Conectados -->
+            <div class="lobby-players-grid" id="lobby-players-grid">
+                <div class="lobby-empty-hint" id="lobby-empty-hint">
+                    <div class="pulse-ring"></div>
+                    <!-- SVG smartphone -->
+                    <span class="hint-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(169,255,113,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </span>
+                    <h3>Aguardando os primeiros alunos entrarem...</h3>
+                    <p>Peça para os alunos digitarem o PIN acima na tela da Arena!</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             2. TELA: PERGUNTA ATIVA (CONTAGEM E OPÇÕES)
+        ======================================================== -->
+        <section class="screen question-screen" id="screen-question" style="display: none;">
+            <div class="question-header-row">
+                <div class="question-meta-pill">
+                    <span class="q-num" id="q-counter">Pergunta 1 de 5</span>
+                    <span class="q-divider">•</span>
+                    <span class="q-topic" id="q-topic-badge">Sustentabilidade</span>
+                </div>
+
+                <!-- Cronômetro Circular -->
+                <div class="timer-wrapper">
+                    <div class="timer-circle" id="timer-circle">
+                        <span class="timer-seconds" id="timer-seconds">20</span>
+                    </div>
+                </div>
+
+                <div class="answers-counter-pill" id="answers-counter-pill">
+                    <span class="count-num" id="answers-received-count">0</span>
+                    <span class="count-label">respostas</span>
+                </div>
+            </div>
+
+            <!-- Pergunta em Destaque -->
+            <div class="question-card-main">
+                <h1 class="question-text" id="question-text">Carregando pergunta...</h1>
+            </div>
+
+            <!-- Grid de 4 Alternativas com ícones SVG temáticos -->
+            <div class="options-grid" id="options-grid">
+                <!-- Opção 0: Folha (coral) -->
+                <div class="option-card option-card--coral" data-index="0">
+                    <div class="option-symbol">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                    </div>
+                    <div class="option-text" id="opt-text-0">Opção 1</div>
+                    <div class="option-bar-container" id="bar-cnt-0" style="display:none;">
+                        <div class="option-bar" id="bar-fill-0"></div>
+                        <span class="option-votes" id="bar-votes-0">0</span>
+                    </div>
+                </div>
+
+                <!-- Opção 1: Gota (azul) -->
+                <div class="option-card option-card--ocean" data-index="1">
+                    <div class="option-symbol">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                    </div>
+                    <div class="option-text" id="opt-text-1">Opção 2</div>
+                    <div class="option-bar-container" id="bar-cnt-1" style="display:none;">
+                        <div class="option-bar" id="bar-fill-1"></div>
+                        <span class="option-votes" id="bar-votes-1">0</span>
+                    </div>
+                </div>
+
+                <!-- Opção 2: Sol (âmbar) -->
+                <div class="option-card option-card--amber" data-index="2">
+                    <div class="option-symbol">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </div>
+                    <div class="option-text" id="opt-text-2">Opção 3</div>
+                    <div class="option-bar-container" id="bar-cnt-2" style="display:none;">
+                        <div class="option-bar" id="bar-fill-2"></div>
+                        <span class="option-votes" id="bar-votes-2">0</span>
+                    </div>
+                </div>
+
+                <!-- Opção 3: Semente/Raiz (verde) -->
+                <div class="option-card option-card--forest" data-index="3">
+                    <div class="option-symbol">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>
+                    </div>
+                    <div class="option-text" id="opt-text-3">Opção 4</div>
+                    <div class="option-bar-container" id="bar-cnt-3" style="display:none;">
+                        <div class="option-bar" id="bar-fill-3"></div>
+                        <span class="option-votes" id="bar-votes-3">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra Inferior de Controle do Professor -->
+            <div class="question-footer-controls">
+                <button class="btn-host-action" id="btn-skip-timer" onclick="revelarRespostaAgora()">
+                    <!-- SVG cronômetro -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Revelar Resposta</span>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             3. TELA: RESULTADO / GABARITO & CURIOSIDADE SUSTENTÁVEL
+        ======================================================== -->
+        <section class="screen result-screen" id="screen-result" style="display: none;">
+            <div class="result-banner">
+                <span class="result-eyebrow">Gabarito da Rodada</span>
+                <h2 class="result-title" id="result-title">Resposta Correta Revelada!</h2>
+            </div>
+
+            <!-- Card de Curiosidade Sustentável -->
+            <div class="eco-fact-card">
+                <div class="eco-fact-header">
+                    <!-- SVG folha + brilho (substitui 💡) -->
+                    <span class="eco-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                    </span>
+                    <h3>Curiosidade Socioambiental</h3>
+                </div>
+                <p class="eco-fact-text" id="eco-fact-text">A sustentabilidade gera equilíbrio ecológico e economia de recursos no dia a dia.</p>
+                <div class="eco-fact-source" id="eco-fact-source">
+                    <span>Fonte:</span> <strong id="eco-source-name">Sementis</strong>
+                </div>
+            </div>
+
+            <!-- Ações do Resultado -->
+            <div class="result-actions">
+                <button class="btn-next-step" onclick="mostrarLeaderboard()">
+                    <!-- SVG troféu -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 9H4a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-2"/><path d="M8 22v-4m8 4v-4M5 22h14"/></svg>
+                    <span>Ver Placar da Rodada</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             4. TELA: RANKING DINÂMICO DA RODADA (LEADERBOARD)
+        ======================================================== -->
+        <section class="screen ranking-screen" id="screen-ranking" style="display: none;">
+            <div class="ranking-header">
+                <!-- SVG troféu (substitui 🏆) -->
+                <div class="ranking-trophy-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 9H4a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-2"/><path d="M8 22v-4m8 4v-4M5 22h14"/></svg>
+                </div>
+                <h1 class="ranking-title">Placar da <span>Rodada</span></h1>
+                <p class="ranking-subtitle">Veja quem subiu no ranking nesta pergunta!</p>
+            </div>
+
+            <!-- Lista dos Top Jogadores -->
+            <div class="leaderboard-list" id="leaderboard-list">
+                <!-- Preenchido dinamicamente via JS -->
+            </div>
+
+            <!-- Botão de Avançar -->
+            <div class="ranking-actions">
+                <button class="btn-next-step" id="btn-next-question" onclick="avancarProximaPergunta()">
+                    <span id="btn-next-text">Próxima Pergunta</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             5. TELA: GRANDE PÓDIO FINAL (CERIMÔNIA DE ENCERRAMENTO)
+        ======================================================== -->
+        <section class="screen podium-screen" id="screen-podium" style="display: none;">
+            <div class="podium-header">
+                <!-- Badge sem emojis -->
+                <div class="podium-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#a9ff71" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    FIM DE JOGO
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#a9ff71" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <h1 class="podium-title">Grande <span>Pódio Sementis</span></h1>
+                <p class="podium-subtitle">Parabéns a todos os defensores da sustentabilidade!</p>
+            </div>
+
+            <!-- Estrutura 3D do Pódio Olímpico -->
+            <div class="podium-stage">
+                <!-- 2º LUGAR (Prata) -->
+                <div class="podium-column podium-column--second" id="podium-second">
+                    <div class="podium-player-card">
+                        <div class="podium-avatar" id="podium-avatar-2">🥈</div>
+                        <strong class="podium-player-name" id="podium-name-2">2º Lugar</strong>
+                        <span class="podium-player-points" id="podium-points-2">0 pts</span>
+                    </div>
+                    <div class="podium-block block-silver">
+                        <span class="podium-number">2</span>
+                    </div>
+                </div>
+
+                <!-- 1º LUGAR (Ouro - Campeão) -->
+                <div class="podium-column podium-column--first" id="podium-first">
+                    <!-- Coroa SVG (substitui 👑) -->
+                    <div class="podium-crown">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="#ffd700" stroke="#b8860b" stroke-width="1"><path d="M2 20h20l-2-10-5 5-3-8-3 8-5-5-2 10z"/></svg>
+                    </div>
+                    <div class="podium-player-card champion-card">
+                        <div class="podium-avatar" id="podium-avatar-1">🥇</div>
+                        <strong class="podium-player-name" id="podium-name-1">Campeão</strong>
+                        <span class="podium-player-points" id="podium-points-1">0 pts</span>
+                    </div>
+                    <div class="podium-block block-gold">
+                        <span class="podium-number">1</span>
+                    </div>
+                </div>
+
+                <!-- 3º LUGAR (Bronze) -->
+                <div class="podium-column podium-column--third" id="podium-third">
+                    <div class="podium-player-card">
+                        <div class="podium-avatar" id="podium-avatar-3">🥉</div>
+                        <strong class="podium-player-name" id="podium-name-3">3º Lugar</strong>
+                        <span class="podium-player-points" id="podium-points-3">0 pts</span>
+                    </div>
+                    <div class="podium-block block-bronze">
+                        <span class="podium-number">3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações Finais -->
+            <div class="podium-footer-actions">
+                <a href="painel-professor.html" class="btn-secondary-host">
+                    ← Voltar ao Painel
+                </a>
+                <button class="btn-start-game" onclick="window.location.reload()">
+                    <!-- SVG reload -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.28"/></svg>
+                    Jogar Novamente
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast de Notificação -->
+    <div class="host-toast" id="host-toast"></div>
+
+    <script src="/js/live-host.js"></script>
+</body>
+</html>

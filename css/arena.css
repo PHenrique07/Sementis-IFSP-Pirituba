@@ -1,0 +1,742 @@
+/* ===================================================================
+   SEMENTIS ARENA — CSS DO JOGADOR (STUDENT / MOBILE VIEW)
+   Nova identidade visual: florestal, escura, orgânica — sem Kahoot
+=================================================================== */
+
+:root {
+    --arena-bg:          #0d1f0e;
+    --arena-bg-deep:     #061008;
+    --arena-card-bg:     rgba(15, 35, 16, 0.88);
+    --arena-accent:      #a9ff71;
+    --arena-accent-glow: rgba(169, 255, 113, 0.35);
+
+    /* Cores dos 4 botões — borda colorida tênue + ícone SVG temático */
+    --color-coral:   #ff6b6b;
+    --color-ocean:   #4fc3f7;
+    --color-amber:   #ffca28;
+    --color-forest:  #66bb6a;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body.arena-body {
+    background: radial-gradient(ellipse at 50% 0%, #112213 0%, #0a1a0b 55%, #061008 100%);
+    color: #ffffff;
+    font-family: var(--font-family);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Topbar do Aluno */
+.arena-topbar {
+    height: 56px;
+    background: rgba(6, 16, 8, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(169, 255, 113, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.arena-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.arena-player-avatar {
+    font-size: 22px;
+}
+
+.arena-player-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.arena-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.arena-player-score {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--arena-accent);
+}
+
+.arena-player-rank {
+    background: rgba(169, 255, 113, 0.12);
+    border: 1px solid var(--arena-accent);
+    color: var(--arena-accent);
+    border-radius: 9999px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* Container Principal */
+.arena-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.arena-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    animation: arenaFadeIn 0.3s ease forwards;
+}
+
+@keyframes arenaFadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* ===================================================================
+   1. TELA DE ENTRADA (JOIN)
+=================================================================== */
+.join-card {
+    background: var(--arena-card-bg);
+    border: 1px solid rgba(169, 255, 113, 0.22);
+    border-radius: 24px;
+    padding: 30px 24px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(14px);
+}
+
+.join-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.join-logo {
+    height: 38px;
+    margin: 0 auto 12px;
+}
+
+.arena-live-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(169, 255, 113, 0.1);
+    border: 1px solid rgba(169, 255, 113, 0.32);
+    border-radius: 9999px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--arena-accent);
+    letter-spacing: 1px;
+}
+
+.live-blink-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--arena-accent);
+    border-radius: 50%;
+    animation: livePulse 1.2s infinite;
+}
+
+@keyframes livePulse {
+    0%   { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 0 0 rgba(169,255,113,0.7); }
+    70%  { transform: scale(1.1); opacity: 1;   box-shadow: 0 0 0 7px rgba(169,255,113,0); }
+    100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.arena-input-group {
+    margin-bottom: 18px;
+}
+
+.arena-input-group label,
+.avatar-picker-section label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #5a8c5a;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+}
+
+.arena-input-group input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(169, 255, 113, 0.12);
+    border-radius: 14px;
+    padding: 14px 18px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.arena-input-group input:focus {
+    border-color: var(--arena-accent);
+    box-shadow: 0 0 16px rgba(169, 255, 113, 0.22);
+}
+
+.input-pin-big {
+    font-size: 26px !important;
+    font-weight: 900 !important;
+    letter-spacing: 6px !important;
+    text-align: center;
+    color: var(--arena-accent) !important;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Avatar Grid */
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.avatar-option-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    font-size: 24px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.avatar-option-btn:hover {
+    background: rgba(169, 255, 113, 0.12);
+    transform: scale(1.08);
+}
+
+.avatar-option-btn.selected {
+    border-color: var(--arena-accent);
+    background: rgba(169, 255, 113, 0.18);
+    transform: scale(1.1);
+}
+
+.join-error-msg {
+    color: #ff7b7b;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    text-align: center;
+    min-height: 18px;
+}
+
+.btn-join-arena {
+    width: 100%;
+    background: linear-gradient(135deg, var(--arena-accent) 0%, #7ce048 100%);
+    color: #061008;
+    border: none;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(169, 255, 113, 0.4);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-join-arena:active {
+    transform: scale(0.97);
+    box-shadow: 0 4px 12px rgba(169, 255, 113, 0.3);
+}
+
+.join-footer-link {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.join-footer-link a {
+    color: #4a7c4e;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.join-footer-link a:hover {
+    color: var(--arena-accent);
+}
+
+/* ===================================================================
+   2. TELA DE ESPERA NO LOBBY
+=================================================================== */
+.waiting-card {
+    background: var(--arena-card-bg);
+    border: 1px solid rgba(169, 255, 113, 0.2);
+    border-radius: 24px;
+    padding: 40px 24px;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+.waiting-avatar-wrapper {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waiting-avatar-ring {
+    position: absolute;
+    inset: 0;
+    border: 3px dashed var(--arena-accent);
+    border-radius: 50%;
+    animation: rotateRing 8s linear infinite;
+    opacity: 0.6;
+}
+
+@keyframes rotateRing {
+    to { transform: rotate(360deg); }
+}
+
+.waiting-avatar-emoji {
+    font-size: 54px;
+}
+
+.waiting-player-name {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+}
+
+.waiting-room-name {
+    font-size: 14px;
+    color: #4a7c4e;
+    margin-bottom: 26px;
+}
+
+.waiting-instruction-box {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(169, 255, 113, 0.15);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+}
+
+.waiting-icon {
+    flex-shrink: 0;
+    opacity: 0.9;
+}
+
+.waiting-instruction-box p {
+    font-size: 14px;
+    font-weight: 600;
+    color: #c5e8c6;
+    line-height: 1.4;
+}
+
+/* ===================================================================
+   3. TELA DE RESPOSTA
+=================================================================== */
+.answering-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.answering-q-counter {
+    font-size: 14px;
+    font-weight: 700;
+    color: #4a7c4e;
+}
+
+.answering-time-pill {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--arena-accent);
+    color: var(--arena-accent);
+    border-radius: 9999px;
+    padding: 4px 14px;
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Enunciado da Pergunta — visível no celular do aluno */
+.arena-question-card {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(169, 255, 113, 0.18);
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arena-question-text {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: #e8f5e8;
+    text-align: center;
+}
+
+/* Grid de Botões Táteis */
+.tactile-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+    flex: 1;
+    min-height: 320px;
+}
+
+.tactile-btn {
+    background: rgba(10, 25, 12, 0.85);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+    transition: transform 0.1s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Reflexo sutil no topo */
+.tactile-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.07), transparent);
+    border-radius: 18px 18px 0 0;
+    pointer-events: none;
+}
+
+.tactile-btn:active {
+    transform: scale(0.93);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* Bordas coloridas por opção */
+.btn-coral  { border-color: var(--color-coral);  box-shadow: 0 6px 20px rgba(255,107,107,0.18); }
+.btn-ocean  { border-color: var(--color-ocean);  box-shadow: 0 6px 20px rgba(79,195,247,0.18); }
+.btn-amber  { border-color: var(--color-amber);  box-shadow: 0 6px 20px rgba(255,202,40,0.18); }
+.btn-forest { border-color: var(--color-forest); box-shadow: 0 6px 20px rgba(102,187,106,0.18); }
+
+.btn-coral:active  { box-shadow: 0 2px 8px rgba(255,107,107,0.35); }
+.btn-ocean:active  { box-shadow: 0 2px 8px rgba(79,195,247,0.35); }
+.btn-amber:active  { box-shadow: 0 2px 8px rgba(255,202,40,0.35); }
+.btn-forest:active { box-shadow: 0 2px 8px rgba(102,187,106,0.35); }
+
+.tactile-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* Ícone colorido por opção */
+.btn-coral  .tactile-symbol svg { stroke: var(--color-coral); }
+.btn-ocean  .tactile-symbol svg { stroke: var(--color-ocean); }
+.btn-amber  .tactile-symbol svg { stroke: var(--color-amber); }
+.btn-forest .tactile-symbol svg { stroke: var(--color-forest); }
+
+.tactile-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e8f5e8;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ===================================================================
+   4. TELA: RESPOSTA ENVIADA (SUBMITTED)
+=================================================================== */
+.submitted-card {
+    background: var(--arena-card-bg);
+    border: 1px solid rgba(169, 255, 113, 0.22);
+    border-radius: 24px;
+    padding: 50px 24px;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+.submitted-check-icon {
+    width: 84px;
+    height: 84px;
+    background: rgba(169, 255, 113, 0.1);
+    border: 2px solid rgba(169, 255, 113, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    animation: checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes checkPop {
+    from { transform: scale(0); }
+    to   { transform: scale(1); }
+}
+
+.submitted-card h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.submitted-card p {
+    font-size: 14px;
+    color: #4a7c4e;
+    margin-bottom: 28px;
+}
+
+/* Folhas flutuantes (substitui loading dots) */
+.submitted-leaves-anim {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    height: 40px;
+}
+
+.leaf-float {
+    animation: leafDrift 2.2s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.leaf-1 { animation-delay: 0s; }
+.leaf-2 { animation-delay: 0.5s; }
+.leaf-3 { animation-delay: 1s; }
+
+@keyframes leafDrift {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+    33%       { transform: translateY(-10px) rotate(12deg); opacity: 1; }
+    66%       { transform: translateY(-5px) rotate(-8deg); opacity: 0.8; }
+}
+
+/* ===================================================================
+   5. TELA DE RESULTADO DA RODADA
+=================================================================== */
+.round-result-card {
+    border-radius: 24px;
+    padding: 40px 24px;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    animation: resultPop 0.35s ease forwards;
+}
+
+@keyframes resultPop {
+    from { transform: scale(0.9); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.round-result-card.correct {
+    background: linear-gradient(135deg, #0d3318 0%, #07200e 100%);
+    border: 2px solid rgba(169, 255, 113, 0.55);
+}
+
+.round-result-card.wrong {
+    background: linear-gradient(135deg, #3b1010 0%, #240a0a 100%);
+    border: 2px solid rgba(239, 68, 68, 0.45);
+}
+
+.round-result-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.round-result-card.correct .round-result-icon {
+    background: rgba(169, 255, 113, 0.1);
+    border: 2px solid rgba(169, 255, 113, 0.4);
+}
+
+.round-result-card.wrong .round-result-icon {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid rgba(239, 68, 68, 0.4);
+}
+
+.round-result-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.round-points-gain {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--arena-accent);
+    margin-bottom: 12px;
+    text-shadow: 0 0 20px rgba(169, 255, 113, 0.5);
+}
+
+.round-streak-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 152, 0, 0.12);
+    border: 1px solid rgba(255, 152, 0, 0.35);
+    border-radius: 9999px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffb74d;
+    margin-bottom: 24px;
+}
+
+.streak-flame-svg {
+    animation: flameFlicker 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes flameFlicker {
+    from { transform: scaleY(1) rotate(-3deg); }
+    to   { transform: scaleY(1.1) rotate(3deg); }
+}
+
+.round-rank-info {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 15px;
+}
+
+.rank-label {
+    color: #4a7c4e;
+    font-weight: 600;
+}
+
+.rank-value {
+    color: #fff;
+    font-weight: 800;
+}
+
+/* ===================================================================
+   6. TELA DO PÓDIO FINAL
+=================================================================== */
+.final-podium-card {
+    background: var(--arena-card-bg);
+    border: 2px solid rgba(255, 215, 0, 0.35);
+    border-radius: 24px;
+    padding: 40px 24px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.15);
+}
+
+.final-trophy-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    background: rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.final-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: #fff;
+}
+
+.final-subtitle {
+    font-size: 14px;
+    color: #4a7c4e;
+    margin-bottom: 24px;
+}
+
+.final-stats-box {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.stat-box {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(169, 255, 113, 0.12);
+    border-radius: 16px;
+    padding: 16px 10px;
+}
+
+.stat-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #4a7c4e;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.stat-val {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--arena-accent);
+}
+
+.btn-final-return {
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+}

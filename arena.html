@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#061008">
+    <title>Sementis Arena — Jogar ao Vivo</title>
+    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/arena.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body class="arena-body">
+
+    <!-- Topbar Mobile -->
+    <header class="arena-topbar" id="arena-topbar" style="display:none;">
+        <div class="arena-topbar-left">
+            <span class="arena-player-avatar" id="topbar-avatar">🌱</span>
+            <span class="arena-player-name" id="topbar-nome">Aluno</span>
+        </div>
+        <div class="arena-topbar-right">
+            <span class="arena-player-score" id="topbar-pontos">0 pts</span>
+            <span class="arena-player-rank" id="topbar-rank">#1</span>
+        </div>
+    </header>
+
+    <main class="arena-container">
+
+        <!-- ========================================================
+             1. TELA: ENTRAR NA ARENA (PIN & NOME)
+        ======================================================== -->
+        <section class="arena-screen" id="screen-join">
+            <div class="join-card">
+                <div class="join-header">
+                    <img src="/assets/brand/logo_sementis_branco.png" alt="Sementis" class="join-logo">
+                    <div class="arena-live-tag">
+                        <span class="live-blink-dot"></span>
+                        <span>ARENA AO VIVO</span>
+                    </div>
+                </div>
+
+                <form class="join-form" id="join-form" onsubmit="entrarNaSala(event)">
+                    <!-- Campo do PIN -->
+                    <div class="arena-input-group">
+                        <label for="input-pin">CÓDIGO PIN DA SALA</label>
+                        <input type="text" id="input-pin" class="input-pin-big" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="off" required>
+                    </div>
+
+                    <!-- Campo do Apelido -->
+                    <div class="arena-input-group">
+                        <label for="input-nickname">SEU APELIDO / NOME</label>
+                        <input type="text" id="input-nickname" placeholder="Ex: EcoPlayer, Lucas..." maxlength="20" autocomplete="off" required>
+                    </div>
+
+                    <!-- Seletor de Avatar -->
+                    <div class="avatar-picker-section">
+                        <label>ESCOLHA SEU AVATAR</label>
+                        <div class="avatar-grid" id="avatar-grid">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+
+                    <p class="join-error-msg" id="join-error-msg"></p>
+
+                    <button type="submit" class="btn-join-arena" id="btn-join-submit">
+                        <span>Entrar na Arena!</span>
+                        <!-- SVG seta -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+                </form>
+
+                <div class="join-footer-link">
+                    <a href="home.html">← Voltar para as Trilhas</a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             2. TELA: LOBBY DE ESPERA (AGUARDANDO O PROFESSOR)
+        ======================================================== -->
+        <section class="arena-screen" id="screen-waiting-lobby" style="display: none;">
+            <div class="waiting-card">
+                <div class="waiting-avatar-wrapper">
+                    <div class="waiting-avatar-ring"></div>
+                    <span class="waiting-avatar-emoji" id="waiting-avatar-emoji">🌱</span>
+                </div>
+
+                <h1 class="waiting-player-name" id="waiting-player-title">Você está dentro!</h1>
+                <p class="waiting-room-name" id="waiting-room-subtitle">Sala: Carregando...</p>
+
+                <div class="waiting-instruction-box">
+                    <!-- SVG folha + brilho -->
+                    <span class="waiting-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                    </span>
+                    <p>Aguarde! O professor está preparando a partida. A questão aparecerá aqui quando começar.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             3. TELA: RESPONDER PERGUNTA (ENUNCIADO + 4 BOTÕES TÁTEIS)
+        ======================================================== -->
+        <section class="arena-screen" id="screen-answering" style="display: none;">
+            <div class="answering-header">
+                <span class="answering-q-counter" id="answering-counter">Pergunta 1 de 5</span>
+                <div class="answering-time-pill">
+                    <!-- SVG cronômetro -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="answering-timer">20s</span>
+                </div>
+            </div>
+
+            <!-- Enunciado da Pergunta (visível no celular do aluno) -->
+            <div class="arena-question-card">
+                <p class="arena-question-text" id="arena-question-text">Carregando pergunta...</p>
+            </div>
+
+            <!-- Grid de 4 Botões Táteis Grandes -->
+            <div class="tactile-buttons-grid">
+                <!-- Botão 0: Folha (vermelho/coral) -->
+                <button type="button" class="tactile-btn btn-coral" onclick="enviarResposta(0)" id="tactile-btn-0">
+                    <span class="tactile-symbol">
+                        <!-- SVG Folha -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                    </span>
+                    <span class="tactile-text" id="tactile-text-0">Opção 1</span>
+                </button>
+
+                <!-- Botão 1: Gota (azul) -->
+                <button type="button" class="tactile-btn btn-ocean" onclick="enviarResposta(1)" id="tactile-btn-1">
+                    <span class="tactile-symbol">
+                        <!-- SVG Gota -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                    </span>
+                    <span class="tactile-text" id="tactile-text-1">Opção 2</span>
+                </button>
+
+                <!-- Botão 2: Sol (âmbar) -->
+                <button type="button" class="tactile-btn btn-amber" onclick="enviarResposta(2)" id="tactile-btn-2">
+                    <span class="tactile-symbol">
+                        <!-- SVG Sol -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </span>
+                    <span class="tactile-text" id="tactile-text-2">Opção 3</span>
+                </button>
+
+                <!-- Botão 3: Semente/Raiz (verde) -->
+                <button type="button" class="tactile-btn btn-forest" onclick="enviarResposta(3)" id="tactile-btn-3">
+                    <span class="tactile-symbol">
+                        <!-- SVG Semente/Broto -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>
+                    </span>
+                    <span class="tactile-text" id="tactile-text-3">Opção 4</span>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             4. TELA: RESPOSTA REGISTRADA (AGUARDANDO REVELAÇÃO)
+        ======================================================== -->
+        <section class="arena-screen" id="screen-submitted" style="display: none;">
+            <div class="submitted-card">
+                <div class="submitted-check-icon">
+                    <!-- SVG check -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <h2>Resposta Enviada!</h2>
+                <p>Excelente agilidade! Aguardando a rodada encerrar...</p>
+
+                <!-- Animação de folhas flutuando (sem dots de loading) -->
+                <div class="submitted-leaves-anim">
+                    <svg class="leaf-float leaf-1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="rgba(169,255,113,0.6)" stroke="none"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg>
+                    <svg class="leaf-float leaf-2" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="rgba(169,255,113,0.4)" stroke="none"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg>
+                    <svg class="leaf-float leaf-3" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="rgba(169,255,113,0.5)" stroke="none"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             5. TELA: RESULTADO DA RODADA (ACERTOU / ERROU + PONTOS)
+        ======================================================== -->
+        <section class="arena-screen" id="screen-round-result" style="display: none;">
+            <div class="round-result-card" id="round-result-card">
+                <div class="round-result-icon" id="round-result-icon">
+                    <!-- Preenchido via JS com SVG -->
+                </div>
+                <h1 class="round-result-title" id="round-result-title">RESPOSTA CORRETA!</h1>
+                
+                <div class="round-points-gain" id="round-points-gain">+920 pts</div>
+                <div class="round-streak-pill" id="round-streak-pill">
+                    <!-- Ícone de chama SVG + texto -->
+                    <svg class="streak-flame-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#ff9800" stroke="none"><path d="M12 23c-6 0-9-4.5-9-8.5 0-2.76 1.46-5.07 4-6.5C8 10 10 11 12 12c0-4 1-7 4-9-1 6 5 7 5 13 0 4-3 7-9 7z"/></svg>
+                    <span id="streak-text">2 acertos seguidos!</span>
+                </div>
+
+                <div class="round-rank-info">
+                    <span class="rank-label">Sua Posição Atual:</span>
+                    <strong class="rank-value" id="round-rank-val">#1 Lugar</strong>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             6. TELA: PÓDIO FINAL DO ALUNO
+        ======================================================== -->
+        <section class="arena-screen" id="screen-final-podium" style="display: none;">
+            <div class="final-podium-card">
+                <div class="final-trophy-icon" id="final-trophy-icon">
+                    <!-- Preenchido via JS com SVG de troféu ou medalha -->
+                </div>
+                <h1 class="final-title">Fim de Jogo!</h1>
+                <p class="final-subtitle">Você completou o desafio Sementis Live!</p>
+
+                <div class="final-stats-box">
+                    <div class="stat-box">
+                        <span class="stat-label">Sua Colocação</span>
+                        <strong class="stat-val" id="final-place-val">1º Lugar</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Pontuação Total</span>
+                        <strong class="stat-val" id="final-score-val">0 pts</strong>
+                    </div>
+                </div>
+
+                <a href="home.html" class="btn-join-arena btn-final-return">
+                    Voltar ao Sementis
+                    <!-- SVG folha -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="/js/arena.js"></script>
+</body>
+</html>
