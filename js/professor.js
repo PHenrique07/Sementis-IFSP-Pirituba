@@ -154,6 +154,7 @@
                 console.error('Tipo de usuario ausente ou desconhecido.');
                 return;
             }
+            //talvez tenha que mudar a rota para o aluno, mas por enquanto é assim
         const rota = tipo === 'aluno' ? '/api/turmas/minhas' : '/api/turmas';
 
         try {
