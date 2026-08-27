@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/painel-professor.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body class="professor-page">
 
@@ -40,36 +40,189 @@
         </div>
     </header>
 
-    <!-- ===== MAIN ===== -->
-    <main class="prof-main">
-        <div class="prof-title-row">
-            <h1 class="prof-page-title">Minhas <span>Turmas</span></h1>
-            <button class="btn-nova-turma" id="btn-nova-turma">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                Nova Turma
-            </button>
-        </div>
+    <!-- ===== LAYOUT PRINCIPAL EM DUAS COLUNAS ===== -->
+    <div class="prof-layout-container">
+        
+        <!-- ===== SIDEBAR LATERAL ESQUERDA ===== -->
+        <aside class="prof-sidebar">
+            <div class="prof-nav-section">
+                <span class="prof-nav-label">NAVEGAÇÃO</span>
+                <nav class="prof-nav-menu">
+                    <button class="prof-nav-item active" id="nav-btn-turmas" onclick="trocarAbaPainel('turmas')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Minhas Turmas</span>
+                    </button>
+                    <button class="prof-nav-item" id="nav-btn-live" onclick="trocarAbaPainel('live')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        <span>Sementis Live</span>
+                        <span class="nav-live-badge">NOVO</span>
+                    </button>
+                </nav>
+            </div>
 
-        <!-- Estado vazio -->
-        <div class="prof-empty" id="prof-empty">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            <h3>Nenhuma turma ainda</h3>
-            <p>Clique em "Nova Turma" para criar sua primeira turma e compartilhar o código com seus alunos.</p>
-        </div>
+            <!-- Card de Destaque: Criar Sala Rápida (Estilo Kahoot) -->
+            <div class="sidebar-live-card">
+                <div class="sidebar-live-header">
+                    <div class="sidebar-live-icon">⚡</div>
+                    <div>
+                        <h4>Sementis Live</h4>
+                        <p>Arena estilo Kahoot</p>
+                    </div>
+                </div>
+                <p class="sidebar-live-desc">Crie uma sala temporária com código PIN para jogar ao vivo com seus alunos na aula!</p>
+                <button class="btn-sidebar-create-live" onclick="abrirModalLive()">
+                    <span>+ Criar Sala Temporária</span>
+                </button>
+            </div>
+        </aside>
 
-        <!-- Grid das turmas -->
-        <div class="turmas-grid" id="turmas-grid"></div>
-    </main>
+        <!-- ===== CONTEÚDO PRINCIPAL ===== -->
+        <main class="prof-main-content">
+
+            <!-- ===================================================
+                 ABA 1: MINHAS TURMAS (PADRÃO)
+            =================================================== -->
+            <section class="prof-view-section" id="view-turmas">
+                <div class="prof-title-row">
+                    <div>
+                        <h1 class="prof-page-title">Minhas <span>Turmas</span></h1>
+                        <p class="prof-page-subtitle">Gerencie suas turmas permanentes e acompanhe o progresso semanal.</p>
+                    </div>
+                    <button class="btn-nova-turma" id="btn-nova-turma">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Nova Turma
+                    </button>
+                </div>
+
+                <!-- Estado vazio -->
+                <div class="prof-empty" id="prof-empty">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <h3>Nenhuma turma ainda</h3>
+                    <p>Clique em "Nova Turma" para criar sua primeira turma e compartilhar o código com seus alunos.</p>
+                </div>
+
+                <!-- Grid das turmas -->
+                <div class="turmas-grid" id="turmas-grid"></div>
+            </section>
+
+
+            <!-- ===================================================
+                 ABA 2: SEMENTIS LIVE (KAHOOT DE SUSTENTABILIDADE)
+            =================================================== -->
+            <section class="prof-view-section" id="view-live" style="display: none;">
+                <div class="live-hero-banner">
+                    <div class="live-hero-content">
+                        <div class="live-hero-pill">
+                            <span class="live-hero-dot"></span>
+                            <span>MODO ARENA AO VIVO</span>
+                        </div>
+                        <h2>Desafios em Tempo Real estilo <span>Kahoot</span></h2>
+                        <p>Projete perguntas no telão, veja os alunos competirem em tempo real pelo celular e descubra o campeão sustentável com ranking dinâmico e pódio 3D!</p>
+                        
+                        <div class="live-hero-actions">
+                            <button class="btn-hero-create-live" onclick="abrirModalLive()">
+                                <span>🚀 Criar Sala Temporária</span>
+                            </button>
+                            <a href="arena.html" target="_blank" class="btn-hero-student-link">
+                                📱 Ver Arena do Aluno
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Tópicos Rápidos -->
+                <div class="live-topics-section">
+                    <h3 class="live-section-title">Escolha um Tema de Sustentabilidade</h3>
+                    <p class="live-section-subtitle">Clique em um tema para abrir uma sala rápida instantânea:</p>
+                    
+                    <div class="live-topics-grid" id="live-topics-grid">
+                        <!-- Preenchido via JS com cards de Fundamentos, Água, Clima, etc. -->
+                    </div>
+                </div>
+
+                <!-- Salas Recentes -->
+                <div class="live-recent-section">
+                    <h3 class="live-section-title">Minhas Salas Criadas</h3>
+                    <div class="live-recent-list" id="live-recent-list">
+                        <div class="live-recent-empty" id="live-recent-empty">
+                            <p>Nenhuma sala ao vivo criada recentemente. Clique no botão acima para começar!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
 
     <!-- ===================================================
-         MODAL: NOVA TURMA
+         MODAL: CRIAR SALA TEMPORÁRIA SEMENTIS LIVE
+    =================================================== -->
+    <div class="modal-overlay" id="modal-criar-live" role="dialog" aria-modal="true" aria-labelledby="modal-criar-live-title">
+        <div class="modal-card modal-card--wide">
+            <div class="modal-header">
+                <div class="modal-icon modal-icon--live">⚡</div>
+                <div>
+                    <h2 id="modal-criar-live-title">Criar Sala Temporária — Sementis Live</h2>
+                    <p>Um código PIN de 6 dígitos será gerado para os alunos entrarem</p>
+                </div>
+                <button class="modal-close" onclick="fecharModalLive()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Nome da Sala -->
+                <div class="input-group">
+                    <label for="input-nome-live">Nome ou Identificação da Sala</label>
+                    <input type="text" id="input-nome-live" placeholder="Ex: Desafio Sustentável — 2º Ano B" maxlength="60" autocomplete="off">
+                </div>
+
+                <!-- Seletor de Tema -->
+                <div class="live-modal-topics-group">
+                    <label>Tema de Sustentabilidade</label>
+                    <div class="modal-topics-grid" id="modal-topics-grid">
+                        <!-- Preenchido via JS com seleção ativa -->
+                    </div>
+                </div>
+
+                <!-- Configuração de Quantidade e Tempo -->
+                <div class="live-modal-row">
+                    <div class="input-group flex-1">
+                        <label for="select-qtd-questoes">Quantidade de Questões</label>
+                        <select id="select-qtd-questoes" class="prof-select">
+                            <option value="5" selected>5 Perguntas (Rápido - ~5 min)</option>
+                            <option value="8">8 Perguntas (Médio - ~8 min)</option>
+                            <option value="10">10 Perguntas (Completo - ~12 min)</option>
+                            <option value="15">15 Perguntas (Torneio - ~20 min)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group flex-1">
+                        <label for="select-tempo-questao">Tempo por Questão</label>
+                        <select id="select-tempo-questao" class="prof-select">
+                            <option value="15">15 segundos (Ágil)</option>
+                            <option value="20" selected>20 segundos (Recomendado)</option>
+                            <option value="30">30 segundos (Mais tempo para pensar)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-msg" id="modal-criar-live-msg"></div>
+
+                <button class="btn-modal-confirm btn-modal-confirm--live" id="btn-confirmar-criar-live" onclick="executarCriacaoSalaLive()">
+                    <span>🚀 Gerar Sala e Abrir Telão</span>
+                    <div class="btn-spinner" id="btn-live-spinner" style="display:none;"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL: NOVA TURMA PERMANENTE
     =================================================== -->
     <div class="modal-overlay" id="modal-nova-turma" role="dialog" aria-modal="true" aria-labelledby="modal-nova-turma-title">
         <div class="modal-card">
@@ -141,6 +294,7 @@
         </div>
     </div>
 
+    <script src="/js/loading.js"></script>
     <script src="/js/painel-professor.js"></script>
 </body>
 </html>

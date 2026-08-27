@@ -53,26 +53,21 @@ criar_tabelas()
 #Função criada para não repetir o mesmo codigo em cada rota
 def token_obrigatorio(f):
     """Decorador que protege rotas - só acessa com token válido"""
-    #Copia a documentação e outras propriedades da função original
     @wraps(f)
-    #Função que substitui a função original
-    #*args e **kwargs vão capturar todos os argumentos que a função original receberia
     def decorador(*args, **kwargs):
-        #Cria o token vazio
         token = None
         
-        # Pega o token do cabeçalho Authorization
+        # Pega o token do cabeçalho Authorization ou query parameter
         if 'Authorization' in request.headers:
             token = request.headers['Authorization'].replace('Bearer ', '')
+        elif 'token' in request.args:
+            token = request.args.get('token')
         
-        #Caso não, da erro, o que significa que o usuario nunca enviou token
         if not token:
             return jsonify({"erro": "Token não fornecido!"}), 401
         
         try:
-            # Tenta decodificar o token
             dados_token = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            # Guarda os dados do usuário na requisição
             request.usuario_id = dados_token['usuario_id']
             request.usuario_nome = dados_token['nome']
             request.usuario_tipo = dados_token['tipo']
@@ -724,6 +719,193 @@ def aluno_entrar_turma():
         }), 200
 
 
+# =====================================================================
+# --- ROTAS DO SEMENTIS LIVE (MODO KAHOOT MULTIPLAYER EM TEMPO REAL) ---
+# =====================================================================
+from live_game import live_manager
+
+@app.route('/arena')
+@app.route('/arena.html')
+def servir_arena():
+    """Serve a tela do jogador/aluno do Sementis Live"""
+    return send_from_directory(BASE_DIR, 'arena.html')
+
+@app.route('/live-host')
+@app.route('/live-host.html')
+def servir_live_host():
+    """Serve a tela de apresentação / telão do professor"""
+    return send_from_directory(BASE_DIR, 'live-host.html')
+
+@app.route('/api/live/topicos', methods=['GET'])
+def live_topicos():
+    """Lista tópicos de sustentabilidade disponíveis para a sala ao vivo."""
+    return jsonify(live_manager.listar_topicos()), 200
+
+@app.route('/api/live/criar-sala', methods=['POST'])
+@token_obrigatorio
+def live_criar_sala():
+    """Cria uma sala temporária estilo Kahoot no Sementis Live."""
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Apenas professores podem criar salas ao vivo."}), 403
+
+    dados = request.get_json() or {}
+    nome_sala = dados.get("nome", "").strip() or f"Arena Sustentável — Prof. {request.usuario_nome}"
+    topico = dados.get("topico", "todos")
+    qtd_perguntas = int(dados.get("qtd_perguntas", 5))
+    tempo_por_pergunta = int(dados.get("tempo_por_pergunta", 20))
+
+    sala = live_manager.criar_sala(
+        professor_id=request.usuario_id,
+        professor_nome=request.usuario_nome,
+        nome_sala=nome_sala,
+        topico=topico,
+        qtd_perguntas=qtd_perguntas,
+        tempo_por_pergunta=tempo_por_pergunta
+    )
+    return jsonify(sala), 201
+
+@app.route('/api/live/entrar', methods=['POST'])
+def live_entrar():
+    """Permite que um aluno entre na sala pelo PIN de 6 dígitos."""
+    dados = request.get_json() or {}
+    pin = str(dados.get("pin", "")).strip().replace(" ", "").replace("-", "")
+    nome = dados.get("nome", "").strip()
+    usuario_id = dados.get("usuario_id")
+    avatar_id = dados.get("avatar_id")
+
+    if not pin:
+        return jsonify({"erro": "Código PIN é obrigatório."}), 400
+    if not nome:
+        return jsonify({"erro": "Digite um apelido ou nome para jogar."}), 400
+
+    resultado = live_manager.entrar_sala(
+        pin=pin,
+        nome=nome,
+        usuario_id=usuario_id,
+        avatar_id=avatar_id
+    )
+
+    if not resultado:
+        return jsonify({"erro": "Sala não encontrada! Verifique o PIN digitado."}), 404
+
+    return jsonify(resultado), 200
+
+@app.route('/api/live/sala/<pin>/estado', methods=['GET'])
+def live_estado_sala(pin):
+    """Consulta o estado atual da sala (usado pelo Telão e pelos Alunos)."""
+    pin = str(pin).strip().replace(" ", "").replace("-", "")
+    is_host = request.args.get('is_host') == '1'
+    jogador_id = request.args.get('jogador_id')
+
+    # Se pedir visão de host, verifica se o usuário autenticado é o dono da sala
+    if is_host:
+        token = request.headers.get('Authorization', '').replace('Bearer ', '') or request.args.get('token')
+        if token:
+            try:
+                dados_token = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+                # Validação de professor
+                if dados_token.get('tipo') == 'professor':
+                    is_host = True
+            except Exception:
+                is_host = False
+
+    estado = live_manager.obter_estado(pin=pin, is_host=is_host, jogador_id=jogador_id)
+    if not estado:
+        return jsonify({"erro": "Sala não encontrada ou encerrada."}), 404
+
+    return jsonify(estado), 200
+
+@app.route('/api/live/sala/<pin>/iniciar', methods=['POST'])
+@token_obrigatorio
+def live_iniciar_jogo(pin):
+    """Professor inicia o jogo da sala."""
+    pin = str(pin).strip()
+    sucesso = live_manager.iniciar_jogo(pin=pin, professor_id=request.usuario_id)
+    if not sucesso:
+        return jsonify({"erro": "Não foi possível iniciar o jogo. Verifique suas permissões."}), 400
+    return jsonify({"sucesso": True, "status": "pergunta"}), 200
+
+@app.route('/api/live/sala/<pin>/responder', methods=['POST'])
+def live_responder(pin):
+    """Aluno envia sua resposta para a questão atual."""
+    pin = str(pin).strip()
+    dados = request.get_json() or {}
+    jogador_id = dados.get("jogador_id")
+    opcao = dados.get("opcao")
+    tempo_ms = int(dados.get("tempo_ms", 5000))
+
+    if not jogador_id or opcao is None:
+        return jsonify({"erro": "Jogador e opção são obrigatórios."}), 400
+
+    resultado = live_manager.responder(
+        pin=pin,
+        jogador_id=jogador_id,
+        opcao=int(opcao),
+        tempo_ms=tempo_ms
+    )
+
+    if not resultado:
+        return jsonify({"erro": "Sala não encontrada."}), 404
+    if "erro" in resultado:
+        return jsonify(resultado), 400
+
+    return jsonify(resultado), 200
+
+@app.route('/api/live/sala/<pin>/revelar', methods=['POST'])
+@token_obrigatorio
+def live_revelar_resultado(pin):
+    """Professor encerra a contagem da pergunta e exibe o gabarito."""
+    pin = str(pin).strip()
+    sucesso = live_manager.revelar_resultado(pin=pin, professor_id=request.usuario_id)
+    if not sucesso:
+        return jsonify({"erro": "Não foi possível revelar a resposta."}), 400
+    return jsonify({"sucesso": True, "status": "resultado"}), 200
+
+@app.route('/api/live/sala/<pin>/ranking', methods=['POST'])
+@token_obrigatorio
+def live_mostrar_ranking(pin):
+    """Professor avança para a tela de ranking/leaderboard da rodada."""
+    pin = str(pin).strip()
+    sucesso = live_manager.mostrar_ranking(pin=pin, professor_id=request.usuario_id)
+    if not sucesso:
+        return jsonify({"erro": "Não foi possível exibir o ranking."}), 400
+    return jsonify({"sucesso": True, "status": "ranking"}), 200
+
+@app.route('/api/live/sala/<pin>/proxima', methods=['POST'])
+@token_obrigatorio
+def live_proxima_pergunta(pin):
+    """Professor avança para a próxima pergunta ou encerra no Pódio Final."""
+    pin = str(pin).strip()
+    resultado = live_manager.proxima_pergunta(pin=pin, professor_id=request.usuario_id)
+    if "erro" in resultado:
+        return jsonify(resultado), 400
+    return jsonify(resultado), 200
+
+@app.route('/api/live/sala/<pin>/adicionar-bot', methods=['POST'])
+def live_adicionar_bot(pin):
+    """Adiciona um participante simulado para testes rápidos."""
+    pin = str(pin).strip()
+    res = live_manager.adicionar_bot_simulado(pin)
+    if not res:
+        return jsonify({"erro": "Não foi possível adicionar bot."}), 400
+    return jsonify(res), 200
+
+@app.route('/api/live/sala/<pin>/simular-respostas', methods=['POST'])
+def live_simular_respostas(pin):
+    """Faz os bots responderem a pergunta atual."""
+    pin = str(pin).strip()
+    live_manager.simular_respostas_bots(pin)
+    return jsonify({"sucesso": True}), 200
+
+@app.route('/api/live/minhas-salas', methods=['GET'])
+@token_obrigatorio
+def live_minhas_salas():
+    """Retorna as salas ativas criadas pelo professor."""
+    salas = live_manager.listar_salas_professor(request.usuario_id)
+    return jsonify(salas), 200
+
+
 if __name__ == '__main__':
     # Roda o servidor no modo Debug (reinicia sozinho quando você salva o código)
     app.run(debug=True)
+

@@ -59,6 +59,100 @@
     }
 }
 
+/* ===== Banner Sementis Live na Home do Aluno ===== */
+.live-home-banner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, rgba(39, 50, 110, 0.9) 0%, rgba(20, 26, 75, 0.9) 100%);
+    border: 2px solid rgba(169, 255, 113, 0.35);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 20px rgba(169, 255, 113, 0.15);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.live-home-banner:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 30px rgba(169, 255, 113, 0.3);
+}
+
+.live-home-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(169, 255, 113, 0.2);
+    border: 1px solid var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.live-home-info {
+    flex: 1;
+}
+
+.live-home-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.live-home-title strong {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.live-badge-glow {
+    background: var(--color-accent);
+    color: var(--color-primary-dark);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    letter-spacing: 1px;
+}
+
+.live-home-info p {
+    font-size: 13px;
+    color: #b8b8dc;
+    line-height: 1.4;
+}
+
+.live-home-action {
+    background: linear-gradient(135deg, var(--color-accent) 0%, #8ce05a 100%);
+    color: var(--color-primary-dark);
+    font-size: 13px;
+    font-weight: 800;
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(169, 255, 113, 0.3);
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+    .live-home-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+    .live-home-action {
+        width: 100%;
+        text-align: center;
+    }
+}
+
 .header-top {
     display: flex;
     justify-content: space-between;

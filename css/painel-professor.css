@@ -1,4 +1,4 @@
-﻿/* ===================================================================
+/* ===================================================================
    PAINEL DO PROFESSOR — CSS
    Usa as variáveis globais de styles.css
 =================================================================== */
@@ -98,11 +98,164 @@
     color: #fff;
 }
 
-/* ---- Main Content ---- */
-.prof-main {
-    max-width: 900px;
+/* ---- Layout com Sidebar e Conteúdo ---- */
+.prof-layout-container {
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 40px 24px 80px;
+    padding: 30px 24px 80px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+/* ---- Sidebar Esquerda ---- */
+.prof-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: sticky;
+    top: 96px;
+}
+
+.prof-nav-section {
+    background: rgba(33, 33, 80, 0.75);
+    border: 1px solid rgba(169, 255, 113, 0.15);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+}
+
+.prof-nav-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #9999b8;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+    padding-left: 6px;
+}
+
+.prof-nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.prof-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: #c4c4e0;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.prof-nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.prof-nav-item.active {
+    background: rgba(169, 255, 113, 0.14);
+    border: 1px solid rgba(169, 255, 113, 0.35);
+    color: var(--color-accent);
+}
+
+.nav-live-badge {
+    margin-left: auto;
+    background: var(--color-accent);
+    color: var(--color-primary-dark);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    letter-spacing: 0.5px;
+}
+
+/* Card da Barra Lateral: Criar Sala Rápida */
+.sidebar-live-card {
+    background: linear-gradient(135deg, rgba(38, 48, 98, 0.9) 0%, rgba(26, 32, 75, 0.9) 100%);
+    border: 2px solid rgba(169, 255, 113, 0.35);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 20px rgba(169, 255, 113, 0.15);
+}
+
+.sidebar-live-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.sidebar-live-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(169, 255, 113, 0.2);
+    border: 1px solid var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.sidebar-live-header h4 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.sidebar-live-header p {
+    font-size: 12px;
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.sidebar-live-desc {
+    font-size: 13px;
+    color: #b5b5d5;
+    line-height: 1.45;
+    margin-bottom: 16px;
+}
+
+.btn-sidebar-create-live {
+    width: 100%;
+    background: linear-gradient(135deg, var(--color-accent) 0%, #8ce05a 100%);
+    color: var(--color-primary-dark);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(169, 255, 113, 0.3);
+}
+
+.btn-sidebar-create-live:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(169, 255, 113, 0.45);
+}
+
+/* ---- Conteúdo Principal ---- */
+.prof-main-content {
+    min-width: 0;
+}
+
+.prof-view-section {
+    animation: fadeIn 0.3s ease forwards;
 }
 
 /* ---- Page Title Row ---- */
@@ -112,17 +265,23 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 16px;
-    margin-bottom: 36px;
+    margin-bottom: 30px;
 }
 
 .prof-page-title {
     font-size: 26px;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--color-white);
 }
 
 .prof-page-title span {
     color: var(--color-accent);
+}
+
+.prof-page-subtitle {
+    font-size: 14px;
+    color: #a0a0c8;
+    margin-top: 4px;
 }
 
 /* ---- Botão Nova Turma ---- */
@@ -365,7 +524,8 @@
     padding: 20px;
 }
 
-.modal-overlay.open {
+.modal-overlay.open,
+.modal-overlay.active {
     opacity: 1;
     visibility: visible;
 }
@@ -382,7 +542,8 @@
     transition: all var(--transition-base);
 }
 
-.modal-overlay.open .modal-card {
+.modal-overlay.open .modal-card,
+.modal-overlay.active .modal-card {
     transform: scale(1) translateY(0);
 }
 
@@ -706,11 +867,324 @@
 }
 
 /* =====================================================================
+   SEMENTIS LIVE — ESTILOS DO PAINEL DO PROFESSOR
+===================================================================== */
+.live-hero-banner {
+    background: linear-gradient(135deg, rgba(39, 50, 105, 0.95) 0%, rgba(22, 28, 70, 0.95) 100%);
+    border: 2px solid rgba(169, 255, 113, 0.3);
+    border-radius: var(--radius-xl);
+    padding: 36px 40px;
+    margin-bottom: 36px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.live-hero-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(169, 255, 113, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.live-hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(169, 255, 113, 0.15);
+    border: 1px solid rgba(169, 255, 113, 0.4);
+    border-radius: var(--radius-full);
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: var(--color-accent);
+    margin-bottom: 14px;
+}
+
+.live-hero-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    animation: livePulse 1.2s infinite;
+}
+
+.live-hero-content h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.live-hero-content h2 span {
+    color: var(--color-accent);
+}
+
+.live-hero-content p {
+    font-size: 15px;
+    color: #c4c4e0;
+    line-height: 1.6;
+    max-width: 760px;
+    margin-bottom: 24px;
+}
+
+.live-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.btn-hero-create-live {
+    background: linear-gradient(135deg, var(--color-accent) 0%, #8ce05a 100%);
+    color: var(--color-primary-dark);
+    border: none;
+    border-radius: var(--radius-full);
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(169, 255, 113, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-hero-create-live:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(169, 255, 113, 0.5);
+}
+
+.btn-hero-student-link {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: var(--radius-full);
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.btn-hero-student-link:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* Seções de Tópicos */
+.live-topics-section,
+.live-recent-section {
+    margin-bottom: 36px;
+}
+
+.live-section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.live-section-subtitle {
+    font-size: 14px;
+    color: #9999b8;
+    margin-bottom: 20px;
+}
+
+.live-topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.topic-quick-card {
+    background: rgba(33, 33, 80, 0.85);
+    border: 1px solid rgba(169, 255, 113, 0.18);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.topic-quick-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(169, 255, 113, 0.15);
+}
+
+.topic-quick-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.topic-quick-info h4 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.topic-quick-info p {
+    font-size: 13px;
+    color: #a0a0c4;
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.topic-count-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-accent);
+    background: rgba(169, 255, 113, 0.12);
+    padding: 3px 10px;
+    border-radius: 9999px;
+}
+
+/* Salas Recentes */
+.live-recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.live-recent-item {
+    background: rgba(33, 33, 80, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.live-recent-info h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.live-recent-info span {
+    font-size: 13px;
+    color: #a0a0c0;
+}
+
+.live-recent-empty {
+    text-align: center;
+    padding: 36px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    color: #8888aa;
+    font-size: 14px;
+}
+
+/* Modal de Criar Sala Live */
+.modal-icon--live {
+    background: rgba(169, 255, 113, 0.2) !important;
+    border-color: var(--color-accent) !important;
+    color: var(--color-accent) !important;
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.live-modal-topics-group {
+    margin-bottom: 20px;
+}
+
+.live-modal-topics-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-gray-400);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.modal-topics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.modal-topic-chip {
+    background: rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.modal-topic-chip:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.modal-topic-chip.selected {
+    border-color: var(--color-accent);
+    background: rgba(169, 255, 113, 0.12);
+}
+
+.modal-topic-chip-icon {
+    font-size: 22px;
+}
+
+.modal-topic-chip-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.live-modal-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.prof-select {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    font-family: var(--font-family);
+    cursor: pointer;
+}
+
+.prof-select option {
+    background: #1a1a4a;
+    color: #fff;
+}
+
+.btn-modal-confirm--live {
+    background: linear-gradient(135deg, var(--color-accent) 0%, #8ce05a 100%) !important;
+}
+
+/* =====================================================================
    BOTÃO FLUTUANTE ENTRAR EM TURMA (home.html — aluno)
 ===================================================================== */
 .btn-join-class {
     position: fixed;
-    bottom: 90px;        /* acima da navbar inferior */
+    bottom: 90px;
     right: 20px;
     z-index: 100;
     display: flex;
@@ -738,8 +1212,24 @@
 /* =====================================================================
    RESPONSIVO
 ===================================================================== */
+@media (max-width: 960px) {
+    .prof-layout-container {
+        grid-template-columns: 1fr;
+    }
+    .prof-sidebar {
+        position: static;
+    }
+    .modal-topics-grid {
+        grid-template-columns: 1fr;
+    }
+    .live-modal-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
 @media (max-width: 600px) {
-    .prof-main { padding: 24px 16px 80px; }
+    .prof-layout-container { padding: 20px 16px 80px; }
     .prof-page-title { font-size: 20px; }
     .prof-user-name { display: none; }
     .turmas-grid { grid-template-columns: 1fr; }
@@ -748,4 +1238,7 @@
     .modal-card { padding: 24px 18px; }
     .btn-join-class span { display: none; }
     .btn-join-class { padding: 14px; border-radius: 50%; }
+    .live-hero-banner { padding: 24px 20px; }
+    .live-hero-content h2 { font-size: 22px; }
 }
+
