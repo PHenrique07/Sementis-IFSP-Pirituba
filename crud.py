@@ -26,6 +26,9 @@ def criar_tabelas():
 
 # 3. Função para inserir um usuário
 def inserir_usuario(nome: str, email: str, senha: str, tipo_usuario: str, data_nascimento=None):
+    if isinstance(data_nascimento, str):
+        data_nascimento = date.fromisoformat(data_nascimento)
+
     with Session(engine) as session:
         novo_usuario = Usuario(
             nome=nome,

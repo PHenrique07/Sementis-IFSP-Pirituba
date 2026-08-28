@@ -10,7 +10,7 @@ from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_ema
 from passlib.hash import argon2
 from functools import wraps
 import os
-from datetime import datetime, timezone, timedelta
+from datetime import date, datetime, timezone, timedelta
 import jwt
 from sqlmodel import Session, select, create_engine, func
 from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma
@@ -117,6 +117,15 @@ def cadastro():
     if not dados:
         return jsonify({"erro": "Nenhum dado recebido"}), 400
 
+    data_nascimento_texto = dados.get('data_nascimento')
+    try:
+        data_nascimento = (
+            date.fromisoformat(data_nascimento_texto)
+            if data_nascimento_texto else None
+        )
+    except (TypeError, ValueError):
+        return jsonify({"erro": "Data de nascimento inválida. Use o formato AAAA-MM-DD."}), 400
+
     # Pega a senha que o cliente digitou
     senha_limpa = dados.get('senha')
 
@@ -133,7 +142,7 @@ def cadastro():
         novo_user = inserir_usuario(
             nome=dados.get('nome'),
             email=dados.get('email'),
-            data_nascimento=dados.get('data_nascimento'),
+            data_nascimento=data_nascimento,
             senha=senha_segura, 
             tipo_usuario=dados.get('tipo_usuario')
         )
