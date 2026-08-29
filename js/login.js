@@ -126,12 +126,6 @@ function initFormValidation() {
         });
     }
 
-    if (registerForm) {
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            handleRegister();
-        });
-    }
 }
 
 function handleLogin() {
@@ -156,56 +150,6 @@ function handleLogin() {
     setTimeout(() => {
         window.location.href = 'home.html';
         console.log('Login data:', { email, password });
-    }, 1500);
-}
-
-function handleRegister() {
-    const nome = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const senha = document.getElementById('registerPassword').value;
-    const confirmPassword = document.getElementById('registerConfirmPassword').value;
-    const idade = parseInt(document.getElementById('registerAge').value);
-    const tipo_usuario = document.querySelector('input[name="userType"]:checked').value;
-    const acceptTerms = document.getElementById('acceptTerms').checked;
-
-    // Validations
-    if (nome.trim().length < 2) {
-        showNotification('Por favor, insira seu nome completo.', 'error');
-        return;
-    }
-
-    if (!validateEmail(email)) {
-        showNotification('Por favor, insira um e-mail válido.', 'error');
-        return;
-    }
-
-    if (!idade || idade < 5 || idade > 120) {
-        showNotification('Por favor, insira uma idade válida.', 'error');
-        return;
-    }
-
-    if (senha.length < 8) {
-        showNotification('A senha deve ter pelo menos 8 caracteres.', 'error');
-        return;
-    }
-
-    if (senha !== confirmPassword) {
-        showNotification('As senhas não coincidem.', 'error');
-        return;
-    }
-
-    if (!acceptTerms) {
-        showNotification('Você precisa aceitar os termos de uso.', 'error');
-        return;
-    }
-
-    // Simulate registration (replace with actual API call)
-    showNotification('Conta criada com sucesso! Bem-vindo ao Sementis!', 'success');
-
-    // Simulate redirect
-    setTimeout(() => {
-        window.location.href = 'home.html';
-        console.log('Register data:', { nome, email, senha, idade, tipo_usuario });
     }, 1500);
 }
 

@@ -1,4 +1,4 @@
-const CACHE_VERSION = "sementis-pwa-v5";
+const CACHE_VERSION = "sementis-pwa-v6";
 const APP_SHELL_CACHE = `app-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 
@@ -23,6 +23,7 @@ const APP_SHELL_FILES = [
   "./css/turma-professor.css",
   "./js/main.js",
   "./js/login.js",
+  "./js/cadastro.js",
   "./js/home.js",
   "./js/shared-navbar.js",
   "./js/quiz.js",

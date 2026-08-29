@@ -13,6 +13,7 @@ import os
 from datetime import date, datetime, timezone, timedelta
 import jwt
 from sqlmodel import Session, select, create_engine, func
+from sqlalchemy.exc import IntegrityError
 from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma
 
 app = Flask(__name__)
@@ -117,6 +118,9 @@ def cadastro():
     if not dados:
         return jsonify({"erro": "Nenhum dado recebido"}), 400
 
+    email = dados.get('email')
+    if not isinstance(email, str) or not email.strip():
+        return jsonify({"erro": "E-mail inválido"}), 400
     data_nascimento_texto = dados.get('data_nascimento')
     try:
         data_nascimento = (
@@ -129,6 +133,10 @@ def cadastro():
     # Pega a senha que o cliente digitou
     senha_limpa = dados.get('senha')
 
+    email = email.strip().lower()
+
+    if buscar_usuario_por_email(email):
+        return jsonify({"erro": "E-mail já cadastrado"}), 409
     # --- Criptografia ---
     # 1. Misturamos a senha do cliente com a nossa Pepper
     senha_com_pimenta = senha_limpa + PEPPER
@@ -141,7 +149,7 @@ def cadastro():
         # Enviamos os dados para a função do crud.py salvar no banco
         novo_user = inserir_usuario(
             nome=dados.get('nome'),
-            email=dados.get('email'),
+            email=email,
             data_nascimento=data_nascimento,
             senha=senha_segura, 
             tipo_usuario=dados.get('tipo_usuario')
@@ -153,8 +161,9 @@ def cadastro():
             "id": novo_user.id
         }), 201
 
+    except IntegrityError:
+        return jsonify({"erro": "E-mail já cadastrado"}), 409
     except Exception as e:
-        # Se o e-mail já existir ou der erro no banco, cai aqui no limbo
         return jsonify({"erro": f"Erro ao cadastrar: {str(e)}"}), 500
 
 # --- Rota de Login ---
