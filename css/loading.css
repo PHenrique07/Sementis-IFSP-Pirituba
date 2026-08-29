@@ -1,6 +1,7 @@
 /* ===================================================================
    SEMENTIS — TELA DE LOADING GLOBAL
-   Centralizado, fofinho e dinâmico com GIF e efeitos suaves
+   Tela cheia com as cores oficiais do site (roxo + verde) e GIF solto,
+   sem moldura/quadrado ao redor.
 =================================================================== */
 
 .sementis-loading-overlay {
@@ -10,9 +11,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(14, 14, 38, 0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: radial-gradient(circle at 20% 15%, rgba(169, 255, 113, 0.12), transparent 45%),
+                linear-gradient(180deg, var(--color-primary-dark, #1a1a4a) 0%, var(--color-primary, #27275e) 100%);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -26,17 +26,17 @@
 }
 
 .sementis-loading-card {
-    background: linear-gradient(135deg, rgba(35, 35, 88, 0.9) 0%, rgba(20, 20, 60, 0.9) 100%);
-    border: 2px solid rgba(169, 255, 113, 0.35);
-    border-radius: 28px;
-    padding: 32px 36px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 24px;
     text-align: center;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 30px rgba(169, 255, 113, 0.2);
+    box-shadow: none;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 360px;
+    max-width: 560px;
     width: 100%;
     transform: scale(0.92) translateY(12px);
     transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -46,22 +46,25 @@
     transform: scale(1) translateY(0);
 }
 
+/* Sem quadrado/moldura ao redor do gif: sem background, sem border, sem overflow hidden */
 .sementis-loading-gif-wrap {
     position: relative;
-    width: 180px;
-    height: 180px;
+    width: min(90vw, 640px);
+    height: min(90vw, 640px);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 6px;
+    margin-bottom: 12px;
 }
 
 .sementis-loading-gif {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    object-fit: contain;   /* nao corta/preenche em quadrado, mostra o gif inteiro */
+    border-radius: 0;       /* sem cantos de "caixa" */
+    box-shadow: none;       /* sem sombra de painel, so o proprio gif */
+    filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.35));
+    background: transparent;
     animation: gentleFloat 2.8s ease-in-out infinite alternate;
 }
 

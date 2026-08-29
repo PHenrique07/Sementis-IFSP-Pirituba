@@ -29,11 +29,19 @@ def inserir_usuario(nome: str, email: str, senha: str, tipo_usuario: str, data_n
     if isinstance(data_nascimento, str):
         data_nascimento = date.fromisoformat(data_nascimento)
 
+    idade = 0
+    if data_nascimento:
+        hoje = date.today()
+        idade = hoje.year - data_nascimento.year - (
+            (hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day)
+        )
+
     with Session(engine) as session:
         novo_usuario = Usuario(
             nome=nome,
             email=email,
             data_nascimento=data_nascimento,
+            idade=idade,
             senha=senha,
             tipo_usuario=tipo_usuario
         )
