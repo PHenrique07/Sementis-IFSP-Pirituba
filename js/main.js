@@ -391,3 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.finalizarTrilha = finalizarTrilha;
 });
+
+
+};
