@@ -1,88 +1,68 @@
+Markdown
+
 # Sementis 🌱 ![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-blue.svg)
 
-<<<<<<< HEAD
-> **⚠️ AVISO: BRANCH DE TESTES (STAGING)**
-> Este ambiente é destinado exclusivamente para validação de novas funcionalidades. O código aqui pode estar em desenvolvimento e pode conter instabilidades.
-=======
 Plataforma educacional gamificada desenvolvida como projeto acadêmico no IFSP Pirituba. O Sementis utiliza mecânicas de jogos para engajar os usuários no aprendizado através de trilhas de conhecimento, quizzes dinâmicos, missões diárias, uma loja de avatares virtuais e um sistema competitivo de ligas e rankings.
+
+## 🏗️ Arquitetura do Projeto
+
+O Sementis utiliza uma arquitetura **desacoplada**:
+- **Front-end (Client):** Progressive Web App (PWA) construído com HTML/CSS/JS puro (Vanilla). Hospedado na **Vercel** (`sementis.com.br`).
+- **Back-end (API):** Servidor construído em Python com **Flask**, responsável pelas regras de negócio e banco de dados. Hospedado no **PythonAnywhere**.
+- O sistema possui configuração de ambiente dinâmica (`js/api-config.js`) que direciona as requisições (Fetch API) automaticamente para a API correta (Localhost ou Produção).
 
 ## 🛠 Tecnologias
 
 **Backend:**
-- Python 3
-- Flask (API e Rotas)
-- SQLModel / SQLAlchemy (ORM)
+- Python 3.10+
+- Flask (Rotas e API Rest)
+- Flask-CORS (Comunicação Cross-Origin com credenciais)
 - SQLite (Banco de Dados)
 
 **Frontend:**
 - HTML5 / CSS3
-- Vanilla JavaScript (Integração assíncrona via Fetch API / JSON)
-- PWA (Progressive Web App - Manifest e Service Workers)
-
-## 📁 Estrutura do projeto
-
-```text
-Sementis-IFSP-Pirituba/
-├── FlapFish/         ← Minigame interativo integrado à plataforma
-├── assets/           ← Imagens, ícones, avatares e recursos visuais
-├── css/              ← Folhas de estilo da aplicação
-├── js/               ← Lógica de frontend e consumo da API
-├── pwa/              ← Configurações e ícones para instalação mobile/desktop
-├── .gitignore        ← Arquivos e pastas ignorados pelo Git (ex: venv)
-├── app.py            ← Inicialização do servidor Flask e endpoints (Rotas)
-├── crud.py           ← Operações de banco de dados e regras de negócio
-├── models.py         ← Esquemas e tabelas do banco de dados (Usuários, Ligas, Loja, etc.)
-├── seeds.py          ← Script para popular o banco com dados iniciais para testes
-├── sementis.db       ← Arquivo do banco de dados local SQLite
-├── requirements.txt  ← Dependências do projeto Python
-├── questoes.json     ← Arquivo de dados com as perguntas e respostas do Quiz
-├── sw.js             ← Service Worker principal para cache e funcionamento offline
-├── teste_backend.py  ← Script de testes e validação do CRUD e rotas
-├── README.md         ← Documentação principal do projeto
-└── *.html            ← Páginas de interface (index, login, home, ligas, perfil, missões, trilhas)
-```
+- Vanilla JavaScript
+- PWA (Manifest e Service Workers)
 
 ## ⚙️ Como rodar localmente
 
-### Pré-requisitos
-- [Python 3.10+](https://www.python.org/downloads/) instalado na máquina.
-- Git instalado.
+Como o projeto é desacoplado, você precisa rodar a API (Back-end) e abrir o Front-end simultaneamente.
 
-### Passo a passo
-
-1. Clone o repositório:
+### 1. Rodando a API (Back-end)
+1. Clone o repositório e entre na pasta:
    ```bash
    git clone [https://github.com/PHenrique07/Sementis-IFSP-Pirituba.git](https://github.com/PHenrique07/Sementis-IFSP-Pirituba.git)
-   ```
-
-2. Entre na pasta do projeto e crie um ambiente virtual (recomendado):
-   ```bash
    cd Sementis-IFSP-Pirituba
-   python -m venv venv
-   ```
 
-3. Ative o ambiente virtual:
-   - **Windows:** `venv\Scripts\activate`
-   - **Linux/macOS:** `source venv/bin/activate`
+    Crie e ative o ambiente virtual:
 
-4. Instale as dependências do projeto:
-   ```bash
-   pip install -r requirements.txt
-   ```
+        Windows: python -m venv venv e depois venv\Scripts\activate
 
-5. Popule o banco de dados com os usuários e itens de teste:
-   ```bash
-   python seeds.py
-   ```
+        Linux/macOS: python3 -m venv venv e depois source venv/bin/activate
 
-6. Inicie o servidor local:
-   ```bash
-   flask run
-   ```
-   
-7. Acesse o sistema pelo navegador através do endereço retornado pelo terminal (geralmente `http://127.0.0.1:5000/`).
+    Instale as dependências e inicie o banco de testes:
+    Bash
 
-## 👥 Integrantes e Contribuições
+    pip install -r requirements.txt
+    python seeds.py
+
+    Inicie o servidor Flask:
+    Bash
+
+    flask run
+
+    A API estará rodando em http://127.0.0.1:5000.
+
+2. Rodando o Site (Front-end)
+
+    Com a API rodando no terminal, abra o código do Sementis no VS Code.
+
+    Utilize a extensão Live Server para abrir o arquivo index.html.
+
+    O script api-config.js detectará que você está no localhost e fará com que o site se conecte automaticamente à sua API local da porta 5000.
+
+👥 Integrantes e Contribuições
+
 
 - **[Pedro Henrique Santos da Silva](https://www.linkedin.com/in/pedro-henrique-santos-da-silva-40b521349/)** — **Líder Técnico & Desenvolvedor Backend:** Responsável pela coordenação geral do desenvolvimento, arquitetura do banco de dados (Models), implementação do CRUD e povoamento do banco(Seeds).
 
@@ -92,9 +72,7 @@ Sementis-IFSP-Pirituba/
 
 - **[Wellington Mendes](https://www.linkedin.com/in/wmendesc/)** — **Desenvolvedor Frontend:** Responsável pela criação da interface, estilização visual (UI/UX) e garantia da responsividade da aplicação.
 
-## 📄 Licença
+📄 Licença
 
-**Todos os Direitos Reservados (All Rights Reserved)**
-
-Este repositório e seu código-fonte são de propriedade exclusiva da equipe criadora. Não é permitida a cópia, modificação, distribuição, sublicenciamento ou uso (comercial ou não comercial) de qualquer parte deste projeto sem a autorização prévia e explícita dos autores.
->>>>>>> 45466e2a0180f6fcd0d819061db212a1d3aa270c
+Todos os Direitos Reservados (All Rights Reserved)
+Este repositório e seu código-fonte são de propriedade exclusiva da equipe criadora.
