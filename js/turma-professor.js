@@ -13,7 +13,7 @@ const professorNome = document.getElementById('professor-nome');
 if (professorNome) professorNome.textContent = usuario.nome || 'Professor(a)';
 
 async function apiFetch(url, options = {}) {
-    const response = await fetch(url, {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
         ...options,
         headers: {
             'Content-Type': 'application/json',

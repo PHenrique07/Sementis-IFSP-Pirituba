@@ -143,7 +143,7 @@ async function openQuizModal() {
   maxHealth = health;
 
   try {
-    const response = await fetch(`/api/atividades/${idClicado}/questoes`, {
+    const response = await fetch(`${API_BASE_URL}/api/atividades/${idClicado}/questoes`, {
       headers: { Authorization: "Bearer " + token }
     });
 
@@ -464,7 +464,7 @@ function dispararVitoria() {
   const trilhaId = localStorage.getItem("ultima_fase_id");
   const errosCount = localStorage.getItem("erros_cometidos") || 0;
 
-  fetch("/completar_atividade", {
+  fetch(`${API_BASE_URL}/completar_atividade`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -538,7 +538,7 @@ function renderGameOverScreen() {
   const errosCount = localStorage.getItem("erros_cometidos") || 0;
 
   // Salvar no backend
-  fetch("/completar_atividade", {
+  fetch(`${API_BASE_URL}/completar_atividade`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

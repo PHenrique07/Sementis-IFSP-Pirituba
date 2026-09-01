@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const buscarMissoes = async () => {
         const tempoReal = new Date().getTime();
-        const rota = `http://127.0.0.1:5000/missoes?v=${tempoReal}`;
+        const rota = `${API_BASE_URL}/missoes?v=${tempoReal}`;
         const token = localStorage.getItem('token'); 
 
         try {
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const trilhaId = localStorage.getItem('ultima_fase_id');
             const errosCount = localStorage.getItem('erros_cometidos') || 0;
             
-            fetch('/completar_atividade', {
+            fetch(`${API_BASE_URL}/completar_atividade`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

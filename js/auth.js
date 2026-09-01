@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const senhaDigitada = document.getElementById('loginPassword').value;
 
             try {
-                // ATENÇÃO: Como o Python agora roda o site junto com a API, 
-                // não precisamos mais colocar "http://0.0.0.127/...". Usamos apenas a rota!
-                const urlDoServidor = "/login";
+                // API_BASE_URL é definida em js/api-config.js e detecta
+                // automaticamente se estamos em local ou em produção.
+                const urlDoServidor = `${API_BASE_URL}/login`;
 
                 const resposta = await fetch(urlDoServidor, {
                     method: "POST",

@@ -457,7 +457,7 @@ function initModulesView() {
 // ===== Integração com API (Carregar Trilha) =====
 async function carregarTrilha(moduloId = 1) { 
     try {
-        const response = await fetch(`/api/modulos/${moduloId}/trilhas`, {
+        const response = await fetch(`${API_BASE_URL}/api/modulos/${moduloId}/trilhas`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -539,7 +539,7 @@ async function carregarProgressoModulos() {
     if (!token) return;
 
     try {
-        const response = await fetch('/api/modulos/progresso', {
+        const response = await fetch(`${API_BASE_URL}/api/modulos/progresso`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
         
@@ -593,7 +593,7 @@ async function carregarProgressoModulos() {
     if (!token) return;
 
     try {
-        const response = await fetch('/api/modulos/progresso', {
+        const response = await fetch(`${API_BASE_URL}/api/modulos/progresso`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
         

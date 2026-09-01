@@ -82,7 +82,7 @@ function updateLeagueHeader(league) {
 const buscarRankingAPI = async (ligaId) => {
     const tempoReal = new Date().getTime();
     // Caminho relativo para funcionar tanto no PC quanto no Deploy
-    const rota = `/ranking/${ligaId}?v=${tempoReal}`; 
+    const rota = `${API_BASE_URL}/ranking/${ligaId}?v=${tempoReal}`; 
     
     try {
         const response = await fetch(rota, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });

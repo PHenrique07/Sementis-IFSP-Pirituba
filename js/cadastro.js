@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const resposta = await fetch("/cadastro", {
+                const resposta = await fetch(`${API_BASE_URL}/cadastro`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

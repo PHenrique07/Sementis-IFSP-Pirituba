@@ -1,4 +1,4 @@
-﻿// ===== Entrar em Turma — Lógica do Modal (Aluno) =====
+// ===== Entrar em Turma — Lógica do Modal (Aluno) =====
 
 document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setLoading(true);
         limparMensagem();
         try {
-            const resposta = await fetch('/api/aluno/entrar-turma', {
+            const resposta = await fetch(`${API_BASE_URL}/api/aluno/entrar-turma`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
                 body: JSON.stringify({ codigo })
