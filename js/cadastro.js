@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
 
     if (registerForm) {
-        registerForm.addEventListener('submit', async function(event) {
+        registerForm.addEventListener('submit', async function (event) {
             event.preventDefault();
 
             const nomeDigitado = document.getElementById("registerName").value;
@@ -20,11 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const usuario = {
                 nome: nomeDigitado,
                 email: emailDigitado,
-<<<<<<< HEAD
                 data_nascimento: dataNascimentoDigitada,
-=======
-                idade: idadeDigitada, // O banco exige número inteiro
->>>>>>> 45466e2a0180f6fcd0d819061db212a1d3aa270c
                 senha: senhaDigitada,
                 tipo_usuario: tipoUsuarioSelecionado
             };
@@ -54,11 +50,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-<<<<<<< HEAD
-=======
-
-    /* Abaixo o Vini pode colocar as lógicas do login.html 
-       (como alternar entre as abas de entrar/cadastrar e a visibilidade da senha)
-    */
->>>>>>> 45466e2a0180f6fcd0d819061db212a1d3aa270c
 });
