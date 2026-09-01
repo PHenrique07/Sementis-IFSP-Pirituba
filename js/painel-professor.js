@@ -23,7 +23,7 @@ async function apiFetch(url, options = {}) {
         }
     };
     const config = { ...defaults, ...options, headers: { ...defaults.headers, ...(options.headers || {}) } };
-    const res = await fetch(url, config);
+    const res = await fetch(`${API_BASE_URL}${url}`, config);
     if (res.status === 401) {
         fazerLogout();
         return null;

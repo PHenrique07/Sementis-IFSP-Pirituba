@@ -131,7 +131,7 @@ async function entrarNaSala(e) {
     } catch (err) {}
 
     try {
-        const res = await fetch('/api/live/entrar', {
+        const res = await fetch(`${API_BASE_URL}/api/live/entrar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -187,7 +187,7 @@ async function syncEstado() {
     if (!jogadorAtual) return;
 
     try {
-        const res = await fetch(`/api/live/sala/${jogadorAtual.pin}/estado?jogador_id=${jogadorAtual.jogador_id}`);
+        const res = await fetch(`${API_BASE_URL}/api/live/sala/${jogadorAtual.pin}/estado?jogador_id=${jogadorAtual.jogador_id}`);
         if (!res.ok) {
             console.warn('Sala não encontrada ou encerrada.');
             return;
@@ -302,7 +302,7 @@ async function enviarResposta(opcaoIndex) {
     mostrarTela('submitted');
 
     try {
-        await fetch(`/api/live/sala/${jogadorAtual.pin}/responder`, {
+        await fetch(`${API_BASE_URL}/api/live/sala/${jogadorAtual.pin}/responder`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

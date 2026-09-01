@@ -24,11 +24,17 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = "chave_super_secreta_2026_GRATIA!"
 
 # =====================================================================
-# --- ALTERAÇÃO FEITA POR PEDRO SANTOS ---
-# Ativação do CORS (Cross-Origin Resource Sharing). 
-# Sem isso, o navegador do Vini bloqueava a requisição de cadastro
-# achando que era um ataque, impedindo o Front de falar com a API.
-CORS(app)
+# --- CORS (Cross-Origin Resource Sharing) ---
+# Permite que o front-end hospedado na Vercel se comunique com esta API.
+# supports_credentials=True é necessário para envio de cookies/JWT.
+CORS(app, supports_credentials=True, origins=[
+    "http://127.0.0.1:5000",
+    "http://localhost:5000",
+    "http://localhost:3000",
+    "https://sementis.com.br",
+    "https://www.sementis.com.br",
+    "https://sementis-ifsp-pirituba.vercel.app",
+])
 # =====================================================================
 
 # PEPPER: Uma chave secreta que só nós sabemos. 

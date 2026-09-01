@@ -47,7 +47,7 @@
             return null;
         }
 
-        const resposta = await fetch(url, {
+        const resposta = await fetch(`${API_BASE_URL}${url}`, {
             ...opcoes,
             headers: {
                 ...(opcoes && opcoes.headers),

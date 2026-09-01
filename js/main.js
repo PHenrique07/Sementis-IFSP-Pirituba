@@ -201,7 +201,7 @@ function atualizarHeaderSuperior(ofensiva, moedas, vidas) {
 
 const atualizarBarraDeXP = async () => {
     console.log("1. Iniciando busca de dados na API...");
-    const rota = '/api/perfil';
+    const rota = `${API_BASE_URL}/api/perfil`;
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await fetch('/completar_atividade', {
+            const response = await fetch(`${API_BASE_URL}/completar_atividade`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
