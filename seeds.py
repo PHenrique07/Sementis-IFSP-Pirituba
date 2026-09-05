@@ -4,6 +4,7 @@ import sys
 from sqlmodel import Session, SQLModel, create_engine, delete, select
 from datetime import date, timedelta
 from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao, Turma, TurmaAluno
+from crud import migrar_colunas_ausentes
 from passlib.hash import argon2
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +48,7 @@ def sincronizar_conteudo_educacional():
         print(f"❌ Erro ao ler o arquivo 'questoes.json': {e}")
         return
 
+    migrar_colunas_ausentes(engine)
     SQLModel.metadata.create_all(engine)
     with Session(engine) as session:
         for dados_modulo in conteudo_educacional:
@@ -127,6 +129,7 @@ def sincronizar_conteudo_educacional():
     print("✅ Conteúdo educacional sincronizado sem alterar usuários ou progresso.")
 
 def semear_banco():
+    migrar_colunas_ausentes(engine)
     SQLModel.metadata.create_all(engine)
     
     with Session(engine) as session:

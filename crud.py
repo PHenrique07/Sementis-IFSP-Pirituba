@@ -3,6 +3,7 @@ from datetime import date
 import os
 import secrets
 import string
+from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 # Importando todas as tabelas do models.py
 from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno
@@ -17,8 +18,54 @@ engine = create_engine(sqlite_url, echo=True)
 
 # 2. Função para criar as tabelas no banco
 def criar_tabelas():
-    # Vai ler todas as classes que foram importadas e criar no banco
+    migrar_colunas_ausentes(engine)
     SQLModel.metadata.create_all(engine)
+
+
+def migrar_colunas_ausentes(engine_banco):
+    """Adiciona colunas novas sem recriar tabelas nem remover dados."""
+    with engine_banco.begin() as conexao:
+        inspetor = inspect(conexao)
+        tabelas_existentes = set(inspetor.get_table_names())
+        dialeto = conexao.dialect
+
+        for tabela in SQLModel.metadata.sorted_tables:
+            if tabela.name not in tabelas_existentes:
+                continue
+
+            colunas_existentes = {
+                coluna["name"] for coluna in inspetor.get_columns(tabela.name)
+            }
+            preparador = dialeto.identifier_preparer
+
+            for coluna in tabela.columns:
+                if coluna.name in colunas_existentes:
+                    continue
+
+                tipo = coluna.type.compile(dialect=dialeto)
+                definicao = [
+                    "ALTER TABLE",
+                    preparador.quote(tabela.name),
+                    "ADD COLUMN",
+                    preparador.quote(coluna.name),
+                    tipo,
+                ]
+
+                default = coluna.default.arg if coluna.default is not None else None
+                valor_default = None
+                if default is not None and not callable(default):
+                    if isinstance(default, bool):
+                        valor_default = "1" if default else "0"
+                    elif isinstance(default, (int, float)):
+                        valor_default = str(default)
+                    elif isinstance(default, str):
+                        valor_default = "'" + default.replace("'", "''") + "'"
+                    else:
+                        valor_default = None
+                    if valor_default is not None:
+                        definicao.extend(["DEFAULT", valor_default])
+
+                conexao.execute(text(" ".join(definicao)))
 
 # ==========================================
 # FUNÇÕES DE USUÁRIO E AUTENTICAÇÃO
