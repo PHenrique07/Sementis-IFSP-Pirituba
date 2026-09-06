@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initScrollEffects();
     initAnimations();
-    
+
     // Chama a função para buscar os dados de perfil e injetar na página
     atualizarBarraDeXP();
 });
@@ -55,7 +55,7 @@ function initScrollEffects() {
 
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== Funções do Perfil e Logout =====
-window.toggleProfileDropdown = function(event) {
+window.toggleProfileDropdown = function (event) {
     if (event) event.stopPropagation();
     const dropdown = document.getElementById('profileDropdown');
     if (dropdown) {
@@ -179,9 +179,9 @@ document.addEventListener('click', (e) => {
 });
 
 function fazerLogout() {
-    localStorage.removeItem("user"); 
-    localStorage.removeItem("token"); 
-    window.location.reload(); 
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.reload();
 }
 
 // ========================================================
@@ -211,7 +211,7 @@ const atualizarBarraDeXP = async () => {
 
     try {
         const response = await fetch(rota, {
-    credentials: 'include',
+            credentials: 'include',
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token,
@@ -228,22 +228,22 @@ const atualizarBarraDeXP = async () => {
             }
             throw new Error('Erro na API ao buscar perfil');
         }
-        
+
         const dados = await response.json();
         console.log("2. Dados recebidos do banco:", dados);
 
         // --- MAPEANDO TODOS OS DADOS DA API ---
         const nomeUsuario = dados.nome;
-        const xpAtual = dados.progresso_nivel.xp_no_nivel; 
+        const xpAtual = dados.progresso_nivel.xp_no_nivel;
         const xpProximo = dados.progresso_nivel.xp_proximo_nivel;
         const nivelAtual = dados.progresso_nivel.nivel_atual;
         const xpTotal = dados.xp_total;
-        
+
         // Dados de Economia e Retenção
         const ofensiva = dados.ofensiva;
         const moedas = dados.moedas;
         const vidas = dados.vidas;
-        
+
         // --- LÓGICA DA LIGA ---
         const ligaId = dados.liga_id || 1; // Se não vier nada, garante que é 1
         let nomeLiga = "BRONZE";
@@ -257,23 +257,23 @@ const atualizarBarraDeXP = async () => {
             iconeLiga = "assets/ligas/liga_trofeu_ouro.png";
         } else if (ligaId === 4) {
             nomeLiga = "DIAMANTE";
-            iconeLiga = "assets/ligas/liga_trofeu_diamante.png"; 
+            iconeLiga = "assets/ligas/liga_trofeu_diamante.png";
         }
 
         // Calculando a porcentagem da barra verde (o que já foi preenchido)
         const porcentagem = (xpAtual / xpProximo) * 100;
-        
+
         // Calculando o que FALTA para o texto da Home (100% - o que já tem)
-        const porcentagemFaltante = (100 - porcentagem).toFixed(0); 
-        
+        const porcentagemFaltante = (100 - porcentagem).toFixed(0);
+
         console.log(`3. Cálculo feito: Barra = ${porcentagem}%. Faltam = ${porcentagemFaltante}%`);
 
         // Pequeno atraso para garantir que o HTML já renderizou tudo
         setTimeout(() => {
-            
+
             // --- CHAMADA DA NOVA FUNÇÃO DO HEADER ---
             atualizarHeaderSuperior(ofensiva, moedas, vidas);
-            
+
             // --- 1. SELETORES DA TELA HOME ---
             const homeBarra = document.getElementById('ui-progress-fill');
             const homeTextoBarra = document.getElementById('ui-progress-text');
@@ -298,7 +298,7 @@ const atualizarBarraDeXP = async () => {
                 homeBarra.style.setProperty('width', `${porcentagem}%`, 'important');
             }
             if (homeTextoBarra) homeTextoBarra.textContent = `Faltam ${porcentagemFaltante}% para o próximo nível`;
-            if (homeNivel) homeNivel.textContent = `Nível ${nivelAtual}`; 
+            if (homeNivel) homeNivel.textContent = `Nível ${nivelAtual}`;
             if (homeNome) homeNome.textContent = nomeUsuario;
 
 
@@ -327,24 +327,24 @@ const atualizarBarraDeXP = async () => {
 
 // ===== Integração com API (Finalizar Trilha) =====
 document.addEventListener('DOMContentLoaded', () => {
-   async function finalizarTrilha() {
+    async function finalizarTrilha() {
         const trilhaId = localStorage.getItem('ultima_fase_id');
         const errosCount = localStorage.getItem('erros_cometidos') || 0;
-        
+
         // CORREÇÃO 2b: Limpa o histórico de erros para a próxima lição
-        localStorage.setItem('erros_cometidos', 0); 
-        
-        const progressoData = { 
-            atividade_id: trilhaId, 
+        localStorage.setItem('erros_cometidos', 0);
+
+        const progressoData = {
+            atividade_id: trilhaId,
             erros: parseInt(errosCount),
-            concluida_com_sucesso: true 
+            concluida_com_sucesso: true
         };
 
         try {
             const response = await fetch(`${API_BASE_URL}/completar_atividade`, {
-    credentials: 'include',
+                credentials: 'include',
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 },
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // === A MÁGICA ENTRA AQUI ===
             // 1. Transforma a resposta do back-end em JSON
             const resultado = await response.json();
-            
+
             // 2. Pega os dados exatos que o banco do Pedro calculou
             const novaOfensiva = resultado.ofensiva_atual;
             const moedasAtuais = resultado.moedas_atuais;
@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (contadorOfensiva) {
                 contadorOfensiva.textContent = novaOfensiva;
             }
-            
+
             // 4. Atualiza o Header Superior na hora, sem precisar recarregar a página!
             atualizarHeaderSuperior(novaOfensiva, moedasAtuais, vidasAtuais);
 
@@ -395,4 +395,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-};
