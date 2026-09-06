@@ -82,6 +82,7 @@ async function carregarRanking(tipoRanking) {
 
     try {
         const resposta = await fetch(configuracao.rota, {
+    credentials: 'include',
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

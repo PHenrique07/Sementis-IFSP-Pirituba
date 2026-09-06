@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const urlDoServidor = `${API_BASE_URL}/login`;
 
                 const resposta = await fetch(urlDoServidor, {
+    credentials: 'include',
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

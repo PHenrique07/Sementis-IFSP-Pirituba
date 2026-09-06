@@ -458,6 +458,7 @@ function initModulesView() {
 async function carregarTrilha(moduloId = 1) { 
     try {
         const response = await fetch(`${API_BASE_URL}/api/modulos/${moduloId}/trilhas`, {
+    credentials: 'include',
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -540,6 +541,7 @@ async function carregarProgressoModulos() {
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/modulos/progresso`, {
+    credentials: 'include',
             headers: { 'Authorization': 'Bearer ' + token }
         });
         
@@ -594,6 +596,7 @@ async function carregarProgressoModulos() {
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/modulos/progresso`, {
+    credentials: 'include',
             headers: { 'Authorization': 'Bearer ' + token }
         });
         

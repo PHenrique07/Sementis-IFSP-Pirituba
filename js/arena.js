@@ -132,6 +132,7 @@ async function entrarNaSala(e) {
 
     try {
         const res = await fetch(`${API_BASE_URL}/api/live/entrar`, {
+    credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -195,7 +196,7 @@ async function syncEstado() {
 
         const dados = await res.json();
         atualizarTelaJogador(dados);
-    } catch (err) {
+    } catch (err, { credentials: 'include' }) {
         console.error('Erro de sincronização da Arena:', err);
     }
 }
@@ -303,6 +304,7 @@ async function enviarResposta(opcaoIndex) {
 
     try {
         await fetch(`${API_BASE_URL}/api/live/sala/${jogadorAtual.pin}/responder`, {
+    credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

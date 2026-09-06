@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         limparMensagem();
         try {
             const resposta = await fetch(`${API_BASE_URL}/api/aluno/entrar-turma`, {
+    credentials: 'include',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
                 body: JSON.stringify({ codigo })

@@ -48,6 +48,7 @@
         }
 
         const resposta = await fetch(`${API_BASE_URL}${url}`, {
+    credentials: 'include',
             ...opcoes,
             headers: {
                 ...(opcoes && opcoes.headers),

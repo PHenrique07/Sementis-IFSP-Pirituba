@@ -17,6 +17,8 @@ from sqlalchemy.exc import IntegrityError
 from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma
 
 app = Flask(__name__)
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
 
 # Caminho absoluto da pasta do projeto — resolve o problema do PythonAnywhere
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

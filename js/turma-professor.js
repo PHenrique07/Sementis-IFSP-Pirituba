@@ -14,6 +14,7 @@ if (professorNome) professorNome.textContent = usuario.nome || 'Professor(a)';
 
 async function apiFetch(url, options = {}) {
     const response = await fetch(`${API_BASE_URL}${url}`, {
+    credentials: 'include',
         ...options,
         headers: {
             'Content-Type': 'application/json',

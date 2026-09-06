@@ -211,6 +211,7 @@ const atualizarBarraDeXP = async () => {
 
     try {
         const response = await fetch(rota, {
+    credentials: 'include',
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token,
@@ -341,6 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(`${API_BASE_URL}/completar_atividade`, {
+    credentials: 'include',
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

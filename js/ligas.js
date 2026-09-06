@@ -85,7 +85,8 @@ const buscarRankingAPI = async (ligaId) => {
     const rota = `${API_BASE_URL}/ranking/${ligaId}?v=${tempoReal}`; 
     
     try {
-        const response = await fetch(rota, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+        const response = await fetch(rota, {
+    credentials: 'include', cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
         if (!response.ok) throw new Error('Erro na API');
         
         const usuarios = await response.json();
