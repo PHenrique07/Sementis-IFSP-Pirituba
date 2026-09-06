@@ -1,513 +1,392 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#23234d" />
-    <meta name="description" content="Sementis Loja Oficial - Adquira avatares, temas e power-ups para sua jornada." />
+    <script src="js/api-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a4a">
+    <meta name="application-name" content="Sementis">
+    <link rel="manifest" href="pwa/manifest.webmanifest">
+    <link rel="icon" href="assets/icons/pwa-icon.svg" type="image/svg+xml">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <title>Sementis - Loja Oficial</title>
     
-    <title>Sementis | Loja Oficial</title>
+    <!-- Google Fonts Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Compiled Site Style Sheet -->
-    <link rel="stylesheet" href="css/loja-style.css" />
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/shared-navbar.css">
+    <link rel="stylesheet" href="css/loja.css">
     
     <!-- Vector Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Dynamic Gacha & Modal animations -->
-    <style>
-        /* Shake animations for Gacha Machine */
-        @keyframes shake-capsule {
-            0%, 100% { transform: translate(0, 0) rotate(var(--r)); }
-            20% { transform: translate(4px, -6px) rotate(calc(var(--r) + 12deg)); }
-            40% { transform: translate(-5px, 4px) rotate(calc(var(--r) - 15deg)); }
-            60% { transform: translate(3px, -3px) rotate(calc(var(--r) + 8deg)); }
-            80% { transform: translate(-3px, 3px) rotate(calc(var(--r) - 8deg)); }
-        }
-        .spinning-machine .gacha-capsule {
-            animation: shake-capsule 0.5s infinite ease-in-out;
-        }
-
-        @keyframes rotate-knob {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(1080deg); }
-        }
-        .spinning-machine .gacha-knob {
-            animation: rotate-knob 1.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        @keyframes shake-body {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-4px) translateY(1px); }
-            40% { transform: translateX(4px) translateY(-1px); }
-            60% { transform: translateX(-3px) translateY(1px); }
-            80% { transform: translateX(3px) translateY(-1px); }
-        }
-        .spinning-machine .gacha-body {
-            animation: shake-body 0.15s infinite ease-in-out;
-        }
-
-        /* Drop prize capsule animation */
-        @keyframes capsule-drop {
-            0% { transform: translateY(-40px) scale(0.4); opacity: 0; }
-            70% { transform: translateY(5px) scale(1.1); opacity: 1; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .animate-capsule-drop {
-            animation: capsule-drop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        /* Wiggle capsule reveal animation */
-        @keyframes capsule-wiggle {
-            0%, 100% { transform: rotate(0deg); }
-            15% { transform: rotate(-8deg); }
-            30% { transform: rotate(8deg); }
-            45% { transform: rotate(-6deg); }
-            60% { transform: rotate(6deg); }
-            75% { transform: rotate(-3deg); }
-        }
-        .animate-capsule-wiggle {
-            animation: capsule-wiggle 1s ease-in-out infinite;
-        }
-
-        /* Flash on split */
-        @keyframes radial-flash {
-            0% { transform: scale(0.2); opacity: 0.95; }
-            100% { transform: scale(3.5); opacity: 0; }
-        }
-        .animate-radial-flash {
-            animation: radial-flash 0.75s ease-out forwards;
-        }
-
-        /* Slide up animations for Toast Notification items */
-        @keyframes slide-up {
-            0% { transform: translate(-50%, 20px); opacity: 0; }
-            100% { transform: translate(-50%, 0); opacity: 1; }
-        }
-        #toast-container {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            pointer-events: none;
-        }
-        .toast-item {
-            pointer-events: auto;
-            animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-    </style>
 </head>
-<body class="bg-[#23234d] text-white">
+<body class="loja-page">
 
-    <div class="grain min-h-screen overflow-x-clip bg-[#2B2B5C]">
+    <!-- Navegação Compartilhada (Desktop Sidebar / Mobile Bottom Nav) -->
+    <div id="shared-navbar-root"></div>
+
+    <div class="loja-container">
         
-        <!-- HEADER -->
-        <header data-testid="loja-header" class="fixed inset-x-0 top-0 z-50">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6">
-                <div class="mt-4 flex items-center justify-between gap-3 rounded-3xl border border-white/10 bg-[#23234d]/75 px-4 py-3 shadow-[0_12px_40px_rgba(10,10,35,0.45)] backdrop-blur-xl sm:px-6">
-                    
-                    <!-- Logo / Brand -->
-                    <button data-testid="logo-btn" onclick="scrollToTarget('#topo')" class="flex items-center gap-2.5 transition-transform duration-200 hover:scale-[1.03] active:scale-95">
-                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#7BE85B] shadow-[0_4px_0_#4ea331]">
-                            <i data-lucide="sprout" class="h-5 w-5 text-[#1d1d42]" style="stroke-width: 2.6"></i>
-                        </span>
-                        <span class="font-display text-lg font-semibold leading-none text-white text-left">
-                            Sementis
-                            <span class="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#7BE85B]">Loja</span>
-                        </span>
-                    </button>
+        <!-- Header da Loja -->
+        <header class="loja-header" data-testid="loja-header">
+            <a href="home.html" aria-label="Voltar para a página inicial" class="loja-header-logo-link">
+                <img src="assets/brand/logo_sementis_branco.png" alt="Sementis Logo" class="loja-header-logo">
+            </a>
 
-                    <!-- Navigation -->
-                    <nav class="hidden items-center gap-1 md:flex" data-testid="main-nav">
-                        <button data-testid="nav-link-maquina" onclick="scrollToTarget('#maquina')" class="rounded-full px-4 py-2 text-sm font-bold text-[#B8B8E6] transition-colors duration-200 hover:bg-white/10 hover:text-white">
-                            Máquina
-                        </button>
-                        <button data-testid="nav-link-itens" onclick="scrollToTarget('#itens')" class="rounded-full px-4 py-2 text-sm font-bold text-[#B8B8E6] transition-colors duration-200 hover:bg-white/10 hover:text-white">
-                            Itens
-                        </button>
-                        <button data-testid="nav-link-colecao" onclick="scrollToTarget('#colecao')" class="rounded-full px-4 py-2 text-sm font-bold text-[#B8B8E6] transition-colors duration-200 hover:bg-white/10 hover:text-white">
-                            Coleção
-                        </button>
-                    </nav>
-
-                    <!-- Actions Balance / Audio / Reset -->
-                    <div class="flex items-center gap-2">
-                        <div data-testid="coin-balance" class="flex items-center gap-2 rounded-full border border-[#FFC107]/30 bg-[#FFC107]/10 px-4 py-2">
-                            <i data-lucide="coins" class="h-4 w-4 text-[#FFC107]" style="stroke-width: 2.5"></i>
-                            <span data-testid="coin-balance-val" class="font-display text-base font-semibold text-[#FFC107]">
-                                1.000
-                            </span>
-                        </div>
-                        <button data-testid="sound-toggle-btn" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[#B8B8E6] transition-colors duration-200 hover:bg-white/15 hover:text-white active:scale-90">
-                            <i data-lucide="volume-2" class="h-4 w-4"></i>
-                        </button>
-                        <button data-testid="reset-balance-btn" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[#B8B8E6] transition-colors duration-200 hover:bg-white/15 hover:text-white active:scale-90">
-                            <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
-                        </button>
-                    </div>
+            <div class="loja-header-stats">
+                <div class="loja-stat" title="Ofensiva de estudos">
+                    <img src="assets/icons/icone_sequencia_fogo.png" alt="Ofensiva">
+                    <span class="loja-stat-value" id="header-ofensiva">1</span>
                 </div>
+                <div class="loja-stat" title="Suas Moedas" data-testid="coin-balance">
+                    <img src="assets/icons/icone_moeda.png" alt="Moedas">
+                    <span class="loja-stat-value" data-testid="coin-balance-val" id="header-moedas">1.000</span>
+                </div>
+                <div class="loja-stat" title="Vidas">
+                    <img src="assets/icons/icone_vida.png" alt="Vidas">
+                    <span class="loja-stat-value" id="header-vidas">5</span>
+                </div>
+            </div>
+
+            <div class="loja-header-actions">
+                <button class="loja-icon-btn" data-testid="sound-toggle-btn" title="Silenciar / Ativar sons" aria-label="Alternar som">
+                    <i data-lucide="volume-2" style="width: 18px; height: 18px;"></i>
+                </button>
+                <button class="loja-icon-btn" data-testid="reset-balance-btn" title="Reiniciar moedas de teste" aria-label="Reiniciar saldo">
+                    <i data-lucide="rotate-ccw" style="width: 18px; height: 18px;"></i>
+                </button>
             </div>
         </header>
 
-        <!-- MAIN CONTAINER -->
-        <main>
+        <!-- Conteúdo Principal -->
+        <main class="loja-main">
             
             <!-- HERO SECTION -->
-            <section id="topo" data-testid="hero-section" class="relative overflow-hidden pb-20 pt-36 sm:pt-44">
-                <div class="pointer-events-none absolute -left-40 top-10 h-[480px] w-[480px] rounded-full bg-[#7BE85B]/10 blur-[120px]"></div>
-                <div class="pointer-events-none absolute -right-32 bottom-0 h-[420px] w-[420px] rounded-full bg-[#C084FC]/10 blur-[120px]"></div>
+            <section id="topo" class="loja-hero" data-testid="hero-section">
+                <div class="loja-hero-glow-left"></div>
+                <div class="loja-hero-glow-right"></div>
 
-                <div class="mx-auto grid max-w-7xl items-center gap-16 px-4 sm:px-6 lg:grid-cols-[1.15fr_0.85fr]">
+                <div class="loja-hero-grid">
                     <div>
-                        <p class="mb-6 inline-flex items-center gap-2 rounded-full border border-[#7BE85B]/30 bg-[#7BE85B]/10 px-4 py-1.5 text-xs font-extrabold uppercase tracking-[0.18em] text-[#7BE85B]">
-                            <i data-lucide="sparkles" class="h-3.5 w-3.5"></i>
-                            Loja oficial Sementis
-                        </p>
+                        <div class="loja-hero-badge">
+                            <img src="assets/icons/icone_sequencia_fogo.png" alt="Fogo">
+                            Loja Oficial Sementis
+                        </div>
 
-                        <h1 class="font-display text-4xl font-bold leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl">
-                            <span class="block overflow-hidden pb-1"><span class="block text-white">A MÁQUINA</span></span>
-                            <span class="block overflow-hidden pb-1"><span class="block text-[#7BE85B]">DE PRÊMIOS</span></span>
-                            <span class="block overflow-hidden pb-1"><span class="block text-white">DA FLORESTA</span></span>
+                        <h1>
+                            A MÁQUINA <br>
+                            <span class="accent">DE PRÊMIOS</span> <br>
+                            DA FLORESTA
                         </h1>
 
-                        <p class="mt-6 max-w-md text-base text-[#B8B8E6] md:text-lg">
-                            Gaste suas moedas de estudo em avatares, temas, vidas e power-ups — ou arrisque tudo na máquina de cápsulas e torça por um prêmio lendário.
+                        <p class="loja-hero-desc">
+                            Gaste suas moedas de estudo em avatares, temas, vidas e power-ups — ou arrisque na máquina de cápsulas e torça por um prêmio lendário.
                         </p>
 
-                        <div class="mt-10 flex flex-wrap items-center gap-4">
-                            <button data-testid="hero-cta-girar" onclick="scrollToTarget('#maquina')" class="font-display flex items-center gap-2 rounded-2xl border-b-[5px] border-[#4ea331] bg-[#7BE85B] px-7 py-3.5 text-base font-semibold text-[#1d1d42] transition-[transform,background-color,border-width] duration-150 hover:bg-[#8cf06d] active:translate-y-1 active:border-b-0">
+                        <div class="loja-hero-ctas">
+                            <button onclick="scrollToTarget('#maquina')" class="loja-btn-primary" data-testid="hero-cta-girar">
                                 Girar agora
-                                <i data-lucide="chevron-right" class="h-5 w-5" style="stroke-width: 3"></i>
+                                <i data-lucide="chevron-right" style="width: 18px; height: 18px; stroke-width: 3;"></i>
                             </button>
-                            <button data-testid="hero-cta-itens" onclick="scrollToTarget('#itens')" class="font-display rounded-2xl border-b-[5px] border-black/30 bg-[#3D3D7A] px-7 py-3.5 text-base font-semibold text-white transition-[transform,background-color,border-width] duration-150 hover:bg-[#4a4a8f] active:translate-y-1 active:border-b-0">
+                            <button onclick="scrollToTarget('#itens')" class="loja-btn-secondary" data-testid="hero-cta-itens">
                                 Ver itens
                             </button>
                         </div>
 
-                        <div class="mt-14 flex gap-10" data-testid="hero-stats">
+                        <div class="loja-hero-stats" data-testid="hero-stats">
                             <div>
-                                <p class="font-display text-2xl font-bold text-[#7BE85B] sm:text-3xl">13</p>
-                                <p class="mt-1 text-xs font-bold uppercase tracking-wider text-[#B8B8E6]/70">prêmios possíveis</p>
+                                <div class="loja-hero-stat-value">13</div>
+                                <div class="loja-hero-stat-label">prêmios possíveis</div>
                             </div>
                             <div>
-                                <p class="font-display text-2xl font-bold text-[#7BE85B] sm:text-3xl">4</p>
-                                <p class="mt-1 text-xs font-bold uppercase tracking-wider text-[#B8B8E6]/70">níveis de raridade</p>
+                                <div class="loja-hero-stat-value">4</div>
+                                <div class="loja-hero-stat-label">níveis de raridade</div>
                             </div>
                             <div>
-                                <p class="font-display text-2xl font-bold text-[#7BE85B] sm:text-3xl">100</p>
-                                <p class="mt-1 text-xs font-bold uppercase tracking-wider text-[#B8B8E6]/70">moedas por giro</p>
+                                <div class="loja-hero-stat-value">100</div>
+                                <div class="loja-hero-stat-label">moedas por giro</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Side graphic (Only on large screens) -->
-                    <div class="relative hidden h-[420px] lg:block" data-testid="hero-art">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="spin-slow h-72 w-72 rounded-full border-2 border-dashed border-[#7BE85B]/25"></div>
+                    <!-- Hero Art visual 3D -->
+                    <div class="loja-hero-art" data-testid="hero-art">
+                        <div class="loja-hero-art-ring">
+                            <div class="loja-hero-art-ring-inner"></div>
                         </div>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="floaty relative h-40 w-40 overflow-hidden rounded-full shadow-[0_30px_60px_rgba(10,10,35,0.6)]" style="--r: -8deg">
-                                <div class="absolute inset-x-0 top-0 h-1/2 bg-[#FF4B6E]"></div>
-                                <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white/90"></div>
-                                <div class="absolute left-6 top-5 h-8 w-12 rounded-full bg-white/40 blur-[6px]"></div>
+                        <div class="loja-hero-capsule-big">
+                            <div class="loja-hero-capsule-sphere" style="--float-r: -8deg;">
+                                <div class="loja-hero-capsule-top"></div>
+                                <div class="loja-hero-capsule-bottom"></div>
+                                <div class="loja-hero-capsule-glare"></div>
                             </div>
                         </div>
-                        <div class="floaty absolute right-6 top-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFC107] shadow-[0_5px_0_#b38600]" style="--r: 10deg; animation-delay: 0.6s">
-                            <i data-lucide="coins" class="h-7 w-7 text-[#5c4400]" style="stroke-width: 2.5"></i>
+                        <div class="loja-hero-float-icon loja-hero-float-coins" style="--float-r: 10deg;">
+                            <img src="assets/icons/icone_moeda.png" alt="Moedas">
                         </div>
-                        <div class="floaty absolute bottom-16 left-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#7BE85B] shadow-[0_5px_0_#4ea331]" style="--r: -12deg; animation-delay: 1.1s">
-                            <i data-lucide="leaf" class="h-6 w-6 text-[#1d1d42]" style="stroke-width: 2.5"></i>
+                        <div class="loja-hero-float-icon loja-hero-float-leaf" style="--float-r: -12deg;">
+                            <img src="assets/icons/menu_rodape_tarefa.png" alt="Folha">
                         </div>
-                        <div class="floaty absolute right-16 bottom-6 flex h-11 w-11 items-center justify-center rounded-full bg-[#C084FC] shadow-[0_5px_0_#7c4dbb]" style="--r: 6deg; animation-delay: 1.7s">
-                            <i data-lucide="star" class="h-5 w-5 text-[#2d1a4d]" style="stroke-width: 2.5"></i>
+                        <div class="loja-hero-float-icon loja-hero-float-star" style="--float-r: 6deg;">
+                            <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="Troféu">
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- GACHA MACHINE SECTION -->
-            <section id="maquina" data-testid="gacha-section" class="relative py-24 sm:py-32">
-                <div class="pointer-events-none absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7BE85B]/10 blur-[140px]"></div>
+            <section id="maquina" class="loja-gacha-section" data-testid="gacha-section">
+                <div class="loja-gacha-glow-bg"></div>
 
-                <div class="mx-auto max-w-7xl px-4 sm:px-6">
-                    <div class="mb-16 text-center">
-                        <p class="mb-3 inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.25em] text-[#7BE85B]">
-                            <i data-lucide="clover" class="h-4 w-4"></i> A atração principal
-                        </p>
-                        <h2 class="font-display text-4xl font-bold tracking-tight sm:text-5xl">
-                            Semen-Caps <span class="text-[#7BE85B]">3000</span>
-                        </h2>
-                        <p class="mx-auto mt-4 max-w-lg text-base text-[#B8B8E6]">
-                            Uma cápsula, um destino. Cada giro pode render moedas, vidas, power-ups e até o lendário Espírito da Floresta.
-                        </p>
+                <div class="loja-gacha-header">
+                    <div class="loja-gacha-header-tag">
+                        <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> A atração principal
                     </div>
+                    <h2>Sementeador <span class="accent">de Prêmios</span></h2>
+                    <p>
+                        Uma cápsula, um destino. Cada giro pode render moedas, vidas, power-ups e até o lendário Espírito da Floresta.
+                    </p>
+                </div>
 
-                    <div class="grid items-center gap-14 lg:grid-cols-[1fr_340px]">
+                <div class="loja-gacha-layout">
+                    
+                    <!-- Machine wrapper -->
+                    <div class="loja-gacha-wrapper">
                         
-                        <!-- Machine wrapper -->
-                        <div class="flex flex-col items-center">
-                            
-                            <!-- The Machine object -->
-                            <div data-testid="gacha-machine-container" class="relative w-80 sm:w-[22rem] transition-transform duration-200">
-                                <div class="glow-pulse absolute -inset-10 -z-10 rounded-full bg-[#7BE85B]/15 blur-3xl"></div>
+                        <!-- The Machine object -->
+                        <div class="gacha-machine" data-testid="gacha-machine-container">
+                            <div class="gacha-halo"></div>
 
-                                <!-- Dome Glass -->
-                                <div class="relative z-10 mx-auto w-fit">
-                                    <div class="relative h-72 w-72 overflow-hidden rounded-full border-[6px] border-[#1c1c40] sm:h-80 sm:w-80 gacha-body" style="background: radial-gradient(circle at 30% 22%, rgba(255,255,255,0.42), rgba(255,255,255,0.12) 40%, rgba(23,23,58,0.35) 78%, rgba(10,10,35,0.55) 100%); box-shadow: inset 0 -22px 36px rgba(10,10,35,0.5), inset 0 12px 28px rgba(255,255,255,0.22), 0 20px 44px rgba(10,10,35,0.5);">
-                                        
-                                        <!-- Statically generated capsules matching coords -->
-                                        <!-- Capsule 1 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 12%; left: 18%; width: 46px; height: 46px; --r: -14deg; background: linear-gradient(180deg, #7BE85B 0%, #7BE85B 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-14deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 2 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 8%; left: 46%; width: 48px; height: 48px; --r: 8deg; background: linear-gradient(180deg, #FF4B6E 0%, #FF4B6E 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(8deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 3 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 14%; left: 70%; width: 44px; height: 44px; --r: 20deg; background: linear-gradient(180deg, #4FC3F7 0%, #4FC3F7 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(20deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 4 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 30%; left: 8%; width: 42px; height: 42px; --r: -24deg; background: linear-gradient(180deg, #FFC107 0%, #FFC107 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-24deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 5 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 27%; left: 36%; width: 48px; height: 48px; --r: 4deg; background: linear-gradient(180deg, #C084FC 0%, #C084FC 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(4deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 6 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 29%; left: 62%; width: 46px; height: 46px; --r: 16deg; background: linear-gradient(180deg, #7BE85B 0%, #7BE85B 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(16deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 7 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 33%; left: 82%; width: 38px; height: 38px; --r: -10deg; background: linear-gradient(180deg, #FF8A00 0%, #FF8A00 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-10deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 8 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 50%; left: 16%; width: 46px; height: 46px; --r: 12deg; background: linear-gradient(180deg, #4FC3F7 0%, #4FC3F7 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(12deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 9 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 47%; left: 44%; width: 42px; height: 42px; --r: -18deg; background: linear-gradient(180deg, #FF4B6E 0%, #FF4B6E 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-18deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 10 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 51%; left: 68%; width: 46px; height: 46px; --r: 6deg; background: linear-gradient(180deg, #FFC107 0%, #FFC107 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(6deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 11 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 66%; left: 28%; width: 42px; height: 42px; --r: -6deg; background: linear-gradient(180deg, #C084FC 0%, #C084FC 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-6deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 12 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 66%; left: 54%; width: 44px; height: 44px; --r: 22deg; background: linear-gradient(180deg, #7BE85B 0%, #7BE85B 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(22deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 13 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 42%; left: 26%; width: 34px; height: 34px; --r: 30deg; background: linear-gradient(180deg, #FF8A00 0%, #FF8A00 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(30deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-                                        <!-- Capsule 14 -->
-                                        <div class="gacha-capsule absolute rounded-full" style="top: 60%; left: 80%; width: 34px; height: 34px; --r: -28deg; background: linear-gradient(180deg, #FF4B6E 0%, #FF4B6E 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-28deg);">
-                                            <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-                                            <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-                                        </div>
-
-                                        <div class="pointer-events-none absolute -left-2 top-5 h-40 w-16 rotate-[24deg] rounded-full bg-white/30 blur-md"></div>
-                                        <div class="pointer-events-none absolute right-8 top-10 h-12 w-7 rotate-[24deg] rounded-full bg-white/25 blur-sm"></div>
-                                        <div class="pointer-events-none absolute bottom-4 left-1/2 h-6 w-44 -translate-x-1/2 rounded-full bg-[#7BE85B]/25 blur-lg"></div>
+                            <!-- Dome Glass -->
+                            <div class="gacha-dome-wrap">
+                                <div class="gacha-dome gacha-body">
+                                    
+                                    <!-- Statically generated capsules with coords -->
+                                    <div class="gacha-capsule" style="top: 12%; left: 18%; width: 46px; height: 46px; --r: -14deg; background: linear-gradient(180deg, #a9ff71 0%, #a9ff71 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-14deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
                                     </div>
-                                    <div class="relative z-20 mx-auto -mt-6 h-8 w-56 rounded-full border-4 border-[#1c1c40] bg-gradient-to-b from-[#8cf06d] to-[#4ea331] shadow-[0_6px_0_rgba(0,0,0,0.35)] sm:w-64"></div>
+                                    <div class="gacha-capsule" style="top: 8%; left: 46%; width: 48px; height: 48px; --r: 8deg; background: linear-gradient(180deg, #FF4B6E 0%, #FF4B6E 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(8deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 14%; left: 70%; width: 44px; height: 44px; --r: 20deg; background: linear-gradient(180deg, #4FC3F7 0%, #4FC3F7 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(20deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 30%; left: 8%; width: 42px; height: 42px; --r: -24deg; background: linear-gradient(180deg, #FFC107 0%, #FFC107 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-24deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 27%; left: 36%; width: 48px; height: 48px; --r: 4deg; background: linear-gradient(180deg, #C084FC 0%, #C084FC 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(4deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 29%; left: 62%; width: 46px; height: 46px; --r: 16deg; background: linear-gradient(180deg, #a9ff71 0%, #a9ff71 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(16deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 33%; left: 82%; width: 38px; height: 38px; --r: -10deg; background: linear-gradient(180deg, #FF8A00 0%, #FF8A00 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-10deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 50%; left: 16%; width: 46px; height: 46px; --r: 12deg; background: linear-gradient(180deg, #4FC3F7 0%, #4FC3F7 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(12deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 47%; left: 44%; width: 42px; height: 42px; --r: -18deg; background: linear-gradient(180deg, #FF4B6E 0%, #FF4B6E 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-18deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 51%; left: 68%; width: 46px; height: 46px; --r: 6deg; background: linear-gradient(180deg, #FFC107 0%, #FFC107 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(6deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 66%; left: 28%; width: 42px; height: 42px; --r: -6deg; background: linear-gradient(180deg, #C084FC 0%, #C084FC 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-6deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 66%; left: 54%; width: 44px; height: 44px; --r: 22deg; background: linear-gradient(180deg, #a9ff71 0%, #a9ff71 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(22deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+
+                                    <!-- Reflexos de vidro realistas -->
+                                    <div class="gacha-dome-glare-1"></div>
+                                    <div class="gacha-dome-glare-2"></div>
+                                    <div class="gacha-dome-glow-bottom"></div>
+                                </div>
+                                <div class="gacha-dome-ring"></div>
+                            </div>
+
+                            <!-- Body of Machine -->
+                            <div class="gacha-body">
+                                <div class="gacha-name-badge">
+                                    <span class="gacha-name-badge-dot"></span>
+                                    <span>SEMENTEADOR DE PRÊMIOS</span>
+                                    <span class="gacha-name-badge-dot"></span>
                                 </div>
 
-                                <!-- Body of Machine (shakes during spin) -->
-                                <div class="relative z-0 -mt-3 rounded-[2.2rem] border-[5px] border-[#1c1c40] px-6 pb-7 pt-6 shadow-[0_24px_50px_rgba(10,10,35,0.55)] gacha-body" style="background: linear-gradient(180deg, #4a4a96 0%, #3D3D7A 45%, #31316a 100%)">
-                                    <div class="mx-auto mb-5 flex w-fit items-center gap-2 rounded-full border-2 border-[#1c1c40] bg-[#7BE85B] px-5 py-1.5 shadow-[0_3px_0_rgba(0,0,0,0.35)]">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-[#1d1d42]/70"></span>
-                                        <span class="font-display text-xs font-bold tracking-[0.25em] text-[#1d1d42]">SEMEN-CAPS 3000</span>
-                                        <span class="h-1.5 w-1.5 rounded-full bg-[#1d1d42]/70"></span>
+                                <div class="gacha-display-row">
+                                    <div class="gacha-screen">
+                                        <i data-lucide="sparkles" class="gacha-screen-icon"></i>
+                                        <span class="gacha-screen-text" data-testid="gacha-status">PRONTO</span>
                                     </div>
-
-                                    <div class="flex items-stretch gap-3">
-                                        <div class="screen-flicker flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-[#1c1c40] bg-[#17173a] px-4 py-3 shadow-[inset_0_3px_8px_rgba(0,0,0,0.6)]">
-                                            <i data-lucide="sparkles" class="h-4 w-4 text-[#7BE85B]"></i>
-                                            <span data-testid="gacha-status" class="font-display text-sm font-semibold tracking-[0.2em] text-[#7BE85B]">
-                                                PRONTO
-                                            </span>
-                                        </div>
-                                        <div class="flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-[#1c1c40] bg-[#2a2a5e] px-3 py-2 shadow-[inset_0_2px_6px_rgba(0,0,0,0.5)]">
-                                            <i data-lucide="coins" class="h-4 w-4 text-[#FFC107]" style="stroke-width: 2.5"></i>
-                                            <span class="font-display text-[10px] font-bold leading-none text-[#FFC107]">100</span>
-                                            <div class="h-3 w-1 rounded-full bg-[#14142f] shadow-[inset_0_1px_3px_rgba(0,0,0,0.8)]"></div>
-                                        </div>
+                                    <div class="gacha-price-display">
+                                        <img src="assets/icons/icone_moeda.png" alt="Moeda">
+                                        <span class="gacha-price-display-value">100</span>
+                                        <div class="gacha-price-slot"></div>
                                     </div>
+                                </div>
 
-                                    <div class="mt-6 flex items-end justify-between gap-4">
-                                        <!-- Knob (rotates during spin) -->
-                                        <div class="flex flex-col items-center gap-2">
-                                            <div data-testid="gacha-knob" class="relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-[#1c1c40] gacha-knob" style="background: repeating-conic-gradient(#5a5aa3 0deg 14deg, #41417f 14deg 28deg); shadow: inset 0 5px 10px rgba(255,255,255,0.28), inset 0 -8px 12px rgba(0,0,0,0.45), 0 7px 0 rgba(0,0,0,0.35);">
-                                                <div class="flex h-9 w-9 items-start justify-center rounded-full border-4 border-[#1c1c40] bg-[#7BE85B] pt-1 shadow-[inset_0_2px_4px_rgba(255,255,255,0.5)]">
-                                                    <div class="h-3.5 w-1.5 rounded-full bg-[#1d1d42]"></div>
-                                                </div>
+                                <div class="gacha-controls-row">
+                                    <!-- Knob (manivela) -->
+                                    <div class="gacha-knob-group">
+                                        <div class="gacha-knob" data-testid="gacha-knob">
+                                            <div class="gacha-knob-center">
+                                                <div class="gacha-knob-pointer"></div>
                                             </div>
-                                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#B8B8E6]">Gire a manivela</span>
                                         </div>
-
-                                        <!-- Chute -->
-                                        <div id="gacha-chute-container" class="flex h-24 w-32 items-center justify-center rounded-2xl border-4 border-[#1c1c40] bg-[#17173a] shadow-[inset_0_8px_16px_rgba(0,0,0,0.7)]">
-                                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#B8B8E6]/50">
-                                                Saída do prêmio
-                                            </span>
-                                        </div>
+                                        <span class="gacha-knob-label">Gire a manivela</span>
                                     </div>
-                                </div>
 
-                                <!-- Feet -->
-                                <div class="mx-auto flex w-56 justify-between">
-                                    <div class="h-4 w-10 rounded-b-xl bg-[#1c1c40]"></div>
-                                    <div class="h-4 w-10 rounded-b-xl bg-[#1c1c40]"></div>
+                                    <!-- Chute de saída do prêmio -->
+                                    <div class="gacha-chute" id="gacha-chute-container">
+                                        <span class="gacha-chute-label">Saída do prêmio</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Spin button -->
-                            <button data-testid="gacha-spin-btn" class="font-display mt-10 flex items-center gap-3 rounded-3xl border-b-[6px] px-10 py-4 text-lg font-bold border-[#4ea331] bg-[#7BE85B] text-[#1d1d42] hover:bg-[#8cf06d] transition-[transform,background-color,border-width,opacity] duration-150 active:translate-y-1.5 active:border-b-0">
-                                GIRAR
-                                <span class="flex items-center gap-1.5 rounded-full bg-[#1d1d42]/15 px-3 py-1 text-sm">
-                                    <i data-lucide="coins" class="h-4 w-4" style="stroke-width: 2.6"></i>
-                                    100
-                                </span>
-                            </button>
+                            <!-- Pés de suporte -->
+                            <div class="gacha-feet">
+                                <div class="gacha-foot"></div>
+                                <div class="gacha-foot"></div>
+                            </div>
                         </div>
 
-                        <!-- Sidebar Chances -->
-                        <aside data-testid="gacha-odds" class="rounded-3xl border border-white/10 bg-[#3D3D7A]/60 p-7 backdrop-blur-md">
-                            <h3 class="font-display text-lg font-semibold text-white">Chances de raridade</h3>
-                            <p class="mt-1 text-sm text-[#B8B8E6]">Toda cápsula tem um nível. Quanto mais raro, mais brilho.</p>
-                            <ul class="mt-6 space-y-4">
-                                <li class="flex items-center justify-between rounded-2xl bg-[#23234d]/70 px-4 py-3">
-                                    <span class="flex items-center gap-3">
-                                        <span class="h-3.5 w-3.5 rounded-full shadow-[0_0_12px]" style="background-color: #B8B8E6; color: #B8B8E6"></span>
-                                        <span class="text-sm font-extrabold" style="color: #B8B8E6">Comum</span>
-                                    </span>
-                                    <span class="font-display text-base font-semibold text-white">55%</span>
-                                </li>
-                                <li class="flex items-center justify-between rounded-2xl bg-[#23234d]/70 px-4 py-3">
-                                    <span class="flex items-center gap-3">
-                                        <span class="h-3.5 w-3.5 rounded-full shadow-[0_0_12px]" style="background-color: #4FC3F7; color: #4FC3F7"></span>
-                                        <span class="text-sm font-extrabold" style="color: #4FC3F7">Raro</span>
-                                    </span>
-                                    <span class="font-display text-base font-semibold text-white">30%</span>
-                                </li>
-                                <li class="flex items-center justify-between rounded-2xl bg-[#23234d]/70 px-4 py-3">
-                                    <span class="flex items-center gap-3">
-                                        <span class="h-3.5 w-3.5 rounded-full shadow-[0_0_12px]" style="background-color: #C084FC; color: #C084FC"></span>
-                                        <span class="text-sm font-extrabold" style="color: #C084FC">Épico</span>
-                                    </span>
-                                    <span class="font-display text-base font-semibold text-white">12%</span>
-                                </li>
-                                <li class="flex items-center justify-between rounded-2xl bg-[#23234d]/70 px-4 py-3">
-                                    <span class="flex items-center gap-3">
-                                        <span class="h-3.5 w-3.5 rounded-full shadow-[0_0_12px]" style="background-color: #FFC107; color: #FFC107"></span>
-                                        <span class="text-sm font-extrabold" style="color: #FFC107">Lendário</span>
-                                    </span>
-                                    <span class="font-display text-base font-semibold text-white">3%</span>
-                                </li>
-                            </ul>
-                            <p class="mt-6 rounded-2xl bg-[#7BE85B]/10 px-4 py-3 text-xs font-bold leading-relaxed text-[#7BE85B]">
-                                Dica de colecionador: prêmios em moedas podem pagar o próximo giro. O jackpot lendário dá +777 moedas.
-                            </p>
-                        </aside>
+                        <!-- Spin button -->
+                        <button class="gacha-spin-btn" data-testid="gacha-spin-btn">
+                            GIRAR
+                            <span class="gacha-spin-btn-price">
+                                <img src="assets/icons/icone_moeda.png" alt="Moedas">
+                                100
+                            </span>
+                        </button>
                     </div>
+
+                    <!-- Sidebar Chances -->
+                    <aside class="loja-odds-panel" data-testid="gacha-odds">
+                        <h3>Chances de raridade</h3>
+                        <p>Toda cápsula tem um nível. Quanto mais raro, mais brilho.</p>
+                        
+                        <ul class="loja-odds-list">
+                            <li class="loja-odds-item">
+                                <div class="loja-odds-item-info">
+                                    <span class="loja-odds-dot" style="background-color: #b8b8e6; box-shadow: 0 0 10px #b8b8e6;"></span>
+                                    <span class="loja-odds-label" style="color: #b8b8e6;">Comum</span>
+                                </div>
+                                <span class="loja-odds-pct">55%</span>
+                            </li>
+                            <li class="loja-odds-item">
+                                <div class="loja-odds-item-info">
+                                    <span class="loja-odds-dot" style="background-color: #4FC3F7; box-shadow: 0 0 10px #4FC3F7;"></span>
+                                    <span class="loja-odds-label" style="color: #4FC3F7;">Raro</span>
+                                </div>
+                                <span class="loja-odds-pct">30%</span>
+                            </li>
+                            <li class="loja-odds-item">
+                                <div class="loja-odds-item-info">
+                                    <span class="loja-odds-dot" style="background-color: #C084FC; box-shadow: 0 0 10px #C084FC;"></span>
+                                    <span class="loja-odds-label" style="color: #C084FC;">Épico</span>
+                                </div>
+                                <span class="loja-odds-pct">12%</span>
+                            </li>
+                            <li class="loja-odds-item">
+                                <div class="loja-odds-item-info">
+                                    <span class="loja-odds-dot" style="background-color: #FFC107; box-shadow: 0 0 10px #FFC107;"></span>
+                                    <span class="loja-odds-label" style="color: #FFC107;">Lendário</span>
+                                </div>
+                                <span class="loja-odds-pct">3%</span>
+                            </li>
+                        </ul>
+
+                        <div class="loja-odds-tip">
+                            Dica de colecionador: prêmios em moedas podem pagar o próximo giro. O jackpot lendário dá +777 moedas.
+                        </div>
+                    </aside>
                 </div>
             </section>
 
             <!-- MARQUEE RIBBON -->
-            <div data-testid="loja-marquee" class="relative -rotate-1 overflow-hidden border-y-4 border-[#1d1d42] bg-[#7BE85B] py-4">
-                <div class="marquee-track flex w-max">
-                    <div class="flex shrink-0 items-center">
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            LOJA SEMENTIS <i data-lucide="sparkles" class="h-5 w-5" style="stroke-width: 2.6"></i>
+            <div class="loja-marquee" data-testid="loja-marquee">
+                <div class="loja-marquee-track">
+                    <div class="loja-marquee-group">
+                        <span class="loja-marquee-item">
+                            LOJA SEMENTIS <img src="assets/icons/menu_rodape_tarefa.png" alt="*">
                         </span>
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            GIRE E GANHE <i data-lucide="leaf" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                        <span class="loja-marquee-item">
+                            GIRE E GANHE <img src="assets/icons/icone_sequencia_fogo.png" alt="*">
                         </span>
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            PRÊMIOS LENDÁRIOS <i data-lucide="crown" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                        <span class="loja-marquee-item">
+                            PRÊMIOS LENDÁRIOS <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="*">
                         </span>
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            MOEDAS DE ESTUDO <i data-lucide="coins" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                        <span class="loja-marquee-item">
+                            MOEDAS DE ESTUDO <img src="assets/icons/icone_moeda.png" alt="*">
                         </span>
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            COLECIONE TUDO <i data-lucide="star" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                        <span class="loja-marquee-item">
+                            COLECIONE TUDO <img src="assets/icons/menu_rodape_alvo.png" alt="*">
                         </span>
                     </div>
-                    <div class="flex shrink-0 items-center">
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            LOJA SEMENTIS <i data-lucide="sparkles" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                    <div class="loja-marquee-group">
+                        <span class="loja-marquee-item">
+                            LOJA SEMENTIS <img src="assets/icons/menu_rodape_tarefa.png" alt="*">
                         </span>
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            GIRE E GANHE <i data-lucide="leaf" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                        <span class="loja-marquee-item">
+                            GIRE E GANHE <img src="assets/icons/icone_sequencia_fogo.png" alt="*">
                         </span>
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            PRÊMIOS LENDÁRIOS <i data-lucide="crown" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                        <span class="loja-marquee-item">
+                            PRÊMIOS LENDÁRIOS <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="*">
                         </span>
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            MOEDAS DE ESTUDO <i data-lucide="coins" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                        <span class="loja-marquee-item">
+                            MOEDAS DE ESTUDO <img src="assets/icons/icone_moeda.png" alt="*">
                         </span>
-                        <span class="font-display flex items-center gap-4 px-6 text-base font-bold tracking-[0.15em] text-[#1d1d42]">
-                            COLECIONE TUDO <i data-lucide="star" class="h-5 w-5" style="stroke-width: 2.6"></i>
+                        <span class="loja-marquee-item">
+                            COLECIONE TUDO <img src="assets/icons/menu_rodape_alvo.png" alt="*">
                         </span>
                     </div>
                 </div>
             </div>
 
             <!-- SHOP ITEMS SECTIONS -->
-            <section id="itens" class="mx-auto max-w-7xl space-y-28 px-4 py-24 sm:px-6 sm:py-32">
-                <!-- Dynamically generated in app.js -->
+            <section id="itens" class="loja-shop">
+                <!-- Gerado dinamicamente em loja.js -->
             </section>
 
             <!-- INVENTORY COLLECTION SECTION -->
-            <section id="colecao" data-testid="inventory-section" class="relative py-24 sm:py-32">
-                <div class="pointer-events-none absolute right-0 top-20 h-[380px] w-[380px] rounded-full bg-[#FFC107]/8 blur-[120px]"></div>
+            <section id="colecao" class="loja-inventory" data-testid="inventory-section">
+                <div class="loja-inventory-glow"></div>
                 
-                <div class="mx-auto max-w-7xl px-4 sm:px-6">
-                    <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
+                <div class="loja-inventory-inner">
+                    <div class="loja-inventory-head">
                         <div>
-                            <p class="mb-3 flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.25em] text-[#FFC107]">
-                                <i data-lucide="trophy" class="h-4 w-4"></i> Inventário
-                            </p>
-                            <h2 class="font-display text-4xl font-bold tracking-tight sm:text-5xl text-white">Sua Coleção</h2>
+                            <div class="loja-inventory-tag">
+                                <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="Troféu">
+                                Inventário
+                            </div>
+                            <h2>Sua Coleção</h2>
                         </div>
-                        <div data-testid="inventory-count" class="font-display rounded-2xl border border-white/10 bg-[#3D3D7A] px-6 py-3 text-lg font-semibold text-white">
-                            0 <span class="text-[#B8B8E6]">de 12</span>
+                        <div class="loja-inventory-count" data-testid="inventory-count">
+                            0 <span class="muted">de 12</span>
                         </div>
                     </div>
 
-                    <!-- Grid dynamic wrapper -->
-                    <div id="inventory-container-wrapper" class="w-full flex">
-                        <!-- Dynamically generated in app.js -->
+                    <!-- Grid dinâmico -->
+                    <div id="inventory-container-wrapper" class="w-full">
+                        <!-- Gerado dinamicamente em loja.js -->
                     </div>
                 </div>
             </section>
@@ -515,27 +394,28 @@
         </main>
 
         <!-- FOOTER -->
-        <footer data-testid="loja-footer" class="border-t border-white/10 bg-[#23234d] py-12">
-            <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:flex-row sm:px-6">
-                <div class="flex items-center gap-2.5">
-                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#7BE85B]">
-                        <i data-lucide="sprout" class="h-4 w-4 text-[#1d1d42]" style="stroke-width: 2.6"></i>
-                    </span>
-                    <div class="leading-tight">
-                        <p class="font-display text-sm font-semibold text-white">Sementis · Raízes do Saber</p>
-                        <p class="text-xs font-bold text-[#B8B8E6]/70">Plante a semente do conhecimento</p>
+        <footer class="loja-footer" data-testid="loja-footer">
+            <div class="loja-footer-inner">
+                <div class="loja-footer-brand">
+                    <div class="loja-footer-brand-icon">
+                        <img src="assets/brand/logo_sementis_branco.png" alt="Sementis">
+                    </div>
+                    <div>
+                        <div class="loja-footer-brand-name">Sementis · Raízes do Saber</div>
+                        <div class="loja-footer-brand-sub">Plante a semente do conhecimento</div>
                     </div>
                 </div>
-                <p class="text-xs font-bold uppercase tracking-widest text-[#B8B8E6]/50">
-                    Loja demonstrativa — moedas simuladas
-                </p>
+                <div class="loja-footer-note">
+                    Loja gamificada — moedas e conquistas de estudo
+                </div>
             </div>
         </footer>
 
     </div>
 
-    <!-- Script tags at bottom -->
+    <!-- Scripts -->
     <script src="js/sounds.js"></script>
+    <script src="js/shared-navbar.js"></script>
     <script src="js/loja.js"></script>
 
 </body>

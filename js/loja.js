@@ -1,4 +1,7 @@
-// Data Configuration
+// Sementis - Lógica da Loja Oficial e Gacha Machine
+// Compatível com CSS Vanilla (css/loja.css) e design system do Sementis
+
+// Configurações e Dados da Loja
 const START_COINS = 1000;
 const GACHA_COST = 100;
 
@@ -16,7 +19,7 @@ const SHOP_SECTIONS = [
     title: "Avatares",
     tagline: "Dê uma cara nova ao seu perfil na floresta do saber.",
     items: [
-      { id: "av-broto", name: "Broto Guerreiro", desc: "Pequeno, mas corajoso. O avatar de quem está começando a jornada.", price: 250, icon: "sprout", tint: "#7BE85B" },
+      { id: "av-broto", name: "Broto Guerreiro", desc: "Pequeno, mas corajoso. O avatar de quem está começando a jornada.", price: 250, icon: "sprout", tint: "#a9ff71" },
       { id: "av-guardiao", name: "Guardião da Mata", desc: "Protetor das árvores antigas. Impõe respeito em qualquer ranking.", price: 400, icon: "tree-pine", tint: "#4FC3F7" },
       { id: "av-espirito", name: "Espírito da Floresta", desc: "O avatar mais raro da loja. Dizem que ele sussurra respostas.", price: 600, icon: "ghost", tint: "#C084FC" },
     ],
@@ -38,7 +41,7 @@ const SHOP_SECTIONS = [
     title: "Vidas",
     tagline: "Errou? Sem drama. Continue a missão.",
     items: [
-      { id: "vd-coracao", name: "Coração Extra", desc: "Uma vida a mais para não perder a sequência de estudos.", price: 150, icon: "heart", tint: "#FF4B4B" },
+      { id: "vd-coracao", name: "Coração Extra", desc: "Uma vida a mais para não perder a sequência de estudos.", price: 150, icon: "heart", tint: "#FF4B6E" },
       { id: "vd-escudo", name: "Escudo de Vida", desc: "Protege seus corações por 24 horas de erros sem punição.", price: 250, icon: "shield", tint: "#4FC3F7" },
       { id: "vd-recarga", name: "Recarga Total", desc: "Enche todos os corações na hora. Volta pro jogo imediato.", price: 400, icon: "zap", tint: "#FFC107" },
     ],
@@ -49,7 +52,7 @@ const SHOP_SECTIONS = [
     title: "Power-ups",
     tagline: "Vantagens secretas para dominar as missões.",
     items: [
-      { id: "pw-xp", name: "XP em Dobro", desc: "Dobra todo o XP ganho nas próximas 5 lições.", price: 200, icon: "star", tint: "#7BE85B" },
+      { id: "pw-xp", name: "XP em Dobro", desc: "Dobra todo o XP ganho nas próximas 5 lições.", price: 200, icon: "star", tint: "#a9ff71" },
       { id: "pw-dica", name: "Dica Mágica", desc: "Revela a resposta certa quando o desafio apertar.", price: 120, icon: "lightbulb", tint: "#FFC107" },
       { id: "pw-tempo", name: "Congelar Tempo", desc: "Pausa o cronômetro nos quizzes contra o relógio.", price: 180, icon: "timer", tint: "#4FC3F7" },
       { id: "pw-raio", name: "Raio de Sabedoria", desc: "Elimina duas alternativas erradas de qualquer questão.", price: 300, icon: "rocket", tint: "#C084FC" },
@@ -82,7 +85,7 @@ const RARITY_WEIGHTS = [
   ["lendario", 3],
 ];
 
-// App State Management
+// Gerenciamento de Estado
 const STORAGE_KEY = "sementis-loja-v1";
 let state = {
   coins: START_COINS,
@@ -113,7 +116,7 @@ function saveState() {
   }
 }
 
-// Custom Toast Toaster Implementation
+// Sistema de Notificações Toast (CSS Vanilla)
 function showToast(title, description = "", type = "info") {
   let container = document.getElementById("toast-container");
   if (!container) {
@@ -123,38 +126,30 @@ function showToast(title, description = "", type = "info") {
   }
 
   const toastItem = document.createElement("div");
-  toastItem.className = `toast-item border-l-4 p-4 rounded-xl flex flex-col gap-1 shadow-lg bg-[#3d3d7a] border-white/10 text-white font-semibold min-w-[280px] max-w-[380px] transition-all duration-300 transform translate-y-4 opacity-0`;
-  
-  if (type === "success") {
-    toastItem.style.borderLeftColor = "#7BE85B";
-  } else if (type === "error") {
-    toastItem.style.borderLeftColor = "#FF4B4B";
-  } else {
-    toastItem.style.borderLeftColor = "#4FC3F7";
-  }
+  toastItem.className = `toast-item ${type === "success" ? "toast-item--success" : type === "error" ? "toast-item--error" : ""}`;
 
   const titleEl = document.createElement("div");
-  titleEl.className = "text-sm font-bold font-display";
+  titleEl.className = "toast-title";
   titleEl.innerText = title;
   toastItem.appendChild(titleEl);
 
   if (description) {
     const descEl = document.createElement("div");
-    descEl.className = "text-xs text-[#B8B8E6] font-normal";
+    descEl.className = "toast-desc";
     descEl.innerText = description;
     toastItem.appendChild(descEl);
   }
 
   container.appendChild(toastItem);
 
-  // Trigger entering animation
+  // Animação de entrada
   setTimeout(() => {
-    toastItem.classList.remove("translate-y-4", "opacity-0");
+    toastItem.classList.add("show");
   }, 10);
 
-  // Automatically remove toast after 3.5 seconds
+  // Remoção automática
   setTimeout(() => {
-    toastItem.classList.add("translate-y-2", "opacity-0");
+    toastItem.classList.remove("show");
     setTimeout(() => {
       toastItem.remove();
     }, 300);
@@ -167,7 +162,7 @@ const toast = {
   info: (title, options) => showToast(title, options?.description, "info"),
 };
 
-// Roll Gacha Function
+// Sorteio de Prêmio Gacha
 function rollPrize() {
   const roll = Math.random() * 100;
   let acc = 0;
@@ -183,13 +178,12 @@ function rollPrize() {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-// UI State / DOM Elements variables
+// Variáveis de Estado de UI e Elementos DOM
 let spinning = false;
 let currentPrize = null;
 let revealingPrize = null;
 let shakeBtnTimeout = null;
 
-// DOM Selectors
 const coinBalances = document.querySelectorAll("[data-testid='coin-balance-val']");
 const gachaStatus = document.querySelector("[data-testid='gacha-status']");
 const gachaMachineEl = document.querySelector("[data-testid='gacha-machine-container']");
@@ -202,32 +196,37 @@ const shopItensContainer = document.getElementById("itens");
 const inventoryCountEl = document.querySelector("[data-testid='inventory-count']");
 const inventoryContainer = document.getElementById("inventory-container-wrapper");
 
-// Sound Toggle state helper
-let soundMuted = window.sounds.isMuted();
+// Sons
+let soundMuted = window.sounds?.isMuted ? window.sounds.isMuted() : false;
 
 function updateSoundButton() {
   if (soundToggleBtn) {
     soundToggleBtn.innerHTML = soundMuted
-      ? '<i data-lucide="volume-x" class="h-4 w-4"></i>'
-      : '<i data-lucide="volume-2" class="h-4 w-4"></i>';
+      ? '<i data-lucide="volume-x" style="width: 18px; height: 18px;"></i>'
+      : '<i data-lucide="volume-2" style="width: 18px; height: 18px;"></i>';
     soundToggleBtn.title = soundMuted ? "Ativar sons" : "Silenciar sons";
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
   }
 }
 
-// Smooth scroll implementation helper
+// Scroll Suave
 window.scrollToTarget = function (id) {
   document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
 };
 
-// UI Rendering Functions
+// Atualização de Saldo na Interface
 function updateBalanceUI() {
+  const formatted = state.coins.toLocaleString("pt-BR");
   coinBalances.forEach((el) => {
-    // Basic counter increment or instant replacement
-    el.innerText = state.coins.toLocaleString("pt-BR");
+    el.innerText = formatted;
   });
+  const headerMoedas = document.getElementById("header-moedas");
+  if (headerMoedas) {
+    headerMoedas.innerText = formatted;
+  }
 }
 
+// Renderização dos Itens da Loja
 function renderShop() {
   if (!shopItensContainer) return;
   shopItensContainer.innerHTML = "";
@@ -235,23 +234,23 @@ function renderShop() {
   SHOP_SECTIONS.forEach((section) => {
     const secDiv = document.createElement("div");
     secDiv.setAttribute("data-testid", `shop-section-${section.id}`);
-    secDiv.className = "space-y-10";
+    secDiv.style.marginBottom = "56px";
 
-    // Section header
+    // Cabeçalho da seção
     const headerHTML = `
-      <div class="flex items-end gap-6 mb-10">
-        <span class="font-display text-outline text-6xl font-bold leading-none sm:text-7xl">${section.num}</span>
-        <div class="pb-1">
-          <h2 class="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">${section.title}</h2>
-          <p class="mt-1 text-sm font-semibold text-[#B8B8E6]">${section.tagline}</p>
+      <div class="loja-shop-section-header">
+        <span class="loja-shop-section-num">${section.num}</span>
+        <div>
+          <h2 class="loja-shop-section-title">${section.title}</h2>
+          <p class="loja-shop-section-tagline">${section.tagline}</p>
         </div>
       </div>
     `;
     secDiv.innerHTML = headerHTML;
 
-    // Grid Container
+    // Grid de itens
     const gridDiv = document.createElement("div");
-    gridDiv.className = "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+    gridDiv.className = "loja-shop-grid";
 
     section.items.forEach((item) => {
       const isOwned = Boolean(state.owned[item.id]);
@@ -260,50 +259,51 @@ function renderShop() {
 
       const card = document.createElement("article");
       card.setAttribute("data-testid", `shop-card-${item.id}`);
-      card.className = "group flex flex-col rounded-[1.6rem] border border-white/10 border-b-[6px] border-b-black/40 bg-[#3D3D7A] p-6 transition-[transform,border-color] duration-200 hover:-translate-y-1.5 hover:border-white/20";
+      card.className = "loja-shop-card";
 
-      // Icon badge
+      // Badge de ícone
       const iconBadge = document.createElement("div");
-      iconBadge.className = "flex h-16 w-16 items-center justify-center rounded-2xl border-b-4 transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-6";
+      iconBadge.className = "loja-shop-card-icon";
       iconBadge.style.backgroundColor = `${item.tint}26`;
       iconBadge.style.borderColor = `${item.tint}55`;
-      iconBadge.innerHTML = `<i data-lucide="${item.icon}" class="h-8 w-8" style="color: ${item.tint}"></i>`;
+      iconBadge.innerHTML = `<i data-lucide="${item.icon}" style="width: 28px; height: 28px; color: ${item.tint};"></i>`;
       card.appendChild(iconBadge);
 
-      // Title & description
+      // Nome do item
       const title = document.createElement("h3");
-      title.className = "font-display mt-5 text-lg font-semibold text-white";
+      title.className = "loja-shop-card-name";
       title.innerText = item.name;
       card.appendChild(title);
 
+      // Descrição
       const desc = document.createElement("p");
-      desc.className = "mt-2 flex-1 text-sm font-semibold leading-relaxed text-[#B8B8E6]";
+      desc.className = "loja-shop-card-desc";
       desc.innerText = item.desc;
       card.appendChild(desc);
 
-      // Buy button
+      // Botão de compra
       const btn = document.createElement("button");
       btn.setAttribute("data-testid", `buy-btn-${item.id}`);
       btn.disabled = isOwned;
 
       if (isOwned) {
-        btn.className = "font-display mt-6 flex items-center justify-center gap-2 rounded-2xl border-b-4 px-5 py-3 text-sm font-bold cursor-default border-black/30 bg-white/10 text-[#B8B8E6]";
-        btn.innerHTML = `<i data-lucide="check" class="h-4 w-4" style="stroke-width: 3"></i> Adquirido`;
+        btn.className = "loja-buy-btn loja-buy-btn--owned";
+        btn.innerHTML = `<i data-lucide="check" style="width: 16px; height: 16px; stroke-width: 3;"></i> Adquirido`;
       } else if (poor) {
-        btn.className = "font-display mt-6 flex items-center justify-center gap-2 rounded-2xl border-b-4 px-5 py-3 text-sm font-bold border-[#7a2b2b] bg-[#FF4B4B]/15 text-[#ff9d9d] hover:bg-[#FF4B4B]/25 active:translate-y-1 active:border-b-0";
-        btn.innerHTML = `<i data-lucide="lock" class="h-4 w-4" style="stroke-width: 2.6"></i> Faltam ${missing.toLocaleString("pt-BR")} moedas`;
+        btn.className = "loja-buy-btn loja-buy-btn--locked";
+        btn.innerHTML = `<i data-lucide="lock" style="width: 16px; height: 16px; stroke-width: 2.5;"></i> Faltam ${missing.toLocaleString("pt-BR")} moedas`;
       } else {
-        btn.className = "font-display mt-6 flex items-center justify-center gap-2 rounded-2xl border-b-4 px-5 py-3 text-sm font-bold border-[#4ea331] bg-[#7BE85B] text-[#1d1d42] hover:bg-[#8cf06d] active:translate-y-1 active:border-b-0";
+        btn.className = "loja-buy-btn";
         btn.innerHTML = `
           Comprar
-          <span class="flex items-center gap-1 rounded-full bg-[#1d1d42]/15 px-2.5 py-0.5 text-xs">
-            <i data-lucide="coins" class="h-3.5 w-3.5" style="stroke-width: 2.6"></i>
+          <span class="loja-buy-btn-price">
+            <img src="assets/icons/icone_moeda.png" alt="Moedas" style="width: 15px; height: 15px;" />
             ${item.price.toLocaleString("pt-BR")}
           </span>
         `;
       }
 
-      // Buy action
+      // Evento de compra
       btn.addEventListener("click", () => {
         if (isOwned) return;
         const result = buyItem(item);
@@ -321,55 +321,57 @@ function renderShop() {
     secDiv.appendChild(gridDiv);
     shopItensContainer.appendChild(secDiv);
   });
-  
-  lucide.createIcons();
+
+  if (window.lucide) lucide.createIcons();
 }
 
 function buyItem(item) {
   if (state.owned[item.id]) return "owned";
   if (state.coins < item.price) return "poor";
-  
+
   state.coins -= item.price;
   state.owned[item.id] = true;
   saveState();
-  
+
   updateBalanceUI();
   renderShop();
   renderInventory();
+  if (window.sounds?.playBuy) window.sounds.playBuy();
   return "ok";
 }
 
+// Renderização do Inventário
 function renderInventory() {
   if (!inventoryContainer || !inventoryCountEl) return;
   inventoryContainer.innerHTML = "";
 
   const ownedItems = ALL_ITEMS.filter((i) => state.owned[i.id]);
-  inventoryCountEl.innerHTML = `${ownedItems.length} <span class="text-[#B8B8E6]">de ${ALL_ITEMS.length}</span>`;
+  inventoryCountEl.innerHTML = `${ownedItems.length} <span class="muted">de ${ALL_ITEMS.length}</span>`;
 
   if (ownedItems.length === 0) {
     inventoryContainer.innerHTML = `
-      <div data-testid="inventory-empty" class="flex flex-col items-center gap-4 rounded-[2rem] border-2 border-dashed border-white/15 bg-[#3D3D7A]/40 px-8 py-20 text-center w-full">
-        <i data-lucide="package-open" class="h-12 w-12 text-[#B8B8E6]/60" style="stroke-width: 1.8"></i>
-        <p class="font-display text-xl font-semibold text-white">Sua coleção está vazia</p>
-        <p class="max-w-sm text-sm font-semibold text-[#B8B8E6]">
+      <div data-testid="inventory-empty" class="loja-inventory-empty">
+        <i data-lucide="package-open" class="loja-inventory-empty-icon" style="stroke-width: 1.8;"></i>
+        <h3>Sua coleção está vazia</h3>
+        <p>
           Compre itens na loja ou gire a máquina de cápsulas para começar a colecionar tesouros da floresta.
         </p>
       </div>
     `;
   } else {
     const gridDiv = document.createElement("div");
-    gridDiv.className = "grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full";
+    gridDiv.className = "loja-inventory-grid";
 
     ownedItems.forEach((item) => {
       const card = document.createElement("div");
       card.setAttribute("data-testid", `inventory-item-${item.id}`);
-      card.className = "flex items-center gap-4 rounded-3xl border border-white/10 border-b-4 border-b-black/40 bg-[#3D3D7A] p-5";
+      card.className = "loja-inventory-card";
 
       card.innerHTML = `
-        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-b-2" style="background-color: ${item.tint}26; border-color: ${item.tint}55">
-          <i data-lucide="${item.icon}" class="h-6 w-6" style="color: ${item.tint}; stroke-width: 2.3"></i>
+        <span class="loja-inventory-card-icon" style="background-color: ${item.tint}26; border-color: ${item.tint}55;">
+          <i data-lucide="${item.icon}" style="color: ${item.tint}; width: 22px; height: 22px; stroke-width: 2.3;"></i>
         </span>
-        <span class="font-display text-sm font-semibold leading-tight text-white">${item.name}</span>
+        <span class="loja-inventory-card-name">${item.name}</span>
       `;
       gridDiv.appendChild(card);
     });
@@ -377,114 +379,127 @@ function renderInventory() {
     inventoryContainer.appendChild(gridDiv);
   }
 
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
 }
 
-// Gacha Machine Functions
-function updateGachaStatus(statusText) {
+// Atualizar Status da Tela LED
+function updateGachaStatus(text) {
   if (gachaStatus) {
-    gachaStatus.innerText = statusText;
+    gachaStatus.innerText = text;
   }
 }
 
+// Ação de Girar a Máquina (Spin)
 function handleSpin() {
-  if (spinning || currentPrize || revealingPrize) return;
+  if (spinning) return;
 
   if (state.coins < GACHA_COST) {
+    if (window.sounds?.playError) window.sounds.playError();
+    updateGachaStatus("SEM MOEDAS");
+
     if (gachaSpinBtn) {
       gachaSpinBtn.classList.add("shake-x");
-      setTimeout(() => gachaSpinBtn.classList.remove("shake-x"), 500);
+      clearTimeout(shakeBtnTimeout);
+      shakeBtnTimeout = setTimeout(() => {
+        gachaSpinBtn.classList.remove("shake-x");
+      }, 500);
     }
+
     toast.error("Moedas insuficientes!", {
-      description: `Um giro custa ${GACHA_COST} moedas. Complete missões no app para ganhar mais.`,
+      description: `Você precisa de ${GACHA_COST} moedas para girar a máquina. Complete missões e trilhas para ganhar mais!`,
     });
+
+    setTimeout(() => {
+      updateGachaStatus("PRONTO");
+    }, 2000);
     return;
   }
 
-  // Deduct coins & play sounds
+  // Deduz moedas
   state.coins -= GACHA_COST;
   saveState();
   updateBalanceUI();
-  renderShop(); // Refresh lock triggers
+  renderShop();
 
-  window.sounds.playCrank();
-  window.sounds.playRattle();
-
+  // Inicia animação
   spinning = true;
-  updateGachaStatus("GIRANDO...");
-  gachaSpinBtn.innerText = "GIRANDO...";
   gachaSpinBtn.disabled = true;
-  
-  // Trigger animations via parent class
-  gachaMachineEl.classList.add("spinning-machine");
+  gachaSpinBtn.innerHTML = `GIRANDO... <span class="gacha-spin-btn-price"><img src="assets/icons/icone_moeda.png" alt="Moeda" /> ${GACHA_COST}</span>`;
+  updateGachaStatus("GIRANDO...");
 
-  // Choose prize
+  if (window.sounds?.playSpin) window.sounds.playSpin();
+
+  if (gachaMachineEl) gachaMachineEl.classList.add("spinning-machine");
+
+  // Limpa chute de prêmio
+  if (gachaChute) gachaChute.innerHTML = "";
+
+  // Sorteio
   const rolled = rollPrize();
 
-  // Clear chute prize capsule representation if any exists
-  gachaChute.innerHTML = "";
-
+  // Finaliza giro após 1.9s
   setTimeout(() => {
-    // Spin animation finishes
     spinning = false;
-    gachaMachineEl.classList.remove("spinning-machine");
+    if (gachaMachineEl) gachaMachineEl.classList.remove("spinning-machine");
     updateGachaStatus("PRÊMIO!");
-    gachaSpinBtn.innerHTML = `GIRAR <span class="flex items-center gap-1.5 rounded-full px-3 py-1 text-sm bg-[#1d1d42]/15">
-      <i data-lucide="coins" class="h-4 w-4" style="stroke-width: 2.6"></i> ${GACHA_COST}
-    </span>`;
+    gachaSpinBtn.innerHTML = `GIRAR <span class="gacha-spin-btn-price"><img src="assets/icons/icone_moeda.png" alt="Moeda" /> ${GACHA_COST}</span>`;
     gachaSpinBtn.disabled = false;
-    
-    // Play drop sound
-    window.sounds.playPop();
 
-    // Show capsule in chute
+    if (window.sounds?.playPop) window.sounds.playPop();
+
+    // Mostra cápsula no chute
     const rarityColor = RARITY[rolled.rarity].color;
-    gachaChute.innerHTML = `
-      <div class="relative h-12 w-12 rounded-full cursor-pointer animate-capsule-drop" style="background: linear-gradient(180deg, ${rarityColor} 0%, ${rarityColor} 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 6px 12px rgba(10,10,35,0.5);">
-        <div class="absolute left-[16%] top-[10%] h-[30%] w-[38%] rounded-full bg-white/70 blur-[3px]"></div>
-        <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#1d1d42]/15"></div>
-      </div>
-    `;
+    if (gachaChute) {
+      gachaChute.innerHTML = `
+        <div class="animate-capsule-drop" style="position: relative; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; background: linear-gradient(180deg, ${rarityColor} 0%, ${rarityColor} 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 6px 12px rgba(10,10,35,0.5);">
+          <div style="position: absolute; left: 16%; top: 10%; width: 38%; height: 30%; border-radius: 50%; background: rgba(255,255,255,0.7); filter: blur(3px);"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 50%; height: 2px; transform: translateY(-50%); background: rgba(29,29,66,0.2);"></div>
+        </div>
+      `;
+    }
 
     revealingPrize = rolled;
     showCapsuleReveal(rolled);
   }, 1900);
 }
 
-// Capsule Reveal Overlay Screen
+// Tela de Revelação da Cápsula (Split Capsule Animation)
 function showCapsuleReveal(prize) {
   const r = RARITY[prize.rarity];
   const overlay = document.createElement("div");
   overlay.id = "capsule-reveal-overlay";
-  overlay.className = "fixed inset-0 z-[85] flex flex-col items-center justify-center bg-[#14142f]/70 backdrop-blur-sm transition-all duration-300";
+  overlay.className = "capsule-reveal-overlay";
 
   overlay.innerHTML = `
-    <!-- Split Capsule Visual -->
-    <div id="reveal-capsule" class="relative h-44 w-44 sm:h-52 sm:w-52 transition-all duration-500 transform scale-75 opacity-0">
-      <!-- Top Half -->
-      <div id="reveal-capsule-top" class="absolute inset-x-0 top-0 h-1/2 rounded-t-full border-[5px] border-b-0 border-[#1c1c40] transition-all duration-700 ease-out" style="background: linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0) 50%), ${r.color}; box-shadow: inset 8px 12px 16px rgba(255,255,255,0.35), inset -6px -4px 10px rgba(10,10,35,0.25);">
-        <div class="absolute left-[18%] top-[24%] h-[34%] w-[36%] rounded-full bg-white/70 blur-[6px]"></div>
+    <!-- Cápsula Gigante que vai rachar -->
+    <div id="reveal-capsule" class="reveal-capsule">
+      <!-- Metade Superior -->
+      <div id="reveal-capsule-top" class="reveal-capsule-top" style="background: linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0) 50%), ${r.color}; box-shadow: inset 8px 12px 16px rgba(255,255,255,0.35), inset -6px -4px 10px rgba(10,10,35,0.25);">
+        <div class="reveal-capsule-top-glare"></div>
       </div>
-      <!-- Bottom Half -->
-      <div id="reveal-capsule-bottom" class="absolute inset-x-0 bottom-0 h-1/2 rounded-b-full border-[5px] border-t-0 border-[#1c1c40] transition-all duration-700 ease-out" style="background: linear-gradient(180deg, #f7f7ff, #c9c9e6); box-shadow: inset -8px -12px 16px rgba(10,10,35,0.28), inset 6px 4px 10px rgba(255,255,255,0.5);"></div>
-      <!-- Middle seam -->
-      <div id="reveal-capsule-seam" class="absolute inset-x-1 top-1/2 z-10 h-[3px] -translate-y-1/2 rounded-full bg-[#1d1d42]/25"></div>
+      <!-- Metade Inferior -->
+      <div id="reveal-capsule-bottom" class="reveal-capsule-bottom"></div>
+      <!-- Emenda do meio -->
+      <div id="reveal-capsule-seam" class="reveal-capsule-seam"></div>
     </div>
     
-    <p id="reveal-text" class="font-display mt-12 text-sm font-semibold uppercase tracking-[0.3em] text-[#B8B8E6] transition-opacity duration-300">
+    <p id="reveal-text" class="reveal-text">
       Abrindo cápsula...
     </p>
   `;
 
   document.body.appendChild(overlay);
 
-  // Transition Scale
+  // Animação de entrada da cápsula
   setTimeout(() => {
     const capsule = document.getElementById("reveal-capsule");
-    if (capsule) capsule.className = "relative h-44 w-44 sm:h-52 sm:w-52 transition-all duration-500 transform scale-100 opacity-100 animate-capsule-wiggle";
+    if (capsule) {
+      capsule.classList.add("show");
+      capsule.classList.add("animate-capsule-wiggle");
+    }
   }, 50);
 
-  // Split Capsule open at 1.4s
+  // Racha a cápsula em 1.4s
   setTimeout(() => {
     const topHalf = document.getElementById("reveal-capsule-top");
     const bottomHalf = document.getElementById("reveal-capsule-bottom");
@@ -504,25 +519,24 @@ function showCapsuleReveal(prize) {
     if (seam) seam.style.opacity = "0";
     if (revealText) revealText.style.opacity = "0";
 
-    // Play crack sounds & flash glow
-    window.sounds.playCrack();
+    if (window.sounds?.playCrack) window.sounds.playCrack();
 
-    // Trigger visual flash
+    // Flash visual
     const flash = document.createElement("div");
-    flash.className = "absolute h-56 w-56 rounded-full animate-radial-flash";
+    flash.className = "reveal-flash animate-radial-flash";
     flash.style.background = `radial-gradient(circle, ${r.color}cc, transparent 65%)`;
     overlay.appendChild(flash);
 
-    // Particles/shards
+    // Partículas saindo da cápsula
     for (let i = 0; i < 12; i++) {
       const angle = (i / 12) * Math.PI * 2;
       const dist = 110 + (i % 3) * 30;
       const destX = Math.cos(angle) * dist;
       const destY = Math.sin(angle) * dist;
-      const shardColor = ["#FFFFFF", "#FFC107", "#7BE85B"][i % 3];
+      const shardColor = ["#FFFFFF", "#FFC107", "#a9ff71"][i % 3];
 
       const shard = document.createElement("span");
-      shard.className = "absolute h-2.5 w-2.5 rounded-sm pointer-events-none transition-all duration-700 ease-out transform scale-0";
+      shard.className = "reveal-shard";
       shard.style.backgroundColor = shardColor;
       overlay.appendChild(shard);
 
@@ -533,23 +547,18 @@ function showCapsuleReveal(prize) {
     }
   }, 1400);
 
-  // Complete reveal at 2.3s
+  // Finaliza a revelação e abre modal do prêmio em 2.3s
   setTimeout(() => {
-    // Remove reveal screen
     overlay.style.opacity = "0";
     setTimeout(() => {
       overlay.remove();
-      
-      // Play Fanfare
-      window.sounds.playReveal(prize.rarity);
-      
-      // Show Prize Modal
+      if (window.sounds?.playReveal) window.sounds.playReveal(prize.rarity);
       showPrizeModal(prize);
     }, 300);
   }, 2300);
 }
 
-// Prize Modal Presentation Overlay
+// Modal do Prêmio Recebido
 function showPrizeModal(prize) {
   currentPrize = prize;
   const r = RARITY[prize.rarity];
@@ -557,24 +566,24 @@ function showPrizeModal(prize) {
 
   const overlay = document.createElement("div");
   overlay.id = "prize-modal-overlay";
-  overlay.className = "fixed inset-0 z-[90] flex items-center justify-center p-4 transition-all duration-300 opacity-0";
+  overlay.className = "prize-overlay";
 
-  // Overlay background
+  // Fundo com blur
   const bg = document.createElement("div");
-  bg.className = "absolute inset-0 bg-[#14142f]/80 backdrop-blur-md";
+  bg.className = "prize-overlay-bg";
   overlay.appendChild(bg);
 
-  // Confetti particles for Epic/Legendary
+  // Confetes para épico ou lendário
   if (big) {
-    for (let i = 0; i < 20; i++) {
-      const angle = (i / 20) * Math.PI * 2;
-      const dist = 110 + (i % 4) * 30;
+    for (let i = 0; i < 24; i++) {
+      const angle = (i / 24) * Math.PI * 2;
+      const dist = 120 + (i % 4) * 35;
       const destX = Math.cos(angle) * dist;
       const destY = Math.sin(angle) * dist;
-      const confColor = ["#7BE85B", "#FFC107", "#4FC3F7", "#FF4B6E", "#C084FC"][i % 5];
+      const confColor = ["#a9ff71", "#FFC107", "#4FC3F7", "#FF4B6E", "#C084FC"][i % 5];
 
       const confetti = document.createElement("span");
-      confetti.className = "absolute left-1/2 top-1/2 h-2.5 w-2.5 rounded-sm pointer-events-none transition-all duration-1000 ease-out transform -translate-x-1/2 -translate-y-1/2 scale-0";
+      confetti.className = "prize-confetti";
       confetti.style.backgroundColor = confColor;
       overlay.appendChild(confetti);
 
@@ -585,43 +594,42 @@ function showPrizeModal(prize) {
     }
   }
 
-  // Modal Card Content
+  // Card do prêmio
   const card = document.createElement("div");
-  card.className = "relative w-full max-w-sm overflow-hidden rounded-[2rem] border border-white/15 bg-[#3D3D7A] p-8 text-center shadow-[0_40px_90px_rgba(8,8,28,0.7)] transform scale-50 transition-all duration-500";
+  card.className = "prize-card";
 
   card.innerHTML = `
-    <div class="pointer-events-none absolute -top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full blur-[70px]" style="background-color: ${r.color}55;"></div>
+    <div class="prize-glow" style="background-color: ${r.color}55;"></div>
 
-    <span data-testid="prize-rarity-badge" class="relative inline-block rounded-full px-4 py-1 text-xs font-extrabold uppercase tracking-[0.2em]" style="background-color: ${r.color}22; color: ${r.color};">
+    <span data-testid="prize-rarity-badge" class="prize-rarity-badge" style="background-color: ${r.color}22; color: ${r.color};">
       ${r.label}
     </span>
 
-    <div class="relative mx-auto mt-6 flex h-24 w-24 items-center justify-center rounded-[1.6rem] border-b-[6px]" style="background-color: ${r.color}2e; border-color: ${r.color}66;">
-      <i data-lucide="${prize.icon}" class="h-12 w-12" style="color: ${r.color}; stroke-width: 2.2"></i>
+    <div class="prize-icon-box" style="background-color: ${r.color}2e; border-color: ${r.color}66;">
+      <i data-lucide="${prize.icon}" style="color: ${r.color}; stroke-width: 2.2;"></i>
     </div>
 
-    <h3 data-testid="prize-name" class="font-display relative mt-6 text-2xl font-bold tracking-tight text-white">
+    <h3 data-testid="prize-name" class="prize-name">
       ${prize.name}
     </h3>
-    <p class="relative mt-2 text-sm font-semibold text-[#B8B8E6]">${prize.desc}</p>
+    <p class="prize-desc">${prize.desc}</p>
 
-    <button data-testid="gacha-collect-btn" class="font-display relative mt-8 flex w-full items-center justify-center gap-2 rounded-2xl border-b-[5px] border-[#4ea331] bg-[#7BE85B] px-6 py-3.5 text-base font-bold text-[#1d1d42] transition-[transform,background-color,border-width] duration-150 hover:bg-[#8cf06d] active:translate-y-1 active:border-b-0">
-      <i data-lucide="gift" class="h-5 w-5" style="stroke-width: 2.5"></i>
+    <button data-testid="gacha-collect-btn" class="prize-collect-btn">
+      <i data-lucide="gift" style="width: 18px; height: 18px; stroke-width: 2.5;"></i>
       Coletar prêmio
     </button>
   `;
 
   overlay.appendChild(card);
   document.body.appendChild(overlay);
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
 
-  // Entrance Transition
+  // Transição de entrada
   setTimeout(() => {
-    overlay.style.opacity = "1";
-    card.style.transform = "scale(1)";
-  }, 50);
+    overlay.classList.add("show");
+  }, 30);
 
-  // Collect handler
+  // Clique para coletar
   const collectBtn = card.querySelector("[data-testid='gacha-collect-btn']");
   collectBtn.addEventListener("click", () => {
     collectPrize();
@@ -645,14 +653,14 @@ function collectPrize() {
   renderShop();
   renderInventory();
 
-  // Clear chute image
-  if (gachaChute) gachaChute.innerHTML = `<span class="text-[10px] font-extrabold uppercase tracking-widest text-[#B8B8E6]/50">Saída do prêmio</span>`;
+  // Limpa chute
+  if (gachaChute) gachaChute.innerHTML = `<span class="gacha-chute-label">Saída do prêmio</span>`;
   updateGachaStatus("PRONTO");
 
-  // Close modal with transition
+  // Fecha modal com transição
   const overlay = document.getElementById("prize-modal-overlay");
   if (overlay) {
-    overlay.style.opacity = "0";
+    overlay.classList.remove("show");
     setTimeout(() => {
       overlay.remove();
       currentPrize = null;
@@ -661,7 +669,7 @@ function collectPrize() {
   }
 }
 
-// Reset Balance
+// Reiniciar Saldo
 function handleReset() {
   state.coins = START_COINS;
   state.owned = {};
@@ -676,10 +684,12 @@ function handleReset() {
   });
 }
 
-// Sound Button Toggle Action
+// Alternar Sons
 function toggleSound() {
   soundMuted = !soundMuted;
-  window.sounds.setMuted(soundMuted);
+  if (window.sounds?.setMuted) {
+    window.sounds.setMuted(soundMuted);
+  }
   updateSoundButton();
 
   toast.info(soundMuted ? "Sons desativados" : "Sons ativados", {
@@ -687,19 +697,21 @@ function toggleSound() {
   });
 }
 
-// Initialization on DOMContentLoaded
+// Inicialização
 document.addEventListener("DOMContentLoaded", () => {
   loadState();
 
-  // Draw initial values
   updateBalanceUI();
   renderShop();
   renderInventory();
   updateSoundButton();
 
-  // Bind static page buttons
+  // Listeners estáticos
   if (gachaSpinBtn) {
     gachaSpinBtn.addEventListener("click", handleSpin);
+  }
+  if (gachaKnob) {
+    gachaKnob.addEventListener("click", handleSpin);
   }
   if (soundToggleBtn) {
     soundToggleBtn.addEventListener("click", toggleSound);
@@ -708,6 +720,5 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBalanceBtn.addEventListener("click", handleReset);
   }
 
-  // Draw Lucide icons
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
 });

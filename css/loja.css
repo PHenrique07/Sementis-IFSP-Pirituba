@@ -1,0 +1,1921 @@
+/* ==========================================================
+   Sementis – Loja · CSS Vanilla (substitui loja-style.css)
+   Usa variáveis de styles.css (--color-primary, --color-accent…)
+   ========================================================== */
+
+/* ===== Cores extras específicas da loja ===== */
+:root {
+    --loja-accent: var(--color-accent);
+    --loja-accent-dark: var(--color-accent-dark);
+    --loja-dark: var(--color-primary-dark);
+    --loja-bg: var(--color-primary);
+    --loja-card: var(--color-primary-light);
+    --loja-muted: #b8b8e6;
+    --loja-border: rgba(255, 255, 255, 0.1);
+
+    /* Raridade */
+    --rarity-comum: #b8b8e6;
+    --rarity-raro: #4fc3f7;
+    --rarity-epico: #c084fc;
+    --rarity-lendario: #ffc107;
+
+    /* Capsule colors */
+    --capsule-green: #a9ff71;
+    --capsule-red: #ff4b6e;
+    --capsule-blue: #4fc3f7;
+    --capsule-gold: #ffc107;
+    --capsule-purple: #c084fc;
+    --capsule-orange: #ff8a00;
+}
+
+/* ===== Page Base ===== */
+.loja-page {
+    background-color: var(--loja-bg);
+    min-height: 100vh;
+    padding-bottom: 80px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.loja-page::before {
+    content: '';
+    position: fixed;
+    right: -220px;
+    bottom: -140px;
+    width: clamp(640px, 95vw, 1200px);
+    aspect-ratio: 1 / 1;
+    background-image: url('../assets/brand/logo_sementis_background_5__opacidade.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    opacity: 0.22;
+    transform: rotate(-24deg);
+    pointer-events: none;
+    z-index: 0;
+}
+
+@media (max-width: 768px) {
+    .loja-page::before {
+        right: -170px;
+        bottom: 36px;
+        width: clamp(420px, 108vw, 760px);
+        opacity: 0.18;
+    }
+}
+
+/* Desktop grid com sidebar */
+@media (min-width: 1024px) {
+    .loja-page {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        grid-template-rows: auto 1fr;
+        padding-bottom: 0;
+    }
+}
+
+/* ===== Page Container ===== */
+.loja-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== Header da Loja ===== */
+.loja-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: linear-gradient(180deg, var(--loja-dark) 0%, var(--loja-bg) 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.loja-header-logo {
+    height: 40px;
+    object-fit: contain;
+}
+
+.loja-header-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loja-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--loja-border);
+}
+
+.loja-stat img {
+    width: 22px;
+    height: 22px;
+}
+
+.loja-stat-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.loja-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loja-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--loja-border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--loja-muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.loja-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.loja-icon-btn:active {
+    transform: scale(0.9);
+}
+
+@media (min-width: 1024px) {
+    .loja-header {
+        grid-column: 2;
+        grid-row: 1;
+        padding: 20px 40px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .loja-header-logo {
+        display: none;
+    }
+}
+
+/* ===== Hero Section ===== */
+.loja-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 40px 20px 48px;
+}
+
+@media (min-width: 640px) {
+    .loja-hero {
+        padding: 48px 24px 56px;
+    }
+}
+
+.loja-hero-glow-left {
+    position: absolute;
+    left: -160px;
+    top: 10px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: rgba(169, 255, 113, 0.08);
+    filter: blur(120px);
+    pointer-events: none;
+}
+
+.loja-hero-glow-right {
+    position: absolute;
+    right: -128px;
+    bottom: 0;
+    width: 360px;
+    height: 360px;
+    border-radius: 50%;
+    background: rgba(192, 132, 252, 0.08);
+    filter: blur(120px);
+    pointer-events: none;
+}
+
+.loja-hero-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    align-items: center;
+    gap: 48px;
+}
+
+@media (min-width: 1024px) {
+    .loja-hero-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+    }
+}
+
+.loja-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(169, 255, 113, 0.3);
+    background: rgba(169, 255, 113, 0.1);
+    color: var(--loja-accent);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 20px;
+}
+
+.loja-hero-badge img {
+    width: 14px;
+    height: 14px;
+}
+
+.loja-hero h1 {
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #fff;
+}
+
+.loja-hero h1 .accent {
+    color: var(--loja-accent);
+}
+
+.loja-hero-desc {
+    margin-top: 20px;
+    max-width: 440px;
+    font-size: 15px;
+    color: var(--loja-muted);
+    line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+    .loja-hero-desc {
+        font-size: 17px;
+    }
+}
+
+.loja-hero-ctas {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+}
+
+.loja-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: var(--radius-lg);
+    border: none;
+    border-bottom: 5px solid var(--loja-accent-dark);
+    background: var(--loja-accent);
+    color: var(--loja-dark);
+    font-family: var(--font-family);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.loja-btn-primary:hover {
+    background: var(--color-accent-light);
+}
+
+.loja-btn-primary:active {
+    transform: translateY(3px);
+    border-bottom-width: 0;
+}
+
+.loja-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: var(--radius-lg);
+    border: none;
+    border-bottom: 5px solid rgba(0, 0, 0, 0.3);
+    background: var(--loja-card);
+    color: #fff;
+    font-family: var(--font-family);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.loja-btn-secondary:hover {
+    background: #4a4a8f;
+}
+
+.loja-btn-secondary:active {
+    transform: translateY(3px);
+    border-bottom-width: 0;
+}
+
+.loja-hero-stats {
+    margin-top: 44px;
+    display: flex;
+    gap: 36px;
+}
+
+.loja-hero-stat-value {
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 800;
+    color: var(--loja-accent);
+}
+
+.loja-hero-stat-label {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(184, 184, 230, 0.65);
+}
+
+/* Hero Art (desktop only) */
+.loja-hero-art {
+    position: relative;
+    height: 400px;
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .loja-hero-art {
+        display: block;
+    }
+}
+
+.loja-hero-art-ring {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loja-hero-art-ring-inner {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    border: 2px dashed rgba(169, 255, 113, 0.22);
+    animation: loja-spin-slow 20s linear infinite;
+}
+
+.loja-hero-capsule-big {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loja-hero-capsule-sphere {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(10, 10, 35, 0.6);
+    animation: loja-floaty 3.5s ease-in-out infinite;
+}
+
+.loja-hero-capsule-top {
+    position: absolute;
+    inset: 0 0 50% 0;
+    background: #ff4b6e;
+}
+
+.loja-hero-capsule-bottom {
+    position: absolute;
+    inset: 50% 0 0 0;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.loja-hero-capsule-glare {
+    position: absolute;
+    left: 24px;
+    top: 20px;
+    width: 48px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    filter: blur(6px);
+}
+
+.loja-hero-float-icon {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    animation: loja-floaty 3.5s ease-in-out infinite;
+}
+
+.loja-hero-float-icon img {
+    width: 60%;
+    height: 60%;
+}
+
+.loja-hero-float-coins {
+    right: 24px;
+    top: 32px;
+    width: 56px;
+    height: 56px;
+    background: var(--capsule-gold);
+    box-shadow: 0 5px 0 #b38600;
+    animation-delay: 0.6s;
+}
+
+.loja-hero-float-leaf {
+    bottom: 64px;
+    left: 16px;
+    width: 48px;
+    height: 48px;
+    background: var(--loja-accent);
+    box-shadow: 0 5px 0 var(--loja-accent-dark);
+    animation-delay: 1.1s;
+}
+
+.loja-hero-float-star {
+    right: 64px;
+    bottom: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--capsule-purple);
+    box-shadow: 0 5px 0 #7c4dbb;
+    animation-delay: 1.7s;
+}
+
+/* ===== Gacha Machine Section ===== */
+.loja-gacha-section {
+    position: relative;
+    padding: 60px 20px 80px;
+}
+
+@media (min-width: 640px) {
+    .loja-gacha-section {
+        padding: 80px 24px 100px;
+    }
+}
+
+.loja-gacha-glow-bg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 500px;
+    height: 500px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(169, 255, 113, 0.08);
+    filter: blur(140px);
+    pointer-events: none;
+}
+
+.loja-gacha-header {
+    text-align: center;
+    margin-bottom: 56px;
+}
+
+.loja-gacha-header-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--loja-accent);
+    margin-bottom: 12px;
+}
+
+.loja-gacha-header h2 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+}
+
+.loja-gacha-header h2 .accent {
+    color: var(--loja-accent);
+}
+
+.loja-gacha-header p {
+    margin: 16px auto 0;
+    max-width: 520px;
+    font-size: 15px;
+    color: var(--loja-muted);
+    line-height: 1.6;
+}
+
+.loja-gacha-layout {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    align-items: center;
+    gap: 48px;
+}
+
+@media (min-width: 1024px) {
+    .loja-gacha-layout {
+        grid-template-columns: 1fr 340px;
+    }
+}
+
+.loja-gacha-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ===== The Gacha Machine ===== */
+.gacha-machine {
+    position: relative;
+    width: 320px;
+    transition: transform 0.2s ease;
+}
+
+@media (min-width: 640px) {
+    .gacha-machine {
+        width: 352px;
+    }
+}
+
+/* Glow halo behind machine */
+.gacha-halo {
+    position: absolute;
+    inset: -40px;
+    z-index: -1;
+    border-radius: 50%;
+    background: rgba(169, 255, 113, 0.12);
+    filter: blur(48px);
+    animation: loja-glow-pulse 3s ease-in-out infinite;
+}
+
+/* --- Dome (glass globe) --- */
+.gacha-dome-wrap {
+    position: relative;
+    z-index: 10;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.gacha-dome {
+    position: relative;
+    width: 288px;
+    height: 288px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid #1a1a40;
+    background: radial-gradient(
+        circle at 30% 22%,
+        rgba(255, 255, 255, 0.42),
+        rgba(255, 255, 255, 0.12) 40%,
+        rgba(23, 23, 58, 0.35) 78%,
+        rgba(10, 10, 35, 0.55) 100%
+    );
+    box-shadow:
+        inset 0 -22px 36px rgba(10, 10, 35, 0.5),
+        inset 0 12px 28px rgba(255, 255, 255, 0.22),
+        0 20px 44px rgba(10, 10, 35, 0.5);
+}
+
+@media (min-width: 640px) {
+    .gacha-dome {
+        width: 320px;
+        height: 320px;
+    }
+}
+
+/* Capsules inside dome */
+.gacha-capsule {
+    position: absolute;
+    border-radius: 50%;
+}
+
+.gacha-capsule-glare {
+    position: absolute;
+    left: 16%;
+    top: 10%;
+    width: 38%;
+    height: 30%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    filter: blur(3px);
+}
+
+.gacha-capsule-seam {
+    position: absolute;
+    inset: 0;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: rgba(29, 29, 66, 0.15);
+}
+
+/* Dome glass reflection effects */
+.gacha-dome-glare-1 {
+    position: absolute;
+    left: -8px;
+    top: 20px;
+    width: 64px;
+    height: 160px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    filter: blur(12px);
+    transform: rotate(24deg);
+    pointer-events: none;
+}
+
+.gacha-dome-glare-2 {
+    position: absolute;
+    right: 32px;
+    top: 40px;
+    width: 28px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    filter: blur(4px);
+    transform: rotate(24deg);
+    pointer-events: none;
+}
+
+.gacha-dome-glow-bottom {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 176px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(169, 255, 113, 0.2);
+    filter: blur(16px);
+    pointer-events: none;
+}
+
+/* Dome base ring */
+.gacha-dome-ring {
+    position: relative;
+    z-index: 20;
+    margin: -24px auto 0;
+    width: 224px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    border: 4px solid #1a1a40;
+    background: linear-gradient(180deg, var(--color-accent-light) 0%, var(--loja-accent-dark) 100%);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 640px) {
+    .gacha-dome-ring {
+        width: 256px;
+    }
+}
+
+/* --- Machine Body --- */
+.gacha-body {
+    position: relative;
+    z-index: 0;
+    margin-top: -12px;
+    border-radius: 2.2rem;
+    border: 5px solid #1a1a40;
+    padding: 24px 24px 28px;
+    background: linear-gradient(180deg, #4a4a96 0%, #3a3a7a 45%, #31316a 100%);
+    box-shadow:
+        0 24px 50px rgba(10, 10, 35, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Machine name badge */
+.gacha-name-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: fit-content;
+    margin: 0 auto 20px;
+    padding: 6px 20px;
+    border-radius: var(--radius-full);
+    border: 2px solid #1a1a40;
+    background: var(--loja-accent);
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.gacha-name-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(26, 26, 74, 0.7);
+}
+
+.gacha-name-badge span {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    color: var(--loja-dark);
+    text-transform: uppercase;
+}
+
+/* Screen + price display */
+.gacha-display-row {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+}
+
+.gacha-screen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    border: 2px solid #1a1a40;
+    background: #17173a;
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6);
+    animation: loja-screen-flicker 3s ease-in-out infinite;
+}
+
+.gacha-screen-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--loja-accent);
+}
+
+.gacha-screen-text {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--loja-accent);
+    text-transform: uppercase;
+}
+
+.gacha-price-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    border: 2px solid #1a1a40;
+    background: #2a2a5e;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.gacha-price-display img {
+    width: 16px;
+    height: 16px;
+}
+
+.gacha-price-display-value {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--rarity-lendario);
+    line-height: 1;
+}
+
+.gacha-price-slot {
+    width: 4px;
+    height: 12px;
+    border-radius: var(--radius-full);
+    background: #14142f;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Knob + Chute row */
+.gacha-controls-row {
+    margin-top: 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.gacha-knob-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.gacha-knob {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid #1a1a40;
+    background: repeating-conic-gradient(#5a5aa3 0deg 14deg, #41417f 14deg 28deg);
+    box-shadow:
+        inset 0 5px 10px rgba(255, 255, 255, 0.28),
+        inset 0 -8px 12px rgba(0, 0, 0, 0.45),
+        0 7px 0 rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gacha-knob-center {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 4px solid #1a1a40;
+    background: var(--loja-accent);
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 4px;
+}
+
+.gacha-knob-pointer {
+    width: 6px;
+    height: 14px;
+    border-radius: var(--radius-full);
+    background: var(--loja-dark);
+}
+
+.gacha-knob-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--loja-muted);
+}
+
+/* Prize chute */
+.gacha-chute {
+    width: 128px;
+    height: 96px;
+    border-radius: var(--radius-lg);
+    border: 4px solid #1a1a40;
+    background: #17173a;
+    box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gacha-chute-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(184, 184, 230, 0.4);
+}
+
+/* Machine feet */
+.gacha-feet {
+    width: 224px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.gacha-foot {
+    width: 40px;
+    height: 16px;
+    border-radius: 0 0 12px 12px;
+    background: #1a1a40;
+}
+
+/* ===== Spin Button ===== */
+.gacha-spin-btn {
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 40px;
+    border-radius: 24px;
+    border: none;
+    border-bottom: 6px solid var(--loja-accent-dark);
+    background: var(--loja-accent);
+    color: var(--loja-dark);
+    font-family: var(--font-family);
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.gacha-spin-btn:hover {
+    background: var(--color-accent-light);
+    box-shadow: 0 0 30px rgba(169, 255, 113, 0.25);
+}
+
+.gacha-spin-btn:active {
+    transform: translateY(4px);
+    border-bottom-width: 0;
+}
+
+.gacha-spin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.gacha-spin-btn:disabled:hover {
+    box-shadow: none;
+}
+
+.gacha-spin-btn-price {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    background: rgba(26, 26, 74, 0.15);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.gacha-spin-btn-price img {
+    width: 16px;
+    height: 16px;
+}
+
+/* ===== Chances Sidebar ===== */
+.loja-odds-panel {
+    border-radius: 24px;
+    border: 1px solid var(--loja-border);
+    background: rgba(58, 58, 122, 0.6);
+    padding: 28px;
+    backdrop-filter: blur(12px);
+}
+
+.loja-odds-panel h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.loja-odds-panel > p {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--loja-muted);
+}
+
+.loja-odds-list {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+}
+
+.loja-odds-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: var(--radius-lg);
+    background: rgba(26, 26, 74, 0.6);
+}
+
+.loja-odds-item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.loja-odds-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+.loja-odds-label {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.loja-odds-pct {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.loja-odds-tip {
+    margin-top: 24px;
+    padding: 12px 16px;
+    border-radius: var(--radius-lg);
+    background: rgba(169, 255, 113, 0.08);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--loja-accent);
+    line-height: 1.6;
+}
+
+/* ===== Marquee Ribbon ===== */
+.loja-marquee {
+    position: relative;
+    overflow: hidden;
+    border-top: 4px solid var(--loja-dark);
+    border-bottom: 4px solid var(--loja-dark);
+    background: var(--loja-accent);
+    padding: 14px 0;
+    transform: rotate(-1deg);
+}
+
+.loja-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: loja-marquee-scroll 18s linear infinite;
+}
+
+.loja-marquee-group {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.loja-marquee-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: var(--loja-dark);
+    text-transform: uppercase;
+}
+
+.loja-marquee-item img {
+    width: 18px;
+    height: 18px;
+}
+
+/* ===== Shop Items Sections ===== */
+.loja-shop {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+}
+
+@media (min-width: 640px) {
+    .loja-shop {
+        padding: 72px 24px 96px;
+    }
+}
+
+.loja-shop-section-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.loja-shop-section-num {
+    font-size: clamp(48px, 7vw, 64px);
+    font-weight: 800;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.12);
+}
+
+.loja-shop-section-title {
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+.loja-shop-section-tagline {
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--loja-muted);
+}
+
+/* Shop grid */
+.loja-shop-grid {
+    display: grid;
+    gap: 20px;
+}
+
+@media (min-width: 640px) {
+    .loja-shop-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .loja-shop-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .loja-shop-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Shop Card */
+.loja-shop-card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border-radius: 1.6rem;
+    border: 1px solid var(--loja-border);
+    border-bottom: 6px solid rgba(0, 0, 0, 0.4);
+    background: var(--loja-card);
+    transition: transform var(--transition-base), border-color var(--transition-base);
+}
+
+.loja-shop-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.loja-shop-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    border-bottom: 4px solid transparent;
+    transition: transform var(--transition-base);
+}
+
+.loja-shop-card:hover .loja-shop-card-icon {
+    transform: scale(1.1) rotate(-6deg);
+}
+
+.loja-shop-card-icon i {
+    width: 32px;
+    height: 32px;
+}
+
+.loja-shop-card-name {
+    margin-top: 20px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.loja-shop-card-desc {
+    margin-top: 8px;
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--loja-muted);
+}
+
+/* Shop Card Buttons */
+.loja-buy-btn {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: var(--radius-lg);
+    border: none;
+    border-bottom: 4px solid var(--loja-accent-dark);
+    background: var(--loja-accent);
+    color: var(--loja-dark);
+    font-family: var(--font-family);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.loja-buy-btn:hover {
+    background: var(--color-accent-light);
+}
+
+.loja-buy-btn:active {
+    transform: translateY(3px);
+    border-bottom-width: 0;
+}
+
+.loja-buy-btn-price {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    background: rgba(26, 26, 74, 0.15);
+    font-size: 12px;
+}
+
+.loja-buy-btn-price img {
+    width: 14px;
+    height: 14px;
+}
+
+.loja-buy-btn--owned {
+    border-bottom-color: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--loja-muted);
+    cursor: default;
+}
+
+.loja-buy-btn--owned:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.loja-buy-btn--locked {
+    border-bottom-color: #7a2b2b;
+    background: rgba(255, 75, 75, 0.12);
+    color: #ff9d9d;
+}
+
+.loja-buy-btn--locked:hover {
+    background: rgba(255, 75, 75, 0.2);
+}
+
+/* ===== Inventory Section ===== */
+.loja-inventory {
+    position: relative;
+    padding: 60px 20px 80px;
+}
+
+@media (min-width: 640px) {
+    .loja-inventory {
+        padding: 80px 24px 100px;
+    }
+}
+
+.loja-inventory-glow {
+    position: absolute;
+    right: 0;
+    top: 80px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: rgba(255, 193, 7, 0.06);
+    filter: blur(120px);
+    pointer-events: none;
+}
+
+.loja-inventory-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.loja-inventory-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.loja-inventory-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--rarity-lendario);
+    margin-bottom: 12px;
+}
+
+.loja-inventory-tag img {
+    width: 16px;
+    height: 16px;
+}
+
+.loja-inventory-head h2 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+}
+
+.loja-inventory-count {
+    padding: 12px 24px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--loja-border);
+    background: var(--loja-card);
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.loja-inventory-count .muted {
+    color: var(--loja-muted);
+}
+
+/* Inventory Grid */
+.loja-inventory-grid {
+    display: grid;
+    gap: 16px;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .loja-inventory-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .loja-inventory-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .loja-inventory-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Inventory Card */
+.loja-inventory-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 24px;
+    border: 1px solid var(--loja-border);
+    border-bottom: 4px solid rgba(0, 0, 0, 0.4);
+    background: var(--loja-card);
+}
+
+.loja-inventory-card-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    border-bottom: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loja-inventory-card-icon i {
+    width: 24px;
+    height: 24px;
+}
+
+.loja-inventory-card-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+}
+
+/* Inventory Empty State */
+.loja-inventory-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 64px 32px;
+    border-radius: 2rem;
+    border: 2px dashed rgba(255, 255, 255, 0.12);
+    background: rgba(58, 58, 122, 0.35);
+    text-align: center;
+}
+
+.loja-inventory-empty-icon {
+    width: 48px;
+    height: 48px;
+    color: rgba(184, 184, 230, 0.5);
+}
+
+.loja-inventory-empty h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.loja-inventory-empty p {
+    max-width: 380px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--loja-muted);
+    line-height: 1.6;
+}
+
+/* ===== Footer ===== */
+.loja-footer {
+    border-top: 1px solid var(--loja-border);
+    background: var(--loja-dark);
+    padding: 40px 20px;
+}
+
+.loja-footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+@media (min-width: 640px) {
+    .loja-footer-inner {
+        flex-direction: row;
+    }
+}
+
+.loja-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loja-footer-brand-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--loja-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loja-footer-brand-icon img {
+    width: 18px;
+    height: 18px;
+}
+
+.loja-footer-brand-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.loja-footer-brand-sub {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(184, 184, 230, 0.6);
+}
+
+.loja-footer-note {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(184, 184, 230, 0.4);
+}
+
+/* ===== Toast System ===== */
+#toast-container {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.toast-item {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 280px;
+    max-width: 380px;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border-left: 4px solid #4fc3f7;
+    background: var(--loja-card);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    transform: translateY(16px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-item.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast-item--success {
+    border-left-color: var(--loja-accent);
+}
+
+.toast-item--error {
+    border-left-color: #ff4b4b;
+}
+
+.toast-title {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.toast-desc {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--loja-muted);
+}
+
+/* ===== Prize Modal ===== */
+.prize-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.prize-overlay.show {
+    opacity: 1;
+}
+
+.prize-overlay-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 20, 47, 0.8);
+    backdrop-filter: blur(12px);
+}
+
+.prize-card {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    padding: 32px;
+    border-radius: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--loja-card);
+    text-align: center;
+    box-shadow: 0 40px 90px rgba(8, 8, 28, 0.7);
+    transform: scale(0.5);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prize-overlay.show .prize-card {
+    transform: scale(1);
+}
+
+.prize-glow {
+    position: absolute;
+    top: -96px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 224px;
+    height: 224px;
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+}
+
+.prize-rarity-badge {
+    position: relative;
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+.prize-icon-box {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    margin: 24px auto 0;
+    border-radius: 1.6rem;
+    border-bottom: 6px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prize-icon-box i {
+    width: 48px;
+    height: 48px;
+}
+
+.prize-name {
+    position: relative;
+    margin-top: 24px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+.prize-desc {
+    position: relative;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--loja-muted);
+}
+
+.prize-collect-btn {
+    position: relative;
+    margin-top: 28px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border-radius: var(--radius-lg);
+    border: none;
+    border-bottom: 5px solid var(--loja-accent-dark);
+    background: var(--loja-accent);
+    color: var(--loja-dark);
+    font-family: var(--font-family);
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.prize-collect-btn:hover {
+    background: var(--color-accent-light);
+}
+
+.prize-collect-btn:active {
+    transform: translateY(3px);
+    border-bottom-width: 0;
+}
+
+/* ===== Capsule Reveal Overlay ===== */
+.capsule-reveal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 85;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 20, 47, 0.7);
+    backdrop-filter: blur(4px);
+    transition: opacity 0.3s ease;
+}
+
+.reveal-capsule {
+    position: relative;
+    width: 176px;
+    height: 176px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: scale(0.75);
+    opacity: 0;
+}
+
+@media (min-width: 640px) {
+    .reveal-capsule {
+        width: 208px;
+        height: 208px;
+    }
+}
+
+.reveal-capsule.show {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.reveal-capsule-top {
+    position: absolute;
+    inset: 0 0 50% 0;
+    border-radius: 50% 50% 0 0;
+    border: 5px solid #1a1a40;
+    border-bottom: none;
+    transition: all 0.7s ease-out;
+}
+
+.reveal-capsule-top-glare {
+    position: absolute;
+    left: 18%;
+    top: 24%;
+    width: 36%;
+    height: 34%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    filter: blur(6px);
+}
+
+.reveal-capsule-bottom {
+    position: absolute;
+    inset: 50% 0 0 0;
+    border-radius: 0 0 50% 50%;
+    border: 5px solid #1a1a40;
+    border-top: none;
+    background: linear-gradient(180deg, #f7f7ff, #c9c9e6);
+    box-shadow:
+        inset -8px -12px 16px rgba(10, 10, 35, 0.28),
+        inset 6px 4px 10px rgba(255, 255, 255, 0.5);
+    transition: all 0.7s ease-out;
+}
+
+.reveal-capsule-seam {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 50%;
+    height: 3px;
+    transform: translateY(-50%);
+    border-radius: var(--radius-full);
+    background: rgba(29, 29, 66, 0.25);
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+.reveal-text {
+    margin-top: 48px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--loja-muted);
+    transition: opacity 0.3s ease;
+}
+
+.reveal-flash {
+    position: absolute;
+    width: 224px;
+    height: 224px;
+    border-radius: 50%;
+}
+
+.reveal-shard {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: all 0.7s ease-out;
+    transform: scale(0);
+}
+
+/* Confetti particles */
+.prize-confetti {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0);
+    transition: all 1s ease-out;
+}
+
+/* ===== Animations ===== */
+
+/* Slow spin for hero ring */
+@keyframes loja-spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Floating animation */
+@keyframes loja-floaty {
+    0%, 100% {
+        transform: translateY(0) rotate(var(--float-r, 0deg));
+    }
+    50% {
+        transform: translateY(-12px) rotate(var(--float-r, 0deg));
+    }
+}
+
+/* Glow pulse behind machine */
+@keyframes loja-glow-pulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+}
+
+/* Screen flicker (LED display) */
+@keyframes loja-screen-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+    52% { opacity: 1; }
+    80% { opacity: 0.92; }
+    82% { opacity: 1; }
+}
+
+/* Marquee infinite scroll */
+@keyframes loja-marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* Gacha Shake: capsules inside dome */
+@keyframes loja-shake-capsule {
+    0%, 100% { transform: translate(0, 0) rotate(var(--r)); }
+    20% { transform: translate(4px, -6px) rotate(calc(var(--r) + 12deg)); }
+    40% { transform: translate(-5px, 4px) rotate(calc(var(--r) - 15deg)); }
+    60% { transform: translate(3px, -3px) rotate(calc(var(--r) + 8deg)); }
+    80% { transform: translate(-3px, 3px) rotate(calc(var(--r) - 8deg)); }
+}
+
+/* Gacha Shake: machine body */
+@keyframes loja-shake-body {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px) translateY(1px); }
+    40% { transform: translateX(4px) translateY(-1px); }
+    60% { transform: translateX(-3px) translateY(1px); }
+    80% { transform: translateX(3px) translateY(-1px); }
+}
+
+/* Gacha: knob rotation */
+@keyframes loja-rotate-knob {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(1080deg); }
+}
+
+/* Capsule drop into chute */
+@keyframes loja-capsule-drop {
+    0% { transform: translateY(-40px) scale(0.4); opacity: 0; }
+    70% { transform: translateY(5px) scale(1.1); opacity: 1; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Capsule wiggle (reveal) */
+@keyframes loja-capsule-wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    15% { transform: rotate(-8deg); }
+    30% { transform: rotate(8deg); }
+    45% { transform: rotate(-6deg); }
+    60% { transform: rotate(6deg); }
+    75% { transform: rotate(-3deg); }
+}
+
+/* Radial flash (capsule split) */
+@keyframes loja-radial-flash {
+    0% { transform: scale(0.2); opacity: 0.95; }
+    100% { transform: scale(3.5); opacity: 0; }
+}
+
+/* Button shake on insufficient coins */
+@keyframes loja-shake-x {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+/* Animation classes (applied via JS) */
+.spinning-machine .gacha-capsule {
+    animation: loja-shake-capsule 0.5s infinite ease-in-out;
+}
+
+.spinning-machine .gacha-body,
+.spinning-machine .gacha-dome {
+    animation: loja-shake-body 0.15s infinite ease-in-out;
+}
+
+.spinning-machine .gacha-knob {
+    animation: loja-rotate-knob 1.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-capsule-drop {
+    animation: loja-capsule-drop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-capsule-wiggle {
+    animation: loja-capsule-wiggle 1s ease-in-out infinite;
+}
+
+.animate-radial-flash {
+    animation: loja-radial-flash 0.75s ease-out forwards;
+}
+
+.shake-x {
+    animation: loja-shake-x 0.5s ease-in-out;
+}
