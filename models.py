@@ -13,7 +13,7 @@ class Usuario(SQLModel, table=True):
     senha: str
     # data_nascimento substitui o campo legado 'idade'
     data_nascimento: Optional[date] = Field(default=None)
-    idade: int = Field(default=0)
+
     tipo_usuario: str
 
     # Gamificação
