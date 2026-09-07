@@ -543,7 +543,7 @@ async function carregarProgressoModulos() {
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/modulos/progresso`, {
-    credentials: 'include',
+            credentials: 'include',
             headers: { 'Authorization': 'Bearer ' + token }
         });
         
@@ -558,37 +558,36 @@ async function carregarProgressoModulos() {
             if (!tituloElement) return;
             
             const nomeModulo = tituloElement.textContent.trim();
+            const nomeLimpo = nomeModulo.toLowerCase();
             
             // O TRADUTOR: Mapeia o nome do HTML para o ID do Módulo no Banco
-            // Porque o nome no HTML ("Água e Vida") é diferente do banco ("Água")
-            const nomeLimpo = nomeModulo.toLowerCase();
             let idMapeado = 1; // Padrão: Fundamentos
             if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
             if (nomeLimpo.includes('clima')) idMapeado = 3;
             
-            // Encontra no JSON do Python os dados exatos usando o ID (tentando id ou modulo_id)
+            // Tenta achar os dados do módulo. Se for aluno novo/zerado, fica undefined
             const dadosModulo = modulos.find(m => m.modulo_id === idMapeado || m.id === idMapeado);
             
-            if (dadosModulo) {
-                // 1. Atualizar a largura da barra verde
-                const barra = card.querySelector('.module-progress-fill');
-                if (barra) {
-                    setTimeout(() => {
-                        barra.style.width = `${dadosModulo.porcentagem}%`;
-                    }, 500); // Animação suave 
-                }
-                
-                // 2. Atualizar o texto ("X/Y lições completas")
-                const textoLicoes = card.querySelector('.module-progress-text');
-                if (textoLicoes) {
-                    // Respeitar se o módulo estiver explicitamente bloqueado visualmente ainda
-                    if (!textoLicoes.classList.contains('locked-text')) {
-                        textoLicoes.textContent = `${dadosModulo.atividades_concluidas}/${dadosModulo.total_atividades} lições completas`;
-                    }
-                }
+            // A MÁGICA: Se achou, usa os dados. Se não, ZERA as barras (0% e 0 lições)
+            const porcentagem = dadosModulo ? dadosModulo.porcentagem : 0;
+            const concluidas = dadosModulo ? dadosModulo.atividades_concluidas : 0;
+            const total = dadosModulo ? dadosModulo.total_atividades : 5; // Total padrão visual
+            
+            // 1. Atualizar a largura da barra verde
+            const barra = card.querySelector('.module-progress-fill');
+            if (barra) {
+                setTimeout(() => {
+                    barra.style.width = `${porcentagem}%`;
+                }, 500); // Animação suave 
+            }
+            
+            // 2. Atualizar o texto ("X/Y lições completas")
+            const textoLicoes = card.querySelector('.module-progress-text');
+            if (textoLicoes && !textoLicoes.classList.contains('locked-text')) {
+                textoLicoes.textContent = `${concluidas}/${total} lições completas`;
             }
         });
-        console.log("Barras de progresso atualizadas com o banco!");
+        console.log("Barras de progresso atualizadas com sucesso!");
     } catch (erro) {
         console.error("Erro ao atualizar barras de módulos:", erro);
     }
