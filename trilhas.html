@@ -724,7 +724,7 @@ async function carregarMapaDinamico() {
   }
 
   try {
-    const url = `/api/modulos/${moduloId}/trilhas`;
+    const url = `${API_BASE_URL}/api/modulos/${moduloId}/trilhas`;
     console.log('📡 Carregando trilhas:', url);
     console.log('🔐 Token enviado:', token.substring(0, 20) + '...');
 

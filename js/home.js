@@ -532,60 +532,7 @@ async function carregarTrilha(moduloId = 1) {
 }
 window.carregarTrilha = carregarTrilha;
 
-// ==========================================
-// INTEGRAÇÃO: Progresso das Barras Verdes
-// ==========================================
-async function carregarProgressoModulos() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/modulos/progresso`, {
-    credentials: 'include',
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-        
-        if (!response.ok) throw new Error("Falha na API");
-        const modulos = await response.json();
-
-        // Pega todos os cards de módulo da tela
-        const cards = document.querySelectorAll('.module-card');
-        
-        cards.forEach(card => {
-            // Busca o título para saber de qual módulo é este card
-            const tituloElement = card.querySelector('.module-title, h3');
-            if (!tituloElement) return;
-            
-            const nomeModulo = tituloElement.textContent.trim();
-            
-            // Encontra no JSON que veio do Python os dados desse módulo específico
-            const dadosModulo = modulos.find(m => m.nome.toLowerCase() === nomeModulo.toLowerCase());
-            
-            if (dadosModulo) {
-                // 1. Atualizar a largura da barra verde
-                const barra = card.querySelector('.progress-fill, .progress-bar, div[style*="width"]');
-                if (barra) {
-                    // Dá um pequeno atraso para a animação inicial não quebrar
-                    setTimeout(() => {
-                        barra.style.width = `${dadosModulo.porcentagem}%`;
-                    }, 800);
-                }
-                
-                // 2. Atualizar o texto ("X/Y lições completas")
-                // Como não tenho as classes exatas do seu HTML, o script varre todos os textos pequenos do card
-                const elementosTexto = card.querySelectorAll('p, span, small');
-                elementosTexto.forEach(el => {
-                    if (el.textContent.includes('lições') || el.textContent.includes('/')) {
-                        el.textContent = `${dadosModulo.atividades_concluidas}/${dadosModulo.total_atividades} lições completas`;
-                    }
-                });
-            }
-        });
-        console.log("Barras de progresso atualizadas com o banco!");
-    } catch (erro) {
-        console.error("Erro ao atualizar barras de módulos:", erro);
-    }
-}
+// Função original de carregarProgressoModulos removida por estar duplicada
 
 // ==========================================
 // INTEGRAÇÃO: Progresso das Barras Verdes
@@ -619,8 +566,8 @@ async function carregarProgressoModulos() {
             if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
             if (nomeLimpo.includes('clima')) idMapeado = 3;
             
-            // Encontra no JSON do Python os dados exatos usando o ID
-            const dadosModulo = modulos.find(m => m.modulo_id === idMapeado);
+            // Encontra no JSON do Python os dados exatos usando o ID (tentando id ou modulo_id)
+            const dadosModulo = modulos.find(m => m.modulo_id === idMapeado || m.id === idMapeado);
             
             if (dadosModulo) {
                 // 1. Atualizar a largura da barra verde
