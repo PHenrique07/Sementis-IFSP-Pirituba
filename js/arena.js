@@ -188,7 +188,10 @@ async function syncEstado() {
     if (!jogadorAtual) return;
 
     try {
-        const res = await fetch(`${API_BASE_URL}/api/live/sala/${jogadorAtual.pin}/estado?jogador_id=${jogadorAtual.jogador_id}`);
+        const res = await fetch(`${API_BASE_URL}/api/live/sala/${jogadorAtual.pin}/estado?jogador_id=${jogadorAtual.jogador_id}`, {
+            credentials: 'include' // <-- O lugar certo dele é aqui dentro das opções do fetch!
+        });
+        
         if (!res.ok) {
             console.warn('Sala não encontrada ou encerrada.');
             return;
@@ -196,7 +199,7 @@ async function syncEstado() {
 
         const dados = await res.json();
         atualizarTelaJogador(dados);
-    } catch (err, { credentials: 'include' }) {
+    } catch (err) { // <-- E o catch volta a ser apenas (err)
         console.error('Erro de sincronização da Arena:', err);
     }
 }
