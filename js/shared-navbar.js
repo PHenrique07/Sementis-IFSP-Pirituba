@@ -3,6 +3,7 @@ function getActiveSection() {
 
   if (page === 'ligas.html') return 'Ligas';
   if (page === 'missions.html' || page === 'missoes.html') return 'Missoes';
+  if (page === 'loja.html') return 'Loja';
   if (page === 'perfil.html') return 'Perfil';
   if (page === 'trilhas.html' || page === 'home.html' || page === '') return 'Trilhas';
   return 'Trilhas';
@@ -12,6 +13,7 @@ function buildSharedNavbar(activeSection) {
   const isTrilhas = activeSection === 'Trilhas';
   const isLigas = activeSection === 'Ligas';
   const isMissoes = activeSection === 'Missoes';
+  const isLoja = activeSection === 'Loja';
   const isPerfil = activeSection === 'Perfil';
 
   return `
@@ -33,6 +35,10 @@ function buildSharedNavbar(activeSection) {
     <a class="nav-item ${isMissoes ? 'active' : ''}" href="missions.html" ${isMissoes ? 'aria-current="page"' : ''}>
       <img src="assets/icons/menu_rodape_alvo.png" alt="Missoes">
       <span>Missões</span>
+    </a>
+    <a class="nav-item ${isLoja ? 'active' : ''}" href="loja.html" ${isLoja ? 'aria-current="page"' : ''}>
+      <img src="assets/icons/loja1.png" alt="Loja">
+      <span>Loja</span>
     </a>
     <a class="nav-item ${isPerfil ? 'active' : ''}" href="perfil.html" ${isPerfil ? 'aria-current="page"' : ''}>
       <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil">
