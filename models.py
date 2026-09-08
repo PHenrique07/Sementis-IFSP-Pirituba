@@ -19,13 +19,13 @@ class Usuario(SQLModel, table=True):
     # Gamificação
     moedas: int = Field(default=0)
     vidas: int = Field(default=5)
-    ofensiva: int = Field(default=0)
-    xp: int = Field(default=0)
+    ofensiva: int = Field(default=0, index=True)
+    xp: int = Field(default=0, index=True)
     freezes: int = Field(default=0)
     # Ligas / Ranking — 1=Bronze, 2=Prata, 3=Ouro...
     liga_id: int = Field(default=1)
     # XP zerado toda semana (liga)
-    xp_semanal: int = Field(default=0)
+    xp_semanal: int = Field(default=0, index=True)
 
     ultima_atividade: Optional[date] = Field(default=None)
 
@@ -139,8 +139,8 @@ class Turma(SQLModel, table=True):
 # 12. Tabela Associativa TurmaAluno (Muitos-Para-Muitos)
 class TurmaAluno(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    turma_id: int = Field(foreign_key="turma.id")
-    aluno_id: int = Field(foreign_key="usuario.id")
+    turma_id: int = Field(foreign_key="turma.id", index=True)
+    aluno_id: int = Field(foreign_key="usuario.id", index=True)
     data_entrada: datetime = Field(default_factory=datetime.utcnow)
 
 # 13. Avisos publicados pelo professor no mural da turma
