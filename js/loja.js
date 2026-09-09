@@ -184,7 +184,7 @@ let currentPrize = null;
 let revealingPrize = null;
 let shakeBtnTimeout = null;
 
-const coinBalances = document.querySelectorAll("[data-testid='coin-balance-val']");
+const coinBalances = document.querySelectorAll("[data-testid='coin-balance-val']:not(#header-moedas)");
 const gachaStatus = document.querySelector("[data-testid='gacha-status']");
 const gachaMachineEl = document.querySelector("[data-testid='gacha-machine-container']");
 const gachaKnob = document.querySelector("[data-testid='gacha-knob']");
@@ -220,10 +220,6 @@ function updateBalanceUI() {
   coinBalances.forEach((el) => {
     el.innerText = formatted;
   });
-  const headerMoedas = document.getElementById("header-moedas");
-  if (headerMoedas) {
-    headerMoedas.innerText = formatted;
-  }
 }
 
 // Renderização dos Itens da Loja
