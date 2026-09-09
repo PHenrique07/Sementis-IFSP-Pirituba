@@ -91,6 +91,7 @@ let state = {
   coins: START_COINS,
   owned: {},
 };
+let moedasConfirmadas = null;
 
 function loadState() {
   try {
@@ -221,6 +222,19 @@ function updateBalanceUI() {
     el.innerText = formatted;
   });
 }
+
+function sincronizarPerfil(dados) {
+  if (!dados || typeof dados.moedas !== "number") return;
+
+  moedasConfirmadas = dados.moedas;
+  state.coins = dados.moedas;
+  updateBalanceUI();
+  renderShop();
+}
+
+window.addEventListener("perfil:atualizado", (event) => {
+  sincronizarPerfil(event.detail);
+});
 
 // Renderização dos Itens da Loja
 function renderShop() {
@@ -667,7 +681,7 @@ function collectPrize() {
 
 // Reiniciar Saldo
 function handleReset() {
-  state.coins = START_COINS;
+  state.coins = moedasConfirmadas ?? START_COINS;
   state.owned = {};
   saveState();
 
@@ -676,7 +690,7 @@ function handleReset() {
   renderInventory();
 
   toast.info("Saldo reiniciado", {
-    description: "Você voltou a ter 1.000 moedas de demonstração.",
+    description: "O saldo voltou ao valor confirmado pelo seu perfil.",
   });
 }
 

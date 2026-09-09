@@ -272,6 +272,9 @@ const atualizarBarraDeXP = async () => {
             
             // --- CHAMADA DA NOVA FUNÇÃO DO HEADER ---
             atualizarHeaderSuperior(ofensiva, moedas, vidas);
+            window.dispatchEvent(new CustomEvent('perfil:atualizado', {
+                detail: { ofensiva, moedas, vidas }
+            }));
             
             // --- 1. SELETORES DA TELA HOME ---
             const homeBarra = document.getElementById('ui-progress-fill');
