@@ -1,6 +1,7 @@
 const token = localStorage.getItem('token');
 const usuario = JSON.parse(localStorage.getItem('user') || '{}');
 const turmaId = new URLSearchParams(window.location.search).get('turma');
+let dadosCarregados = false;
 
 if (!token || usuario.tipo !== 'professor') {
     window.location.replace('login.html');
@@ -104,6 +105,9 @@ function renderDados(dados) {
     document.getElementById('kpi-ativos').textContent = dados.kpis.alunos_ativos;
     document.getElementById('kpi-xp').textContent = dados.kpis.media_xp_semanal.toLocaleString('pt-BR');
     document.getElementById('kpi-progresso').textContent = `${dados.kpis.media_progresso}%`;
+    document.getElementById('relatorio-data').textContent = new Date().toLocaleDateString('pt-BR');
+    dadosCarregados = true;
+    document.getElementById('btnRelatorioPDF').disabled = false;
     renderAvisos(dados.avisos);
     renderAlunos(dados.alunos);
     renderGraficos(dados);
@@ -123,6 +127,9 @@ async function carregarTurma() {
 }
 
 const modal = document.getElementById('aviso-modal');
+document.getElementById('btnRelatorioPDF').addEventListener('click', () => {
+    if (dadosCarregados) window.print();
+});
 const abrirModal = () => { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); document.getElementById('aviso-titulo').focus(); };
 const fecharModal = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); document.getElementById('aviso-form').reset(); document.getElementById('aviso-erro').textContent = ''; };
 document.getElementById('abrir-aviso').addEventListener('click', abrirModal);

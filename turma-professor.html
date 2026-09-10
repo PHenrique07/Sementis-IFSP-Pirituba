@@ -20,17 +20,19 @@
         <div class="turma-professor-name" id="professor-nome"></div>
     </header>
 
-    <main class="turma-main">
+    <main class="turma-main" id="relatorio-impressao">
         <section class="turma-hero" aria-labelledby="turma-nome">
             <div>
                 <span class="hero-eyebrow">Espaço da turma</span>
                 <h1 id="turma-nome">Carregando turma...</h1>
                 <p id="turma-descricao">Acompanhe avisos, engajamento e desempenho da turma.</p>
+                <p class="relatorio-emissao">Relatório emitido em <time id="relatorio-data">—</time></p>
             </div>
             <div class="turma-convite">
                 <span>Código de convite</span>
                 <strong id="codigo-convite">—</strong>
                 <button id="copiar-convite" type="button">Copiar código</button>
+                <button id="btnRelatorioPDF" class="btn-relatorio" type="button" disabled>Salvar relatório em PDF</button>
             </div>
         </section>
 
