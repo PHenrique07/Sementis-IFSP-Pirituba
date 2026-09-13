@@ -497,77 +497,76 @@ def obter_perfil():
 # --- ROTAS DE PROFESSOR ---
 # =====================================================================
 
-@app.route('/api/professor/turmas', methods=['GET'])
+# =====================================================================
+# --- ROTAS DE PROFESSOR E GERENCIAMENTO DE TURMAS ---
+# =====================================================================
+
+# [NEW] GET e POST em /api/turmas e /api/professor/turmas
+@app.route('/api/turmas', methods=['GET', 'POST'])
+@app.route('/api/professor/turmas', methods=['GET', 'POST'])
 @token_obrigatorio
-def listar_turmas():
-    """Retorna todas as turmas do professor logado."""
+def gerenciar_turmas():
+    """Cria uma nova turma ou lista as turmas do professor logado."""
     if request.usuario_tipo != 'professor':
         return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
 
-    with Session(engine) as session:
-        turmas = listar_turmas_do_professor(session, request.usuario_id)
-        # listar_turmas pode retornar dict de erro
-        if isinstance(turmas, dict):
-            return jsonify(turmas), 400
+    # --- CRIAR TURMA (POST) ---
+    if request.method == 'POST':
+        dados = request.get_json()
+        if not dados or not dados.get('nome'):
+            return jsonify({"erro": "Nome da turma é obrigatório."}), 400
 
-        resultado = []
-        for turma in turmas:
-            # Conta quantos alunos estão na turma
-            from models import TurmaAluno
-            from sqlmodel import select, func
-            qtd = session.exec(
-                select(func.count(TurmaAluno.id)).where(TurmaAluno.turma_id == turma.id)
-            ).one()
-            resultado.append({
-                "id": turma.id,
-                "nome": turma.nome,
-                "codigo_convite": turma.codigo_convite,
-                "data_criacao": turma.data_criacao.strftime("%d/%m/%Y"),
-                "total_alunos": qtd
-            })
-        return jsonify(resultado), 200
+        nome_turma = dados['nome'].strip()
+        if len(nome_turma) < 2:
+            return jsonify({"erro": "Nome da turma muito curto."}), 400
 
+        with Session(engine) as session:
+            resultado = criar_turma(session, nome_turma, request.usuario_id)
 
-@app.route('/api/professor/turmas', methods=['POST'])
-@token_obrigatorio
-def criar_nova_turma():
-    """Cria uma nova turma para o professor logado."""
-    if request.usuario_tipo != 'professor':
-        return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
+            if isinstance(resultado, dict):
+                return jsonify(resultado), 400
 
-    dados = request.get_json()
-    if not dados or not dados.get('nome'):
-        return jsonify({"erro": "Nome da turma é obrigatório."}), 400
+            return jsonify({
+                "id": resultado.id,
+                "nome": resultado.nome,
+                "codigo_convite": resultado.codigo_convite,
+                "data_criacao": resultado.data_criacao.strftime("%d/%m/%Y"),
+                "total_alunos": 0
+            }), 201
 
-    nome_turma = dados['nome'].strip()
-    if len(nome_turma) < 2:
-        return jsonify({"erro": "Nome da turma muito curto."}), 400
+    # --- LISTAR TURMAS (GET) ---
+    else:
+        with Session(engine) as session:
+            turmas = listar_turmas_do_professor(session, request.usuario_id)
+            if isinstance(turmas, dict):
+                return jsonify(turmas), 400
 
-    with Session(engine) as session:
-        resultado = criar_turma(session, nome_turma, request.usuario_id)
-
-        if isinstance(resultado, dict):
-            return jsonify(resultado), 400
-
-        return jsonify({
-            "id": resultado.id,
-            "nome": resultado.nome,
-            "codigo_convite": resultado.codigo_convite,
-            "data_criacao": resultado.data_criacao.strftime("%d/%m/%Y"),
-            "total_alunos": 0
-        }), 201
+            resultado = []
+            for turma in turmas:
+                qtd = session.exec(
+                    select(func.count(TurmaAluno.id)).where(TurmaAluno.turma_id == turma.id)
+                ).one()
+                resultado.append({
+                    "id": turma.id,
+                    "nome": turma.nome,
+                    "codigo_convite": turma.codigo_convite,
+                    "data_criacao": turma.data_criacao.strftime("%d/%m/%Y"),
+                    "total_alunos": qtd
+                })
+            return jsonify(resultado), 200
 
 
+# [NEW] GET /api/turmas/<id_turma>/ranking (Ranking/Desempenho da Turma)
+@app.route('/api/turmas/<int:turma_id>/ranking', methods=['GET'])
 @app.route('/api/professor/turmas/<int:turma_id>/alunos', methods=['GET'])
 @token_obrigatorio
 def ranking_turma(turma_id):
-    """Retorna o ranking de alunos de uma turma específica."""
+    """Retorna o ranking de alunos de uma turma específica (com trava de segurança)."""
     if request.usuario_tipo != 'professor':
         return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
 
     with Session(engine) as session:
-        # Verifica se a turma pertence ao professor
-        from models import Turma
+        # Trava de segurança: Verifica se a turma pertence ao professor logado
         turma = session.get(Turma, turma_id)
         if not turma or turma.professor_id != request.usuario_id:
             return jsonify({"erro": "Turma não encontrada ou sem permissão."}), 404
@@ -595,6 +594,40 @@ def ranking_turma(turma_id):
             "alunos": lista_alunos
         }), 200
 
+
+# =====================================================================
+# --- ROTA DO ALUNO: ENTRAR EM TURMA ---
+# =====================================================================
+
+# [NEW] POST /api/turmas/entrar
+@app.route('/api/turmas/entrar', methods=['POST'])
+@app.route('/api/aluno/entrar-turma', methods=['POST'])
+@token_obrigatorio
+def aluno_entrar_turma():
+    """Permite que um aluno entre em uma turma pelo código de convite."""
+    if request.usuario_tipo != 'aluno':
+        return jsonify({"erro": "Acesso negado. Apenas alunos podem entrar em turmas."}), 403
+
+    dados = request.get_json() or {}
+    # Aceita tanto 'codigo_convite' quanto 'codigo' no corpo do JSON
+    codigo = dados.get('codigo_convite') or dados.get('codigo')
+    
+    if not codigo:
+        return jsonify({"erro": "Código de convite é obrigatório."}), 400
+
+    codigo = codigo.strip()
+
+    with Session(engine) as session:
+        resultado = entrar_na_turma(session, request.usuario_id, codigo)
+
+        if isinstance(resultado, dict):
+            return jsonify(resultado), 400
+
+        turma = session.get(Turma, resultado.turma_id)
+        return jsonify({
+            "mensagem": f"Você entrou na turma '{turma.nome}' com sucesso! 🎉",
+            "turma_nome": turma.nome
+        }), 200
 
 def buscar_turma_do_professor(session, turma_id, professor_id):
     """Retorna a turma somente quando ela pertence ao professor autenticado."""
@@ -711,38 +744,6 @@ def publicar_aviso_turma(turma_id):
             "mensagem": aviso.mensagem,
             "data_publicacao": aviso.data_publicacao.strftime("%d/%m às %H:%M"),
         }), 201
-
-
-# =====================================================================
-# --- ROTA DO ALUNO: ENTRAR EM TURMA ---
-# =====================================================================
-
-@app.route('/api/aluno/entrar-turma', methods=['POST'])
-@token_obrigatorio
-def aluno_entrar_turma():
-    """Permite que um aluno entre em uma turma pelo código de convite."""
-    if request.usuario_tipo != 'aluno':
-        return jsonify({"erro": "Acesso negado. Apenas alunos podem entrar em turmas."}), 403
-
-    dados = request.get_json()
-    if not dados or not dados.get('codigo'):
-        return jsonify({"erro": "Código de convite é obrigatório."}), 400
-
-    codigo = dados['codigo'].strip()
-
-    with Session(engine) as session:
-        resultado = entrar_na_turma(session, request.usuario_id, codigo)
-
-        if isinstance(resultado, dict):
-            return jsonify(resultado), 400
-
-        # Busca o nome da turma para retornar ao front
-        from models import Turma
-        turma = session.get(Turma, resultado.turma_id)
-        return jsonify({
-            "mensagem": f"Você entrou na turma '{turma.nome}' com sucesso! 🎉",
-            "turma_nome": turma.nome
-        }), 200
 
 
 # =====================================================================
