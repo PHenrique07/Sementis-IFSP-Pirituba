@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory, Response
+from flask import Flask, render_template, request, jsonify, send_from_directory, Response, send_file
 from flask_cors import CORS
 #Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
@@ -563,18 +563,18 @@ def criar_nova_turma():
 @app.route('/api/professor/turmas/<int:turma_id>/alunos', methods=['GET'])
 @token_obrigatorio
 def ranking_turma(turma_id):
-    """Retorna o ranking de alunos de uma turma específica."""
     if request.usuario_tipo != 'professor':
         return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
 
+    criterio_ordem = request.args.get('ordem', 'xp').lower().strip()
+
     with Session(engine) as session:
-        # Verifica se a turma pertence ao professor
-        from models import Turma
         turma = session.get(Turma, turma_id)
         if not turma or turma.professor_id != request.usuario_id:
             return jsonify({"erro": "Turma não encontrada ou sem permissão."}), 404
 
-        alunos = listar_alunos_da_turma(session, turma_id)
+        # Repassa o criterio_ordem para a função do crud
+        alunos = listar_alunos_da_turma(session, turma_id, ordem=criterio_ordem)
         if isinstance(alunos, dict):
             return jsonify(alunos), 400
 
@@ -594,6 +594,7 @@ def ranking_turma(turma_id):
 
         return jsonify({
             "turma_nome": turma.nome,
+            "ordem_aplicada": criterio_ordem,
             "alunos": lista_alunos
         }), 200
 
@@ -745,6 +746,104 @@ def visao_geral_turma(turma_id):
             } for aviso in avisos],
         }), 200
 
+# --- EXPORTAÇÃO DE RELATÓRIO DA TURMA EM PDF ---
+@app.route('/api/professor/turmas/<int:turma_id>/relatorio/pdf', methods=['GET'])
+@token_obrigatorio
+def exportar_relatorio_pdf(turma_id):
+    """Gera buffer de relatório PDF formatado com os dados consolidados da turma."""
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
+
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+    with Session(engine) as session:
+        turma = buscar_turma_do_professor(session, turma_id, request.usuario_id)
+        if not turma:
+            return jsonify({"erro": "Turma não encontrada ou sem permissão."}), 404
+
+        alunos = listar_alunos_da_turma(session, turma_id, ordem="xp")
+        if isinstance(alunos, dict):
+            return jsonify(alunos), 400
+
+        total_atividades = session.exec(select(func.count(Atividade.id))).one() or 0
+        alunos_formatados = []
+        for aluno in alunos:
+            concluidas = session.exec(
+                select(func.count(ProgressoUsuario.id))
+                .where(ProgressoUsuario.usuario_id == aluno.id)
+            ).one() or 0
+            progresso = round((concluidas / total_atividades) * 100) if total_atividades else 0
+            alunos_formatados.append({
+                "nome": aluno.nome,
+                "xp_semanal": aluno.xp_semanal,
+                "xp_total": aluno.xp,
+                "ofensiva": aluno.ofensiva,
+                "progresso": progresso,
+                "nivel": calcular_nivel(aluno.xp)["nivel"],
+            })
+
+        media_xp = round(sum(a["xp_semanal"] for a in alunos_formatados) / len(alunos_formatados)) if alunos_formatados else 0
+        media_progresso = round(sum(a["progresso"] for a in alunos_formatados) / len(alunos_formatados)) if alunos_formatados else 0
+
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
+        elementos = []
+        styles = getSampleStyleSheet()
+
+        titulo_style = ParagraphStyle('Titulo', parent=styles['Heading1'], fontSize=18, textColor=colors.HexColor('#2E7D32'), spaceAfter=10)
+        sub_style = ParagraphStyle('Sub', parent=styles['Normal'], fontSize=10, textColor=colors.gray, spaceAfter=20)
+        kpi_style = ParagraphStyle('KPI', parent=styles['Normal'], fontSize=11, leading=14, spaceAfter=15)
+
+        elementos.append(Paragraph(f"Relatório de Desempenho — {turma.nome}", titulo_style))
+        elementos.append(Paragraph(f"Código: {turma.codigo_convite} | Gerado em: {datetime.now().strftime('%d/%m/%Y às %H:%M')}", sub_style))
+
+        kpi_texto = (
+            f"<b>Total de Alunos:</b> {len(alunos_formatados)} &nbsp;&nbsp;|&nbsp;&nbsp; "
+            f"<b>Média de XP Semanal:</b> {media_xp} XP &nbsp;&nbsp;|&nbsp;&nbsp; "
+            f"<b>Progresso Médio:</b> {media_progresso}%"
+        )
+        elementos.append(Paragraph(kpi_texto, kpi_style))
+        elementos.append(Spacer(1, 10))
+
+        dados_tabela = [["Pos.", "Aluno", "Nível", "Ofensiva", "XP Semanal", "XP Total", "Progresso"]]
+        for idx, a in enumerate(alunos_formatados, start=1):
+            dados_tabela.append([
+                str(idx),
+                a["nome"],
+                f"Nível {a['nivel']}",
+                f"{a['ofensiva']} dias",
+                f"{a['xp_semanal']} XP",
+                f"{a['xp_total']} XP",
+                f"{a['progresso']}%"
+            ])
+
+        tabela = Table(dados_tabela, colWidths=[35, 170, 60, 60, 75, 75, 65])
+        tabela.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4CAF50')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('TOPPADDING', (0, 0), (-1, 0), 8),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F9F9F9')),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#E0E0E0')),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#F5F5F5')]),
+        ]))
+
+        elementos.append(tabela)
+        doc.build(elementos)
+
+        buffer.seek(0)
+        return send_file(
+            buffer,
+            as_attachment=True,
+            download_name=f"Relatorio_{turma.nome.replace(' ', '_')}.pdf",
+            mimetype='application/pdf'
+        )
 
 @app.route('/api/professor/turmas/<int:turma_id>/exportar', methods=['GET'])
 @token_obrigatorio

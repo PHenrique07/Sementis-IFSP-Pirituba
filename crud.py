@@ -164,34 +164,48 @@ def listar_turmas_do_professor(session: Session, professor_id: int):
     return session.exec(instrucao).all()
 
 
-# 9. Listar alunos da turma
-def listar_alunos_da_turma(session: Session, turma_id: int):
+# 9. Listar alunos da turma com ordenação dinâmica
+def listar_alunos_da_turma(session: Session, turma_id: int, ordem: str = "xp"):
     turma = session.get(Turma, turma_id)
     if not turma:
         return {"status": "erro", "mensagem": "Turma não encontrada"}
 
-    instrucao = (
+    consulta = (
         select(Usuario)
         .join(TurmaAluno, TurmaAluno.aluno_id == Usuario.id)
         .where(TurmaAluno.turma_id == turma_id)
-        .order_by(Usuario.xp_semanal.desc(), Usuario.id)
     )
-    return session.exec(instrucao).all()
+
+    if ordem == "ofensiva":
+        consulta = consulta.order_by(Usuario.ofensiva.desc(), Usuario.id)
+    elif ordem in ("nivel", "xp_total"):
+        consulta = consulta.order_by(Usuario.xp.desc(), Usuario.id)
+    else:  # Padrão: XP semanal
+        consulta = consulta.order_by(Usuario.xp_semanal.desc(), Usuario.id)
+
+    return session.exec(consulta).all()
 
 
-def listar_alunos_detalhados_da_turma(session: Session, turma_id: int):
-    """Retorna lista de tuplas (Usuario, data_entrada) dos alunos da turma."""
+def listar_alunos_detalhados_da_turma(session: Session, turma_id: int, ordem: str = "xp"):
+    """Retorna lista de tuplas (Usuario, data_entrada) dos alunos da turma com ordenação dinâmica."""
     turma = session.get(Turma, turma_id)
     if not turma:
         return {"status": "erro", "mensagem": "Turma não encontrada"}
 
-    instrucao = (
+    consulta = (
         select(Usuario, TurmaAluno.data_entrada)
         .join(TurmaAluno, TurmaAluno.aluno_id == Usuario.id)
         .where(TurmaAluno.turma_id == turma_id)
-        .order_by(Usuario.xp_semanal.desc(), Usuario.id)
     )
-    return session.exec(instrucao).all()
+
+    if ordem == "ofensiva":
+        consulta = consulta.order_by(Usuario.ofensiva.desc(), Usuario.id)
+    elif ordem in ("nivel", "xp_total"):
+        consulta = consulta.order_by(Usuario.xp.desc(), Usuario.id)
+    else:  # Padrão: XP semanal
+        consulta = consulta.order_by(Usuario.xp_semanal.desc(), Usuario.id)
+
+    return session.exec(consulta).all()
 
 
 def obter_progresso_modulos_turma(session: Session, turma_id: int):
