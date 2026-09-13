@@ -22,6 +22,7 @@ const SHOP_SECTIONS = [
       { id: "av-broto", name: "Broto Guerreiro", desc: "Pequeno, mas corajoso. O avatar de quem está começando a jornada.", price: 250, icon: "sprout", tint: "#a9ff71" },
       { id: "av-guardiao", name: "Guardião da Mata", desc: "Protetor das árvores antigas. Impõe respeito em qualquer ranking.", price: 400, icon: "tree-pine", tint: "#4FC3F7" },
       { id: "av-espirito", name: "Espírito da Floresta", desc: "O avatar mais raro da loja. Dizem que ele sussurra respostas.", price: 600, icon: "ghost", tint: "#C084FC" },
+      { id: "av-folha", name: "Folha Guardiã", desc: "Um símbolo de equilíbrio para quem protege o conhecimento.", price: 320, icon: "leaf", tint: "#FFC107" },
     ],
   },
   {
@@ -33,6 +34,7 @@ const SHOP_SECTIONS = [
       { id: "tm-oceano", name: "Tema Oceano", desc: "Mergulhe em tons azulados enquanto aprende sobre vida aquática.", price: 300, icon: "waves", tint: "#4FC3F7" },
       { id: "tm-noturno", name: "Tema Noturno", desc: "Para quem estuda de madrugada sob a luz das estrelas.", price: 350, icon: "moon", tint: "#B8B8E6" },
       { id: "tm-aurora", name: "Tema Aurora", desc: "Cores quentes de um amanhecer na floresta. Edição especial.", price: 500, icon: "sunrise", tint: "#FF8A00" },
+      { id: "tm-floresta", name: "Tema Floresta", desc: "Verdes vivos e trilhas suaves para estudar em conexão com a natureza.", price: 450, icon: "trees", tint: "#a9ff71" },
     ],
   },
   {
@@ -44,6 +46,7 @@ const SHOP_SECTIONS = [
       { id: "vd-coracao", name: "Coração Extra", desc: "Uma vida a mais para não perder a sequência de estudos.", price: 150, icon: "heart", tint: "#FF4B6E" },
       { id: "vd-escudo", name: "Escudo de Vida", desc: "Protege seus corações por 24 horas de erros sem punição.", price: 250, icon: "shield", tint: "#4FC3F7" },
       { id: "vd-recarga", name: "Recarga Total", desc: "Enche todos os corações na hora. Volta pro jogo imediato.", price: 400, icon: "zap", tint: "#FFC107" },
+      { id: "vd-coracao-dourado", name: "Coração Dourado", desc: "Uma vida especial para recuperar o ritmo e manter sua sequência.", price: 300, icon: "heart-pulse", tint: "#C084FC" },
     ],
   },
   {
@@ -56,6 +59,7 @@ const SHOP_SECTIONS = [
       { id: "pw-dica", name: "Dica Mágica", desc: "Revela a resposta certa quando o desafio apertar.", price: 120, icon: "lightbulb", tint: "#FFC107" },
       { id: "pw-tempo", name: "Congelar Tempo", desc: "Pausa o cronômetro nos quizzes contra o relógio.", price: 180, icon: "timer", tint: "#4FC3F7" },
       { id: "pw-raio", name: "Raio de Sabedoria", desc: "Elimina duas alternativas erradas de qualquer questão.", price: 300, icon: "rocket", tint: "#C084FC" },
+      { id: "pw-bussola", name: "Bússola do Saber", desc: "Mostra o melhor caminho para avançar nas próximas missões.", price: 280, icon: "compass", tint: "#FF4B6E" },
     ],
   },
 ];
@@ -244,6 +248,7 @@ function renderShop() {
   SHOP_SECTIONS.forEach((section) => {
     const secDiv = document.createElement("div");
     secDiv.setAttribute("data-testid", `shop-section-${section.id}`);
+    secDiv.className = "loja-shop-section";
     secDiv.style.marginBottom = "56px";
 
     // Cabeçalho da seção
