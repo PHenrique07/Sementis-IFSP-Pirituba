@@ -178,6 +178,88 @@ def listar_alunos_da_turma(session: Session, turma_id: int):
     )
     return session.exec(instrucao).all()
 
+
+def listar_alunos_detalhados_da_turma(session: Session, turma_id: int):
+    """Retorna lista de tuplas (Usuario, data_entrada) dos alunos da turma."""
+    turma = session.get(Turma, turma_id)
+    if not turma:
+        return {"status": "erro", "mensagem": "Turma não encontrada"}
+
+    instrucao = (
+        select(Usuario, TurmaAluno.data_entrada)
+        .join(TurmaAluno, TurmaAluno.aluno_id == Usuario.id)
+        .where(TurmaAluno.turma_id == turma_id)
+        .order_by(Usuario.xp_semanal.desc(), Usuario.id)
+    )
+    return session.exec(instrucao).all()
+
+
+def obter_progresso_modulos_turma(session: Session, turma_id: int):
+    """
+    Calcula o progresso pedagógico consolidado da turma por módulo.
+    """
+    turma = session.get(Turma, turma_id)
+    if not turma:
+        return []
+
+    alunos_ids = session.exec(
+        select(TurmaAluno.aluno_id).where(TurmaAluno.turma_id == turma_id)
+    ).all()
+    qtd_alunos = len(alunos_ids)
+
+    modulos = session.exec(select(Modulo).order_by(Modulo.ordem)).all()
+    progresso_modulos = []
+
+    for modulo in modulos:
+        atividades_ids = session.exec(
+            select(Atividade.id)
+            .join(Trilha, Atividade.trilha_id == Trilha.id)
+            .where(Trilha.modulo_id == modulo.id)
+        ).all()
+        total_atividades = len(atividades_ids)
+
+        if total_atividades == 0 or qtd_alunos == 0:
+            progresso_modulos.append({
+                "modulo_id": modulo.id,
+                "nome": modulo.nome,
+                "ordem": modulo.ordem,
+                "total_atividades": total_atividades,
+                "total_conclusoes": 0,
+                "porcentagem": 0,
+                "alunos_completaram": 0
+            })
+            continue
+
+        conclusoes = session.exec(
+            select(func.count(ProgressoUsuario.id))
+            .where(ProgressoUsuario.usuario_id.in_(alunos_ids))
+            .where(ProgressoUsuario.atividade_id.in_(atividades_ids))
+        ).one() or 0
+
+        conclusoes_por_aluno = session.exec(
+            select(ProgressoUsuario.usuario_id, func.count(ProgressoUsuario.id))
+            .where(ProgressoUsuario.usuario_id.in_(alunos_ids))
+            .where(ProgressoUsuario.atividade_id.in_(atividades_ids))
+            .group_by(ProgressoUsuario.usuario_id)
+        ).all()
+        alunos_completaram = sum(1 for _, count in conclusoes_por_aluno if count >= total_atividades)
+
+        maximo_conclusoes = total_atividades * qtd_alunos
+        porcentagem = round((conclusoes / maximo_conclusoes) * 100) if maximo_conclusoes > 0 else 0
+
+        progresso_modulos.append({
+            "modulo_id": modulo.id,
+            "nome": modulo.nome,
+            "ordem": modulo.ordem,
+            "total_atividades": total_atividades,
+            "total_conclusoes": conclusoes,
+            "porcentagem": porcentagem,
+            "alunos_completaram": alunos_completaram
+        })
+
+    return progresso_modulos
+
+
 # ==========================================
 # FUNÇÕES DE GAMIFICAÇÃO E PROGRESSO (CARDS)
 # ==========================================

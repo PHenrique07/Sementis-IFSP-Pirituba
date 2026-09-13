@@ -24,7 +24,6 @@ A arquitetura é dividida em um back-end leve em Python servindo APIs e um front
 3. **Separação de Responsabilidades:** O Front-end NUNCA deve calcular regras de negócio pesadas (como dias de ofensiva ou nível de XP). O back-end calcula, envia no payload JSON, e o front-end apenas exibe.
 4. **Idioma e Nomenclatura:** Código fonte com variáveis, funções e comentários escritos prioritariamente em Português (ex: `atualizar_ofensiva` ao invés de `updateStreak`).
 5. **Respostas Diretas:** Mantenha as respostas curtas, objetivas e focadas em código funcional.
-
 ---
 
 ## 4. O Esquadrão Sementis (Pipeline de Agentes)

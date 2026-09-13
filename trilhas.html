@@ -643,7 +643,7 @@
             <button onclick="fecharJogo()" class="btn-fechar-jogo">&times;</button>
         </div>
         <div class="corpo-modal">
-           <iframe id="iframe-flapfish" src="" width="100%" height="100%" frameborder="0"></iframe>
+           <iframe id="iframe-flapfish" src="" width="100%" height="100%" frameborder="0" onload="if(this.src) hideLoading();"></iframe>
         </div>
     </div>
 </div>
@@ -655,11 +655,12 @@
 // ==============================================================
 function abrirJogo() {
     document.getElementById('modal-jogo').className = 'modal-visivel';
-    // Adicione essa linha abaixo para carregar o jogo SÓ quando abrir a tela
+    showLoading('Carregando FlapFish', 'Preparando o desafio final 🐟');
     document.getElementById('iframe-flapfish').src = "/FlapFish/index.html";
 }
 function fecharJogo() {
     document.getElementById('modal-jogo').className = 'modal-escondido';
+    hideLoading();
     document.getElementById('iframe-flapfish').src = "/FlapFish/index.html"; // recarrega
     
     // Mostra um aviso pro usuário saber que precisa voltar depois
@@ -951,6 +952,7 @@ carregarMapaDinamico();
 window.addEventListener('resize', build);
 </script>
 <script src="pwa/pwa-register.js"></script>
+<script src="/js/loading.js"></script>
 <script src="/js/shared-navbar.js"></script>
 </body>
 </html>

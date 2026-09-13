@@ -14,7 +14,7 @@ const ECO_TIPS = [
 let tipInterval = null;
 let loadingHideTimeout = null;
 let loadingStartedAt = 0;
-const LOADING_DURATION = 5000;
+const LOADING_MAX_DURATION = 8000; // segurança: fecha sozinho após 8s se hideLoading não for chamado
 
 function ensureLoadingDOM() {
     let overlay = document.getElementById('sementis-global-loading');
@@ -61,20 +61,17 @@ function showLoading(msg = "Carregando", subtext = null) {
     clearTimeout(loadingHideTimeout);
     loadingStartedAt = Date.now();
     overlay.classList.add('active');
-    loadingHideTimeout = setTimeout(hideLoading, LOADING_DURATION);
+    // Segurança: fecha sozinho após LOADING_MAX_DURATION caso hideLoading não seja chamado
+    loadingHideTimeout = setTimeout(hideLoading, LOADING_MAX_DURATION);
 }
 
 function hideLoading() {
     clearInterval(tipInterval);
+    clearTimeout(loadingHideTimeout);
+    loadingHideTimeout = null;
     const overlay = document.getElementById('sementis-global-loading');
     if (!overlay) return;
-
-    const remainingTime = Math.max(0, LOADING_DURATION - (Date.now() - loadingStartedAt));
-    clearTimeout(loadingHideTimeout);
-    loadingHideTimeout = setTimeout(() => {
-        overlay.classList.remove('active');
-        loadingHideTimeout = null;
-    }, remainingTime);
+    overlay.classList.remove('active');
 }
 
 // Expõe globalmente no window

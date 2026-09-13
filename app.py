@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
 #Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
@@ -6,11 +6,15 @@ from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_ema
     listar_atividades_da_trilha, buscar_ranking_por_liga, atualizar_progresso_missao,
     sortear_missoes_diarias, calcular_nivel, buscar_questoes_por_atividade,
     listar_progresso_geral_modulos, atualizar_ofensiva,
-    criar_turma, listar_turmas_do_professor, listar_alunos_da_turma, entrar_na_turma) 
+    criar_turma, listar_turmas_do_professor, listar_alunos_da_turma,
+    listar_alunos_detalhados_da_turma, obter_progresso_modulos_turma, entrar_na_turma) 
 from passlib.hash import argon2
 from functools import wraps
 import os
+import csv
+import io
 from datetime import date, datetime, timezone, timedelta
+from urllib.parse import quote
 import jwt
 from sqlmodel import Session, select, create_engine, func
 from sqlalchemy.exc import IntegrityError
@@ -605,45 +609,105 @@ def buscar_turma_do_professor(session, turma_id, professor_id):
 @app.route('/api/professor/turmas/<int:turma_id>/visao-geral', methods=['GET'])
 @token_obrigatorio
 def visao_geral_turma(turma_id):
-    """Painel de dados da turma, preparado para receber métricas mais detalhadas futuramente."""
+    """Painel de dados e acompanhamento pedagógico consolidado da turma."""
     if request.usuario_tipo != 'professor':
         return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
+
+    ordenar_por = (request.args.get('ordenar_por') or 'xp_semanal').lower().strip()
+    ordem = (request.args.get('ordem') or 'desc').lower().strip()
 
     with Session(engine) as session:
         turma = buscar_turma_do_professor(session, turma_id, request.usuario_id)
         if not turma:
             return jsonify({"erro": "Turma não encontrada ou sem permissão."}), 404
 
-        alunos = listar_alunos_da_turma(session, turma_id)
-        if isinstance(alunos, dict):
-            return jsonify(alunos), 400
+        alunos_detalhados = listar_alunos_detalhados_da_turma(session, turma_id)
+        if isinstance(alunos_detalhados, dict):
+            return jsonify(alunos_detalhados), 400
 
         total_atividades = session.exec(select(func.count(Atividade.id))).one() or 0
+        aluno_ids = [aluno.id for aluno, _ in alunos_detalhados]
+
+        # Contagem em lote (única query agrupada para evitar latência)
+        conclusoes_map = {}
+        if aluno_ids:
+            conclusoes_raw = session.exec(
+                select(ProgressoUsuario.usuario_id, func.count(ProgressoUsuario.id))
+                .where(ProgressoUsuario.usuario_id.in_(aluno_ids))
+                .group_by(ProgressoUsuario.usuario_id)
+            ).all()
+            conclusoes_map = dict(conclusoes_raw)
+
         alunos_formatados = []
-        for aluno in alunos:
-            concluidas = session.exec(
-                select(func.count(ProgressoUsuario.id))
-                .where(ProgressoUsuario.usuario_id == aluno.id)
-            ).one() or 0
+        for aluno, data_entrada in alunos_detalhados:
+            concluidas = conclusoes_map.get(aluno.id, 0)
             progresso = round((concluidas / total_atividades) * 100) if total_atividades else 0
+
+            if progresso >= 70:
+                status = "em_dia"
+                status_texto = "Em dia"
+            elif progresso >= 30:
+                status = "atencao"
+                status_texto = "Em atenção"
+            else:
+                status = "inicio"
+                status_texto = "Iniciando"
+
+            nivel_info = calcular_nivel(aluno.xp)
+
             alunos_formatados.append({
+                "posicao": 1,
                 "id": aluno.id,
                 "nome": aluno.nome,
+                "email": aluno.email,
                 "xp_total": aluno.xp,
                 "xp_semanal": aluno.xp_semanal,
                 "ofensiva": aluno.ofensiva,
                 "progresso": progresso,
-                "nivel": calcular_nivel(aluno.xp)["nivel"],
+                "atividades_concluidas": concluidas,
+                "total_atividades": total_atividades,
+                "nivel": nivel_info["nivel"],
+                "status": status,
+                "status_texto": status_texto,
+                "data_entrada": data_entrada.strftime("%d/%m/%Y") if data_entrada else "—",
+                "ativo_semana": aluno.xp_semanal > 0,
             })
+
+        # Ordenação dinâmica respeitando parâmetros da API
+        def chave_ordenacao(item):
+            if ordenar_por in ('xp', 'xp_total'):
+                return item['xp_total']
+            elif ordenar_por == 'nivel':
+                return item['nivel']
+            elif ordenar_por in ('ofensiva', 'streak'):
+                return item['ofensiva']
+            elif ordenar_por == 'progresso':
+                return item['progresso']
+            elif ordenar_por == 'nome':
+                return item['nome'].lower()
+            else: # padrão: 'xp_semanal'
+                return item['xp_semanal']
+
+        reverso = (ordem != 'asc')
+        alunos_formatados.sort(key=chave_ordenacao, reverse=reverso)
+
+        # Atualiza a posição no ranking após ordenação
+        for pos, item in enumerate(alunos_formatados, start=1):
+            item['posicao'] = pos
 
         alunos_ativos = sum(1 for aluno in alunos_formatados if aluno["xp_semanal"] > 0)
         media_xp = round(sum(aluno["xp_semanal"] for aluno in alunos_formatados) / len(alunos_formatados)) if alunos_formatados else 0
         media_progresso = round(sum(aluno["progresso"] for aluno in alunos_formatados) / len(alunos_formatados)) if alunos_formatados else 0
         distribuicao = {
-            "em_dia": sum(1 for aluno in alunos_formatados if aluno["progresso"] >= 70),
-            "atencao": sum(1 for aluno in alunos_formatados if 30 <= aluno["progresso"] < 70),
-            "inicio": sum(1 for aluno in alunos_formatados if aluno["progresso"] < 30),
+            "em_dia": sum(1 for aluno in alunos_formatados if aluno["status"] == "em_dia"),
+            "atencao": sum(1 for aluno in alunos_formatados if aluno["status"] == "atencao"),
+            "inicio": sum(1 for aluno in alunos_formatados if aluno["status"] == "inicio"),
         }
+
+        precisam_apoio = sum(1 for aluno in alunos_formatados if aluno["status"] == "inicio" or not aluno["ativo_semana"])
+        destaques = sum(1 for aluno in alunos_formatados if aluno["progresso"] >= 70 or aluno["ofensiva"] >= 3)
+
+        progresso_modulos = obter_progresso_modulos_turma(session, turma_id)
 
         avisos = session.exec(
             select(AvisoTurma)
@@ -663,8 +727,15 @@ def visao_geral_turma(turma_id):
                 "alunos_ativos": alunos_ativos,
                 "media_xp_semanal": media_xp,
                 "media_progresso": media_progresso,
+                "precisam_apoio": precisam_apoio,
+                "destaques": destaques,
+            },
+            "ordenacao_atual": {
+                "campo": ordenar_por,
+                "ordem": ordem
             },
             "distribuicao_progresso": distribuicao,
+            "modulos": progresso_modulos,
             "alunos": alunos_formatados,
             "avisos": [{
                 "id": aviso.id,
@@ -673,6 +744,246 @@ def visao_geral_turma(turma_id):
                 "data_publicacao": aviso.data_publicacao.strftime("%d/%m às %H:%M"),
             } for aviso in avisos],
         }), 200
+
+
+@app.route('/api/professor/turmas/<int:turma_id>/exportar', methods=['GET'])
+@token_obrigatorio
+def exportar_dados_turma(turma_id):
+    """Gera e faz download de relatório da turma em formato CSV ou XLS (Excel)."""
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
+
+    formato = (request.args.get('formato') or 'csv').lower().strip()
+
+    with Session(engine) as session:
+        turma = buscar_turma_do_professor(session, turma_id, request.usuario_id)
+        if not turma:
+            return jsonify({"erro": "Turma não encontrada ou sem permissão."}), 404
+
+        alunos_detalhados = listar_alunos_detalhados_da_turma(session, turma_id)
+        if isinstance(alunos_detalhados, dict):
+            return jsonify(alunos_detalhados), 400
+
+        total_atividades = session.exec(select(func.count(Atividade.id))).one() or 0
+        aluno_ids = [aluno.id for aluno, _ in alunos_detalhados]
+
+        conclusoes_map = {}
+        if aluno_ids:
+            conclusoes_raw = session.exec(
+                select(ProgressoUsuario.usuario_id, func.count(ProgressoUsuario.id))
+                .where(ProgressoUsuario.usuario_id.in_(aluno_ids))
+                .group_by(ProgressoUsuario.usuario_id)
+            ).all()
+            conclusoes_map = dict(conclusoes_raw)
+
+        ordenar_por = (request.args.get('ordenar_por') or 'xp_semanal').lower().strip()
+        ordem = (request.args.get('ordem') or 'desc').lower().strip()
+
+        linhas_alunos = []
+        for aluno, data_entrada in alunos_detalhados:
+            concluidas = conclusoes_map.get(aluno.id, 0)
+            progresso = round((concluidas / total_atividades) * 100) if total_atividades else 0
+
+            if progresso >= 70:
+                status_texto = "Em dia"
+            elif progresso >= 30:
+                status_texto = "Em atenção"
+            else:
+                status_texto = "Iniciando"
+
+            nivel = calcular_nivel(aluno.xp)["nivel"]
+            data_ent = data_entrada.strftime("%d/%m/%Y") if data_entrada else "—"
+
+            linhas_alunos.append({
+                "posicao": 1,
+                "nome": aluno.nome,
+                "email": aluno.email,
+                "nivel": nivel,
+                "progresso_num": progresso,
+                "progresso": f"{progresso}%",
+                "atividades_concluidas": f"{concluidas}/{total_atividades}",
+                "xp_semanal": aluno.xp_semanal,
+                "xp_total": aluno.xp,
+                "ofensiva_num": aluno.ofensiva,
+                "ofensiva": f"{aluno.ofensiva} dias",
+                "status": status_texto,
+                "data_entrada": data_ent
+            })
+
+        def chave_exportacao(item):
+            if ordenar_por in ('xp', 'xp_total'):
+                return item['xp_total']
+            elif ordenar_por == 'nivel':
+                return item['nivel']
+            elif ordenar_por in ('ofensiva', 'streak'):
+                return item['ofensiva_num']
+            elif ordenar_por == 'progresso':
+                return item['progresso_num']
+            elif ordenar_por == 'nome':
+                return item['nome'].lower()
+            else:
+                return item['xp_semanal']
+
+        linhas_alunos.sort(key=chave_exportacao, reverse=(ordem != 'asc'))
+        for pos, item in enumerate(linhas_alunos, start=1):
+            item['posicao'] = pos
+
+        nome_limpo = "".join(c for c in turma.nome if c.isalnum() or c in (' ', '_', '-')).strip().replace(' ', '_')
+        data_hoje = date.today().strftime("%Y-%m-%d")
+
+        if formato in ('xls', 'excel'):
+            html_rows = ""
+            for a in linhas_alunos:
+                html_rows += f"""<tr>
+                    <td>{a['posicao']}</td>
+                    <td><b>{a['nome']}</b></td>
+                    <td>{a['email']}</td>
+                    <td>{a['nivel']}</td>
+                    <td>{a['progresso']}</td>
+                    <td>{a['atividades_concluidas']}</td>
+                    <td>{a['xp_semanal']}</td>
+                    <td>{a['xp_total']}</td>
+                    <td>{a['ofensiva']}</td>
+                    <td>{a['status']}</td>
+                    <td>{a['data_entrada']}</td>
+                </tr>"""
+
+            tabela_xls = f"""<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="utf-8">
+                <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>Relatorio {turma.nome}</x:Name>
+                                <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+                <![endif]-->
+                <style>
+                    th {{ background-color: #2e7d32; color: #ffffff; font-weight: bold; padding: 6px; border: 1px solid #ccc; }}
+                    td {{ padding: 5px; border: 1px solid #ddd; }}
+                </style>
+            </head>
+            <body>
+                <h2>Relatório de Desempenho - Turma: {turma.nome}</h2>
+                <p><b>Data de Emissão:</b> {date.today().strftime("%d/%m/%Y")} | <b>Código de Convite:</b> {turma.codigo_convite}</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Nome do Aluno</th>
+                            <th>E-mail</th>
+                            <th>Nível</th>
+                            <th>Progresso</th>
+                            <th>Lições Concluídas</th>
+                            <th>XP Semanal</th>
+                            <th>XP Total</th>
+                            <th>Ofensiva</th>
+                            <th>Situação</th>
+                            <th>Data de Entrada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {html_rows}
+                    </tbody>
+                </table>
+            </body>
+            </html>"""
+
+            nome_arquivo = f"relatorio_{nome_limpo}_{data_hoje}.xls"
+            return Response(
+                tabela_xls.encode('utf-8'),
+                mimetype='application/vnd.ms-excel',
+                headers={
+                    'Content-Disposition': f'attachment; filename="{nome_arquivo}"'
+                }
+            )
+
+        output = io.StringIO()
+        writer = csv.writer(output, delimiter=';', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow([
+            "Posição", "Nome do Aluno", "E-mail", "Nível", "Progresso (%)",
+            "Lições Concluídas", "XP Semanal", "XP Total", "Ofensiva (Dias)",
+            "Situação", "Data de Entrada"
+        ])
+
+        for a in linhas_alunos:
+            writer.writerow([
+                a["posicao"],
+                a["nome"],
+                a["email"],
+                a["nivel"],
+                a["progresso"],
+                a["atividades_concluidas"],
+                a["xp_semanal"],
+                a["xp_total"],
+                a["ofensiva"],
+                a["status"],
+                a["data_entrada"]
+            ])
+
+        conteudo_csv = output.getvalue().encode('utf-8-sig')
+        nome_arquivo = f"relatorio_{nome_limpo}_{data_hoje}.csv"
+        return Response(
+            conteudo_csv,
+            mimetype='text/csv; charset=utf-8',
+            headers={
+                'Content-Disposition': f'attachment; filename="{nome_arquivo}"'
+            }
+        )
+
+
+@app.route('/api/professor/turmas/<int:turma_id>/alunos/<int:aluno_id>', methods=['GET'])
+@token_obrigatorio
+def detalhe_aluno_turma(turma_id, aluno_id):
+    """Retorna raio-X pedagógico detalhado de um aluno específico na turma."""
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
+
+    with Session(engine) as session:
+        turma = buscar_turma_do_professor(session, turma_id, request.usuario_id)
+        if not turma:
+            return jsonify({"erro": "Turma não encontrada ou sem permissão."}), 404
+
+        matricula = session.exec(
+            select(TurmaAluno).where(TurmaAluno.turma_id == turma_id, TurmaAluno.aluno_id == aluno_id)
+        ).first()
+        if not matricula:
+            return jsonify({"erro": "Aluno não pertence a esta turma."}), 404
+
+        aluno = session.get(Usuario, aluno_id)
+        if not aluno:
+            return jsonify({"erro": "Aluno não encontrado."}), 404
+
+        total_atividades = session.exec(select(func.count(Atividade.id))).one() or 0
+        concluidas = session.exec(
+            select(func.count(ProgressoUsuario.id))
+            .where(ProgressoUsuario.usuario_id == aluno.id)
+        ).one() or 0
+        progresso = round((concluidas / total_atividades) * 100) if total_atividades else 0
+
+        modulos_aluno = listar_progresso_geral_modulos(session, aluno_id)
+        info_nivel = calcular_nivel(aluno.xp)
+
+        return jsonify({
+            "id": aluno.id,
+            "nome": aluno.nome,
+            "email": aluno.email,
+            "xp_total": aluno.xp,
+            "xp_semanal": aluno.xp_semanal,
+            "ofensiva": aluno.ofensiva,
+            "progresso": progresso,
+            "atividades_concluidas": concluidas,
+            "total_atividades": total_atividades,
+            "nivel": info_nivel["nivel"],
+            "data_entrada": matricula.data_entrada.strftime("%d/%m/%Y"),
+            "modulos": modulos_aluno
+        }), 200
+
 
 
 @app.route('/api/professor/turmas/<int:turma_id>/avisos', methods=['POST'])
