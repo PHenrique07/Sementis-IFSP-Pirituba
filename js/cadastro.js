@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
 
     if (registerForm) {
-        registerForm.addEventListener('submit', async function(event) {
+        registerForm.addEventListener('submit', async function (event) {
             event.preventDefault();
 
             const nomeDigitado = document.getElementById("registerName").value;
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 const resposta = await fetch(`${API_BASE_URL}/cadastro`, {
+    credentials: 'include',
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

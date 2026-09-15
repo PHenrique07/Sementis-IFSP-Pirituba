@@ -129,6 +129,7 @@ async function apiPost(endpoint, body = {}) {
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
         const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    credentials: 'include',
             method: 'POST',
             headers,
             body: JSON.stringify(body)
@@ -147,7 +148,8 @@ async function syncEstadoSala() {
     try {
         const headers = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
-        const res = await fetch(`${API_BASE_URL}/api/live/sala/${pin}/estado?is_host=1&token=${token}`, { headers });
+        const res = await fetch(`${API_BASE_URL}/api/live/sala/${pin}/estado?is_host=1&token=${token}`, {
+    credentials: 'include', headers });
         if (!res.ok) {
             console.warn('Erro ao sincronizar estado da sala:', res.status);
             return;

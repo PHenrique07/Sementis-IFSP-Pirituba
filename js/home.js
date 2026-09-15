@@ -458,6 +458,7 @@ function initModulesView() {
 async function carregarTrilha(moduloId = 1) { 
     try {
         const response = await fetch(`${API_BASE_URL}/api/modulos/${moduloId}/trilhas`, {
+    credentials: 'include',
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -531,59 +532,7 @@ async function carregarTrilha(moduloId = 1) {
 }
 window.carregarTrilha = carregarTrilha;
 
-// ==========================================
-// INTEGRAÇÃO: Progresso das Barras Verdes
-// ==========================================
-async function carregarProgressoModulos() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/modulos/progresso`, {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-        
-        if (!response.ok) throw new Error("Falha na API");
-        const modulos = await response.json();
-
-        // Pega todos os cards de módulo da tela
-        const cards = document.querySelectorAll('.module-card');
-        
-        cards.forEach(card => {
-            // Busca o título para saber de qual módulo é este card
-            const tituloElement = card.querySelector('.module-title, h3');
-            if (!tituloElement) return;
-            
-            const nomeModulo = tituloElement.textContent.trim();
-            
-            // Encontra no JSON que veio do Python os dados desse módulo específico
-            const dadosModulo = modulos.find(m => m.nome.toLowerCase() === nomeModulo.toLowerCase());
-            
-            if (dadosModulo) {
-                // 1. Atualizar a largura da barra verde
-                const barra = card.querySelector('.progress-fill, .progress-bar, div[style*="width"]');
-                if (barra) {
-                    // Dá um pequeno atraso para a animação inicial não quebrar
-                    setTimeout(() => {
-                        barra.style.width = `${dadosModulo.porcentagem}%`;
-                    }, 800);
-                }
-                
-                // 2. Atualizar o texto ("X/Y lições completas")
-                // Como não tenho as classes exatas do seu HTML, o script varre todos os textos pequenos do card
-                const elementosTexto = card.querySelectorAll('p, span, small');
-                elementosTexto.forEach(el => {
-                    if (el.textContent.includes('lições') || el.textContent.includes('/')) {
-                        el.textContent = `${dadosModulo.atividades_concluidas}/${dadosModulo.total_atividades} lições completas`;
-                    }
-                });
-            }
-        });
-        console.log("Barras de progresso atualizadas com o banco!");
-    } catch (erro) {
-        console.error("Erro ao atualizar barras de módulos:", erro);
-    }
-}
+// Função original de carregarProgressoModulos removida por estar duplicada
 
 // ==========================================
 // INTEGRAÇÃO: Progresso das Barras Verdes
@@ -594,6 +543,7 @@ async function carregarProgressoModulos() {
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/modulos/progresso`, {
+            credentials: 'include',
             headers: { 'Authorization': 'Bearer ' + token }
         });
         
@@ -608,37 +558,36 @@ async function carregarProgressoModulos() {
             if (!tituloElement) return;
             
             const nomeModulo = tituloElement.textContent.trim();
+            const nomeLimpo = nomeModulo.toLowerCase();
             
             // O TRADUTOR: Mapeia o nome do HTML para o ID do Módulo no Banco
-            // Porque o nome no HTML ("Água e Vida") é diferente do banco ("Água")
-            const nomeLimpo = nomeModulo.toLowerCase();
             let idMapeado = 1; // Padrão: Fundamentos
             if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
             if (nomeLimpo.includes('clima')) idMapeado = 3;
             
-            // Encontra no JSON do Python os dados exatos usando o ID
-            const dadosModulo = modulos.find(m => m.modulo_id === idMapeado);
+            // Tenta achar os dados do módulo. Se for aluno novo/zerado, fica undefined
+            const dadosModulo = modulos.find(m => m.modulo_id === idMapeado || m.id === idMapeado);
             
-            if (dadosModulo) {
-                // 1. Atualizar a largura da barra verde
-                const barra = card.querySelector('.module-progress-fill');
-                if (barra) {
-                    setTimeout(() => {
-                        barra.style.width = `${dadosModulo.porcentagem}%`;
-                    }, 500); // Animação suave 
-                }
-                
-                // 2. Atualizar o texto ("X/Y lições completas")
-                const textoLicoes = card.querySelector('.module-progress-text');
-                if (textoLicoes) {
-                    // Respeitar se o módulo estiver explicitamente bloqueado visualmente ainda
-                    if (!textoLicoes.classList.contains('locked-text')) {
-                        textoLicoes.textContent = `${dadosModulo.atividades_concluidas}/${dadosModulo.total_atividades} lições completas`;
-                    }
-                }
+            // A MÁGICA: Se achou, usa os dados. Se não, ZERA as barras (0% e 0 lições)
+            const porcentagem = dadosModulo ? dadosModulo.porcentagem : 0;
+            const concluidas = dadosModulo ? dadosModulo.atividades_concluidas : 0;
+            const total = dadosModulo ? dadosModulo.total_atividades : 5; // Total padrão visual
+            
+            // 1. Atualizar a largura da barra verde
+            const barra = card.querySelector('.module-progress-fill');
+            if (barra) {
+                setTimeout(() => {
+                    barra.style.width = `${porcentagem}%`;
+                }, 500); // Animação suave 
+            }
+            
+            // 2. Atualizar o texto ("X/Y lições completas")
+            const textoLicoes = card.querySelector('.module-progress-text');
+            if (textoLicoes && !textoLicoes.classList.contains('locked-text')) {
+                textoLicoes.textContent = `${concluidas}/${total} lições completas`;
             }
         });
-        console.log("Barras de progresso atualizadas com o banco!");
+        console.log("Barras de progresso atualizadas com sucesso!");
     } catch (erro) {
         console.error("Erro ao atualizar barras de módulos:", erro);
     }

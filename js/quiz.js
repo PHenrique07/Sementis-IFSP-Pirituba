@@ -144,6 +144,7 @@ async function openQuizModal() {
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/atividades/${idClicado}/questoes`, {
+    credentials: 'include',
       headers: { Authorization: "Bearer " + token }
     });
 
@@ -465,6 +466,7 @@ function dispararVitoria() {
   const errosCount = localStorage.getItem("erros_cometidos") || 0;
 
   fetch(`${API_BASE_URL}/completar_atividade`, {
+    credentials: 'include',
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -539,6 +541,7 @@ function renderGameOverScreen() {
 
   // Salvar no backend
   fetch(`${API_BASE_URL}/completar_atividade`, {
+    credentials: 'include',
     method: "POST",
     headers: {
       "Content-Type": "application/json",
