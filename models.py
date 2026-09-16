@@ -31,6 +31,7 @@ class Usuario(SQLModel, table=True):
 
     # Avatar atual do usuário
     avatar_atual_id: int | None = Field(default=None, foreign_key="itemloja.id")
+    tema_atual_id: int | None = Field(default=None, foreign_key="itemloja.id")
 
 # 2. Tabela de Módulos (ex: Módulo 1 - Sustentabilidade Básica)
 class Modulo(SQLModel, table=True):
@@ -77,7 +78,10 @@ class ItemLoja(SQLModel, table=True):
     descricao: str
     preco: int
     imagem: str | None = None # Caminho para o ícone do item
-    tipo: str = Field(default="cosmetico") # Pode ser "cosmetico", "poder", "avatar"
+    tipo: str = Field(default="cosmetico") # Pode ser "cosmetico", "poder", "avatar", "tema"
+    raridade: str = Field(default="comum") # "comum", "raro", "epico", "lendario"
+    trait: str | None = Field(default=None) # Característica especial/buff futuro
+    atributos_bonus: dict = Field(default_factory=dict, sa_column=Column(JSON)) # Para bônus futuros
 
 # 7. Tabela de Inventário (O que cada usuário comprou)
 class InventarioUsuario(SQLModel, table=True):
@@ -86,6 +90,7 @@ class InventarioUsuario(SQLModel, table=True):
     item_id: int = Field(foreign_key="itemloja.id")
     data_compra: datetime = Field(default_factory=datetime.utcnow)
     equipado: bool = Field(default=False) # Se o usuário está usando o item no momento
+    quantidade: int = Field(default=1)
 
 
 # 8. Catálogo de Missões (A vitrine de todas as missões que existem no sementis)
@@ -151,3 +156,11 @@ class AvisoTurma(SQLModel, table=True):
     titulo: str
     mensagem: str
     data_publicacao: datetime = Field(default_factory=datetime.utcnow)
+
+# 14. Amizades
+class Amizade(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    usuario_id_1: int = Field(foreign_key="usuario.id", index=True)
+    usuario_id_2: int = Field(foreign_key="usuario.id", index=True)
+    status: str = Field(default="pendente") # "pendente", "aceito", "recusado"
+    data_solicitacao: datetime = Field(default_factory=datetime.utcnow)

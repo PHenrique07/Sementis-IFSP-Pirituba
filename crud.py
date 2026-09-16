@@ -6,7 +6,7 @@ import string
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 # Importando todas as tabelas do models.py
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade
 from datetime import date, timedelta
 import math
 
@@ -684,11 +684,86 @@ def listar_inventario(session: Session, usuario_id: int):
             "item_id": item.id,
             "nome": item.nome,
             "tipo": item.tipo,
-            "tier_raridade": item.tier_raridade,
+            "raridade": item.raridade,
+            "quantidade": inv.quantidade,
             "imagem_url": item.imagem,
-            "equipado": inv.equipado
+            "equipado": inv.equipado,
+            "atributos_bonus": item.atributos_bonus
         })
     return lista_inventario
+
+# 24. Adicionar item ao inventário
+def adicionar_item_inventario(session: Session, usuario_id: int, item_id: int, quantidade: int = 1):
+    usuario = session.get(Usuario, usuario_id)
+    item = session.get(ItemLoja, item_id)
+    if not usuario or not item:
+        return {"status": "erro", "mensagem": "Usuário ou item não encontrado"}
+
+    # Verifica se o usuário já tem o item no inventário
+    inventario = session.exec(
+        select(InventarioUsuario).where(
+            InventarioUsuario.usuario_id == usuario_id,
+            InventarioUsuario.item_id == item_id
+        )
+    ).first()
+
+    if item.tipo == "avatar" and inventario:
+        # Tabela de compensação por raridade
+        compensacao = {
+            "comum": 50,
+            "raro": 150,
+            "epico": 400,
+            "lendario": 777
+        }
+        moedas_ganhas = compensacao.get(item.raridade, 50)
+        usuario.moedas += moedas_ganhas
+        session.add(usuario)
+        session.commit()
+        return {"status": "repetido", "mensagem": f"Você já tinha este avatar. Recebeu {moedas_ganhas} moedas de volta!"}
+
+    if inventario:
+        inventario.quantidade += quantidade
+        session.add(inventario)
+    else:
+        novo_inv = InventarioUsuario(usuario_id=usuario_id, item_id=item_id, quantidade=quantidade)
+        session.add(novo_inv)
+    
+    session.commit()
+    return {"status": "sucesso", "mensagem": "Item adicionado ao inventário"}
+
+# 25. Consumir item do inventário
+def consumir_item_inventario(session: Session, usuario_id: int, item_id: int, quantidade_uso: int = 1):
+    inventario = session.exec(
+        select(InventarioUsuario).where(
+            InventarioUsuario.usuario_id == usuario_id,
+            InventarioUsuario.item_id == item_id
+        )
+    ).first()
+
+    if not inventario or inventario.quantidade < quantidade_uso:
+        return {"status": "erro", "mensagem": "Item insuficiente no inventário"}
+
+    item = session.get(ItemLoja, item_id)
+    usuario = session.get(Usuario, usuario_id)
+
+    if item.tipo == "poder":
+        # Se for vida extra, aplica direto no perfil
+        if item.nome.lower() == "vida extra":
+            usuario.vidas += quantidade_uso
+        elif item.nome.lower() == "freeze de ofensiva":
+            usuario.freezes += quantidade_uso
+        # (Futuramente outros poderes como XP boost podem ser ativados aqui)
+        
+        session.add(usuario)
+        
+    inventario.quantidade -= quantidade_uso
+    if inventario.quantidade == 0:
+        session.delete(inventario)
+    else:
+        session.add(inventario)
+        
+    session.commit()
+    return {"status": "sucesso", "mensagem": f"Você usou {item.nome}."}
 
 
 # 24. Atualizar a ofensiva do usuário com base na data da última atividade
@@ -731,3 +806,205 @@ def atualizar_ofensiva(session: Session, id_usuario: int, completou_tarefa: bool
     session.refresh(usuario)
     
     return usuario.ofensiva
+
+# 26. Equipar um item (avatar ou tema)
+def equipar_item(session: Session, usuario_id: int, item_id: int):
+    # Busca o item no inventário
+    inventario = session.exec(
+        select(InventarioUsuario).where(
+            InventarioUsuario.usuario_id == usuario_id,
+            InventarioUsuario.item_id == item_id
+        )
+    ).first()
+
+    if not inventario:
+        return {"status": "erro", "mensagem": "Você não possui este item."}
+
+    item = session.get(ItemLoja, item_id)
+    usuario = session.get(Usuario, usuario_id)
+
+    if item.tipo not in ["avatar", "tema"]:
+        return {"status": "erro", "mensagem": "Este item não é equipável."}
+
+    # Desequipa todos os itens do mesmo tipo no inventário do usuário
+    todos_itens_inventario = session.exec(
+        select(InventarioUsuario).where(InventarioUsuario.usuario_id == usuario_id)
+    ).all()
+
+    for inv in todos_itens_inventario:
+        item_inv = session.get(ItemLoja, inv.item_id)
+        if item_inv and item_inv.tipo == item.tipo:
+            inv.equipado = False
+            session.add(inv)
+
+    # Equipa o escolhido
+    inventario.equipado = True
+    session.add(inventario)
+
+    # Atualiza o perfil do usuário
+    if item.tipo == "avatar":
+        usuario.avatar_atual_id = item.id
+    elif item.tipo == "tema":
+        usuario.tema_atual_id = item.id
+
+    session.add(usuario)
+    session.commit()
+    return {"status": "sucesso", "mensagem": f"{item.nome} equipado com sucesso!"}
+
+# 27. Rolar Gacha
+def rolar_gacha(session: Session, usuario_id: int, custo: int = 100):
+    usuario = session.get(Usuario, usuario_id)
+    if usuario.moedas < custo:
+        return {"status": "erro", "mensagem": "Moedas insuficientes para o gacha."}
+
+    usuario.moedas -= custo
+    session.add(usuario)
+    session.commit() # Salva a dedução para evitar duplicação
+
+    # Busca os itens que podem sair no gacha (avatares)
+    itens_gacha = session.exec(select(ItemLoja).where(ItemLoja.tipo == "avatar")).all()
+    if not itens_gacha:
+        return {"status": "erro", "mensagem": "O gacha está vazio no momento!"}
+
+    pesos = {
+        "comum": 60,
+        "raro": 25,
+        "epico": 10,
+        "lendario": 5
+    }
+
+    import random
+    pesos_itens = [pesos.get(item.raridade, 10) for item in itens_gacha]
+    item_sorteado = random.choices(itens_gacha, weights=pesos_itens, k=1)[0]
+
+    resultado = adicionar_item_inventario(session, usuario_id, item_sorteado.id, 1)
+
+    return {
+        "status": "sucesso", 
+        "mensagem": f"Você tirou {item_sorteado.nome} no Gacha! {resultado['mensagem']}",
+        "item_id": item_sorteado.id,
+        "imagem": item_sorteado.imagem,
+        "raridade": item_sorteado.raridade,
+        "trait": item_sorteado.trait
+    }
+
+# 28. Obter Loja Diária
+def obter_loja_diaria(session: Session):
+    """
+    Retorna 3 itens aleatórios que mudam diariamente.
+    A semente do gerador é a data atual, garantindo a mesma loja para todos no mesmo dia.
+    """
+    import random
+    from datetime import date
+
+    itens_loja = session.exec(select(ItemLoja).where(ItemLoja.tipo.in_(["avatar", "tema"]))).all()
+    if not itens_loja:
+        return []
+
+    # Usa a data como semente
+    semente_hoje = date.today().toordinal()
+    rng = random.Random(semente_hoje)
+
+    # Escolhe 3 itens sem repetir
+    qtd_sortear = min(3, len(itens_loja))
+    loja_de_hoje = rng.sample(itens_loja, qtd_sortear)
+
+    # Retorna num formato amigável pro front
+    lista_pronta = []
+    for item in loja_de_hoje:
+        lista_pronta.append({
+            "id": item.id,
+            "nome": item.nome,
+            "descricao": item.descricao,
+            "preco": item.preco,
+            "imagem": item.imagem,
+            "tipo": item.tipo,
+            "raridade": item.raridade,
+            "trait": item.trait
+        })
+    return lista_pronta
+
+# ==========================================
+# FUNÇÕES DE AMIGOS
+# ==========================================
+
+# 29. Enviar Solicitação de Amizade
+def enviar_solicitacao_amizade(session: Session, remetente_id: int, destinatario_email: str):
+    remetente = session.get(Usuario, remetente_id)
+    destinatario = session.exec(select(Usuario).where(Usuario.email == destinatario_email)).first()
+    
+    if not destinatario:
+        return {"status": "erro", "mensagem": "Usuário não encontrado com esse email."}
+        
+    if remetente_id == destinatario.id:
+        return {"status": "erro", "mensagem": "Você não pode adicionar a si mesmo."}
+        
+    # Verifica se já existe amizade ou convite pendente entre os dois
+    amizade_existente = session.exec(
+        select(Amizade).where(
+            ((Amizade.usuario_id_1 == remetente_id) & (Amizade.usuario_id_2 == destinatario.id)) |
+            ((Amizade.usuario_id_1 == destinatario.id) & (Amizade.usuario_id_2 == remetente_id))
+        )
+    ).first()
+    
+    if amizade_existente:
+        if amizade_existente.status == "aceito":
+            return {"status": "erro", "mensagem": "Vocês já são amigos."}
+        elif amizade_existente.status == "pendente":
+            return {"status": "erro", "mensagem": "Já existe um convite pendente entre vocês."}
+            
+    nova_amizade = Amizade(usuario_id_1=remetente_id, usuario_id_2=destinatario.id, status="pendente")
+    session.add(nova_amizade)
+    session.commit()
+    return {"status": "sucesso", "mensagem": "Solicitação de amizade enviada!"}
+
+# 30. Aceitar Solicitação de Amizade
+def aceitar_amizade(session: Session, amizade_id: int, usuario_id: int):
+    amizade = session.get(Amizade, amizade_id)
+    
+    if not amizade:
+        return {"status": "erro", "mensagem": "Solicitação não encontrada."}
+        
+    if amizade.usuario_id_2 != usuario_id:
+        return {"status": "erro", "mensagem": "Você não tem permissão para aceitar este convite."}
+        
+    amizade.status = "aceito"
+    session.add(amizade)
+    session.commit()
+    return {"status": "sucesso", "mensagem": "Agora vocês são amigos!"}
+
+# 31. Listar Amigos
+def listar_amigos(session: Session, usuario_id: int):
+    """Retorna a lista de amigos aceitos, formatada com nome, nivel, avatar, etc"""
+    amizades = session.exec(
+        select(Amizade).where(
+            ((Amizade.usuario_id_1 == usuario_id) | (Amizade.usuario_id_2 == usuario_id)) &
+            (Amizade.status == "aceito")
+        )
+    ).all()
+    
+    lista_amigos = []
+    for amizade in amizades:
+        amigo_id = amizade.usuario_id_2 if amizade.usuario_id_1 == usuario_id else amizade.usuario_id_1
+        amigo = session.get(Usuario, amigo_id)
+        
+        if amigo:
+            nivel_info = calcular_nivel(amigo.xp)
+            
+            imagem_avatar = None
+            if amigo.avatar_atual_id:
+                item_avatar = session.get(ItemLoja, amigo.avatar_atual_id)
+                if item_avatar:
+                    imagem_avatar = item_avatar.imagem
+            
+            lista_amigos.append({
+                "id": amigo.id,
+                "nome": amigo.nome,
+                "email": amigo.email,
+                "xp": amigo.xp,
+                "nivel": nivel_info["nivel"],
+                "ofensiva": amigo.ofensiva,
+                "avatar_url": imagem_avatar
+            })
+            
+    return lista_amigos

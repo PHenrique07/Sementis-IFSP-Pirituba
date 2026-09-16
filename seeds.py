@@ -3,7 +3,7 @@ import os
 import sys
 from sqlmodel import Session, SQLModel, create_engine, delete, select
 from datetime import date, timedelta
-from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao, Turma, TurmaAluno
+from models import Usuario, Modulo, Trilha, Atividade, ItemLoja, Missao, ProgressoMissao, Questao, Turma, TurmaAluno, Amizade
 from crud import migrar_colunas_ausentes
 from passlib.hash import argon2
 
@@ -205,14 +205,35 @@ def semear_banco():
             Usuario(nome="Humberto", email="humberto@teste.com", data_nascimento=date(2002, 1, 27), senha=senha_padrao, tipo_usuario="aluno", xp=2000, moedas=200, xp_semanal=1800, liga_id=3)
         ]
         session.add_all(usuarios)
+        session.flush()
+
+        # ====================================================================
+        # 1.5 AMIZADES DE TESTE
+        # ====================================================================
+        pedro_seed = next(u for u in usuarios if u.email == "pedroteste@gmail.com")
+        lucas_seed = next(u for u in usuarios if u.email == "lucas@ifsp.edu.br")
+        vini_seed = next(u for u in usuarios if u.email == "vini@ifsp.edu.br")
+
+        amizades = [
+            Amizade(usuario_id_1=pedro_seed.id, usuario_id_2=lucas_seed.id, status="aceito"),
+            Amizade(usuario_id_1=vini_seed.id, usuario_id_2=pedro_seed.id, status="pendente") # Vini quer ser amigo do Pedro
+        ]
+        session.add_all(amizades)
 
         # ====================================================================
         # 2. LOJA E MISSÕES DE TESTE (Escadinha de Fases)
         # ====================================================================
         session.add_all([
-            ItemLoja(nome="Avatar Semente", descricao="Um avatar especial de semente brotando.", preco=100, tipo="avatar", imagem="assets/loja/avatar_semente.png"),
+            ItemLoja(nome="Avatar Semente", descricao="Um avatar especial de semente brotando.", preco=100, tipo="avatar", imagem="assets/loja/avatar_semente.png", raridade="comum", trait="Crescimento Rápido"),
+            ItemLoja(nome="Avatar Folha de Carvalho", descricao="Sábio como uma árvore antiga.", preco=300, tipo="avatar", imagem="assets/loja/avatar_carvalho.png", raridade="raro", trait="Resiliência"),
+            ItemLoja(nome="Avatar Espírito da Floresta", descricao="Guardião dos bosques.", preco=800, tipo="avatar", imagem="assets/loja/avatar_espirito.png", raridade="epico", trait="Bênção da Natureza"),
+            ItemLoja(nome="Avatar Gaia", descricao="A própria mãe terra.", preco=2000, tipo="avatar", imagem="assets/loja/avatar_gaia.png", raridade="lendario", trait="Domínio Elemental"),
+            
             ItemLoja(nome="Proteção de Ofensiva", descricao="Congela sua ofensiva por 1 dia se você não jogar.", preco=250, tipo="poder", imagem="assets/loja/escudo_ofensiva.png"),
-            ItemLoja(nome="Coração Extra", descricao="Recupera 1 vida instantaneamente.", preco=50, tipo="consumivel", imagem="assets/loja/coracao.png")
+            ItemLoja(nome="Coração Extra", descricao="Recupera 1 vida instantaneamente.", preco=50, tipo="consumivel", imagem="assets/loja/coracao.png"),
+
+            ItemLoja(nome="Tema Noturno", descricao="Um tema escuro para a interface.", preco=500, tipo="tema", imagem="assets/loja/tema_noturno.png", raridade="raro", trait="Visão Noturna"),
+            ItemLoja(nome="Tema Floresta Encantada", descricao="Um tema verde e vibrante.", preco=1000, tipo="tema", imagem="assets/loja/tema_floresta.png", raridade="epico", trait="Foco Profundo")
         ])
 
         session.add_all([
