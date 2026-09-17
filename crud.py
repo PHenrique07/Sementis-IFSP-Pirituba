@@ -1008,3 +1008,95 @@ def listar_amigos(session: Session, usuario_id: int):
             })
             
     return lista_amigos
+
+# 32. Listar Solicitações Pendentes (Recebidas)
+def listar_solicitacoes_pendentes(session: Session, usuario_id: int):
+    """Lista apenas os convites que outras pessoas enviaram para este usuário."""
+    amizades = session.exec(
+        select(Amizade).where(
+            (Amizade.usuario_id_2 == usuario_id) &
+            (Amizade.status == "pendente")
+        )
+    ).all()
+    
+    lista_pedidos = []
+    for amizade in amizades:
+        remetente = session.get(Usuario, amizade.usuario_id_1)
+        if remetente:
+            nivel_info = calcular_nivel(remetente.xp)
+            imagem_avatar = None
+            if remetente.avatar_atual_id:
+                item_avatar = session.get(ItemLoja, remetente.avatar_atual_id)
+                if item_avatar:
+                    imagem_avatar = item_avatar.imagem
+                    
+            lista_pedidos.append({
+                "amizade_id": amizade.id,
+                "remetente_id": remetente.id,
+                "nome": remetente.nome,
+                "email": remetente.email,
+                "nivel": nivel_info["nivel"],
+                "avatar_url": imagem_avatar
+            })
+            
+    return lista_pedidos
+
+# 33. Rejeitar Solicitação de Amizade
+def rejeitar_amizade(session: Session, amizade_id: int, usuario_id: int):
+    amizade = session.get(Amizade, amizade_id)
+    
+    if not amizade:
+        return {"status": "erro", "mensagem": "Solicitação não encontrada."}
+        
+    if amizade.usuario_id_2 != usuario_id:
+        return {"status": "erro", "mensagem": "Você não tem permissão para rejeitar este convite."}
+        
+    session.delete(amizade)
+    session.commit()
+    return {"status": "sucesso", "mensagem": "Solicitação rejeitada."}
+
+# 34. Remover Amigo
+def remover_amizade(session: Session, amizade_id: int, usuario_id: int):
+    amizade = session.get(Amizade, amizade_id)
+    
+    if not amizade:
+        return {"status": "erro", "mensagem": "Amizade não encontrada."}
+        
+    if amizade.usuario_id_1 != usuario_id and amizade.usuario_id_2 != usuario_id:
+        return {"status": "erro", "mensagem": "Você não tem permissão para remover esta amizade."}
+        
+    session.delete(amizade)
+    session.commit()
+    return {"status": "sucesso", "mensagem": "Amigo removido com sucesso."}
+
+# 35. Obter Perfil Público do Usuário (Para ver o amigo)
+def obter_perfil_publico(session: Session, usuario_id: int):
+    usuario = session.get(Usuario, usuario_id)
+    if not usuario:
+        return {"status": "erro", "mensagem": "Usuário não encontrado."}
+        
+    nivel_info = calcular_nivel(usuario.xp)
+    
+    imagem_avatar = None
+    if usuario.avatar_atual_id:
+        item_avatar = session.get(ItemLoja, usuario.avatar_atual_id)
+        if item_avatar:
+            imagem_avatar = item_avatar.imagem
+            
+    imagem_tema = None
+    if usuario.tema_atual_id:
+        item_tema = session.get(ItemLoja, usuario.tema_atual_id)
+        if item_tema:
+            imagem_tema = item_tema.imagem
+            
+    return {
+        "id": usuario.id,
+        "nome": usuario.nome,
+        "email": usuario.email,
+        "xp": usuario.xp,
+        "nivel": nivel_info["nivel"],
+        "ofensiva": usuario.ofensiva,
+        "avatar_url": imagem_avatar,
+        "tema_url": imagem_tema,
+        "badges": [] # Placeholder para futuros emblemas
+    }
