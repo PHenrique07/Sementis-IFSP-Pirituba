@@ -1,0 +1,172 @@
+/* Sementis - Página de Jogos */
+:root {
+  --bg-dark: #0d0e29;
+  --card-bg: #1a1a4a;
+  --accent-green: #a9ff71;
+  --accent-blue: #4d9fff;
+  --text-light: #ffffff;
+  --text-muted: #8d92bc;
+}
+
+body.jogos-page {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding-bottom: 90px;
+}
+
+@media (min-width: 1024px) {
+  body.jogos-page {
+    margin-left: 250px;
+    padding-bottom: 40px;
+  }
+}
+
+.jogos-header {
+  padding: 32px 24px 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.jogos-header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent-green);
+}
+
+.jogos-header-video {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background: transparent;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+.jogos-header-subtitle {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.jogos-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 24px 32px;
+}
+
+.jogos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.game-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  color: inherit;
+}
+
+.game-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(169, 255, 113, 0.4);
+  box-shadow: 0 14px 36px rgba(169, 255, 113, 0.15);
+}
+
+.game-banner {
+  position: relative;
+  width: 100%;
+  height: 170px;
+  background: #131338;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-banner img,
+.game-banner-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.game-card:hover .game-banner img,
+.game-card:hover .game-banner-video {
+  transform: scale(1.06);
+}
+
+.game-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(13, 14, 41, 0.85);
+  backdrop-filter: blur(8px);
+  color: var(--accent-green);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(169, 255, 113, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.game-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.game-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.game-description {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.game-play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent-green);
+  color: #0d0e29;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  text-align: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.game-card:hover .game-play-btn {
+  background: #bdff94;
+  transform: scale(1.02);
+}
