@@ -108,6 +108,53 @@ body.jogos-page {
   pointer-events: none;
 }
 
+.game-banner-video--lit {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 12px rgba(169, 255, 113, 0.7));
+}
+
+.game-banner-video--garbage {
+  width: 121%;
+  height: 121%;
+}
+
+.game-banner--lit::before,
+.game-banner--lit::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.game-banner--lit::before {
+  inset: 20% 22%;
+  background: radial-gradient(circle, rgba(169, 255, 113, 0.42), rgba(169, 255, 113, 0) 68%);
+  filter: blur(10px);
+  animation: liveBannerGlow 2.8s ease-in-out infinite;
+}
+
+.game-banner--lit::after {
+  inset: -45%;
+  background: repeating-conic-gradient(from -18deg at 50% 54%, transparent 0deg 9deg, rgba(169, 255, 113, 0.08) 9deg 13deg, transparent 13deg 24deg);
+  filter: blur(1px);
+  opacity: 0.85;
+  animation: liveBannerLightSweep 8s linear infinite;
+}
+
+@keyframes liveBannerGlow {
+  0%, 100% { opacity: 0.55; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes liveBannerLightSweep {
+  from { transform: rotate(0deg) scale(1); }
+  to { transform: rotate(360deg) scale(1); }
+}
+
 .game-card:hover .game-banner img,
 .game-card:hover .game-banner-video {
   transform: scale(1.06);
@@ -127,6 +174,7 @@ body.jogos-page {
   border: 1px solid rgba(169, 255, 113, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  z-index: 2;
 }
 
 .game-info {

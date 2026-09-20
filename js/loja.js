@@ -846,35 +846,44 @@ function executarAnimacaoDroneLoot() {
   parcel.className = "drone-parcel";
   smoke.className = "drone-smoke-burst";
 
-  if (window.sounds?.play) {
-    try { window.sounds.play("whoosh"); } catch (e) {}
+  if (window.sounds?.playDroneMotor) {
+    try { window.sounds.playDroneMotor(); } catch (e) {}
   }
 
   // 2. Solta a caixa quando o drone chega no centro (~1.8s)
   setTimeout(() => {
     parcel.className = "drone-parcel dropping";
+    if (window.sounds?.playDroneBoom) {
+      try { window.sounds.playDroneBoom(); } catch (e) {}
+    }
   }, 1800);
 
-  // 3. Estouro de fumaça cartoon e tremor de tela (~2.4s)
+  // 3. Impacto da caixa no chão, fumaça cartoon e tremor (~2.45s)
   setTimeout(() => {
     smoke.className = "drone-smoke-burst active";
     document.body.classList.add("screen-shaking");
-    if (window.sounds?.play) {
-      try { window.sounds.play("gachaFanfare"); } catch (e) {}
+    if (window.sounds?.playDroneLanding) {
+      try { window.sounds.playDroneLanding(); } catch (e) {}
     }
 
     setTimeout(() => {
       document.body.classList.remove("screen-shaking");
     }, 450);
-  }, 2350);
+  }, 2450);
 
   // 4. Drone vai embora (~2.8s)
   setTimeout(() => {
+    if (window.sounds?.stopDroneMotor) {
+      try { window.sounds.stopDroneMotor(); } catch (e) {}
+    }
     actor.className = "drone-actor flying-away";
   }, 2800);
 
   // 5. Abre o modal de resgate (~3.4s)
   setTimeout(() => {
+    if (window.sounds?.stopDroneMotor) {
+      try { window.sounds.stopDroneMotor(); } catch (e) {}
+    }
     stage.style.display = "none";
     smoke.className = "drone-smoke-burst";
     modal.classList.add("open");
