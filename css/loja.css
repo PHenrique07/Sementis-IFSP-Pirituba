@@ -78,8 +78,14 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-width: 0;
     position: relative;
     z-index: 1;
+}
+
+.loja-main {
+    min-width: 0;
+    overflow-x: clip;
 }
 
 /* ===== Header da Loja ===== */
@@ -263,6 +269,7 @@
 .loja-hero-grid {
     width: min(1100px, 100%);
     max-width: 1100px;
+    min-width: 0;
     margin: 0 auto;
     display: grid;
     align-items: center;
@@ -582,6 +589,7 @@
 .loja-gacha-layout {
     width: min(1100px, 100%);
     max-width: 1100px;
+    min-width: 0;
     margin: 0 auto;
     display: grid;
     align-items: start;
@@ -1123,6 +1131,7 @@
 .loja-shop {
     width: min(1100px, 100%);
     max-width: 1100px;
+    min-width: 0;
     margin: 0 auto;
     padding: 60px 20px 80px;
     display: flex;
@@ -1411,6 +1420,7 @@
 .loja-inventory-inner {
     width: min(1100px, 100%);
     max-width: 1100px;
+    min-width: 0;
     margin: 0 auto;
 }
 
@@ -1618,6 +1628,39 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: rgba(184, 184, 230, 0.4);
+}
+
+/* Evita que a barra lateral deixe as grades e os paineis apertados em monitores medios. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .loja-hero-grid,
+    .loja-gacha-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .loja-hero-art {
+        display: none;
+    }
+
+    .loja-gacha-layout {
+        justify-items: center;
+    }
+
+    .loja-odds-panel {
+        width: min(100%, 520px);
+    }
+
+    .loja-shop-grid,
+    .loja-inventory-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1279px) {
+    .loja-shop-grid,
+    .loja-inventory-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 /* ===== Toast System ===== */
