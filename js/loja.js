@@ -736,4 +736,164 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (window.lucide) lucide.createIcons();
+
+  // Inicializa a verificação do Loot Diário do Drone Sustentável e seus eventos
+  inicializarEventosDroneModal();
+  inicializarDroneLootDiario();
 });
+
+// ===== Lógica do Drone Sustentável & Loot Diário (+67 Moedas) =====
+function inicializarDroneLootDiario() {
+  const HOJE_KEY = "sementis_drone_loot_date";
+  const hojeStr = new Date().toISOString().split("T")[0];
+  const ultimaData = localStorage.getItem(HOJE_KEY);
+
+  // Executa se ainda não resgatou hoje
+  if (ultimaData !== hojeStr) {
+    setTimeout(() => {
+      executarAnimacaoDroneLoot();
+    }, 1200);
+  }
+}
+
+function fecharModalDroneLoot(resgatarMoedas = true) {
+  const modal = document.getElementById("drone-loot-modal");
+  if (modal) {
+    modal.classList.remove("open");
+  }
+
+  const hojeStr = new Date().toISOString().split("T")[0];
+  localStorage.setItem("sementis_drone_loot_date", hojeStr);
+
+  if (resgatarMoedas) {
+    try {
+      if (typeof userState !== "undefined" && userState) {
+        userState.coins = (userState.coins || 0) + 67;
+      }
+      if (typeof updateBalanceUI === "function") updateBalanceUI();
+      if (typeof saveState === "function") saveState();
+
+      const token = localStorage.getItem("token");
+      if (token) {
+        fetch(`${API_BASE_URL}/api/moedas/adicionar`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ moedas: 67 })
+        }).catch(() => {});
+      }
+    } catch (err) {
+      console.error("Erro ao resgatar moedas:", err);
+    }
+
+    if (typeof toast !== "undefined" && toast.success) {
+      toast.success("Loot Diário Resgatado!", {
+        description: "+67 moedas adicionadas à sua conta pelo Drone Sustentável! 🛸",
+      });
+    }
+
+    if (typeof userState !== "undefined") {
+      window.dispatchEvent(new CustomEvent("perfil:atualizado", { detail: userState }));
+    }
+  }
+}
+
+function inicializarEventosDroneModal() {
+  const modal = document.getElementById("drone-loot-modal");
+  const btnClaim = document.getElementById("btn-claim-drone-loot");
+  const btnClose = document.getElementById("btn-close-drone-modal");
+
+  if (btnClaim) {
+    btnClaim.onclick = (e) => {
+      e.stopPropagation();
+      fecharModalDroneLoot(true);
+    };
+  }
+
+  if (btnClose) {
+    btnClose.onclick = (e) => {
+      e.stopPropagation();
+      fecharModalDroneLoot(true);
+    };
+  }
+
+  if (modal) {
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        fecharModalDroneLoot(true);
+      }
+    };
+  }
+}
+
+function executarAnimacaoDroneLoot() {
+  const stage = document.getElementById("drone-loot-stage");
+  const actor = document.getElementById("drone-actor");
+  const parcel = document.getElementById("drone-parcel");
+  const smoke = document.getElementById("drone-smoke-burst");
+  const modal = document.getElementById("drone-loot-modal");
+
+  if (!stage || !actor || !modal) return;
+
+  // Garantir que os eventos de clique estejam atribuídos
+  inicializarEventosDroneModal();
+
+  // 1. Prepara elementos
+  stage.style.display = "block";
+  actor.className = "drone-actor flying-in";
+  parcel.className = "drone-parcel";
+  smoke.className = "drone-smoke-burst";
+
+  if (window.sounds?.playDroneMotor) {
+    try { window.sounds.playDroneMotor(); } catch (e) {}
+  }
+
+  // 2. Solta a caixa quando o drone chega no centro (~1.8s)
+  setTimeout(() => {
+    parcel.className = "drone-parcel dropping";
+    if (window.sounds?.playDroneBoom) {
+      try { window.sounds.playDroneBoom(); } catch (e) {}
+    }
+  }, 1800);
+
+  // 3. Impacto da caixa no chão, fumaça cartoon e tremor (~2.45s)
+  setTimeout(() => {
+    smoke.className = "drone-smoke-burst active";
+    document.body.classList.add("screen-shaking");
+    if (window.sounds?.playDroneLanding) {
+      try { window.sounds.playDroneLanding(); } catch (e) {}
+    }
+
+    setTimeout(() => {
+      document.body.classList.remove("screen-shaking");
+    }, 450);
+  }, 2450);
+
+  // 4. Drone vai embora (~2.8s)
+  setTimeout(() => {
+    if (window.sounds?.stopDroneMotor) {
+      try { window.sounds.stopDroneMotor(); } catch (e) {}
+    }
+    actor.className = "drone-actor flying-away";
+  }, 2800);
+
+  // 5. Abre o modal de resgate (~3.4s)
+  setTimeout(() => {
+    if (window.sounds?.stopDroneMotor) {
+      try { window.sounds.stopDroneMotor(); } catch (e) {}
+    }
+    stage.style.display = "none";
+    smoke.className = "drone-smoke-burst";
+    modal.classList.add("open");
+
+    if (window.lucide) lucide.createIcons();
+  }, 3400);
+}
+
+// Função global para testar a animação a qualquer momento via console/dev button
+window.testarDroneLoot = function() {
+  localStorage.removeItem("sementis_drone_loot_date");
+  executarAnimacaoDroneLoot();
+};

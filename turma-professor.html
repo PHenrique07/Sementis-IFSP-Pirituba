@@ -3,7 +3,7 @@
 <head>
     <script src="/js/api-config.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#12123d">
     <title>Turma — Sementis</title>
     <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
@@ -40,10 +40,15 @@
             </div>
             
             <div class="turma-hero-actions">
-                <!-- Código de Convite -->
+                <!-- Código de Convite com Ícone WebM 3D Integrado -->
                 <div class="turma-convite">
-                    <span class="convite-label">Código de convite</span>
-                    <div class="convite-code-row">
+                    <div class="convite-webm-thumb">
+                        <video autoplay loop muted playsinline class="convite-webm-video">
+                            <source src="assets/webm/3d-stickle-spreadsheet-document-with-pie-charts-and-data-table-for-analytics.webm" type="video/webm">
+                        </video>
+                    </div>
+                    <div class="convite-content">
+                        <span class="convite-label">Código de convite</span>
                         <strong id="codigo-convite">—</strong>
                         <button id="copiar-convite" type="button" title="Copiar código para a área de transferência">Copiar</button>
                     </div>
@@ -52,7 +57,7 @@
                 <!-- Dropdown único: Exportar (PDF, CSV, XLS) -->
                 <div class="export-dropdown-wrap">
                     <button id="btn-exportar-toggle" type="button" class="btn-exportar" aria-expanded="false" title="Exportar relatório da turma">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>

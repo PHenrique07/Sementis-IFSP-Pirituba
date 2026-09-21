@@ -79,13 +79,13 @@ body.turma-professor-page {
 
 /* Hero Section */
 .turma-hero {
-    padding: clamp(24px, 4vw, 36px);
+    padding: 20px clamp(20px, 3vw, 36px);
     display: flex;
     gap: 24px;
     justify-content: space-between;
     align-items: center;
     border: 1px solid rgba(169, 255, 113, .24);
-    border-radius: 24px;
+    border-radius: 28px;
     background: linear-gradient(120deg, rgba(72, 72, 145, .58), rgba(24, 24, 73, .85));
     box-shadow: 0 18px 48px rgba(0, 0, 0, .2);
 }
@@ -111,47 +111,103 @@ body.turma-professor-page {
 .turma-hero-actions {
     display: flex;
     align-items: stretch;
-    gap: 14px;
+    gap: 18px;
     flex-wrap: wrap;
 }
 
 .turma-convite {
-    min-width: 170px;
-    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 28px;
     border: 1px solid var(--turma-line);
-    border-radius: 16px;
-    background: rgba(16, 16, 55, .45);
-    text-align: center;
+    border-radius: 24px;
+    background: rgba(16, 16, 55, .55);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    min-height: 110px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
 
-.turma-convite span { display: block; font-size: 11px; color: var(--turma-muted); }
-.turma-convite strong { display: block; margin: 4px 0 6px; color: var(--turma-green); letter-spacing: 2px; font-size: 20px; }
-.turma-convite button {
+.turma-convite:hover {
+    border-color: rgba(169, 255, 113, 0.45);
+    box-shadow: 0 12px 32px rgba(169, 255, 113, 0.15);
+    transform: translateY(-2px);
+}
+
+.convite-webm-thumb {
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+.convite-webm-video {
     width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: translateX(-8px) scale(1.31);
+    pointer-events: none;
+}
+
+.convite-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.convite-content span {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--turma-muted);
+}
+
+.convite-content strong {
+    display: block;
+    margin: 4px 0 6px;
+    color: var(--turma-green);
+    letter-spacing: 2.2px;
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.convite-content button {
     cursor: pointer;
     border: none;
     background: transparent;
-    color: white;
+    color: #ffffff;
     text-decoration: underline;
     font-family: inherit;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
+    padding: 0;
     transition: color 0.2s;
 }
-.turma-convite button:hover { color: var(--turma-green); }
+
+.convite-content button:hover {
+    color: var(--turma-green);
+}
 
 /* Botão PDF Hero */
 .btn-pdf-hero {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 18px;
+    padding: 14px 22px;
     border: none;
-    border-radius: 16px;
+    border-radius: 18px;
     cursor: pointer;
     color: #171744;
     background: linear-gradient(135deg, #b7ff8e, #8fe858);
-    font: 700 13px Poppins, sans-serif;
+    font: 800 15px 'Poppins', sans-serif;
     box-shadow: 0 8px 20px rgba(169, 255, 113, .22);
     transition: all 0.2s ease;
     white-space: nowrap;
@@ -169,30 +225,33 @@ body.turma-professor-page {
 .export-dropdown-wrap {
     position: relative;
     display: flex;
+    align-items: stretch;
 }
 
 .btn-exportar {
     border: 1px solid rgba(169, 255, 113, .35);
-    border-radius: 16px;
-    padding: 12px 18px;
+    border-radius: 24px;
+    padding: 18px 32px;
     cursor: pointer;
     color: #171744;
     background: linear-gradient(135deg, #b7ff8e, #8fe858);
-    font: 700 13px Poppins, sans-serif;
+    font: 800 16px/1.2 'Poppins', sans-serif;
     display: flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 8px 20px rgba(169, 255, 113, .22);
+    justify-content: center;
+    gap: 12px;
+    min-height: 110px;
+    box-shadow: 0 10px 26px rgba(169, 255, 113, .28);
     transition: all 0.2s ease;
 }
 
 .btn-exportar:hover {
     filter: brightness(1.08);
     transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(169, 255, 113, .35);
+    box-shadow: 0 12px 30px rgba(169, 255, 113, .4);
 }
 
-.chevron-down { font-size: 10px; margin-left: 2px; }
+.chevron-down { font-size: 14px; margin-left: 4px; }
 
 .export-menu {
     position: absolute;
@@ -1006,27 +1065,43 @@ body.turma-professor-page {
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .turma-layout { grid-template-columns: 1fr; }
     .turma-aside { grid-template-columns: 1fr 1fr; }
-    .turma-hero { align-items: flex-start; flex-direction: column; }
-    .turma-hero-actions { width: 100%; }
-    .turma-convite, .export-dropdown-wrap { flex: 1; min-width: 140px; }
-    .btn-exportar { width: 100%; justify-content: center; }
+    .turma-hero { align-items: flex-start; flex-direction: column; gap: 18px; }
+    .turma-hero-actions { width: 100%; justify-content: space-between; gap: 14px; }
+    .turma-convite, .export-dropdown-wrap { flex: 1; min-width: 0; }
+    .btn-exportar { width: 100%; justify-content: center; min-height: 100px; }
     .export-menu { width: 100%; }
     .raiox-stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 560px) {
-    .turma-topbar { min-height: 60px; }
+    .turma-topbar { min-height: 60px; padding: 10px 14px; }
     .turma-logo-link { display: none; }
-    .turma-main { width: min(100% - 24px, 1280px); padding-top: 20px; }
-    .kpi-grid, .turma-aside { grid-template-columns: 1fr; }
-    .panel { padding: 18px; }
-    .panel-heading { align-items: flex-start; flex-direction: column; }
+    .turma-main { width: calc(100% - 20px); padding-top: 16px; overflow-x: hidden; }
+    .turma-hero { padding: 18px; gap: 16px; border-radius: 22px; }
+    .turma-hero h1 { font-size: 25px; line-height: 1.12; }
+    .turma-hero p { font-size: 13px; line-height: 1.5; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .turma-aside { grid-template-columns: 1fr; }
+    .panel { padding: 16px; border-radius: 18px; }
+    .panel-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
     .panel-note { display: none; }
     .turma-professor-name { font-size: 11px; min-width: 0; }
     .back-link { font-size: 12px; }
-    .alunos-toolbar { flex-direction: column; align-items: stretch; }
+    .alunos-toolbar { flex-direction: column; align-items: stretch; gap: 10px; }
     .search-box { width: 100%; }
-    .status-filters { width: 100%; }
-    .filter-btn { flex: 1; text-align: center; font-size: 11px; padding: 7px 8px; }
+    .sort-box { width: 100%; }
+    .sort-select { width: 100%; }
+    .status-filters { width: 100%; flex-wrap: wrap; gap: 6px; }
+    .filter-btn { flex: 1 1 45%; text-align: center; font-size: 11px; padding: 8px; }
     .raiox-stats-grid { grid-template-columns: 1fr; }
+
+    .turma-hero-actions { flex-direction: column; width: 100%; gap: 12px; }
+    .turma-convite { width: 100%; padding: 12px 14px; gap: 10px; min-height: 88px; justify-content: flex-start; }
+    .convite-webm-thumb { width: 58px; height: 58px; }
+    .convite-webm-video { transform: translateX(-6px) scale(1.18); }
+    .convite-content { min-width: 0; }
+    .convite-content span { font-size: 10px; letter-spacing: .7px; }
+    .convite-content strong { font-size: 22px; }
+    .export-dropdown-wrap { width: 100%; }
+    .btn-exportar { width: 100%; min-height: 52px; font-size: 14px; padding: 14px; border-radius: 18px; }
 }

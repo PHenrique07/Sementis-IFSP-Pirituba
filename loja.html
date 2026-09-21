@@ -3,7 +3,7 @@
 <head>
     <script src="js/api-config.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1a1a4a">
     <meta name="application-name" content="Sementis">
     <link rel="manifest" href="pwa/manifest.webmanifest">
@@ -53,6 +53,9 @@
             </div>
 
             <div class="loja-header-actions">
+                <button class="loja-icon-btn" onclick="window.testarDroneLoot()" title="Chamar Drone de Loot (Teste)" aria-label="Chamar Drone">
+                    <i data-lucide="plane" style="width: 18px; height: 18px;"></i>
+                </button>
                 <button class="loja-icon-btn" data-testid="sound-toggle-btn" title="Silenciar / Ativar sons" aria-label="Alternar som">
                     <i data-lucide="volume-2" style="width: 18px; height: 18px;"></i>
                 </button>
@@ -411,6 +414,55 @@
             </div>
         </footer>
 
+    </div>
+
+    <!-- Stage do Drone Sustentável e Loot Diário -->
+    <div id="drone-loot-stage" class="drone-loot-stage">
+        <!-- Drone Voador em WebM -->
+        <div id="drone-actor" class="drone-actor">
+            <video autoplay loop muted playsinline class="drone-video">
+                <source src="assets/webm/3d-stickle-drone-with-parcel.webm" type="video/webm">
+            </video>
+        </div>
+
+        <!-- Caixa de loot se soltando e caindo -->
+        <div id="drone-parcel" class="drone-parcel">
+            <div class="parcel-box">🎁</div>
+        </div>
+
+        <!-- Fumaça Cartoon & Explosão de Partículas -->
+        <div id="drone-smoke-burst" class="drone-smoke-burst">
+            <div class="smoke-puff puff-1"></div>
+            <div class="smoke-puff puff-2"></div>
+            <div class="smoke-puff puff-3"></div>
+            <div class="smoke-puff puff-4"></div>
+            <div class="sparkle-star star-1">✨</div>
+            <div class="sparkle-star star-2">🌟</div>
+            <div class="sparkle-star star-3">🪙</div>
+            <div class="sparkle-star star-4">💎</div>
+        </div>
+    </div>
+
+    <!-- Modal de Resgate do Loot Diário do Drone -->
+    <div id="drone-loot-modal" class="drone-modal-overlay">
+        <div class="drone-modal-card">
+            <button class="drone-modal-close-btn" id="btn-close-drone-modal" type="button" aria-label="Fechar modal">✕</button>
+            <div class="drone-modal-glow"></div>
+            <div class="drone-modal-badge">🛸 ENTREGA ESPECIAL SEMENTIS</div>
+            <h2 class="drone-modal-title">LOOT DIÁRIO DROPOU!</h2>
+            <p class="drone-modal-desc">O Drone Sustentável sobrevoou a sua loja e entregou um suprimento especial de moedas de estudo!</p>
+            <div class="drone-loot-reward-box">
+                <img src="assets/icons/icone_moeda.png" alt="Moedas" class="reward-coin-icon">
+                <div class="reward-values">
+                    <span class="reward-amount">+67</span>
+                    <span class="reward-label">Moedas Gratuitas</span>
+                </div>
+            </div>
+            <button id="btn-claim-drone-loot" class="drone-claim-btn" type="button">
+                <span>Resgatar 67 Moedas!</span>
+                <i data-lucide="sparkles" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
     </div>
 
     <!-- Scripts -->

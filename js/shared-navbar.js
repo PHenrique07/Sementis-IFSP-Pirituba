@@ -4,6 +4,7 @@ function getActiveSection() {
   if (page === 'ligas.html') return 'Ligas';
   if (page === 'missions.html' || page === 'missoes.html') return 'Missoes';
   if (page === 'loja.html') return 'Loja';
+  if (page === 'jogos.html' || page === 'arena.html') return 'Jogos';
   if (page === 'perfil.html') return 'Perfil';
   if (page === 'trilhas.html' || page === 'home.html' || page === '') return 'Trilhas';
   return 'Trilhas';
@@ -14,12 +15,14 @@ function buildSharedNavbar(activeSection) {
   const isLigas = activeSection === 'Ligas';
   const isMissoes = activeSection === 'Missoes';
   const isLoja = activeSection === 'Loja';
+  const isJogos = activeSection === 'Jogos';
   const isPerfil = activeSection === 'Perfil';
+  const isMais = isPerfil || isJogos;
 
   return `
-<nav class="bottom-nav" aria-label="Navegacao principal">
+<nav class="bottom-nav" aria-label="Navegação principal">
   <div class="sidebar-logo">
-    <a href="index.html" aria-label="Ir para a pagina inicial" class="sidebar-logo-link">
+    <a href="index.html" aria-label="Ir para a página inicial" class="sidebar-logo-link">
       <img src="assets/brand/logo_sementis_branco.png" alt="Sementis">
     </a>
   </div>
@@ -33,17 +36,38 @@ function buildSharedNavbar(activeSection) {
       <span>Ligas</span>
     </a>
     <a class="nav-item ${isMissoes ? 'active' : ''}" href="missions.html" ${isMissoes ? 'aria-current="page"' : ''}>
-      <img src="assets/icons/menu_rodape_alvo.png" alt="Missoes">
+      <img src="assets/icons/menu_rodape_alvo.png" alt="Missões">
       <span>Missões</span>
     </a>
     <a class="nav-item ${isLoja ? 'active' : ''}" href="loja.html" ${isLoja ? 'aria-current="page"' : ''}>
       <img src="assets/icons/loja1.png" alt="Loja">
       <span>Loja</span>
     </a>
-    <a class="nav-item ${isPerfil ? 'active' : ''}" href="perfil.html" ${isPerfil ? 'aria-current="page"' : ''}>
+    <a class="nav-item desktop-only ${isJogos ? 'active' : ''}" href="jogos.html" ${isJogos ? 'aria-current="page"' : ''}>
+      <img src="assets/icons/menu_games.png" alt="Jogos">
+      <span>Jogos</span>
+    </a>
+    <a class="nav-item desktop-only ${isPerfil ? 'active' : ''}" href="perfil.html" ${isPerfil ? 'aria-current="page"' : ''}>
       <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil">
       <span>Perfil</span>
     </a>
+    <button class="nav-item mobile-only ${isMais ? 'active' : ''}" id="nav-item-mais" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Mais opções">
+      <img src="assets/icons/menu_mais.png" alt="Mais">
+      <span>Mais</span>
+    </button>
+  </div>
+
+  <div class="more-menu-popup mobile-only" id="more-menu-popup" aria-hidden="true">
+    <div class="more-menu-content">
+      <a class="more-menu-item ${isPerfil ? 'active' : ''}" href="perfil.html">
+        <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil">
+        <span>Perfil</span>
+      </a>
+      <a class="more-menu-item ${isJogos ? 'active' : ''}" href="jogos.html">
+        <img src="assets/icons/menu_games.png" alt="Jogos">
+        <span>Jogos</span>
+      </a>
+    </div>
   </div>
 </nav>
   `;
@@ -63,6 +87,46 @@ function mountSharedNavbar() {
       window.location.href = 'index.html';
     });
   }
+
+  const btnMais = host.querySelector('#nav-item-mais');
+  const popupMais = host.querySelector('#more-menu-popup');
+
+  if (btnMais && popupMais) {
+    function fecharMaisMenu() {
+      popupMais.classList.remove('open');
+      btnMais.setAttribute('aria-expanded', 'false');
+      popupMais.setAttribute('aria-hidden', 'true');
+    }
+
+    function abrirMaisMenu() {
+      popupMais.classList.add('open');
+      btnMais.setAttribute('aria-expanded', 'true');
+      popupMais.setAttribute('aria-hidden', 'false');
+    }
+
+    btnMais.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = popupMais.classList.contains('open');
+      if (isOpen) {
+        fecharMaisMenu();
+      } else {
+        abrirMaisMenu();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!host.contains(e.target)) {
+        fecharMaisMenu();
+      }
+    });
+
+    window.addEventListener('scroll', () => {
+      if (popupMais.classList.contains('open')) {
+        fecharMaisMenu();
+      }
+    }, { passive: true });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', mountSharedNavbar);
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script src="/js/api-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a4a">
+    <meta name="application-name" content="Sementis">
+    <link rel="manifest" href="pwa/manifest.webmanifest">
+    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <title>Sementis - Central de Jogos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/shared-navbar.css">
+    <link rel="stylesheet" href="/css/jogos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="jogos-page">
+
+    <header class="jogos-header">
+        <h1 class="jogos-header-title">
+            <video autoplay loop muted playsinline class="jogos-header-video">
+                <source src="assets/webm/3d-stickle-arcade-machine-retro-gaming-console-with-joystick-and-pixel-alien.webm" type="video/webm">
+            </video>
+            <span>Central de Jogos</span>
+        </h1>
+        <p class="jogos-header-subtitle">Aprenda sobre sustentabilidade e meio ambiente enquanto se diverte!</p>
+    </header>
+
+    <main class="jogos-main">
+        <div class="jogos-grid">
+
+            <!-- Game Card 1: Arena ao Vivo -->
+            <a href="arena.html" class="game-card">
+                <div class="game-banner game-banner--lit">
+                    <span class="game-tag">Multiplayer</span>
+                    <video autoplay loop muted playsinline class="game-banner-video game-banner-video--lit" aria-label="Sementis Live Arena">
+                        <source src="assets/webm/sementis-live.webm" type="video/webm">
+                    </video>
+                </div>
+                <div class="game-info">
+                    <h2 class="game-title">Sementis Live Arena</h2>
+                    <p class="game-description">Entre com o PIN da sua sala e disputar um quiz ao vivo com sua turma estilo Kahoot!</p>
+                    <span class="game-play-btn">🎮 Entrar na Arena</span>
+                </div>
+            </a>
+
+            <!-- Game Card 2: Flappy Fish -->
+            <a href="FlapFish/index.html" class="game-card">
+                <div class="game-banner">
+                    <span class="game-tag">Arcade</span>
+                    <video autoplay loop muted playsinline class="game-banner-video">
+                        <source src="assets/webm/flappy fish.webm" type="video/webm">
+                    </video>
+                </div>
+                <div class="game-info">
+                    <h2 class="game-title">Flappy Fish</h2>
+                    <p class="game-description">Navegue com o peixe pelo oceano e ajude-o a se esquivar da poluição e resíduos plásticos.</p>
+                    <span class="game-play-btn">🐟 Jogar Flappy Fish</span>
+                </div>
+            </a>
+
+            <!-- Game Card 3: Garbage Recycle -->
+            <a href="home.html" class="game-card">
+                <div class="game-banner game-banner--lit">
+                    <span class="game-tag">Reciclagem</span>
+                    <video autoplay loop muted playsinline class="game-banner-video game-banner-video--lit game-banner-video--garbage" aria-label="Garbage Recycle">
+                        <source src="assets/webm/garbage.webm" type="video/webm">
+                    </video>
+                </div>
+                <div class="game-info">
+                    <h2 class="game-title">Garbage Recycle</h2>
+                    <p class="game-description">Separe os diferentes tipos de materiais nas lixeiras corretas antes que o tempo acabe!</p>
+                    <span class="game-play-btn">♻️ Separar Lixo</span>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- Componente Navbar Compartilhada -->
+    <div id="shared-navbar-root"></div>
+
+    <script src="pwa/pwa-register.js"></script>
+    <script src="/js/shared-navbar.js"></script>
+</body>
+</html>

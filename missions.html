@@ -3,7 +3,7 @@
 <head>
     <script src="/js/api-config.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1a1a4a">
     <meta name="application-name" content="Sementis">
     <link rel="manifest" href="pwa/manifest.webmanifest">
@@ -80,6 +80,9 @@
             <!-- Lista de Missões -->
             <section class="missions-list">
                 <div class="section-header">
+                    <video autoplay loop muted playsinline class="missions-title-webm" aria-label="Alvo animado">
+                        <source src="assets/webm/target.webm" type="video/webm">
+                    </video>
                     <h2 class="section-title">MISSÕES DIÁRIAS</h2>
                     <button class="info-btn" aria-label="Informações sobre Recompensas" onclick="toggleXpModal()">?</button>
                 </div>
@@ -391,6 +394,9 @@
     <div id="xpModal" class="xp-modal-overlay" onclick="toggleXpModal(event)">
         <div class="xp-modal-content" onclick="event.stopPropagation()">
             <button class="close-modal-btn" onclick="toggleXpModal()">×</button>
+            <video autoplay loop muted playsinline class="xp-modal-webm" aria-label="Alvo animado">
+                <source src="assets/webm/target.webm" type="video/webm">
+            </video>
             <h3 class="xp-modal-title">Recompensas de Missão</h3>
             <p class="xp-modal-desc">Cada tipo de missão garante uma quantidade diferente de Pontos de Experiência (XP).</p>
             

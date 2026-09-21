@@ -1,5 +1,6 @@
 let ctx = null;
 let muted = false;
+let droneMotor = null;
 try {
   muted = localStorage.getItem("sementis-loja-muted") === "1";
 } catch (e) {
@@ -105,6 +106,127 @@ const playReveal = (rarity) => {
   }
 };
 
+const playDroneMotor = () => {
+  if (muted || droneMotor) return;
+
+  const audioContext = getCtx();
+  const startTime = audioContext.currentTime;
+  const masterGain = audioContext.createGain();
+
+  masterGain.gain.setValueAtTime(0.0001, startTime);
+  masterGain.gain.exponentialRampToValueAtTime(0.08, startTime + 0.12);
+  masterGain.connect(audioContext.destination);
+
+  const noiseLength = Math.floor(audioContext.sampleRate * 0.24);
+  const noiseBuffer = audioContext.createBuffer(1, noiseLength, audioContext.sampleRate);
+  const noiseData = noiseBuffer.getChannelData(0);
+  for (let index = 0; index < noiseLength; index++) {
+    noiseData[index] = (Math.random() * 2 - 1) * 0.45;
+  }
+
+  const propellerNoise = audioContext.createBufferSource();
+  const noiseFilter = audioContext.createBiquadFilter();
+  const noiseGain = audioContext.createGain();
+  propellerNoise.buffer = noiseBuffer;
+  propellerNoise.loop = true;
+  noiseFilter.type = "bandpass";
+  noiseFilter.frequency.value = 950;
+  noiseFilter.Q.value = 0.7;
+  noiseGain.gain.value = 0.32;
+  propellerNoise.connect(noiseFilter).connect(noiseGain).connect(masterGain);
+  propellerNoise.start(startTime);
+
+  const pulseOscillator = audioContext.createOscillator();
+  const pulseDepth = audioContext.createGain();
+  pulseOscillator.frequency.value = 32;
+  pulseDepth.gain.value = 0.24;
+  pulseOscillator.connect(pulseDepth).connect(noiseGain.gain);
+  pulseOscillator.start(startTime);
+
+  droneMotor = { masterGain, propellerNoise, pulseOscillator };
+};
+
+const stopDroneMotor = () => {
+  if (!droneMotor || !ctx) return;
+
+  const motor = droneMotor;
+  const stopTime = ctx.currentTime;
+  motor.masterGain.gain.cancelScheduledValues(stopTime);
+  motor.masterGain.gain.setValueAtTime(Math.max(motor.masterGain.gain.value, 0.0001), stopTime);
+  motor.masterGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.18);
+  motor.propellerNoise.stop(stopTime + 0.22);
+  motor.pulseOscillator.stop(stopTime + 0.22);
+  droneMotor = null;
+};
+
+const playDroneBoom = () => {
+  if (muted) return;
+
+  const audioContext = getCtx();
+  const startTime = audioContext.currentTime;
+  const impactGain = audioContext.createGain();
+  const impactFilter = audioContext.createBiquadFilter();
+  const impactOscillator = audioContext.createOscillator();
+
+  impactFilter.type = "lowpass";
+  impactFilter.frequency.value = 620;
+  impactGain.gain.setValueAtTime(0.0001, startTime);
+  impactGain.gain.exponentialRampToValueAtTime(0.22, startTime + 0.018);
+  impactGain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.48);
+
+  impactOscillator.type = "sine";
+  impactOscillator.frequency.setValueAtTime(105, startTime);
+  impactOscillator.frequency.exponentialRampToValueAtTime(42, startTime + 0.36);
+  impactOscillator.connect(impactFilter).connect(impactGain).connect(audioContext.destination);
+  impactOscillator.start(startTime);
+  impactOscillator.stop(startTime + 0.52);
+
+  const noiseLength = Math.floor(audioContext.sampleRate * 0.16);
+  const noiseBuffer = audioContext.createBuffer(1, noiseLength, audioContext.sampleRate);
+  const noiseData = noiseBuffer.getChannelData(0);
+  for (let index = 0; index < noiseLength; index++) {
+    noiseData[index] = (Math.random() * 2 - 1) * (1 - index / noiseLength);
+  }
+
+  const impactNoise = audioContext.createBufferSource();
+  const noiseGain = audioContext.createGain();
+  impactNoise.buffer = noiseBuffer;
+  noiseGain.gain.value = 0.18;
+  impactNoise.connect(impactFilter).connect(noiseGain).connect(audioContext.destination);
+  impactNoise.start(startTime);
+};
+
+const playDroneLanding = () => {
+  if (muted) return;
+
+  const audioContext = getCtx();
+  const startTime = audioContext.currentTime;
+  const impactGain = audioContext.createGain();
+  const impactFilter = audioContext.createBiquadFilter();
+  const impactOscillator = audioContext.createOscillator();
+  const subOscillator = audioContext.createOscillator();
+
+  impactFilter.type = "lowpass";
+  impactFilter.frequency.value = 300;
+  impactGain.gain.setValueAtTime(0.0001, startTime);
+  impactGain.gain.exponentialRampToValueAtTime(0.42, startTime + 0.012);
+  impactGain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.52);
+  impactOscillator.type = "sine";
+  impactOscillator.frequency.setValueAtTime(58, startTime);
+  impactOscillator.frequency.exponentialRampToValueAtTime(26, startTime + 0.32);
+  subOscillator.type = "sine";
+  subOscillator.frequency.setValueAtTime(38, startTime);
+  subOscillator.frequency.exponentialRampToValueAtTime(20, startTime + 0.38);
+  impactOscillator.connect(impactFilter).connect(impactGain).connect(audioContext.destination);
+  subOscillator.connect(impactFilter);
+  impactOscillator.start(startTime);
+  subOscillator.start(startTime);
+  impactOscillator.stop(startTime + 0.56);
+  subOscillator.stop(startTime + 0.56);
+
+  noiseBurst(startTime, { gain: 0.28, dur: 0.1, freq: 220 });
+};
+
 window.sounds = {
   isMuted,
   setMuted,
@@ -112,5 +234,9 @@ window.sounds = {
   playRattle,
   playPop,
   playCrack,
-  playReveal
+  playReveal,
+  playDroneMotor,
+  stopDroneMotor,
+  playDroneBoom,
+  playDroneLanding
 };

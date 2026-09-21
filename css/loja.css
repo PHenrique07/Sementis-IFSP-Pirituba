@@ -32,7 +32,7 @@
 .loja-page {
     background-color: var(--loja-bg);
     min-height: 100vh;
-    padding-bottom: 80px;
+    padding-bottom: 100px;
     overflow-x: hidden;
     position: relative;
 }
@@ -78,8 +78,14 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-width: 0;
     position: relative;
     z-index: 1;
+}
+
+.loja-main {
+    min-width: 0;
+    overflow-x: clip;
 }
 
 /* ===== Header da Loja ===== */
@@ -90,6 +96,50 @@
     padding: 16px 20px;
     background: linear-gradient(180deg, var(--loja-dark) 0%, var(--loja-bg) 100%);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 640px) {
+    .loja-header {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 14px;
+    }
+
+    .loja-header-logo {
+        height: 30px;
+    }
+
+    .loja-header-stats {
+        order: 3;
+        width: 100%;
+        justify-content: space-around;
+        background: rgba(0, 0, 0, 0.25);
+        padding: 6px 8px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        gap: 4px;
+    }
+
+    .loja-stat {
+        padding: 4px 8px;
+        gap: 4px;
+        border: none;
+        background: transparent;
+    }
+
+    .loja-stat img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .loja-stat-value {
+        font-size: 12px;
+    }
+
+    .loja-icon-btn {
+        width: 32px;
+        height: 32px;
+    }
 }
 
 .loja-header-logo {
@@ -219,6 +269,7 @@
 .loja-hero-grid {
     width: min(1100px, 100%);
     max-width: 1100px;
+    min-width: 0;
     margin: 0 auto;
     display: grid;
     align-items: center;
@@ -538,6 +589,7 @@
 .loja-gacha-layout {
     width: min(1100px, 100%);
     max-width: 1100px;
+    min-width: 0;
     margin: 0 auto;
     display: grid;
     align-items: start;
@@ -1079,6 +1131,7 @@
 .loja-shop {
     width: min(1100px, 100%);
     max-width: 1100px;
+    min-width: 0;
     margin: 0 auto;
     padding: 60px 20px 80px;
     display: flex;
@@ -1367,6 +1420,7 @@
 .loja-inventory-inner {
     width: min(1100px, 100%);
     max-width: 1100px;
+    min-width: 0;
     margin: 0 auto;
 }
 
@@ -1574,6 +1628,39 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: rgba(184, 184, 230, 0.4);
+}
+
+/* Evita que a barra lateral deixe as grades e os paineis apertados em monitores medios. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .loja-hero-grid,
+    .loja-gacha-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .loja-hero-art {
+        display: none;
+    }
+
+    .loja-gacha-layout {
+        justify-items: center;
+    }
+
+    .loja-odds-panel {
+        width: min(100%, 520px);
+    }
+
+    .loja-shop-grid,
+    .loja-inventory-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1279px) {
+    .loja-shop-grid,
+    .loja-inventory-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 /* ===== Toast System ===== */
@@ -2011,4 +2098,414 @@
 
 .shake-x {
     animation: loja-shake-x 0.5s ease-in-out;
+}
+
+/* ===== Drone Loot Diário ===== */
+.drone-loot-stage {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 99990;
+    overflow: hidden;
+}
+
+.drone-actor {
+    position: absolute;
+    top: 25%;
+    left: -200px;
+    width: 180px;
+    height: 180px;
+    z-index: 99992;
+    transition: none;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
+}
+
+.drone-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.drone-actor.flying-in {
+    animation: droneFlyIn 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.drone-actor.flying-away {
+    animation: droneFlyAway 2.2s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+
+@keyframes droneFlyIn {
+    0% {
+        left: -220px;
+        top: 15%;
+        transform: rotate(18deg) scale(0.8);
+    }
+    60% {
+        left: 50%;
+        top: 32%;
+        transform: translate(-50%, -50%) rotate(-4deg) scale(1.1);
+    }
+    80% {
+        left: 50%;
+        top: 30%;
+        transform: translate(-50%, -50%) rotate(2deg) scale(1.05);
+    }
+    100% {
+        left: 50%;
+        top: 30%;
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    }
+}
+
+@keyframes droneFlyAway {
+    0% {
+        left: 50%;
+        top: 30%;
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    }
+    30% {
+        left: 52%;
+        top: 28%;
+        transform: translate(-50%, -50%) rotate(-12deg) scale(1.1);
+    }
+    100% {
+        left: 120vw;
+        top: 10%;
+        transform: rotate(25deg) scale(0.7);
+    }
+}
+
+.drone-parcel {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 99991;
+    opacity: 0;
+    font-size: 54px;
+}
+
+.drone-parcel.dropping {
+    animation: parcelDrop 0.65s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+
+@keyframes parcelDrop {
+    0% {
+        opacity: 1;
+        top: 34%;
+        transform: translate(-50%, 0) scale(1.2) rotate(0deg);
+    }
+    70% {
+        opacity: 1;
+        top: 50%;
+        transform: translate(-50%, 0) scale(1) rotate(180deg);
+    }
+    100% {
+        opacity: 0;
+        top: 52%;
+        transform: translate(-50%, 0) scale(2) rotate(360deg);
+    }
+}
+
+.drone-smoke-burst {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+    z-index: 99993;
+    pointer-events: none;
+    display: none;
+}
+
+.drone-smoke-burst.active {
+    display: block;
+}
+
+.smoke-puff {
+    position: absolute;
+    background: radial-gradient(circle, #ffffff 0%, #a9ff71 50%, rgba(26,26,74,0) 80%);
+    border-radius: 50%;
+    opacity: 0;
+}
+
+.drone-smoke-burst.active .puff-1 {
+    width: 120px;
+    height: 120px;
+    top: -60px;
+    left: -60px;
+    animation: puffExpand 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.drone-smoke-burst.active .puff-2 {
+    width: 90px;
+    height: 90px;
+    top: -80px;
+    left: -10px;
+    animation: puffExpand 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards;
+}
+
+.drone-smoke-burst.active .puff-3 {
+    width: 100px;
+    height: 100px;
+    top: -20px;
+    left: -70px;
+    animation: puffExpand 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards;
+}
+
+.drone-smoke-burst.active .puff-4 {
+    width: 140px;
+    height: 140px;
+    top: -70px;
+    left: -70px;
+    animation: puffExpand 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.04s forwards;
+}
+
+.sparkle-star {
+    position: absolute;
+    font-size: 28px;
+    opacity: 0;
+}
+
+.drone-smoke-burst.active .star-1 {
+    top: -90px;
+    left: -80px;
+    animation: starFly 0.8s ease-out forwards;
+}
+
+.drone-smoke-burst.active .star-2 {
+    top: -100px;
+    left: 40px;
+    animation: starFly 0.8s ease-out 0.05s forwards;
+}
+
+.drone-smoke-burst.active .star-3 {
+    top: 30px;
+    left: -90px;
+    animation: starFly 0.8s ease-out 0.1s forwards;
+}
+
+.drone-smoke-burst.active .star-4 {
+    top: 40px;
+    left: 50px;
+    animation: starFly 0.8s ease-out 0.15s forwards;
+}
+
+@keyframes puffExpand {
+    0% {
+        opacity: 0.9;
+        transform: scale(0.2);
+    }
+    60% {
+        opacity: 0.8;
+        transform: scale(1.4);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(2.2);
+    }
+}
+
+@keyframes starFly {
+    0% {
+        opacity: 1;
+        transform: scale(0.5) translate(0, 0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.8) translate(var(--tx, 30px), var(--ty, -40px));
+    }
+}
+
+body.screen-shaking {
+    animation: screenShake 0.4s ease-in-out;
+}
+
+@keyframes screenShake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-8px, 6px) rotate(-1deg); }
+    40% { transform: translate(8px, -6px) rotate(1deg); }
+    60% { transform: translate(-4px, -4px); }
+    80% { transform: translate(4px, 4px); }
+}
+
+.drone-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(13, 14, 41, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.drone-modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.drone-modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    background: linear-gradient(145deg, #1d1e56 0%, #131338 100%);
+    border: 2px solid rgba(169, 255, 113, 0.4);
+    border-radius: 28px;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(169, 255, 113, 0.2);
+    transform: scale(0.8) translateY(20px);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+
+.drone-modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 15;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.drone-modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+.drone-modal-overlay.open .drone-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.drone-modal-glow {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(169, 255, 113, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.drone-modal-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(169, 255, 113, 0.15);
+    border: 1px solid rgba(169, 255, 113, 0.4);
+    color: #a9ff71;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+}
+
+.drone-modal-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 12px;
+    letter-spacing: -0.5px;
+}
+
+.drone-modal-desc {
+    font-size: 14px;
+    color: #b8b8e6;
+    margin: 0 0 24px;
+    line-height: 1.5;
+}
+
+.drone-loot-reward-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 16px 24px;
+    margin-bottom: 28px;
+}
+
+.reward-coin-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    animation: coinFloat 2s ease-in-out infinite;
+}
+
+@keyframes coinFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.reward-values {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.reward-amount {
+    font-size: 32px;
+    font-weight: 900;
+    color: #a9ff71;
+    line-height: 1;
+}
+
+.reward-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8d92bc;
+    margin-top: 4px;
+}
+
+.drone-claim-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 24px;
+    background: #a9ff71;
+    color: #0d0e29;
+    border: none;
+    border-bottom: 5px solid #7cd645;
+    border-radius: 18px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.drone-claim-btn:hover {
+    background: #bdff94;
+    transform: translateY(-2px);
+}
+
+.drone-claim-btn:active {
+    transform: translateY(2px);
+    border-bottom-width: 2px;
 }

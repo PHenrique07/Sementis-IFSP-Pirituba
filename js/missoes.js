@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Limpa as missões "chumbadas" no HTML, mas mantém o título e o botão de interrogação
         containerMissoes.innerHTML = `
             <div class="section-header">
+                <video autoplay loop muted playsinline class="missions-title-webm" aria-label="Alvo animado">
+                    <source src="assets/webm/target.webm" type="video/webm">
+                </video>
                 <h2 class="section-title">MISSÕES DIÁRIAS</h2>
                 <button class="info-btn" aria-label="Informações sobre Recompensas" onclick="toggleXpModal()">?</button>
             </div>
