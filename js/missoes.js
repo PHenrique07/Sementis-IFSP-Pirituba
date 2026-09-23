@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             missoes.sort((a, b) => a.xp - b.xp);
             
             missoesGlobais = missoes;
+            localStorage.setItem('cached_missoes', JSON.stringify(missoesGlobais));
             exibirMissoes(missoesGlobais);
             
         } catch (erro) {
@@ -119,6 +120,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             containerMissoes.appendChild(item);
         });
     };
+
+    // Carregamento instantâneo via cache (0ms)
+    try {
+        const cached = localStorage.getItem('cached_missoes');
+        if (cached) {
+            missoesGlobais = JSON.parse(cached);
+            exibirMissoes(missoesGlobais);
+        }
+    } catch (e) {
+        console.warn("Erro ao ler cache de missões:", e);
+    }
 
     buscarMissoes();
 });

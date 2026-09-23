@@ -17,7 +17,7 @@ if ('caches' in window) {
 // ========================================================
 // 1. ATUALIZAÇÃO DO PERFIL (Header/Sidebar)
 // ========================================================
-const dadosUsuario = JSON.parse(localStorage.getItem('user'));
+const dadosUsuario = JSON.parse(localStorage.getItem('cached_perfil')) || JSON.parse(localStorage.getItem('user'));
 let idUsuario = null;
 let ligaInicial = 1;
 
@@ -79,79 +79,96 @@ function updateLeagueHeader(league) {
 // ========================================================
 // 3. RANKING E FETCH DA API
 // ========================================================
+function renderRankingList(usuarios) {
+    const lista = document.getElementById('rankingList');
+    if (!lista || !Array.isArray(usuarios)) return;
+    lista.innerHTML = '';
+
+    usuarios.sort((a, b) => b.xp - a.xp).forEach((user, index) => {
+        const posicao = index + 1;
+        const item = document.createElement('li');
+        item.className = 'ranking-row';
+
+        // Destaque por zona baseado na posição (não depende de nth-child)
+        if (posicao <= 10) {
+            item.classList.add('promotion-highlight');
+        } else {
+            item.classList.add('demotion-highlight');
+        }
+        
+        // Destaque do usuário logado
+        if (Number(user.id) === idUsuario) {
+            item.classList.add('rank-highlight');
+        }
+        
+        let rankHtml = '';
+        
+        if (posicao === 1) { 
+            item.classList.add('top-1');
+            rankHtml = '<div class="rank-badge"><img src="assets/ligas/liga_medalha_ouro.png" alt="1º lugar"></div>'; 
+        } else if (posicao === 2) { 
+            item.classList.add('top-2');
+            rankHtml = '<div class="rank-badge"><img src="assets/ligas/liga_medalha_prata.png" alt="2º lugar"></div>'; 
+        } else if (posicao === 3) { 
+            item.classList.add('top-3');
+            rankHtml = '<div class="rank-badge"><img src="assets/ligas/liga_medalha_bronze.png" alt="3º lugar"></div>'; 
+        } else { 
+            rankHtml = `<div class="rank-number">${posicao}</div>`; 
+        }
+
+        item.innerHTML = `
+            ${rankHtml}
+            <div class="player-avatar"><img src="assets/icons/icone_usuario.png" alt="Avatar"></div>
+            <div class="player-meta" style="flex-grow: 1; padding: 0 10px;">
+                <h3>${user.nome}</h3>
+            </div>
+            <div class="player-xp" style="white-space: nowrap;">XP ${user.xp}</div>
+        `;
+        lista.appendChild(item);
+
+        // Divisória de zona de promoção
+        if (posicao === 10 || (posicao === usuarios.length && usuarios.length < 10)) {
+            const divisoria = document.createElement('li');
+            divisoria.style.width = '100%';
+            divisoria.style.textAlign = 'center';
+            divisoria.style.color = '#a9ff71'; 
+            divisoria.style.fontSize = '12px';
+            divisoria.style.fontWeight = 'bold';
+            divisoria.style.margin = '15px 0';
+            divisoria.style.borderBottom = '2px dashed #a9ff71';
+            divisoria.style.paddingBottom = '5px';
+            divisoria.style.letterSpacing = '1px';
+            divisoria.innerText = '⇧ ZONA DE PROMOÇÃO ⇧';
+            lista.appendChild(divisoria);
+        }
+    });
+}
+
 const buscarRankingAPI = async (ligaId) => {
+    // 1. Tenta desenhar imediatamente com o cache local da liga (0ms)
+    try {
+        const cachedRaw = localStorage.getItem(`cached_ranking_${ligaId}`);
+        if (cachedRaw) {
+            renderRankingList(JSON.parse(cachedRaw));
+        }
+    } catch (e) {
+        console.warn("Erro ao ler cache do ranking:", e);
+    }
+
     const tempoReal = new Date().getTime();
-    // Caminho relativo para funcionar tanto no PC quanto no Deploy
     const rota = `${API_BASE_URL}/ranking/${ligaId}?v=${tempoReal}`; 
     
     try {
         const response = await fetch(rota, {
-    credentials: 'include', cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+            credentials: 'include',
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache' }
+        });
         if (!response.ok) throw new Error('Erro na API');
         
         const usuarios = await response.json();
-        const lista = document.getElementById('rankingList');
-        if (!lista) return;
-        lista.innerHTML = '';
-
-        usuarios.sort((a, b) => b.xp - a.xp).forEach((user, index) => {
-            const posicao = index + 1;
-            const item = document.createElement('li');
-            item.className = 'ranking-row';
-
-            // Destaque por zona baseado na posição (não depende de nth-child)
-            if (posicao <= 10) {
-                item.classList.add('promotion-highlight');
-            } else {
-                item.classList.add('demotion-highlight');
-            }
-            
-            // Destaque do usuário logado
-            if (Number(user.id) === idUsuario) {
-                item.classList.add('rank-highlight');
-            }
-            
-            let rankHtml = '';
-            
-            if (posicao === 1) { 
-                item.classList.add('top-1');
-                rankHtml = '<div class="rank-badge"><img src="assets/ligas/liga_medalha_ouro.png" alt="1º lugar"></div>'; 
-            } else if (posicao === 2) { 
-                item.classList.add('top-2');
-                rankHtml = '<div class="rank-badge"><img src="assets/ligas/liga_medalha_prata.png" alt="2º lugar"></div>'; 
-            } else if (posicao === 3) { 
-                item.classList.add('top-3');
-                rankHtml = '<div class="rank-badge"><img src="assets/ligas/liga_medalha_bronze.png" alt="3º lugar"></div>'; 
-            } else { 
-                rankHtml = `<div class="rank-number">${posicao}</div>`; 
-            }
-
-            item.innerHTML = `
-                ${rankHtml}
-                <div class="player-avatar"><img src="assets/icons/icone_usuario.png" alt="Avatar"></div>
-                <div class="player-meta" style="flex-grow: 1; padding: 0 10px;">
-                    <h3>${user.nome}</h3>
-                </div>
-                <div class="player-xp" style="white-space: nowrap;">XP ${user.xp}</div>
-            `;
-            lista.appendChild(item);
-
-            // Divisória de zona de promoção
-            if (posicao === 10 || (posicao === usuarios.length && usuarios.length < 10)) {
-                const divisoria = document.createElement('li');
-                divisoria.style.width = '100%';
-                divisoria.style.textAlign = 'center';
-                divisoria.style.color = '#a9ff71'; 
-                divisoria.style.fontSize = '12px';
-                divisoria.style.fontWeight = 'bold';
-                divisoria.style.margin = '15px 0';
-                divisoria.style.borderBottom = '2px dashed #a9ff71';
-                divisoria.style.paddingBottom = '5px';
-                divisoria.style.letterSpacing = '1px';
-                divisoria.innerText = '⇧ ZONA DE PROMOÇÃO ⇧';
-                lista.appendChild(divisoria);
-            }
-        });
+        localStorage.setItem(`cached_ranking_${ligaId}`, JSON.stringify(usuarios));
+        renderRankingList(usuarios);
     } catch (erro) {
         console.error('Falha no ranking:', erro);
     }
