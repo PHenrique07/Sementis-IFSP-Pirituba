@@ -53,33 +53,17 @@ function initBottomNav() {
     const navItems = document.querySelectorAll('.nav-item');
 
     navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-
+        item.addEventListener('click', (e) => {
             const span = item.querySelector('span');
-            const section = span ? span.textContent : '';
-            handleNavigation(section);
+            const section = span ? span.textContent.trim() : '';
+            if (section === 'Trilhas') {
+                if (currentView !== 'modules') {
+                    e.preventDefault();
+                    showModulesView();
+                }
+            }
         });
     });
-}
-
-function handleNavigation(section) {
-    console.log('Navigating to:', section);
-    switch(section) {
-        case 'Trilhas':
-            showModulesView();
-            break;
-        case 'Ligas':
-            window.location.href = 'ligas.html';
-            break;
-        case 'Missões':
-            console.log('Navigate to missions page');
-            break;
-        case 'Perfil':
-            console.log('Navigate to profile page');
-            break;
-    }
 }
 
 // ===== Trail Interactions =====
