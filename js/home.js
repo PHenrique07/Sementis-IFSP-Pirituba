@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. CARREGA OS DADOS DO USUÁRIO PRIMEIRO DE TUDO!
     carregarDadosUsuario();
     carregarProgressoModulos();
-    carregarProgressoModulos(); // <-- NOVA CHAMADA AQUI!
 
     // 2. Inicia as interações dos botões e menus
     initBottomNav();
@@ -54,33 +53,17 @@ function initBottomNav() {
     const navItems = document.querySelectorAll('.nav-item');
 
     navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-
+        item.addEventListener('click', (e) => {
             const span = item.querySelector('span');
-            const section = span ? span.textContent : '';
-            handleNavigation(section);
+            const section = span ? span.textContent.trim() : '';
+            if (section === 'Trilhas') {
+                if (currentView !== 'modules') {
+                    e.preventDefault();
+                    showModulesView();
+                }
+            }
         });
     });
-}
-
-function handleNavigation(section) {
-    console.log('Navigating to:', section);
-    switch(section) {
-        case 'Trilhas':
-            showModulesView();
-            break;
-        case 'Ligas':
-            window.location.href = 'ligas.html';
-            break;
-        case 'Missões':
-            console.log('Navigate to missions page');
-            break;
-        case 'Perfil':
-            console.log('Navigate to profile page');
-            break;
-    }
 }
 
 // ===== Trail Interactions =====
@@ -537,7 +520,50 @@ window.carregarTrilha = carregarTrilha;
 // ==========================================
 // INTEGRAÇÃO: Progresso das Barras Verdes
 // ==========================================
+function aplicarProgressoModulos(modulos) {
+    if (!Array.isArray(modulos)) return;
+
+    const cards = document.querySelectorAll('.module-card');
+    cards.forEach(card => {
+        const tituloElement = card.querySelector('.module-title');
+        if (!tituloElement) return;
+        
+        const nomeModulo = tituloElement.textContent.trim();
+        const nomeLimpo = nomeModulo.toLowerCase();
+        
+        let idMapeado = 1;
+        if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
+        if (nomeLimpo.includes('clima')) idMapeado = 3;
+        
+        const dadosModulo = modulos.find(m => m.modulo_id === idMapeado || m.id === idMapeado);
+        
+        const porcentagem = dadosModulo ? dadosModulo.porcentagem : 0;
+        const concluidas = dadosModulo ? dadosModulo.atividades_concluidas : 0;
+        const total = dadosModulo ? dadosModulo.total_atividades : 5;
+        
+        const barra = card.querySelector('.module-progress-fill');
+        if (barra) {
+            barra.style.width = `${porcentagem}%`;
+        }
+        
+        const textoLicoes = card.querySelector('.module-progress-text');
+        if (textoLicoes && !textoLicoes.classList.contains('locked-text')) {
+            textoLicoes.textContent = `${concluidas}/${total} lições completas`;
+        }
+    });
+}
+
 async function carregarProgressoModulos() {
+    // 1. Tenta carregar do cache local primeiro (0ms)
+    try {
+        const cacheRaw = localStorage.getItem('cached_modulos_progresso');
+        if (cacheRaw) {
+            aplicarProgressoModulos(JSON.parse(cacheRaw));
+        }
+    } catch (e) {
+        console.warn("Erro ao ler cache de módulos:", e);
+    }
+
     const token = localStorage.getItem('token');
     if (!token) return;
 
@@ -550,44 +576,11 @@ async function carregarProgressoModulos() {
         if (!response.ok) throw new Error("Falha na API");
         const modulos = await response.json();
 
-        // Pega todos os cards de módulo da tela Home
-        const cards = document.querySelectorAll('.module-card');
-        
-        cards.forEach(card => {
-            const tituloElement = card.querySelector('.module-title');
-            if (!tituloElement) return;
-            
-            const nomeModulo = tituloElement.textContent.trim();
-            const nomeLimpo = nomeModulo.toLowerCase();
-            
-            // O TRADUTOR: Mapeia o nome do HTML para o ID do Módulo no Banco
-            let idMapeado = 1; // Padrão: Fundamentos
-            if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
-            if (nomeLimpo.includes('clima')) idMapeado = 3;
-            
-            // Tenta achar os dados do módulo. Se for aluno novo/zerado, fica undefined
-            const dadosModulo = modulos.find(m => m.modulo_id === idMapeado || m.id === idMapeado);
-            
-            // A MÁGICA: Se achou, usa os dados. Se não, ZERA as barras (0% e 0 lições)
-            const porcentagem = dadosModulo ? dadosModulo.porcentagem : 0;
-            const concluidas = dadosModulo ? dadosModulo.atividades_concluidas : 0;
-            const total = dadosModulo ? dadosModulo.total_atividades : 5; // Total padrão visual
-            
-            // 1. Atualizar a largura da barra verde
-            const barra = card.querySelector('.module-progress-fill');
-            if (barra) {
-                setTimeout(() => {
-                    barra.style.width = `${porcentagem}%`;
-                }, 500); // Animação suave 
-            }
-            
-            // 2. Atualizar o texto ("X/Y lições completas")
-            const textoLicoes = card.querySelector('.module-progress-text');
-            if (textoLicoes && !textoLicoes.classList.contains('locked-text')) {
-                textoLicoes.textContent = `${concluidas}/${total} lições completas`;
-            }
-        });
-        console.log("Barras de progresso atualizadas com sucesso!");
+        // 2. Salva em cache para o próximo carregamento
+        localStorage.setItem('cached_modulos_progresso', JSON.stringify(modulos));
+
+        // 3. Atualiza na tela
+        aplicarProgressoModulos(modulos);
     } catch (erro) {
         console.error("Erro ao atualizar barras de módulos:", erro);
     }

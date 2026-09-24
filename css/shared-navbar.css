@@ -1,4 +1,16 @@
 /* Navbar compartilhada (fonte: trilhas) */
+#shared-navbar-root {
+  display: contents;
+}
+
+@media (min-width: 1024px) {
+  #shared-navbar-root {
+    display: block;
+    width: 250px;
+    min-width: 250px;
+  }
+}
+
 .bottom-nav {
   position: fixed;
   left: 0;
