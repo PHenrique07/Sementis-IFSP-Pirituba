@@ -75,10 +75,11 @@ function buildSharedNavbar(activeSection) {
 
 function mountSharedNavbar() {
   const host = document.getElementById('shared-navbar-root');
-  if (!host) return;
+  if (!host || host.dataset.mounted === 'true') return;
 
   const activeSection = getActiveSection();
   host.innerHTML = buildSharedNavbar(activeSection);
+  host.dataset.mounted = 'true';
 
   const sidebarLogoLink = host.querySelector('.sidebar-logo-link');
   if (sidebarLogoLink) {
@@ -126,7 +127,36 @@ function mountSharedNavbar() {
       }
     }, { passive: true });
   }
+
+  // Pré-carregamento suave (instant prefetch) das páginas nos links da navbar
+  const links = host.querySelectorAll('a[href$=".html"]');
+  const prefetched = new Set();
+  links.forEach(link => {
+    const url = link.getAttribute('href');
+    if (!url || url.startsWith('http') || url === '#' || prefetched.has(url)) return;
+
+    const prefetch = () => {
+      if (prefetched.has(url)) return;
+      prefetched.add(url);
+      const prefetchLink = document.createElement('link');
+      prefetchLink.rel = 'prefetch';
+      prefetchLink.href = url;
+      prefetchLink.as = 'document';
+      document.head.appendChild(prefetchLink);
+    };
+
+    link.addEventListener('mouseenter', prefetch, { passive: true });
+    link.addEventListener('touchstart', prefetch, { passive: true });
+  });
 }
 
-document.addEventListener('DOMContentLoaded', mountSharedNavbar);
+// Monta imediatamente se o container já existir no DOM, ou aguarda se estiver no head
+if (document.getElementById('shared-navbar-root')) {
+  mountSharedNavbar();
+} else if (document.readyState !== 'loading') {
+  mountSharedNavbar();
+} else {
+  document.addEventListener('DOMContentLoaded', mountSharedNavbar);
+}
+
 

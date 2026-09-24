@@ -66,6 +66,8 @@ textarea,
 
 html {
     scroll-behavior: smooth;
+    background-color: var(--color-primary-dark, #1a1a4a);
+    color-scheme: dark;
 }
 
 body {
@@ -73,9 +75,30 @@ body {
     font-size: 16px;
     line-height: 1.6;
     color: var(--color-white);
-    background-color: var(--color-primary);
+    background-color: var(--color-primary-dark, #1a1a4a);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* Transição suave e estável de conteúdo entre telas (a barra de navegação fica fixa e estática) */
+@keyframes sementisContentFadeIn {
+    0% {
+        opacity: 0.88;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.home-header,
+.content-wrapper,
+.modules-view,
+.loja-container,
+.page-container,
+.ranking-wrapper,
+.perfil-container,
+.trilhas-view {
+    animation: sementisContentFadeIn 0.2s ease-out;
 }
 
 img {

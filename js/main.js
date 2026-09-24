@@ -181,6 +181,7 @@ document.addEventListener('click', (e) => {
 function fazerLogout() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("cached_perfil");
     window.location.reload();
 }
 
@@ -188,24 +189,111 @@ function fazerLogout() {
 // --- NOVA FUNÇÃO: ATUALIZAR HEADER SUPERIOR ---
 // ========================================================
 function atualizarHeaderSuperior(ofensiva, moedas, vidas) {
-    // ATENÇÃO VINI: Verifique se esses IDs estão iguais aos do seu HTML
     const headerOfensiva = document.getElementById('header-ofensiva');
     const headerMoedas = document.getElementById('header-moedas');
     const headerVidas = document.getElementById('header-vidas');
 
-    if (headerOfensiva) headerOfensiva.textContent = ofensiva;
-    if (headerMoedas) headerMoedas.textContent = moedas;
-    if (headerVidas) headerVidas.textContent = vidas;
+    if (headerOfensiva && ofensiva !== undefined) headerOfensiva.textContent = ofensiva;
+    if (headerMoedas && moedas !== undefined) headerMoedas.textContent = moedas;
+    if (headerVidas && vidas !== undefined) headerVidas.textContent = vidas;
 }
 
+// Função centralizada para injetar os dados no DOM sem nenhum delay artificial
+function aplicarDadosPerfil(dados) {
+    if (!dados) return;
+
+    const nomeUsuario = dados.nome || 'Estudante';
+    const xpAtual = dados.progresso_nivel?.xp_no_nivel ?? 0;
+    const xpProximo = dados.progresso_nivel?.xp_proximo_nivel ?? 100;
+    const nivelAtual = dados.progresso_nivel?.nivel_atual ?? 1;
+    const xpTotal = dados.xp_total ?? 0;
+
+    const ofensiva = dados.ofensiva ?? 0;
+    const moedas = dados.moedas ?? 0;
+    const vidas = dados.vidas ?? 5;
+
+    const ligaId = dados.liga_id || 1;
+    let nomeLiga = "BRONZE";
+    let iconeLiga = "assets/ligas/liga_medalha_bronze.png";
+
+    if (ligaId === 2) {
+        nomeLiga = "PRATA";
+        iconeLiga = "assets/ligas/liga_trofeu_prata.png";
+    } else if (ligaId === 3) {
+        nomeLiga = "OURO";
+        iconeLiga = "assets/ligas/liga_trofeu_ouro.png";
+    } else if (ligaId === 4) {
+        nomeLiga = "DIAMANTE";
+        iconeLiga = "assets/ligas/liga_trofeu_diamante.png";
+    }
+
+    const porcentagem = xpProximo > 0 ? (xpAtual / xpProximo) * 100 : 0;
+    const porcentagemFaltante = Math.max(0, (100 - porcentagem).toFixed(0));
+
+    // 1. Atualizar Header Superior
+    atualizarHeaderSuperior(ofensiva, moedas, vidas);
+
+    // 2. Disparar evento para outros componentes (ex: Loja)
+    window.dispatchEvent(new CustomEvent('perfil:atualizado', {
+        detail: { ofensiva, moedas, vidas }
+    }));
+
+    // 3. Seletores da Tela Home
+    const homeBarra = document.getElementById('ui-progress-fill');
+    const homeTextoBarra = document.getElementById('ui-progress-text');
+    const homeNivel = document.getElementById('ui-user-level');
+    const homeNome = document.getElementById('ui-user-name');
+
+    if (homeBarra) homeBarra.style.setProperty('width', `${porcentagem}%`, 'important');
+    if (homeTextoBarra) homeTextoBarra.textContent = `Faltam ${porcentagemFaltante}% para o próximo nível`;
+    if (homeNivel) homeNivel.textContent = `Nível ${nivelAtual}`;
+    if (homeNome) homeNome.textContent = nomeUsuario;
+
+    // 4. Seletores da Tela de Perfil
+    const perfilNome = document.getElementById('perfil-user-name');
+    const perfilNivel = document.getElementById('perfil-user-level');
+    const perfilBarra = document.getElementById('perfil-progress-fill');
+    const perfilTextoBarra = document.getElementById('perfil-progress-text');
+    const perfilSequencia = document.getElementById('perfil-user-streak');
+    const perfilXpTotal = document.getElementById('perfil-user-xp-total');
+    const perfilLigaTexto = document.getElementById('perfil-user-liga-text');
+    const perfilLigaIcone = document.getElementById('perfil-user-liga-icon');
+
+    if (perfilBarra) perfilBarra.style.setProperty('width', `${porcentagem}%`, 'important');
+    if (perfilTextoBarra) perfilTextoBarra.textContent = `${xpAtual}/${xpProximo}`;
+    if (perfilNivel) perfilNivel.textContent = `LEVEL ${nivelAtual}`;
+    if (perfilNome) perfilNome.textContent = nomeUsuario;
+    if (perfilSequencia) perfilSequencia.textContent = ofensiva;
+    if (perfilXpTotal) perfilXpTotal.textContent = xpTotal;
+    if (perfilLigaTexto) perfilLigaTexto.textContent = nomeLiga;
+    if (perfilLigaIcone) perfilLigaIcone.src = iconeLiga;
+}
+
+// Carrega imediatamente do localStorage para renderização instantânea (0ms)
+function carregarStatsCacheados() {
+    try {
+        const cachedRaw = localStorage.getItem('cached_perfil') || localStorage.getItem('user');
+        if (cachedRaw) {
+            const cached = JSON.parse(cachedRaw);
+            aplicarDadosPerfil(cached);
+        }
+    } catch (e) {
+        console.warn("Erro ao ler cache do perfil:", e);
+    }
+}
+
+// Execução imediata no carregamento do script
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', carregarStatsCacheados);
+} else {
+    carregarStatsCacheados();
+}
 
 const atualizarBarraDeXP = async () => {
-    console.log("1. Iniciando busca de dados na API...");
     const rota = `${API_BASE_URL}/api/perfil`;
     const token = localStorage.getItem('token');
 
     if (!token) {
-        console.error("Token não encontrado! O usuário está logado?");
         return;
     }
 
@@ -223,6 +311,7 @@ const atualizarBarraDeXP = async () => {
             if (response.status === 401) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
+                localStorage.removeItem('cached_perfil');
                 window.location.href = 'login.html';
                 return;
             }
@@ -230,100 +319,15 @@ const atualizarBarraDeXP = async () => {
         }
 
         const dados = await response.json();
-        console.log("2. Dados recebidos do banco:", dados);
+        
+        // Salva no cache local para que a próxima visita/recarregamento seja a 0ms
+        localStorage.setItem('cached_perfil', JSON.stringify(dados));
 
-        // --- MAPEANDO TODOS OS DADOS DA API ---
-        const nomeUsuario = dados.nome;
-        const xpAtual = dados.progresso_nivel.xp_no_nivel;
-        const xpProximo = dados.progresso_nivel.xp_proximo_nivel;
-        const nivelAtual = dados.progresso_nivel.nivel_atual;
-        const xpTotal = dados.xp_total;
-
-        // Dados de Economia e Retenção
-        const ofensiva = dados.ofensiva;
-        const moedas = dados.moedas;
-        const vidas = dados.vidas;
-
-        // --- LÓGICA DA LIGA ---
-        const ligaId = dados.liga_id || 1; // Se não vier nada, garante que é 1
-        let nomeLiga = "BRONZE";
-        let iconeLiga = "assets/ligas/liga_medalha_bronze.png";
-
-        if (ligaId === 2) {
-            nomeLiga = "PRATA";
-            iconeLiga = "assets/ligas/liga_trofeu_prata.png";
-        } else if (ligaId === 3) {
-            nomeLiga = "OURO";
-            iconeLiga = "assets/ligas/liga_trofeu_ouro.png";
-        } else if (ligaId === 4) {
-            nomeLiga = "DIAMANTE";
-            iconeLiga = "assets/ligas/liga_trofeu_diamante.png";
-        }
-
-        // Calculando a porcentagem da barra verde (o que já foi preenchido)
-        const porcentagem = (xpAtual / xpProximo) * 100;
-
-        // Calculando o que FALTA para o texto da Home (100% - o que já tem)
-        const porcentagemFaltante = (100 - porcentagem).toFixed(0);
-
-        console.log(`3. Cálculo feito: Barra = ${porcentagem}%. Faltam = ${porcentagemFaltante}%`);
-
-        // Pequeno atraso para garantir que o HTML já renderizou tudo
-        setTimeout(() => {
-
-            // --- CHAMADA DA NOVA FUNÇÃO DO HEADER ---
-            atualizarHeaderSuperior(ofensiva, moedas, vidas);
-            window.dispatchEvent(new CustomEvent('perfil:atualizado', {
-                detail: { ofensiva, moedas, vidas }
-            }));
-            // --- 1. SELETORES DA TELA HOME ---
-            const homeBarra = document.getElementById('ui-progress-fill');
-            const homeTextoBarra = document.getElementById('ui-progress-text');
-            const homeNivel = document.getElementById('ui-user-level');
-            const homeNome = document.getElementById('ui-user-name');
-
-            // --- 2. SELETORES DA TELA DE PERFIL ---
-            const perfilNome = document.getElementById('perfil-user-name');
-            const perfilNivel = document.getElementById('perfil-user-level');
-            const perfilBarra = document.getElementById('perfil-progress-fill');
-            const perfilTextoBarra = document.getElementById('perfil-progress-text');
-            const perfilSequencia = document.getElementById('perfil-user-streak');
-            const perfilXpTotal = document.getElementById('perfil-user-xp-total');
-            const perfilLigaTexto = document.getElementById('perfil-user-liga-text');
-            const perfilLigaIcone = document.getElementById('perfil-user-liga-icon');
-
-            // ========================================================
-            // --- INJETANDO DADOS NA HOME (Se o usuário estiver lá) ---
-            // ========================================================
-            if (homeBarra) {
-                console.log("4a. Tela Home detectada! Atualizando barra...");
-                homeBarra.style.setProperty('width', `${porcentagem}%`, 'important');
-            }
-            if (homeTextoBarra) homeTextoBarra.textContent = `Faltam ${porcentagemFaltante}% para o próximo nível`;
-            if (homeNivel) homeNivel.textContent = `Nível ${nivelAtual}`;
-            if (homeNome) homeNome.textContent = nomeUsuario;
-
-
-            // ==========================================================
-            // --- INJETANDO DADOS NO PERFIL (Se o usuário estiver lá) ---
-            // ==========================================================
-            if (perfilBarra) {
-                console.log("4b. Tela de Perfil detectada! Atualizando barra...");
-                perfilBarra.style.setProperty('width', `${porcentagem}%`, 'important');
-            }
-            // No perfil o texto é no formato "XP/MAX_XP"
-            if (perfilTextoBarra) perfilTextoBarra.textContent = `${xpAtual}/${xpProximo}`;
-            if (perfilNivel) perfilNivel.textContent = `LEVEL ${nivelAtual}`;
-            if (perfilNome) perfilNome.textContent = nomeUsuario;
-            if (perfilSequencia) perfilSequencia.textContent = ofensiva;
-            if (perfilXpTotal) perfilXpTotal.textContent = xpTotal;
-            if (perfilLigaTexto) perfilLigaTexto.textContent = nomeLiga;
-            if (perfilLigaIcone) perfilLigaIcone.src = iconeLiga;
-
-        }, 100); // 100 milissegundos de delay
+        // Aplica imediatamente sem nenhum setTimeout artificial
+        aplicarDadosPerfil(dados);
 
     } catch (erro) {
-        console.error('Erro geral ao carregar os dados do usuário:', erro);
+        console.error('Erro ao atualizar perfil com API:', erro);
     }
 };
 
