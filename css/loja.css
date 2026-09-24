@@ -2107,9 +2107,24 @@
     left: 0;
     width: 100vw;
     height: 100vh;
+    display: none;
     pointer-events: none;
     z-index: 99990;
     overflow: hidden;
+}
+
+.drone-focus-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(
+        ellipse 230px 190px at 50% 30%,
+        rgba(8, 8, 28, 0.04) 0%,
+        rgba(8, 8, 28, 0.18) 46%,
+        rgba(8, 8, 28, 0.62) 100%
+    );
+    pointer-events: none;
+    animation: drone-focus-in 0.55s ease-out both;
 }
 
 .drone-actor {
@@ -2118,9 +2133,10 @@
     left: -200px;
     width: 180px;
     height: 180px;
-    z-index: 99992;
+    z-index: 3;
     transition: none;
-    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 0 10px rgba(169, 255, 113, 0.7)) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.7));
+    isolation: isolate;
 }
 
 .drone-video {
@@ -2135,6 +2151,11 @@
 
 .drone-actor.flying-away {
     animation: droneFlyAway 2.2s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+
+@keyframes drone-focus-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 @keyframes droneFlyIn {
