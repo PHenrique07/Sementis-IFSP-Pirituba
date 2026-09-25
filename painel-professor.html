@@ -66,7 +66,30 @@
                 </nav>
             </div>
 
-            <!-- Card de Destaque: Criar Sala Rápida (Estilo Kahoot) -->
+            <!-- Card de Destaque 1: Modo IA SemeIA (Gerador de Trilhas) -->
+            <div class="sidebar-semeia-card">
+                <div class="sidebar-semeia-pill">
+                    <span class="semeia-live-dot"></span>
+                    <span>MODO IA ATIVO</span>
+                </div>
+                <div class="sidebar-semeia-header">
+                    <div class="sidebar-semeia-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>SemeIA Studio</h4>
+                        <p>Criador de Trilhas</p>
+                    </div>
+                </div>
+                <p class="sidebar-semeia-desc">Transforme PDFs em trilhas com quiz e minigame coringa em segundos!</p>
+                <button class="btn-sidebar-create-semeia" onclick="trocarAbaPainel('semeia')">
+                    <span>✨ Gerar com SemeIA</span>
+                </button>
+            </div>
+
+            <!-- Card de Destaque 2: Criar Sala Rápida (Estilo Kahoot) -->
             <div class="sidebar-live-card">
                 <div class="sidebar-live-header">
                     <div class="sidebar-live-icon">
@@ -207,6 +230,15 @@
                             <input type="text" id="ia-nome-trilha"
                                    placeholder="Ex: Energia Solar no Cotidiano"
                                    maxlength="80" autocomplete="off" required>
+                        </div>
+
+                        <!-- Atribuir às turmas (opcional) -->
+                        <div class="input-group semeia-turmas-group">
+                            <label>Atribuir a Turmas (opcional):</label>
+                            <p class="semeia-turmas-hint">Marque as turmas que terão acesso a esta trilha logo após a geração:</p>
+                            <div class="semeia-turmas-checklist" id="semeia-turmas-checklist">
+                                <span class="semeia-turmas-loading">Carregando suas turmas...</span>
+                            </div>
                         </div>
 
                         <div class="semeia-form-msg" id="semeia-form-msg"></div>

@@ -6,7 +6,7 @@ import string
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 # Importando todas as tabelas do models.py
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade, GeradorTrilha
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade, GeradorTrilha, TurmaTrilha
 from datetime import date, timedelta
 import math
 
@@ -1143,15 +1143,27 @@ def verificar_cota_geracao_ia(session: Session, professor_id: int) -> dict:
             "pro": False,
         }
 
-    professor.trilhas_ia_restantes -= 1
-    session.add(professor)
-    session.commit()
+    # Apenas verifica — NÃO decrementa aqui!
+    # A cota só é consumida por consumir_cota_ia() após sucesso garantido.
     return {"permitido": True, "restantes": professor.trilhas_ia_restantes, "pro": False}
+
+
+def consumir_cota_ia(session: Session, professor_id: int):
+    """
+    Consome 1 cota de geração APENAS quando a trilha for gerada e salva com sucesso.
+    Se o professor for Pro, não desconta nada.
+    """
+    professor = session.get(Usuario, professor_id)
+    if professor and not professor.trilhas_ia_plano_pro:
+        if professor.trilhas_ia_restantes > 0:
+            professor.trilhas_ia_restantes -= 1
+            session.add(professor)
+            session.commit()
 
 
 def estornar_cota_ia(session: Session, professor_id: int):
     """
-    Restaura 1 cota de geração para o professor caso a geração falhe por erro técnico,
+    Restaura 1 cota de geração para o professor caso necessário,
     respeitando o teto de COTA_MENSAL_GRATUITA (nunca ultrapassa a cota máxima).
     """
     professor = session.get(Usuario, professor_id)
@@ -1161,10 +1173,10 @@ def estornar_cota_ia(session: Session, professor_id: int):
         session.commit()
 
 
-def persistir_trilha_ia(session: Session, professor_id: int, dados_yaml: dict) -> Trilha:
+def persistir_trilha_ia(session: Session, professor_id: int, dados_yaml: dict, turma_ids: list[int] | None = None) -> Trilha:
     """
     Converte o YAML gerado pela SemeIA e persiste nas tabelas existentes
-    (Modulo, Trilha, Atividade, Questao). Não recria tabelas nem remove dados.
+    (Modulo, Trilha, Atividade, Questao, TurmaTrilha). Não recria tabelas nem remove dados.
     """
     # Usa um módulo compartilhado para todas as trilhas geradas por professores
     modulo = session.exec(
@@ -1183,6 +1195,7 @@ def persistir_trilha_ia(session: Session, professor_id: int, dados_yaml: dict) -
         nome=dados_yaml["trilha"]["nome"],
         ordem=1,
         modulo_id=modulo.id,
+        professor_id=professor_id,
     )
     session.add(trilha)
     session.flush()
@@ -1225,5 +1238,90 @@ def persistir_trilha_ia(session: Session, professor_id: int, dados_yaml: dict) -
                 )
                 session.add(questao)
 
+    # Atribuição às turmas selecionadas pelo professor
+    if turma_ids:
+        for tid in turma_ids:
+            # Verifica se já não está atribuída
+            ja_existe = session.exec(
+                select(TurmaTrilha).where(TurmaTrilha.turma_id == tid, TurmaTrilha.trilha_id == trilha.id)
+            ).first()
+            if not ja_existe:
+                session.add(TurmaTrilha(turma_id=tid, trilha_id=trilha.id))
+
     session.commit()
     return trilha
+
+
+def atribuir_trilha_turma(session: Session, turma_id: int, trilha_id: int) -> TurmaTrilha:
+    """Associa uma trilha existente a uma turma."""
+    existente = session.exec(
+        select(TurmaTrilha).where(TurmaTrilha.turma_id == turma_id, TurmaTrilha.trilha_id == trilha_id)
+    ).first()
+    if existente:
+        return existente
+    associacao = TurmaTrilha(turma_id=turma_id, trilha_id=trilha_id)
+    session.add(associacao)
+    session.commit()
+    return associacao
+
+
+def remover_trilha_turma(session: Session, turma_id: int, trilha_id: int) -> bool:
+    """Remove a associação de uma trilha com a turma."""
+    associacao = session.exec(
+        select(TurmaTrilha).where(TurmaTrilha.turma_id == turma_id, TurmaTrilha.trilha_id == trilha_id)
+    ).first()
+    if associacao:
+        session.delete(associacao)
+        session.commit()
+        return True
+    return False
+
+
+def listar_trilhas_da_turma(session: Session, turma_id: int) -> list[dict]:
+    """Retorna todas as trilhas atribuídas a uma turma específica."""
+    registros = session.exec(
+        select(Trilha, TurmaTrilha.data_atribuicao)
+        .join(TurmaTrilha, TurmaTrilha.trilha_id == Trilha.id)
+        .where(TurmaTrilha.turma_id == turma_id)
+        .order_by(TurmaTrilha.data_atribuicao.desc())
+    ).all()
+
+    resultado = []
+    for trilha, data_atribuicao in registros:
+        atividades = session.exec(
+            select(Atividade).where(Atividade.trilha_id == trilha.id)
+        ).all()
+        resultado.append({
+            "id": trilha.id,
+            "nome": trilha.nome,
+            "total_atividades": len(atividades),
+            "tipos_atividades": list(set(a.tipo for a in atividades)),
+            "data_atribuicao": data_atribuicao.strftime("%d/%m/%Y"),
+        })
+    return resultado
+
+
+def listar_trilhas_do_professor(session: Session, professor_id: int) -> list[dict]:
+    """Retorna todas as trilhas criadas pelo professor via SemeIA."""
+    trilhas = session.exec(
+        select(Trilha)
+        .where(Trilha.professor_id == professor_id)
+        .order_by(Trilha.id.desc())
+    ).all()
+
+    resultado = []
+    for trilha in trilhas:
+        atividades = session.exec(
+            select(Atividade).where(Atividade.trilha_id == trilha.id)
+        ).all()
+        # Quantas turmas têm essa trilha
+        turmas_count = session.exec(
+            select(func.count(TurmaTrilha.id)).where(TurmaTrilha.trilha_id == trilha.id)
+        ).one() or 0
+        resultado.append({
+            "id": trilha.id,
+            "nome": trilha.nome,
+            "total_atividades": len(atividades),
+            "turmas_atribuidas": turmas_count,
+        })
+    return resultado

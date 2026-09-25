@@ -1,6 +1,6 @@
 /* ===================================================================
-   PAINEL DO PROFESSOR — CSS
-   Usa as variáveis globais de styles.css
+   PAINEL DO PROFESSOR â€” CSS
+   Usa as variÃ¡veis globais de styles.css
 =================================================================== */
 
 /* ---- Layout base ---- */
@@ -98,7 +98,7 @@
     color: #fff;
 }
 
-/* ---- Layout com Sidebar e Conteúdo ---- */
+/* ---- Layout com Sidebar e ConteÃºdo ---- */
 .prof-layout-container {
     max-width: 1280px;
     margin: 0 auto;
@@ -182,7 +182,7 @@
     letter-spacing: 0.5px;
 }
 
-/* Card da Barra Lateral: Criar Sala Rápida */
+/* Card da Barra Lateral: Criar Sala RÃ¡pida */
 .sidebar-live-card {
     background: linear-gradient(135deg, rgba(38, 48, 98, 0.9) 0%, rgba(26, 32, 75, 0.9) 100%);
     border: 2px solid rgba(169, 255, 113, 0.35);
@@ -257,7 +257,7 @@
     box-shadow: 0 6px 18px rgba(169, 255, 113, 0.45);
 }
 
-/* ---- Conteúdo Principal ---- */
+/* ---- ConteÃºdo Principal ---- */
 .prof-main-content {
     min-width: 0;
 }
@@ -292,7 +292,7 @@
     margin-top: 4px;
 }
 
-/* ---- Botão Nova Turma ---- */
+/* ---- BotÃ£o Nova Turma ---- */
 .btn-nova-turma {
     display: flex;
     align-items: center;
@@ -408,7 +408,7 @@
     flex-shrink: 0;
 }
 
-/* Código de convite */
+/* CÃ³digo de convite */
 .turma-codigo-wrapper {
     background: rgba(0,0,0,0.3);
     border: 1px solid rgba(169, 255, 113, 0.2);
@@ -515,7 +515,7 @@
 }
 
 /* =====================================================================
-   MODAL SHARED — Nova Turma e Ranking
+   MODAL SHARED â€” Nova Turma e Ranking
 ===================================================================== */
 .modal-overlay {
     position: fixed;
@@ -766,7 +766,7 @@
     vertical-align: middle;
 }
 
-/* Posição */
+/* PosiÃ§Ã£o */
 .rank-pos {
     font-weight: 800;
     font-size: 16px;
@@ -875,7 +875,7 @@
 }
 
 /* =====================================================================
-   SEMENTIS LIVE — ESTILOS DO PAINEL DO PROFESSOR
+   SEMENTIS LIVE â€” ESTILOS DO PAINEL DO PROFESSOR
 ===================================================================== */
 .live-hero-banner {
     background: linear-gradient(135deg, rgba(39, 50, 105, 0.95) 0%, rgba(22, 28, 70, 0.95) 100%);
@@ -981,7 +981,7 @@
     background: rgba(255, 255, 255, 0.18);
 }
 
-/* Seções de Tópicos */
+/* SeÃ§Ãµes de TÃ³picos */
 .live-topics-section,
 .live-recent-section {
     margin-bottom: 36px;
@@ -1196,7 +1196,7 @@
 }
 
 /* =====================================================================
-   BOTÃO FLUTUANTE ENTRAR EM TURMA (home.html — aluno)
+   BOTÃƒO FLUTUANTE ENTRAR EM TURMA (home.html â€” aluno)
 ===================================================================== */
 .btn-join-class {
     position: fixed;
@@ -1265,7 +1265,7 @@
 
 
 /* ===================================================================
-   SEMEIA � ABA GERAR TRILHA COM IA
+   SEMEIA — ABA GERAR TRILHA COM IA
 =================================================================== */
 
 .nav-semeia-badge {
@@ -1463,6 +1463,188 @@
     cursor: pointer; transition: all 0.2s ease;
 }
 .btn-semeia-nova:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+
+/* ======================================================================
+   SIDEBAR: CARD DE DESTAQUE SEMEIA (MODO IA)
+====================================================================== */
+.sidebar-semeia-card {
+    background: linear-gradient(135deg, rgba(45, 27, 85, 0.95) 0%, rgba(26, 32, 75, 0.95) 100%);
+    border: 2px solid rgba(167, 139, 250, 0.55);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 18px rgba(167, 139, 250, 0.25);
+    position: relative;
+    overflow: hidden;
+    animation: semeiaBorderGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes semeiaBorderGlow {
+    0% {
+        border-color: rgba(167, 139, 250, 0.45);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 14px rgba(167, 139, 250, 0.2);
+    }
+    50% {
+        border-color: rgba(169, 255, 113, 0.7);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 22px rgba(169, 255, 113, 0.3);
+    }
+    100% {
+        border-color: rgba(192, 132, 252, 0.8);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 24px rgba(192, 132, 252, 0.35);
+    }
+}
+
+.sidebar-semeia-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(169, 255, 113, 0.16);
+    border: 1px solid rgba(169, 255, 113, 0.45);
+    border-radius: var(--radius-full);
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--color-accent);
+    margin-bottom: 10px;
+}
+
+.semeia-live-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    animation: livePulse 1s infinite alternate;
+}
+
+.sidebar-semeia-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.sidebar-semeia-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.35) 0%, rgba(169, 255, 113, 0.25) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e9d5ff;
+    flex-shrink: 0;
+}
+
+.sidebar-semeia-header h4 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.sidebar-semeia-header p {
+    font-size: 11px;
+    color: #c4b5fd;
+    font-weight: 600;
+}
+
+.sidebar-semeia-desc {
+    font-size: 12px;
+    color: #cbd5e1;
+    line-height: 1.45;
+    margin-bottom: 14px;
+}
+
+.btn-sidebar-create-semeia {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+    transition: all 0.25s ease;
+    font-family: var(--font-family);
+}
+
+.btn-sidebar-create-semeia:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+    filter: brightness(1.1);
+}
+
+/* ======================================================================
+   CHECKLIST DE TURMAS NO FORMULÁRIO SEMEIA
+====================================================================== */
+.semeia-turmas-group {
+    margin-top: 14px;
+}
+
+.semeia-turmas-hint {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: -4px;
+    margin-bottom: 10px;
+}
+
+.semeia-turmas-checklist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.semeia-turma-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 7px 14px;
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.semeia-turma-chip:hover {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.4);
+}
+
+.semeia-turma-chip input[type="checkbox"] {
+    accent-color: #a855f7;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+}
+
+.semeia-turma-chip.checked {
+    background: rgba(168, 85, 247, 0.25);
+    border-color: #a855f7;
+    color: #fff;
+    font-weight: 600;
+}
+
+.semeia-turmas-loading,
+.semeia-turmas-vazio {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    padding: 6px 0;
+}
 
 @media (max-width: 600px) {
     .semeia-upload-card { padding: 20px 16px; }

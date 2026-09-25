@@ -444,6 +444,7 @@ function trocarAbaPainel(aba) {
         if (viewSemeia) viewSemeia.style.display = 'block';
         if (btnSemeia)  btnSemeia.classList.add('active');
         carregarCotaSemeIA();
+        carregarTurmasChecklistSemeIA();
     } else {
         if (viewTurmas) viewTurmas.style.display = 'block';
         if (btnTurmas)  btnTurmas.classList.add('active');
@@ -664,6 +665,13 @@ document.addEventListener('keydown', (e) => {
 carregarTurmas();
 carregarTopicosLive();
 
+// Se a URL tiver ?aba=semeia ou ?aba=live, abre direto
+const paramsUrl = new URLSearchParams(window.location.search);
+const abaParam = paramsUrl.get('aba');
+if (abaParam && ['turmas', 'live', 'semeia'].includes(abaParam)) {
+    trocarAbaPainel(abaParam);
+}
+
 
 // =====================================================================
 // SEMEIA — GERAÇÃO DE TRILHAS COM IA
@@ -703,6 +711,36 @@ async function carregarCotaSemeIA() {
         console.error('Erro ao carregar cota SemeIA:', e);
     }
 }
+
+async function carregarTurmasChecklistSemeIA() {
+    const checklist = document.getElementById('semeia-turmas-checklist');
+    if (!checklist) return;
+    try {
+        const res = await apiFetch('/api/professor/turmas');
+        if (!res) return;
+        const dados = await res.json();
+        const turmas = Array.isArray(dados) ? dados : (dados.turmas || []);
+        if (turmas.length === 0) {
+            checklist.innerHTML = '<span class="semeia-turmas-vazio">Nenhuma turma encontrada. A trilha será criada para sua biblioteca de trilhas.</span>';
+            return;
+        }
+        checklist.innerHTML = turmas.map(t => `
+            <label class="semeia-turma-chip" id="chip-turma-${t.id}">
+                <input type="checkbox" name="semeia_turma" value="${t.id}" onchange="toggleChipSemeIA(${t.id}, this.checked)">
+                <span>${escHtml(t.nome)}</span>
+            </label>
+        `).join('');
+    } catch (e) {
+        checklist.innerHTML = '<span class="semeia-turmas-vazio">Erro ao carregar turmas.</span>';
+    }
+}
+
+function toggleChipSemeIA(id, isChecked) {
+    const chip = document.getElementById(`chip-turma-${id}`);
+    if (chip) chip.classList.toggle('checked', isChecked);
+}
+window.toggleChipSemeIA = toggleChipSemeIA;
+window.carregarTurmasChecklistSemeIA = carregarTurmasChecklistSemeIA;
 
 // ---- Drag & Drop ----
 function semeiaOnDragOver(e) {
@@ -747,9 +785,15 @@ async function gerarTrilhaIA(evento) {
         return;
     }
 
+    const turmasSelecionadas = Array.from(document.querySelectorAll('input[name="semeia_turma"]:checked'))
+        .map(cb => cb.value);
+
     const formData = new FormData();
     formData.append('arquivo', semeiaArquivoAtual);
     formData.append('nome_trilha', nomeTrilha);
+    if (turmasSelecionadas.length > 0) {
+        formData.append('turma_ids', turmasSelecionadas.join(','));
+    }
 
     mostrarEstadoSemeIA('processando');
     iniciarRotacaoMensagens();

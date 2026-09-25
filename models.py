@@ -55,6 +55,8 @@ class Trilha(SQLModel, table=True):
     
     # Chave estrangeira ligando a Trilha ao Módulo
     modulo_id: int = Field(foreign_key="modulo.id")
+    # Professor criador da trilha (se foi gerada via SemeIA)
+    professor_id: int | None = Field(default=None, foreign_key="usuario.id", index=True)
 
 # 4. Tabela de Atividades (As "bolinhas" e jogos dentro da trilha)
 class Atividade(SQLModel, table=True):
@@ -186,3 +188,12 @@ class GeradorTrilha(SQLModel, table=True):
 
     data_criacao: datetime = Field(default_factory=datetime.utcnow)
     data_conclusao: datetime | None = Field(default=None)
+
+
+# 16. Associação de Trilhas a Turmas (Muitos-Para-Muitos)
+class TurmaTrilha(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    turma_id: int = Field(foreign_key="turma.id", index=True)
+    trilha_id: int = Field(foreign_key="trilha.id", index=True)
+    data_atribuicao: datetime = Field(default_factory=datetime.utcnow)
+

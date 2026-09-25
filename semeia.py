@@ -16,6 +16,28 @@ import yaml
 import httpx
 
 # ======================================================================
+# CARREGAMENTO AUTOMÁTICO DE .ENV
+# ======================================================================
+def _carregar_env_se_existir():
+    """Carrega variáveis de um arquivo .env na raiz do projeto se existir."""
+    caminho_env = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if os.path.exists(caminho_env):
+        try:
+            with open(caminho_env, "r", encoding="utf-8") as f:
+                for linha in f:
+                    linha = linha.strip()
+                    if linha and not linha.startswith("#") and "=" in linha:
+                        chave, valor = linha.split("=", 1)
+                        chave = chave.strip()
+                        valor = valor.strip().strip('"').strip("'")
+                        if chave and chave not in os.environ:
+                            os.environ[chave] = valor
+        except Exception:
+            pass
+
+_carregar_env_se_existir()
+
+# ======================================================================
 # CONFIGURAÇÕES — ALTERE AQUI SE PRECISAR
 # ======================================================================
 
@@ -40,7 +62,7 @@ LIMITE_CHARS_CONTEXTO = 15_000  # ← mude aqui se o modelo suportar mais contex
 LIMITE_CHARS_MODERACAO = 3_000  # ← mude aqui para aumentar a amostra de moderação
 
 # ======================================================================
-# CHAVES DE API (via variáveis de ambiente — nunca cole keys aqui)
+# CHAVES DE API (via .env ou variáveis de ambiente — ou cole aqui se preferir)
 # ======================================================================
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 OPENAI_API_KEY     = os.environ.get("OPENAI_API_KEY", "")

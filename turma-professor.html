@@ -174,6 +174,30 @@
                     </div>
                 </section>
 
+                <!-- Trilhas SemeIA Personalizadas da Turma -->
+                <section class="panel trilhas-semeia-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <div class="semeia-pill-badge">
+                                <span class="semeia-live-dot"></span>
+                                <span>IA PERSONALIZADA</span>
+                            </div>
+                            <h2>Trilhas SemeIA da Turma</h2>
+                        </div>
+                        <div class="trilhas-semeia-btn-group">
+                            <button type="button" class="btn-semeia-atribuir" onclick="abrirModalAtribuirTrilha()">
+                                + Atribuir Trilha
+                            </button>
+                            <a href="painel-professor.html?aba=semeia" class="btn-semeia-gerar-link">
+                                ✨ Gerar Nova com IA
+                            </a>
+                        </div>
+                    </div>
+                    <div class="trilhas-semeia-container" id="trilhas-semeia-container">
+                        <p class="empty-message">Carregando trilhas da SemeIA...</p>
+                    </div>
+                </section>
+
                 <!-- Desempenho e Ranking dos Alunos -->
                 <section class="panel desempenho-panel">
                     <div class="panel-heading">
@@ -305,6 +329,36 @@
             <div class="raiox-footer">
                 <span class="raiox-entrada" id="raiox-entrada">—</span>
                 <button type="button" class="btn-primary" id="fechar-raiox-btn">Fechar Ficha</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL: ATRIBUIR TRILHA DA SEMEIA À TURMA
+    =================================================== -->
+    <div class="modal-overlay" id="modal-atribuir-trilha" role="dialog" aria-modal="true" aria-labelledby="modal-atribuir-title" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-icon" style="background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; display:flex; align-items:center; justify-content:center; font-size:22px; width:48px; height:48px; border-radius:12px;">
+                    ✨
+                </div>
+                <div>
+                    <h2 id="modal-atribuir-title" style="margin:0; font-size:18px; font-weight:800; color:#fff;">Atribuir Trilha da SemeIA</h2>
+                    <p style="margin:4px 0 0; font-size:13px; color:var(--turma-muted);">Selecione uma de suas trilhas para esta turma</p>
+                </div>
+                <button type="button" class="modal-close" onclick="fecharModalAtribuirTrilha()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+                <div class="input-group">
+                    <label for="select-trilha-existente" style="font-size:13px; font-weight:600; color:#fff; display:block; margin-bottom:6px;">Trilha Criada</label>
+                    <select id="select-trilha-existente" style="width:100%; padding:12px; border-radius:10px; background:rgba(16,16,55,0.85); border:1px solid var(--turma-line); color:#fff; font-family:inherit; font-size:14px;">
+                        <option value="">Carregando suas trilhas...</option>
+                    </select>
+                </div>
+                <div class="modal-msg" id="modal-atribuir-msg" style="font-size:13px;"></div>
+                <button type="button" class="btn-primary" id="btn-confirmar-atribuir" onclick="confirmarAtribuicaoTrilha()" style="width:100%; padding:12px; background:linear-gradient(135deg, #7c3aed 0%, #10b981 100%); border:none; border-radius:10px; color:#fff; font-weight:700; cursor:pointer;">
+                    <span>Adicionar à Turma</span>
+                </button>
             </div>
         </div>
     </div>
