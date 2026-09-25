@@ -17,12 +17,14 @@ async function exibirListaAmigos() {
     lista.replaceChildren();
 
     for (const amigo of amigos) {
-        const cartao = document.createElement('article');
+        const cartao = document.createElement('button');
         const imagem = document.createElement('img');
         const nome = document.createElement('h3');
         const nivel = document.createElement('p');
         const ofensiva = document.createElement('p');
+        const idAmigo = amigo.id ?? amigo.amizade_id ?? amigo.usuario_id;
 
+        cartao.type = 'button';
         cartao.className = 'cartao-amigo';
         imagem.src = amigo.avatar_url || '/assets/icons/icone_usuario.png';
         imagem.alt = `Foto de ${amigo.nome || 'amigo'}`;
@@ -31,6 +33,85 @@ async function exibirListaAmigos() {
         ofensiva.textContent = `Ofensiva: ${amigo.ofensiva ?? 0} dias`;
 
         cartao.append(imagem, nome, nivel, ofensiva);
+
+        if (idAmigo === undefined || idAmigo === null || String(idAmigo).trim() === '') {
+            cartao.disabled = true;
+        } else {
+            cartao.addEventListener('click', async () => {
+                let modal = document.querySelector('#modal-perfil-amigo');
+                if (modal) modal.remove();
+
+                modal = document.createElement('div');
+                const conteudo = document.createElement('div');
+                const fechar = document.createElement('button');
+                const titulo = document.createElement('h2');
+                const avatar = document.createElement('img');
+                const tema = document.createElement('p');
+                const estatisticasTitulo = document.createElement('h3');
+                const estatisticas = document.createElement('div');
+
+                modal.id = 'modal-perfil-amigo';
+                modal.className = 'modal-overlay';
+                conteudo.className = 'modal-content';
+                fechar.type = 'button';
+                fechar.textContent = 'Fechar';
+                fechar.setAttribute('aria-label', 'Fechar perfil');
+                titulo.textContent = amigo.nome || 'Perfil do amigo';
+                avatar.alt = `Avatar de ${amigo.nome || 'amigo'}`;
+                avatar.src = amigo.avatar_url || '/assets/icons/icone_usuario.png';
+                tema.textContent = 'Tema: Carregando...';
+                estatisticasTitulo.textContent = 'Estatísticas';
+
+                const fecharModal = () => modal.remove();
+                fechar.addEventListener('click', fecharModal);
+                modal.addEventListener('click', evento => {
+                    if (evento.target === modal) fecharModal();
+                });
+
+                conteudo.append(fechar, titulo, avatar, tema, estatisticasTitulo, estatisticas);
+                modal.appendChild(conteudo);
+                document.body.appendChild(modal);
+
+                try {
+                    const respostaPerfil = await fetch(`/api/amigos/${encodeURIComponent(idAmigo)}/perfil`);
+                    if (!respostaPerfil.ok) {
+                        throw new Error(`Erro ao carregar o perfil: ${respostaPerfil.status}`);
+                    }
+
+                    const dados = await respostaPerfil.json();
+                    const perfil = dados?.perfil ?? dados ?? {};
+                    const temaPerfil = perfil.tema ?? perfil.theme ?? 'Não informado';
+                    const dadosEstatisticas = perfil.estatisticas ?? perfil['estatísticas'] ?? perfil.stats;
+
+                    tema.textContent = `Tema: ${temaPerfil}`;
+                    if (perfil.avatar_url || perfil.avatar) {
+                        avatar.src = perfil.avatar_url || perfil.avatar;
+                    }
+
+                    estatisticas.replaceChildren();
+                    if (dadosEstatisticas && typeof dadosEstatisticas === 'object' && !Array.isArray(dadosEstatisticas)) {
+                        Object.entries(dadosEstatisticas).forEach(([chave, valor]) => {
+                            const estatistica = document.createElement('p');
+                            const chaveElemento = document.createElement('strong');
+                            chaveElemento.textContent = `${chave}: `;
+                            estatistica.append(chaveElemento, document.createTextNode(String(valor ?? '')));
+                            estatisticas.appendChild(estatistica);
+                        });
+                    } else {
+                        const semEstatisticas = document.createElement('p');
+                        semEstatisticas.textContent = dadosEstatisticas == null
+                            ? 'Nenhuma estatística disponível.'
+                            : String(dadosEstatisticas);
+                        estatisticas.appendChild(semEstatisticas);
+                    }
+                } catch (erro) {
+                    console.error('Não foi possível carregar o perfil do amigo.', erro);
+                    tema.textContent = 'Não foi possível carregar o perfil.';
+                    estatisticas.replaceChildren();
+                }
+            });
+        }
+
         lista.appendChild(cartao);
     }
 }
