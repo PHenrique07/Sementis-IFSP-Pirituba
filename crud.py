@@ -6,7 +6,7 @@ import string
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 # Importando todas as tabelas do models.py
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade, GeradorTrilha
 from datetime import date, timedelta
 import math
 
@@ -1100,3 +1100,118 @@ def obter_perfil_publico(session: Session, usuario_id: int):
         "tema_url": imagem_tema,
         "badges": [] # Placeholder para futuros emblemas
     }
+
+
+# ======================================================
+# SEMEIA — Cota de Geração de Trilhas por IA
+# ======================================================
+
+def verificar_cota_geracao_ia(session: Session, professor_id: int) -> dict:
+    """
+    Verifica se o professor tem cota disponível e decrementa em 1.
+    A cota NUNCA acumula: o reset mensal sempre volta para COTA_MENSAL_GRATUITA.
+    Retorna dict com 'permitido', 'restantes' e 'pro'.
+    """
+    from semeia import COTA_MENSAL_GRATUITA  # fonte única da verdade da cota
+
+    professor = session.get(Usuario, professor_id)
+    if not professor:
+        return {"permitido": False, "motivo": "Professor não encontrado"}
+
+    hoje = date.today()
+    # Reset mensal: sempre retorna para COTA_MENSAL_GRATUITA, nunca acumula saldo
+    if (
+        professor.trilhas_ia_reset_mes is None
+        or professor.trilhas_ia_reset_mes.month != hoje.month
+        or professor.trilhas_ia_reset_mes.year != hoje.year
+    ):
+        professor.trilhas_ia_restantes = COTA_MENSAL_GRATUITA
+        professor.trilhas_ia_reset_mes = hoje
+        session.add(professor)
+        session.commit()
+
+    # Plano Pro: sem limite
+    if professor.trilhas_ia_plano_pro:
+        return {"permitido": True, "restantes": None, "pro": True}
+
+    # Plano gratuito: máximo COTA_MENSAL_GRATUITA por mês
+    if professor.trilhas_ia_restantes <= 0:
+        return {
+            "permitido": False,
+            "motivo": f"Você atingiu o limite de {COTA_MENSAL_GRATUITA} trilhas gratuitas este mês.",
+            "restantes": 0,
+            "pro": False,
+        }
+
+    professor.trilhas_ia_restantes -= 1
+    session.add(professor)
+    session.commit()
+    return {"permitido": True, "restantes": professor.trilhas_ia_restantes, "pro": False}
+
+
+def persistir_trilha_ia(session: Session, professor_id: int, dados_yaml: dict) -> Trilha:
+    """
+    Converte o YAML gerado pela SemeIA e persiste nas tabelas existentes
+    (Modulo, Trilha, Atividade, Questao). Não recria tabelas nem remove dados.
+    """
+    # Usa um módulo compartilhado para todas as trilhas geradas por professores
+    modulo = session.exec(
+        select(Modulo).where(Modulo.nome == "Trilhas Personalizadas")
+    ).first()
+    if not modulo:
+        modulo = Modulo(
+            nome="Trilhas Personalizadas",
+            descricao="Trilhas geradas pelos professores com a SemeIA",
+            ordem=99,
+        )
+        session.add(modulo)
+        session.flush()
+
+    trilha = Trilha(
+        nome=dados_yaml["trilha"]["nome"],
+        ordem=1,
+        modulo_id=modulo.id,
+    )
+    session.add(trilha)
+    session.flush()
+
+    for i, atividade_yaml in enumerate(dados_yaml["atividades"]):
+        atividade = Atividade(
+            nome=atividade_yaml["nome"],
+            tipo=atividade_yaml["tipo"],
+            ordem=i + 1,
+            xp_recompensa=10,
+            moedas_recompensa=5,
+            trilha_id=trilha.id,
+        )
+        session.add(atividade)
+        session.flush()
+
+        if atividade_yaml["tipo"] == "minigame":
+            # Minigame: um único registro de Questao guarda os metadados do minigame
+            questao = Questao(
+                atividade_id=atividade.id,
+                tipo_layout="minigame",
+                conteudo={
+                    "subtipo":  atividade_yaml.get("subtipo", "quiz_rapido"),
+                    "pares":    atividade_yaml.get("pares", []),
+                    "palavras": atividade_yaml.get("palavras", []),
+                    "questoes": atividade_yaml.get("questoes", []),
+                }
+            )
+            session.add(questao)
+        else:
+            for q in atividade_yaml.get("questoes", []):
+                questao = Questao(
+                    atividade_id=atividade.id,
+                    tipo_layout=q["tipo"],
+                    conteudo={
+                        "pergunta":    q["pergunta"],
+                        "opcoes":      q["opcoes"],
+                        "curiosidade": q.get("curiosidade", ""),
+                    }
+                )
+                session.add(questao)
+
+    session.commit()
+    return trilha

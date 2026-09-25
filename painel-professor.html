@@ -58,6 +58,11 @@
                         <span>Sementis Live</span>
                         <span class="nav-live-badge">NOVO</span>
                     </button>
+                    <button class="prof-nav-item" id="nav-btn-semeia" onclick="trocarAbaPainel('semeia')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                        <span>SemeIA</span>
+                        <span class="nav-live-badge nav-semeia-badge">IA</span>
+                    </button>
                 </nav>
             </div>
 
@@ -161,6 +166,97 @@
                         </div>
                     </div>
                 </div>
+            </section>
+
+
+            <!-- ===================================================
+                 ABA 3: SEMEIA — GERAR TRILHA COM IA
+            =================================================== -->
+            <section class="prof-view-section" id="view-semeia" style="display: none;">
+                <div class="prof-title-row">
+                    <div>
+                        <h1 class="prof-page-title">SemeIA <span>Gerar Trilha</span></h1>
+                        <p class="prof-page-subtitle">Envie um PDF e a SemeIA cria uma trilha completa com questões e minigame.</p>
+                    </div>
+                    <div class="semeia-cota-badge" id="semeia-cota-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                        <span id="semeia-cota-texto">Carregando cota...</span>
+                    </div>
+                </div>
+
+                <!-- ---- ESTADO 1: FORMULÁRIO IDLE ---- -->
+                <div id="semeia-estado-idle">
+                    <form id="semeia-form" onsubmit="gerarTrilhaIA(event)" class="semeia-upload-card">
+
+                        <!-- Drop zone -->
+                        <label for="ia-pdf-input" class="semeia-dropzone" id="semeia-dropzone"
+                               ondragover="semeiaOnDragOver(event)" ondragleave="semeiaOnDragLeave(event)"
+                               ondrop="semeiaOnDrop(event)">
+                            <div class="semeia-drop-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            </div>
+                            <p class="semeia-drop-title" id="semeia-drop-title">Arraste seu PDF aqui</p>
+                            <p class="semeia-drop-hint">ou clique para selecionar &nbsp;·&nbsp; máx. 5 MB · 30 páginas</p>
+                            <input type="file" id="ia-pdf-input" accept=".pdf" style="display:none;"
+                                   onchange="semeiaOnFileSelect(event)">
+                        </label>
+
+                        <!-- Nome da trilha -->
+                        <div class="input-group semeia-nome-group">
+                            <label for="ia-nome-trilha">Nome da Trilha</label>
+                            <input type="text" id="ia-nome-trilha"
+                                   placeholder="Ex: Energia Solar no Cotidiano"
+                                   maxlength="80" autocomplete="off" required>
+                        </div>
+
+                        <div class="semeia-form-msg" id="semeia-form-msg"></div>
+
+                        <button type="submit" class="btn-semeia-gerar" id="btn-semeia-gerar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <span>Gerar com SemeIA</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- ---- ESTADO 2: PROCESSANDO ---- -->
+                <div id="semeia-estado-processando" style="display:none;" class="semeia-status-card">
+                    <div class="semeia-pulse-ring">
+                        <div class="semeia-pulse-inner">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                        </div>
+                    </div>
+                    <h3 class="semeia-status-title">SemeIA está trabalhando...</h3>
+                    <p class="semeia-status-msg" id="semeia-msg-processando">🌱 Lendo o material...</p>
+                    <div class="semeia-progress-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+
+                <!-- ---- ESTADO 3: SUCESSO ---- -->
+                <div id="semeia-estado-sucesso" style="display:none;" class="semeia-status-card semeia-sucesso">
+                    <div class="semeia-sucesso-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <h3 class="semeia-status-title">Trilha criada com sucesso! 🎉</h3>
+                    <p class="semeia-status-msg" id="semeia-msg-sucesso">A trilha já está disponível na plataforma.</p>
+                    <div class="semeia-sucesso-actions">
+                        <button class="btn-semeia-nova" onclick="resetarSemeIA()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.64"/></svg>
+                            Gerar outra
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ---- ESTADO 4: ERRO ---- -->
+                <div id="semeia-estado-erro" style="display:none;" class="semeia-status-card semeia-erro">
+                    <div class="semeia-erro-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <h3 class="semeia-status-title">Ops, algo deu errado</h3>
+                    <p class="semeia-status-msg" id="semeia-msg-erro">Erro desconhecido</p>
+                    <button class="btn-semeia-nova" onclick="resetarSemeIA()">Tentar novamente</button>
+                </div>
+
             </section>
 
         </main>

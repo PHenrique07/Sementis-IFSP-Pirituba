@@ -424,23 +424,29 @@ let topicosLiveCache = [];
 let topicoSelecionadoLive = 'todos';
 
 function trocarAbaPainel(aba) {
-    const viewTurmas = document.getElementById('view-turmas');
-    const viewLive   = document.getElementById('view-live');
-    const btnTurmas  = document.getElementById('nav-btn-turmas');
-    const btnLive    = document.getElementById('nav-btn-live');
+    const viewTurmas  = document.getElementById('view-turmas');
+    const viewLive    = document.getElementById('view-live');
+    const viewSemeia  = document.getElementById('view-semeia');
+    const btnTurmas   = document.getElementById('nav-btn-turmas');
+    const btnLive     = document.getElementById('nav-btn-live');
+    const btnSemeia   = document.getElementById('nav-btn-semeia');
+
+    // Oculta todas as views e remove 'active' de todos os botões
+    [viewTurmas, viewLive, viewSemeia].forEach(v => { if (v) v.style.display = 'none'; });
+    [btnTurmas, btnLive, btnSemeia].forEach(b => { if (b) b.classList.remove('active'); });
 
     if (aba === 'live') {
-        if (viewTurmas) viewTurmas.style.display = 'none';
-        if (viewLive)   viewLive.style.display   = 'block';
-        if (btnTurmas)  btnTurmas.classList.remove('active');
-        if (btnLive)    btnLive.classList.add('active');
+        if (viewLive)  viewLive.style.display  = 'block';
+        if (btnLive)   btnLive.classList.add('active');
         carregarTopicosLive();
         carregarSalasRecentesLive();
+    } else if (aba === 'semeia') {
+        if (viewSemeia) viewSemeia.style.display = 'block';
+        if (btnSemeia)  btnSemeia.classList.add('active');
+        carregarCotaSemeIA();
     } else {
         if (viewTurmas) viewTurmas.style.display = 'block';
-        if (viewLive)   viewLive.style.display   = 'none';
         if (btnTurmas)  btnTurmas.classList.add('active');
-        if (btnLive)    btnLive.classList.remove('active');
     }
 }
 window.trocarAbaPainel = trocarAbaPainel;
@@ -658,3 +664,189 @@ document.addEventListener('keydown', (e) => {
 carregarTurmas();
 carregarTopicosLive();
 
+
+// =====================================================================
+// SEMEIA — GERAÇÃO DE TRILHAS COM IA
+// =====================================================================
+
+let semeiaJobIntervalo = null;
+let semeiaArquivoAtual = null;
+
+// Mensagens rotatórias exibidas durante o processamento
+const SEMEIA_MSGS_PROCESSANDO = [
+    '🌱 SemeIA está lendo o material...',
+    '🧠 SemeIA está criando as questões...',
+    '✨ SemeIA está montando a trilha...',
+    '🎮 SemeIA está preparando o minigame...',
+    '📚 Finalizando e salvando sua trilha...',
+];
+
+async function carregarCotaSemeIA() {
+    try {
+        const res = await apiFetch('/api/professor/cota-ia');
+        if (!res) return;
+        const dados = await res.json();
+        const textoEl = document.getElementById('semeia-cota-texto');
+        if (!textoEl) return;
+        if (dados.plano_pro) {
+            textoEl.textContent = '★ Pro — gerações ilimitadas';
+        } else {
+            const restantes = dados.restantes ?? 0;
+            const total     = dados.cota_total ?? 3;
+            textoEl.textContent = `${restantes}/${total} gerações este mês`;
+            if (restantes === 0) {
+                const badge = document.getElementById('semeia-cota-badge');
+                if (badge) badge.classList.add('semeia-cota-esgotada');
+            }
+        }
+    } catch (e) {
+        console.error('Erro ao carregar cota SemeIA:', e);
+    }
+}
+
+// ---- Drag & Drop ----
+function semeiaOnDragOver(e) {
+    e.preventDefault();
+    document.getElementById('semeia-dropzone')?.classList.add('dragover');
+}
+function semeiaOnDragLeave() {
+    document.getElementById('semeia-dropzone')?.classList.remove('dragover');
+}
+function semeiaOnDrop(e) {
+    e.preventDefault();
+    semeiaOnDragLeave();
+    const arquivo = e.dataTransfer?.files?.[0];
+    if (arquivo) definirArquivoSemeIA(arquivo);
+}
+function semeiaOnFileSelect(e) {
+    const arquivo = e.target.files?.[0];
+    if (arquivo) definirArquivoSemeIA(arquivo);
+}
+function definirArquivoSemeIA(arquivo) {
+    semeiaArquivoAtual = arquivo;
+    const titulo = document.getElementById('semeia-drop-title');
+    if (titulo) titulo.textContent = `📄 ${arquivo.name}`;
+    document.getElementById('semeia-dropzone')?.classList.add('arquivo-selecionado');
+}
+window.semeiaOnDragOver  = semeiaOnDragOver;
+window.semeiaOnDragLeave = semeiaOnDragLeave;
+window.semeiaOnDrop      = semeiaOnDrop;
+window.semeiaOnFileSelect = semeiaOnFileSelect;
+
+// ---- Envio do formulário ----
+async function gerarTrilhaIA(evento) {
+    evento.preventDefault();
+
+    if (!semeiaArquivoAtual) {
+        mostrarMsgFormSemeIA('Selecione um arquivo PDF antes de continuar.', 'erro');
+        return;
+    }
+    const nomeTrilha = document.getElementById('ia-nome-trilha').value.trim();
+    if (!nomeTrilha) {
+        mostrarMsgFormSemeIA('Informe um nome para a trilha.', 'erro');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('arquivo', semeiaArquivoAtual);
+    formData.append('nome_trilha', nomeTrilha);
+
+    mostrarEstadoSemeIA('processando');
+    iniciarRotacaoMensagens();
+
+    try {
+        // SEM Content-Type header — o browser define com boundary correto
+        const res = await fetch(`${API_BASE_URL}/api/professor/gerar-trilha`, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+
+        if (!res.ok) {
+            const dados = await res.json();
+            pararRotacaoMensagens();
+            mostrarEstadoSemeIA('erro', dados.erro || 'Erro ao iniciar geração.');
+            return;
+        }
+
+        const { job_id } = await res.json();
+        aguardarJobSemeIA(job_id);
+    } catch (e) {
+        pararRotacaoMensagens();
+        mostrarEstadoSemeIA('erro', 'Erro de conexão. Verifique o servidor.');
+    }
+}
+window.gerarTrilhaIA = gerarTrilhaIA;
+
+// ---- Polling do status do job ----
+async function aguardarJobSemeIA(jobId) {
+    semeiaJobIntervalo = setInterval(async () => {
+        try {
+            const res = await apiFetch(`/api/professor/trilha-status/${jobId}`);
+            if (!res) { pararRotacaoMensagens(); return; }
+            const dados = await res.json();
+
+            if (dados.status === 'concluido') {
+                clearInterval(semeiaJobIntervalo);
+                pararRotacaoMensagens();
+                mostrarEstadoSemeIA('sucesso', `Trilha "${dados.trilha_id ? '#' + dados.trilha_id : ''}" criada e já disponível!`);
+                carregarCotaSemeIA(); // Atualiza contador após sucesso
+            } else if (dados.status === 'erro') {
+                clearInterval(semeiaJobIntervalo);
+                pararRotacaoMensagens();
+                mostrarEstadoSemeIA('erro', dados.erro || 'Erro durante a geração.');
+            }
+        } catch (e) {
+            console.error('Erro ao verificar status da SemeIA:', e);
+        }
+    }, 3000); // Polling a cada 3 segundos
+}
+
+// ---- Gerenciamento de estados da UI ----
+function mostrarEstadoSemeIA(estado, mensagem = '') {
+    const estados = ['idle', 'processando', 'sucesso', 'erro'];
+    estados.forEach(e => {
+        const el = document.getElementById(`semeia-estado-${e}`);
+        if (el) el.style.display = (e === estado) ? 'block' : 'none';
+    });
+    if (mensagem) {
+        const msgEl = document.getElementById(`semeia-msg-${estado}`);
+        if (msgEl) msgEl.textContent = mensagem;
+    }
+}
+
+function resetarSemeIA() {
+    if (semeiaJobIntervalo) clearInterval(semeiaJobIntervalo);
+    semeiaArquivoAtual = null;
+    const titulo = document.getElementById('semeia-drop-title');
+    if (titulo) titulo.textContent = 'Arraste seu PDF aqui';
+    document.getElementById('semeia-dropzone')?.classList.remove('arquivo-selecionado');
+    document.getElementById('ia-nome-trilha').value = '';
+    document.getElementById('ia-pdf-input').value = '';
+    mostrarEstadoSemeIA('idle');
+}
+window.resetarSemeIA = resetarSemeIA;
+
+function mostrarMsgFormSemeIA(texto, tipo = 'info') {
+    const el = document.getElementById('semeia-form-msg');
+    if (!el) return;
+    el.textContent = texto;
+    el.className = `semeia-form-msg semeia-msg-${tipo}`;
+    setTimeout(() => { el.textContent = ''; el.className = 'semeia-form-msg'; }, 5000);
+}
+
+// ---- Rotação de mensagens durante processamento ----
+let semeiaMsgIndex  = 0;
+let semeiaMsgTimer  = null;
+function iniciarRotacaoMensagens() {
+    semeiaMsgIndex = 0;
+    const el = document.getElementById('semeia-msg-processando');
+    if (el) el.textContent = SEMEIA_MSGS_PROCESSANDO[0];
+    semeiaMsgTimer = setInterval(() => {
+        semeiaMsgIndex = (semeiaMsgIndex + 1) % SEMEIA_MSGS_PROCESSANDO.length;
+        if (el) el.textContent = SEMEIA_MSGS_PROCESSANDO[semeiaMsgIndex];
+    }, 4000);
+}
+function pararRotacaoMensagens() {
+    if (semeiaMsgTimer) clearInterval(semeiaMsgTimer);
+}

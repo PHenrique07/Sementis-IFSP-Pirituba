@@ -7,18 +7,21 @@ from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_ema
     sortear_missoes_diarias, calcular_nivel, buscar_questoes_por_atividade,
     listar_progresso_geral_modulos, atualizar_ofensiva,
     criar_turma, listar_turmas_do_professor, listar_alunos_da_turma,
-    listar_alunos_detalhados_da_turma, obter_progresso_modulos_turma, entrar_na_turma) 
+    listar_alunos_detalhados_da_turma, obter_progresso_modulos_turma, entrar_na_turma,
+    verificar_cota_geracao_ia, persistir_trilha_ia)
 from passlib.hash import argon2
 from functools import wraps
 import os
 import csv
 import io
+import threading
 from datetime import date, datetime, timezone, timedelta
 from urllib.parse import quote
 import jwt
 from sqlmodel import Session, select, create_engine, func
 from sqlalchemy.exc import IntegrityError
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma, GeradorTrilha
+from semeia import extrair_texto_pdf, moderar_conteudo, gerar_trilha_yaml, LIMITE_PDF_BYTES
 
 app = Flask(__name__)
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
@@ -1343,6 +1346,120 @@ def live_minhas_salas():
     """Retorna as salas ativas criadas pelo professor."""
     salas = live_manager.listar_salas_professor(request.usuario_id)
     return jsonify(salas), 200
+
+
+# =====================================================================
+# --- SEMEIA: ROTAS DE GERAÇÃO DE TRILHA POR IA ---
+# =====================================================================
+
+@app.route('/api/professor/gerar-trilha', methods=['POST'])
+@token_obrigatorio
+def gerar_trilha_ia():
+    """Inicia geração assíncrona de trilha via SemeIA. Retorna job_id imediato."""
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Apenas professores podem gerar trilhas"}), 403
+
+    if 'arquivo' not in request.files:
+        return jsonify({"erro": "Nenhum arquivo enviado"}), 400
+
+    arquivo = request.files['arquivo']
+    nome_trilha = request.form.get('nome_trilha', '').strip()
+    if not nome_trilha:
+        return jsonify({"erro": "Informe um nome para a trilha"}), 400
+
+    arquivo_bytes = arquivo.read()
+    # LIMITE_PDF_BYTES vem de semeia.py — altere lá para mudar o limite
+    limite_mb = LIMITE_PDF_BYTES // (1024 * 1024)
+    if len(arquivo_bytes) > LIMITE_PDF_BYTES:
+        return jsonify({"erro": f"PDF muito grande. Máximo: {limite_mb} MB"}), 400
+
+    # Verifica cota ANTES de criar o job (cota já decrementada aqui)
+    with Session(engine) as session:
+        cota = verificar_cota_geracao_ia(session, request.usuario_id)
+        if not cota["permitido"]:
+            return jsonify({
+                "erro": cota["motivo"],
+                "restantes": cota.get("restantes", 0)
+            }), 429
+
+        job = GeradorTrilha(
+            professor_id=request.usuario_id,
+            nome_solicitado=nome_trilha,
+            status="processando"
+        )
+        session.add(job)
+        session.commit()
+        session.refresh(job)
+        job_id = job.id
+
+    # Processa em thread separada para não bloquear o Flask
+    def processar_em_background():
+        try:
+            texto = extrair_texto_pdf(arquivo_bytes)
+            moderacao = moderar_conteudo(texto)
+
+            if not moderacao.get("aprovado"):
+                with Session(engine) as s:
+                    j = s.get(GeradorTrilha, job_id)
+                    j.status = "erro"
+                    j.erro_mensagem = f"Material reprovado pela SemeIA: {moderacao.get('motivo')}"
+                    s.add(j); s.commit()
+                return
+
+            dados_yaml = gerar_trilha_yaml(texto)
+
+            with Session(engine) as s:
+                trilha = persistir_trilha_ia(s, request.usuario_id, dados_yaml)
+                j = s.get(GeradorTrilha, job_id)
+                j.status = "concluido"
+                j.trilha_id = trilha.id
+                j.data_conclusao = datetime.utcnow()
+                s.add(j); s.commit()
+
+        except Exception as e:
+            with Session(engine) as s:
+                j = s.get(GeradorTrilha, job_id)
+                if j:
+                    j.status = "erro"
+                    j.erro_mensagem = str(e)
+                    s.add(j); s.commit()
+
+    threading.Thread(target=processar_em_background, daemon=True).start()
+    return jsonify({"job_id": job_id, "status": "processando"}), 202
+
+
+@app.route('/api/professor/trilha-status/<int:job_id>', methods=['GET'])
+@token_obrigatorio
+def status_trilha_ia(job_id):
+    """Polling: retorna o status de um job de geração de trilha da SemeIA."""
+    with Session(engine) as session:
+        job = session.get(GeradorTrilha, job_id)
+        if not job or job.professor_id != request.usuario_id:
+            return jsonify({"erro": "Job não encontrado"}), 404
+
+        return jsonify({
+            "job_id":    job.id,
+            "status":    job.status,
+            "trilha_id": job.trilha_id,
+            "erro":      job.erro_mensagem,
+        })
+
+
+@app.route('/api/professor/cota-ia', methods=['GET'])
+@token_obrigatorio
+def obter_cota_ia():
+    """Retorna quantas gerações de trilha o professor ainda tem no mês."""
+    from semeia import COTA_MENSAL_GRATUITA
+    with Session(engine) as session:
+        professor = session.get(Usuario, request.usuario_id)
+        if not professor:
+            return jsonify({"erro": "Professor não encontrado"}), 404
+        return jsonify({
+            "restantes":   professor.trilhas_ia_restantes,
+            "plano_pro":   professor.trilhas_ia_plano_pro,
+            "cota_total":  None if professor.trilhas_ia_plano_pro else COTA_MENSAL_GRATUITA,
+            "reset_mes":   str(professor.trilhas_ia_reset_mes),
+        })
 
 
 if __name__ == '__main__':

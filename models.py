@@ -29,6 +29,12 @@ class Usuario(SQLModel, table=True):
 
     ultima_atividade: Optional[date] = Field(default=None)
 
+    # SemeIA — cotas mensais de geração de trilhas
+    # Limite configurável em semeia.py → COTA_MENSAL_GRATUITA
+    trilhas_ia_restantes: int = Field(default=3)
+    trilhas_ia_plano_pro: bool = Field(default=False)
+    trilhas_ia_reset_mes: Optional[date] = Field(default=None)
+
     # Avatar atual do usuário
     avatar_atual_id: int | None = Field(default=None, foreign_key="itemloja.id")
     tema_atual_id: int | None = Field(default=None, foreign_key="itemloja.id")
@@ -164,3 +170,19 @@ class Amizade(SQLModel, table=True):
     usuario_id_2: int = Field(foreign_key="usuario.id", index=True)
     status: str = Field(default="pendente") # "pendente", "aceito", "recusado"
     data_solicitacao: datetime = Field(default_factory=datetime.utcnow)
+
+# 15. Fila de jobs assíncronos da SemeIA (geração de trilhas por IA)
+class GeradorTrilha(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    professor_id: int = Field(foreign_key="usuario.id", index=True)
+    trilha_id: int | None = Field(default=None, foreign_key="trilha.id")
+
+    # Status do processamento
+    status: str = Field(default="processando")  # "processando" | "concluido" | "erro"
+    nome_solicitado: str  # Nome que o professor digitou para a trilha
+
+    # Resultado ou mensagem de erro
+    erro_mensagem: str | None = Field(default=None)
+
+    data_criacao: datetime = Field(default_factory=datetime.utcnow)
+    data_conclusao: datetime | None = Field(default=None)
