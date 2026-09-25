@@ -1149,6 +1149,18 @@ def verificar_cota_geracao_ia(session: Session, professor_id: int) -> dict:
     return {"permitido": True, "restantes": professor.trilhas_ia_restantes, "pro": False}
 
 
+def estornar_cota_ia(session: Session, professor_id: int):
+    """
+    Restaura 1 cota de geração para o professor caso a geração falhe por erro técnico,
+    respeitando o teto de COTA_MENSAL_GRATUITA (nunca ultrapassa a cota máxima).
+    """
+    professor = session.get(Usuario, professor_id)
+    if professor and not professor.trilhas_ia_plano_pro:
+        professor.trilhas_ia_restantes = min(COTA_MENSAL_GRATUITA, (professor.trilhas_ia_restantes or 0) + 1)
+        session.add(professor)
+        session.commit()
+
+
 def persistir_trilha_ia(session: Session, professor_id: int, dados_yaml: dict) -> Trilha:
     """
     Converte o YAML gerado pela SemeIA e persiste nas tabelas existentes

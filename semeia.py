@@ -133,8 +133,14 @@ class AdaptadorOpenRouter:
     URL    = "https://openrouter.ai/api/v1/chat/completions"
 
     def chamar(self, prompt: str, formato_json: bool = False) -> str:
+        chave = os.environ.get("OPENROUTER_API_KEY", OPENROUTER_API_KEY).strip()
+        if not chave:
+            raise ValueError(
+                "Chave OPENROUTER_API_KEY não configurada no ambiente. "
+                "Defina a variável OPENROUTER_API_KEY ou configure ADAPTADOR_ATIVO = 'mock' em semeia.py para testar sem chave."
+            )
         headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Authorization": f"Bearer {chave}",
             "HTTP-Referer": "https://sementis.com.br",
             "X-Title": "Sementis SemeIA",  # ASCII only — httpx rejeita non-ASCII
         }
@@ -310,11 +316,21 @@ _ADAPTADORES = {
 
 def _obter_adaptador():
     """Retorna a instância do adaptador ativo configurado em ADAPTADOR_ATIVO."""
-    cls = _ADAPTADORES.get(ADAPTADOR_ATIVO)
+    nome_ativo = os.environ.get("SEMEIA_ADAPTADOR", ADAPTADOR_ATIVO)
+
+    # Se openrouter foi selecionado (padrão) mas nenhuma chave foi definida,
+    # cai para 'mock' para permitir testes locais imediatos sem quebrar o sistema
+    if nome_ativo == "openrouter":
+        chave = os.environ.get("OPENROUTER_API_KEY", OPENROUTER_API_KEY).strip()
+        if not chave and "SEMEIA_ADAPTADOR" not in os.environ:
+            print("[SemeIA] [INFO] OPENROUTER_API_KEY nao detectada. Usando adaptador 'mock' para testes locais.")
+            nome_ativo = "mock"
+
+    cls = _ADAPTADORES.get(nome_ativo)
     if not cls:
         disponiveis = list(_ADAPTADORES.keys())
         raise ValueError(
-            f"Adaptador '{ADAPTADOR_ATIVO}' não encontrado. "
+            f"Adaptador '{nome_ativo}' não encontrado. "
             f"Disponíveis: {disponiveis}"
         )
     return cls()

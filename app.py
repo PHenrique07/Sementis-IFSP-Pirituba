@@ -8,7 +8,7 @@ from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_ema
     listar_progresso_geral_modulos, atualizar_ofensiva,
     criar_turma, listar_turmas_do_professor, listar_alunos_da_turma,
     listar_alunos_detalhados_da_turma, obter_progresso_modulos_turma, entrar_na_turma,
-    verificar_cota_geracao_ia, persistir_trilha_ia)
+    verificar_cota_geracao_ia, persistir_trilha_ia, estornar_cota_ia)
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -1422,7 +1422,9 @@ def gerar_trilha_ia():
                 if j:
                     j.status = "erro"
                     j.erro_mensagem = str(e)
-                    s.add(j); s.commit()
+                    s.add(j)
+                    s.commit()
+                estornar_cota_ia(s, request.usuario_id)
 
     threading.Thread(target=processar_em_background, daemon=True).start()
     return jsonify({"job_id": job_id, "status": "processando"}), 202
