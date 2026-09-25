@@ -221,13 +221,13 @@
                 </div>
 
                 <!-- Banner Chamativo de Incentivo Sementis PRO -->
-                <div class="semeia-pro-banner-cta" onclick="abrirModalProProfessor()">
+                <div class="semeia-pro-banner-cta" onclick="abrirModalProProfessor()" title="Clique para conhecer o Sementis PRO">
                     <div class="pro-banner-tag">
                         <span class="pro-live-dot"></span>
                         <span>SEMENTIS PRO</span>
                     </div>
                     <div class="pro-banner-info">
-                        <strong>Faça muito mais com o PRO:</strong> Crie trilhas ilimitadas com IA avançada, refil mensal e envie apostilas de até 20 MB.
+                        <strong>Turbine suas aulas com o Sementis PRO:</strong> Crie trilhas com modelos de IA mais avançados e rápidos, tenha refil mensal de tokens de criação e envie apostilas completas em PDF de até 20 MB!
                     </div>
                     <div class="pro-banner-action">
                         <span>14 Dias Grátis</span>
@@ -559,10 +559,17 @@
                     <span><strong>Relatórios da turma:</strong> Acompanhe as dificuldades e evolução dos alunos</span>
                 </li>
             </ul>
-            <a href="/perfil.html" class="pro-trial-btn" style="text-decoration:none; text-align:center; display:block; box-sizing:border-box;">
+            <button type="button" class="pro-trial-btn" id="btn-pro-trial" onclick="assinarProIndisponivel()">
                 INICIAR TESTE DE 14 DIAS GRÁTIS
-            </a>
-            <p class="pro-terms">Após o teste, R$ 14,90/mês. Cancele quando quiser.</p>
+            </button>
+            <div id="pro-indisponivel-msg" class="pro-indisponivel-msg" style="display: none;">
+                <span class="pro-indisponivel-icon">🚧</span>
+                <div>
+                    <strong>Recurso em Lançamento!</strong>
+                    <p>O Sementis PRO com refil de tokens e IA avançada está em fase final de testes. Você já está na lista de espera prioritária e será avisado assim que liberarmos!</p>
+                </div>
+            </div>
+            <p class="pro-terms" id="pro-terms-txt">Após o teste, R$ 14,90/mês. Cancele quando quiser.</p>
         </div>
     </div>
 

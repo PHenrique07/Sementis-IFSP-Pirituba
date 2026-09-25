@@ -944,10 +944,29 @@ function fecharModalProProfessor() {
     }
 }
 
+function assinarProIndisponivel() {
+    const msgEl = document.getElementById('pro-indisponivel-msg');
+    const btn = document.getElementById('btn-pro-trial');
+    const terms = document.getElementById('pro-terms-txt');
+    if (msgEl) {
+        msgEl.style.display = 'flex';
+    }
+    if (btn) {
+        btn.textContent = '✓ Adicionado à Lista de Espera!';
+        btn.style.backgroundColor = '#10b981';
+        btn.style.color = '#ffffff';
+        btn.style.boxShadow = '0 4px 0 #059669';
+    }
+    if (terms) {
+        terms.textContent = 'Entraremos em contato com você prioritariamente com condições exclusivas!';
+    }
+}
+
 window.abrirModalComoFuncionaSemeIA = abrirModalComoFuncionaSemeIA;
 window.fecharModalComoFuncionaSemeIA = fecharModalComoFuncionaSemeIA;
 window.abrirModalProProfessor = abrirModalProProfessor;
 window.fecharModalProProfessor = fecharModalProProfessor;
+window.assinarProIndisponivel = assinarProIndisponivel;
 
 // Fechar modais ao clicar no fundo (overlay)
 const modalHelpSemeiaEl = document.getElementById('modal-como-funciona-semeia');
