@@ -839,6 +839,7 @@ async function aguardarJobSemeIA(jobId) {
                 clearInterval(semeiaJobIntervalo);
                 pararRotacaoMensagens();
                 mostrarEstadoSemeIA('erro', dados.erro || 'Erro durante a geração.');
+                carregarCotaSemeIA(); // Revalida a cota na tela para mostrar que nada foi gasto
             }
         } catch (e) {
             console.error('Erro ao verificar status da SemeIA:', e);

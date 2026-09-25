@@ -1400,6 +1400,36 @@ def gerar_trilha_ia():
         session.refresh(job)
         job_id = job.id
 
+    # Captura o ID do professor ANTES da thread para não acessar request em background
+    professor_id = request.usuario_id
+
+    def formatar_erro_usuario(excecao: Exception) -> str:
+        """Traduz exceções técnicas em explicações claras e orientadas à solução para o usuário."""
+        import traceback
+        traceback.print_exc()
+        texto = str(excecao)
+
+        if "Working outside of request context" in texto:
+            return "Erro interno de thread ao processar o material. Por favor, tente novamente."
+        if "OPENROUTER_API_KEY" in texto or "Chave" in texto:
+            return "A chave da OpenRouter não foi encontrada. Configure sua OPENROUTER_API_KEY no arquivo .env."
+        if "Illegal header value" in texto:
+            return "A chave de API informada no .env contém formato inválido ou caracteres incorretos."
+        if "timeout" in texto.lower() or "timed out" in texto.lower():
+            return "A IA demorou mais do que o esperado para responder (tempo limite esgotado). Tente novamente em alguns segundos."
+        if "401" in texto or "unauthorized" in texto.lower():
+            return "A chave da OpenRouter foi recusada pelo provedor (não autorizada). Verifique se a chave no .env está correta e ativa."
+        if "429" in texto or "rate limit" in texto.lower():
+            return "O limite temporário de requisições da IA foi atingido. Aguarde 1 minuto e tente novamente."
+        if "insufficient" in texto.lower() or "credits" in texto.lower():
+            return "Créditos insuficientes na conta da OpenRouter. Adicione saldo ou verifique seu plano."
+        if "pypdf" in texto.lower() or "pdf" in texto.lower():
+            return f"Não foi possível ler o PDF: {texto}"
+        if "yaml" in texto.lower():
+            return "A IA gerou a trilha em um formato incompleto ou inesperado. Tente reenviar o material."
+
+        return f"Instabilidade na geração: {texto}"
+
     # Processa em thread separada para não bloquear o Flask
     def processar_em_background():
         try:
@@ -1418,9 +1448,9 @@ def gerar_trilha_ia():
             dados_yaml = gerar_trilha_yaml(texto)
 
             with Session(engine) as s:
-                trilha = persistir_trilha_ia(s, request.usuario_id, dados_yaml, turma_ids=turma_ids)
+                trilha = persistir_trilha_ia(s, professor_id, dados_yaml, turma_ids=turma_ids)
                 # CONSUMO DA COTA: Apenas quando salvou com 100% de sucesso!
-                consumir_cota_ia(s, request.usuario_id)
+                consumir_cota_ia(s, professor_id)
                 j = s.get(GeradorTrilha, job_id)
                 j.status = "concluido"
                 j.trilha_id = trilha.id
@@ -1428,11 +1458,12 @@ def gerar_trilha_ia():
                 s.add(j); s.commit()
 
         except Exception as e:
+            msg_amigavel = formatar_erro_usuario(e)
             with Session(engine) as s:
                 j = s.get(GeradorTrilha, job_id)
                 if j:
                     j.status = "erro"
-                    j.erro_mensagem = str(e)
+                    j.erro_mensagem = msg_amigavel
                     s.add(j)
                     s.commit()
             # Cota nunca foi consumida, professor preservado!

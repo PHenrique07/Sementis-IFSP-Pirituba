@@ -284,9 +284,15 @@
                     <div class="semeia-erro-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     </div>
-                    <h3 class="semeia-status-title">Ops, algo deu errado</h3>
-                    <p class="semeia-status-msg" id="semeia-msg-erro">Erro desconhecido</p>
-                    <button class="btn-semeia-nova" onclick="resetarSemeIA()">Tentar novamente</button>
+                    <h3 class="semeia-status-title">Não foi possível gerar a trilha</h3>
+                    <p class="semeia-status-msg" id="semeia-msg-erro">Ocorreu um erro inesperado</p>
+                    <div class="semeia-erro-cota-aviso">
+                        <span>💡 <strong>Fique tranquilo:</strong> Nenhuma cota de geração foi consumida nesta tentativa.</span>
+                    </div>
+                    <button class="btn-semeia-nova" onclick="resetarSemeIA()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.64"/></svg>
+                        Tentar novamente
+                    </button>
                 </div>
 
             </section>

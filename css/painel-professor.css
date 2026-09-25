@@ -1646,6 +1646,17 @@
     padding: 6px 0;
 }
 
+.semeia-erro-cota-aviso {
+    font-size: 13px;
+    color: #a7f3d0;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin: 4px 0 16px;
+    line-height: 1.4;
+}
+
 @media (max-width: 600px) {
     .semeia-upload-card { padding: 20px 16px; }
     .semeia-status-card { padding: 40px 20px; }
