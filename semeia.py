@@ -92,18 +92,20 @@ Texto a analisar:
 PROMPT_GERACAO = """
 Você é SemeIA, especialista em criar trilhas de aprendizado gamificadas sobre sustentabilidade para o Sementis.
 
-Com base no material abaixo, gere UMA trilha de aprendizado no formato YAML estrito.
+Com base no material abaixo, gere UMA trilha de aprendizado dinâmica e engajadora no formato YAML estrito.
 
 REGRAS OBRIGATÓRIAS:
-- 4 a 6 atividades do tipo "quiz"
+- Exatamente 2 a 3 atividades do tipo "quiz" (enunciados objetivos, didáticos e concisos)
+- Cada atividade quiz deve ter entre 3 e 4 questões (máximo 4)
+- Tipos de questão: "simples" (4 opções, 1 correta)
+- Mantenha opções concisas (máximo 80 a 100 caracteres por alternativa)
+- Inclua uma curiosidade educativa curta em cada questão
 - 1 atividade final do tipo "minigame" — escolha o subtipo mais adequado ao conteúdo:
-    - "memoria": para conteúdo com muitos conceitos e definições
-    - "palavras_cruzadas": para conteúdo com termos técnicos e vocabulário específico
-    - "quiz_rapido": para conteúdo mais narrativo ou processual
-- Cada atividade quiz tem exatamente 5 questões
-- Tipos de questão: "simples" (4 opções, 1 correta) ou "grid_multiplo" (4+ opções, múltiplas corretas)
-- Idioma: Português brasileiro, tom motivador para jovens do ensino médio
-- Inclua uma curiosidade educativa em cada questão
+    - "memoria": com 4 a 6 pares (frente e verso concisos)
+    - "palavras_cruzadas": com 4 a 5 palavras e pistas objetivas
+    - "quiz_rapido": com 3 perguntas rápidas
+- Idioma: Português brasileiro, tom motivador para estudantes
+- GERE O YAML COMPLETO E SEM CORTES, fechando todas as aspas e listas.
 
 FORMATO YAML OBRIGATÓRIO (respeite exatamente esta estrutura):
 ```yaml
@@ -131,7 +133,7 @@ atividades:
     subtipo: memoria
     pares:
       - frente: "Conceito"
-        verso: "Definição do conceito"
+        verso: "Definição curta"
 ```
 
 Para subtipo "palavras_cruzadas", use:
@@ -173,7 +175,7 @@ class AdaptadorOpenRouter:
         payload = {
             "model": self.MODELO,
             "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 4000,
+            "max_tokens": 6000,
         }
         if formato_json:
             payload["response_format"] = {"type": "json_object"}
@@ -434,6 +436,18 @@ def gerar_trilha_yaml(texto: str) -> dict:
     yaml_limpo = yaml_texto.strip()
     if yaml_limpo.startswith("```"):
         yaml_limpo = yaml_limpo.split("\n", 1)[-1]
+    if yaml_limpo.endswith("```"):
         yaml_limpo = yaml_limpo.rsplit("```", 1)[0]
 
-    return yaml.safe_load(yaml_limpo.strip())
+    try:
+        dados = yaml.safe_load(yaml_limpo.strip())
+    except yaml.YAMLError as e:
+        raise ValueError(
+            f"A IA gerou a resposta de forma incompleta ou com erro de sintaxe. "
+            f"Por favor, tente gerar novamente."
+        )
+
+    if not isinstance(dados, dict) or "trilha" not in dados or "atividades" not in dados:
+        raise ValueError("A resposta da IA não contém os campos 'trilha' ou 'atividades' esperados.")
+
+    return dados

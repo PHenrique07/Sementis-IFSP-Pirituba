@@ -1336,30 +1336,103 @@
     color: #fca5a5;
 }
 
-.btn-semeia-pro-cta {
+.btn-semeia-pro-chamativo {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    border: 1px solid rgba(251, 191, 36, 0.5);
+    gap: 8px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: 1px solid rgba(169, 255, 113, 0.6);
     color: #ffffff;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: 0.3px;
-    padding: 8px 14px;
-    border-radius: 10px;
+    padding: 8px 16px;
+    border-radius: 12px;
     font-family: var(--font-family);
     cursor: pointer;
     transition: all 0.25s ease;
-    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 0 0 10px rgba(169, 255, 113, 0.25);
+    position: relative;
+    overflow: hidden;
 }
-.btn-semeia-pro-cta:hover {
+.btn-semeia-pro-chamativo:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.5);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.55), 0 0 16px rgba(169, 255, 113, 0.4);
     filter: brightness(1.1);
 }
-.btn-semeia-pro-cta:active {
+.btn-semeia-pro-chamativo:active {
     transform: translateY(0);
+}
+
+.pro-chamativo-pulse {
+    width: 7px;
+    height: 7px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    animation: livePulse 1.2s infinite alternate;
+}
+
+/* Barra Chamativa de Incentivo */
+.semeia-pro-banner-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(20, 24, 60, 0.95) 0%, rgba(30, 27, 75, 0.95) 100%);
+    border: 1.5px solid rgba(169, 255, 113, 0.4);
+    border-radius: 16px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 16px rgba(169, 255, 113, 0.1);
+}
+.semeia-pro-banner-cta:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35), 0 0 24px rgba(169, 255, 113, 0.25);
+    transform: translateY(-2px);
+}
+
+.pro-banner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(169, 255, 113, 0.15);
+    border: 1px solid rgba(169, 255, 113, 0.4);
+    color: var(--color-accent);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.pro-banner-info {
+    font-size: 13px;
+    color: #e2e8f0;
+    flex: 1;
+}
+.pro-banner-info strong {
+    color: #fff;
+}
+
+.pro-banner-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-accent);
+    color: var(--color-primary-dark);
+    font-size: 12px;
+    font-weight: 800;
+    padding: 7px 14px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(169, 255, 113, 0.3);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+.semeia-pro-banner-cta:hover .pro-banner-action {
+    transform: translateX(3px);
 }
 
 .semeia-upload-card {
@@ -1818,138 +1891,155 @@
 }
 
 /* ======================================================================
-   MODAL: SEMENTIS PRO DO PROFESSOR
+   MODAL PRO DO PROFESSOR (DESIGN IDÊNTICO AO PERFIL COM BOTÃO VERDE)
 ====================================================================== */
-.modal-pro-card {
-    max-width: 840px !important;
-}
-
-.modal-header--pro {
-    border-bottom: 1px solid rgba(245, 158, 11, 0.25);
-}
-
-.modal-icon--pro {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.35) 100%);
-    border: 1px solid rgba(245, 158, 11, 0.6);
-    color: #fbbf24;
-}
-
-.modal-pro-badge-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.modal-pro-badge-row h2 span {
-    color: #fbbf24;
-}
-
-.pro-chip {
-    display: inline-block;
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    padding: 3px 8px;
-    border-radius: 6px;
-}
-
-.pro-benefits-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.pro-benefit-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    padding: 16px;
-    transition: all 0.2s ease;
-}
-.pro-benefit-item:hover {
-    background: rgba(245, 158, 11, 0.06);
-    border-color: rgba(245, 158, 11, 0.3);
-    transform: translateY(-1px);
-}
-
-.pro-benefit-icon {
-    font-size: 24px;
-    line-height: 1;
-    flex-shrink: 0;
-}
-
-.pro-benefit-text h4 {
-    font-size: 14px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 4px 0;
-}
-
-.pro-benefit-text p {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.65);
-    line-height: 1.4;
-    margin: 0;
-}
-
-.pro-modal-actions {
+.modal-content.pro-modal-content {
+    background: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%);
+    border-radius: 24px;
+    padding: 34px 26px;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--color-white);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-top: 20px;
+    margin: auto;
+    animation: modalPopIn 0.25s ease-out;
 }
 
-.btn-modal-confirm--pro {
-    display: inline-flex;
+@keyframes modalPopIn {
+    0% { transform: scale(0.92) translateY(10px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.pro-modal-header {
+    display: flex;
     align-items: center;
-    justify-content: center;
     gap: 10px;
-    width: 100%;
-    max-width: 420px;
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    color: #fff;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 800;
-    padding: 14px 28px;
-    border-radius: 12px;
-    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.4);
-    transition: all 0.25s ease;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-}
-.btn-modal-confirm--pro:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.6);
-    filter: brightness(1.1);
+    margin-bottom: 18px;
 }
 
-.btn-modal-cancel {
+.pro-modal-header img {
+    height: 32px;
+    object-fit: contain;
+}
+
+.pro-badge {
+    background-color: var(--color-accent);
+    color: #0b1329;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 8px;
+    letter-spacing: 1px;
+}
+
+.pro-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    text-align: center;
+    color: #fff;
+    line-height: 1.3;
+}
+
+.pro-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 28px 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pro-benefits li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #e2e8f0;
+}
+
+.pro-benefits li strong {
+    color: #fff;
+}
+
+.pro-benefits li svg {
+    flex-shrink: 0;
+}
+
+.pro-trial-btn {
+    background-color: var(--color-accent);
+    color: #0b1329;
+    border: none;
+    border-radius: 20px;
+    padding: 15px 22px;
+    font-size: 14px;
+    font-weight: 800;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #58cc02;
+    transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+    letter-spacing: 0.5px;
+    font-family: var(--font-family);
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    box-sizing: border-box;
+}
+
+.pro-trial-btn:hover {
+    filter: brightness(1.08);
+}
+
+.pro-trial-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #58cc02;
+}
+
+.pro-terms {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    text-align: center;
+    margin: 12px 0 0 0;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
     background: transparent;
     border: none;
     color: rgba(255, 255, 255, 0.5);
-    font-size: 13px;
-    font-family: var(--font-family);
+    font-size: 26px;
     cursor: pointer;
-    transition: color 0.2s;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
 }
-.btn-modal-cancel:hover {
-    color: rgba(255, 255, 255, 0.85);
-    text-decoration: underline;
+
+.close-modal-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
 @media (max-width: 768px) {
-    .semeia-steps-grid,
-    .pro-benefits-grid {
+    .semeia-steps-grid {
         grid-template-columns: 1fr;
+    }
+    .semeia-pro-banner-cta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 }
