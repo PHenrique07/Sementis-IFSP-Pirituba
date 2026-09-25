@@ -14,6 +14,10 @@ import os
 import json
 import yaml
 import httpx
+import warnings
+
+# Suprime avisos de requisições HTTPS locais não verificadas
+warnings.filterwarnings("ignore")
 
 # ======================================================================
 # CARREGAMENTO AUTOMÁTICO DE .ENV
@@ -173,7 +177,7 @@ class AdaptadorOpenRouter:
         if formato_json:
             payload["response_format"] = {"type": "json_object"}
 
-        with httpx.Client(timeout=120) as client:
+        with httpx.Client(timeout=120, verify=False) as client:
             res = client.post(self.URL, json=payload, headers=headers)
             res.raise_for_status()
             return res.json()["choices"][0]["message"]["content"]
@@ -197,7 +201,7 @@ class AdaptadorOpenAI:
         if formato_json:
             payload["response_format"] = {"type": "json_object"}
 
-        with httpx.Client(timeout=120) as client:
+        with httpx.Client(timeout=120, verify=False) as client:
             res = client.post(self.URL, json=payload, headers=headers)
             res.raise_for_status()
             return res.json()["choices"][0]["message"]["content"]
@@ -213,6 +217,7 @@ class AdaptadorGemini:
 
     def chamar(self, prompt: str, formato_json: bool = False) -> str:
         import urllib.request
+        import ssl
         url = (
             f"https://generativelanguage.googleapis.com/v1beta/models/"
             f"{self.MODELO}:generateContent?key={GEMINI_API_KEY}"
@@ -220,11 +225,15 @@ class AdaptadorGemini:
         body = json.dumps({
             "contents": [{"parts": [{"text": prompt}]}]
         }).encode()
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
         req = urllib.request.Request(
             url, data=body,
             headers={"Content-Type": "application/json"}
         )
-        with urllib.request.urlopen(req, timeout=120) as r:
+        with urllib.request.urlopen(req, timeout=120, context=ctx) as r:
             dados = json.loads(r.read())
             return dados["candidates"][0]["content"]["parts"][0]["text"]
 

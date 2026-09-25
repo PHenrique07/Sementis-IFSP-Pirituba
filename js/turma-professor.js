@@ -144,7 +144,10 @@ async function abrirModalAtribuirTrilha() {
     const select = document.getElementById('select-trilha-existente');
     const msg = document.getElementById('modal-atribuir-msg');
     if (msg) msg.textContent = '';
-    if (modal) modal.style.display = 'flex';
+    if (modal) {
+        modal.classList.add('open');
+        modal.style.display = 'flex';
+    }
 
     if (select) {
         select.innerHTML = '<option value="">Carregando trilhas...</option>';
@@ -167,8 +170,21 @@ async function abrirModalAtribuirTrilha() {
 
 function fecharModalAtribuirTrilha() {
     const modal = document.getElementById('modal-atribuir-trilha');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+    }
 }
+
+// Fechar modal ao clicar no fundo escuro
+document.addEventListener('DOMContentLoaded', () => {
+    const modalAtribuir = document.getElementById('modal-atribuir-trilha');
+    if (modalAtribuir) {
+        modalAtribuir.addEventListener('click', (e) => {
+            if (e.target === modalAtribuir) fecharModalAtribuirTrilha();
+        });
+    }
+});
 
 async function confirmarAtribuicaoTrilha() {
     const select = document.getElementById('select-trilha-existente');
