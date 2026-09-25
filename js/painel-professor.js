@@ -695,16 +695,29 @@ async function carregarCotaSemeIA() {
         if (!res) return;
         const dados = await res.json();
         const textoEl = document.getElementById('semeia-cota-texto');
+        const badge = document.getElementById('semeia-cota-badge');
         if (!textoEl) return;
         if (dados.plano_pro) {
             textoEl.textContent = '★ Pro — gerações ilimitadas';
+            if (badge) {
+                badge.classList.remove('semeia-cota-esgotada');
+                badge.style.cursor = 'default';
+                badge.onclick = null;
+            }
         } else {
             const restantes = dados.restantes ?? 0;
             const total     = dados.cota_total ?? 3;
             textoEl.textContent = `${restantes}/${total} gerações este mês`;
-            if (restantes === 0) {
-                const badge = document.getElementById('semeia-cota-badge');
-                if (badge) badge.classList.add('semeia-cota-esgotada');
+            if (badge) {
+                badge.style.cursor = 'pointer';
+                badge.onclick = abrirModalProProfessor;
+                if (restantes === 0) {
+                    badge.classList.add('semeia-cota-esgotada');
+                    badge.title = 'Cota esgotada! Clique para desbloquear o Sementis PRO e obter refil.';
+                } else {
+                    badge.classList.remove('semeia-cota-esgotada');
+                    badge.title = `${restantes} gerações disponíveis. Clique para ver benefícios PRO.`;
+                }
             }
         }
     } catch (e) {
@@ -895,3 +908,59 @@ function iniciarRotacaoMensagens() {
 function pararRotacaoMensagens() {
     if (semeiaMsgTimer) clearInterval(semeiaMsgTimer);
 }
+
+// ======================================================================
+// MODAIS: TUTORIAL COMO FUNCIONA A SEMEIA E SEMENTIS PRO
+// ======================================================================
+function abrirModalComoFuncionaSemeIA() {
+    const modal = document.getElementById('modal-como-funciona-semeia');
+    if (modal) {
+        modal.classList.add('open', 'active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function fecharModalComoFuncionaSemeIA() {
+    const modal = document.getElementById('modal-como-funciona-semeia');
+    if (modal) {
+        modal.classList.remove('open', 'active');
+        document.body.style.overflow = '';
+    }
+}
+
+function abrirModalProProfessor() {
+    const modal = document.getElementById('modal-pro-professor');
+    if (modal) {
+        modal.classList.add('open', 'active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function fecharModalProProfessor() {
+    const modal = document.getElementById('modal-pro-professor');
+    if (modal) {
+        modal.classList.remove('open', 'active');
+        document.body.style.overflow = '';
+    }
+}
+
+window.abrirModalComoFuncionaSemeIA = abrirModalComoFuncionaSemeIA;
+window.fecharModalComoFuncionaSemeIA = fecharModalComoFuncionaSemeIA;
+window.abrirModalProProfessor = abrirModalProProfessor;
+window.fecharModalProProfessor = fecharModalProProfessor;
+
+// Fechar modais ao clicar no fundo (overlay)
+const modalHelpSemeiaEl = document.getElementById('modal-como-funciona-semeia');
+if (modalHelpSemeiaEl) {
+    modalHelpSemeiaEl.addEventListener('click', (e) => {
+        if (e.target === modalHelpSemeiaEl) fecharModalComoFuncionaSemeIA();
+    });
+}
+
+const modalProProfessorEl = document.getElementById('modal-pro-professor');
+if (modalProProfessorEl) {
+    modalProProfessorEl.addEventListener('click', (e) => {
+        if (e.target === modalProProfessorEl) fecharModalProProfessor();
+    });
+}
+

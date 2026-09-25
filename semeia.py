@@ -155,7 +155,7 @@ class AdaptadorOpenRouter:
     Docs: https://openrouter.ai/docs
     """
     # ← TROQUE o modelo aqui para outro suportado pela OpenRouter
-    MODELO = "google/gemini-flash-1.5"
+    MODELO = "google/gemini-2.5-flash"
     URL    = "https://openrouter.ai/api/v1/chat/completions"
 
     def chamar(self, prompt: str, formato_json: bool = False) -> str:
@@ -173,13 +173,20 @@ class AdaptadorOpenRouter:
         payload = {
             "model": self.MODELO,
             "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 4000,
         }
         if formato_json:
             payload["response_format"] = {"type": "json_object"}
 
         with httpx.Client(timeout=120, verify=False) as client:
             res = client.post(self.URL, json=payload, headers=headers)
-            res.raise_for_status()
+            if res.status_code != 200:
+                try:
+                    erro_corpo = res.json()
+                    msg_api = erro_corpo.get("error", {}).get("message") or res.text
+                except Exception:
+                    msg_api = res.text
+                raise RuntimeError(f"Erro OpenRouter ({res.status_code}): {msg_api}")
             return res.json()["choices"][0]["message"]["content"]
 
 

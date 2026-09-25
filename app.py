@@ -1419,10 +1419,12 @@ def gerar_trilha_ia():
             return "A IA demorou mais do que o esperado para responder (tempo limite esgotado). Tente novamente em alguns segundos."
         if "401" in texto or "unauthorized" in texto.lower():
             return "A chave da OpenRouter foi recusada pelo provedor (não autorizada). Verifique se a chave no .env está correta e ativa."
+        if "404" in texto or "not found" in texto.lower():
+            return "O modelo de IA selecionado não foi encontrado ou foi descontinuado pelo provedor. O sistema já foi calibrado com o modelo estável."
+        if "402" in texto or "insufficient" in texto.lower() or "credits" in texto.lower() or "payment" in texto.lower():
+            return "Saldo insuficiente ou necessidade de créditos na conta da OpenRouter. Verifique seu saldo no provedor ou consulte o plano Sementis PRO."
         if "429" in texto or "rate limit" in texto.lower():
             return "O limite temporário de requisições da IA foi atingido. Aguarde 1 minuto e tente novamente."
-        if "insufficient" in texto.lower() or "credits" in texto.lower():
-            return "Créditos insuficientes na conta da OpenRouter. Adicione saldo ou verifique seu plano."
         if "pypdf" in texto.lower() or "pdf" in texto.lower():
             return f"Não foi possível ler o PDF: {texto}"
         if "yaml" in texto.lower():

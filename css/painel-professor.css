@@ -1279,6 +1279,43 @@
     margin-left: auto;
 }
 
+.semeia-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-semeia-help {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #e2e8f0;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+.btn-semeia-help:hover {
+    background: rgba(168, 85, 247, 0.18);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.25);
+}
+
+.semeia-cota-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
 .semeia-cota-badge {
     display: flex;
     align-items: center;
@@ -1297,6 +1334,32 @@
     background: rgba(239, 68, 68, 0.15);
     border-color: rgba(239, 68, 68, 0.4);
     color: #fca5a5;
+}
+
+.btn-semeia-pro-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border: 1px solid rgba(251, 191, 36, 0.5);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+}
+.btn-semeia-pro-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.5);
+    filter: brightness(1.1);
+}
+.btn-semeia-pro-cta:active {
+    transform: translateY(0);
 }
 
 .semeia-upload-card {
@@ -1661,4 +1724,232 @@
     .semeia-upload-card { padding: 20px 16px; }
     .semeia-status-card { padding: 40px 20px; }
     .semeia-cota-badge  { font-size: 11px; padding: 6px 10px; }
+}
+
+/* ======================================================================
+   MODAL: COMO FUNCIONA A SEMEIA
+====================================================================== */
+.modal-semeia-help {
+    max-width: 820px !important;
+}
+
+.modal-icon--semeia {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(124, 58, 237, 0.35) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    color: #c084fc;
+}
+
+.semeia-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.semeia-step-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.25s ease;
+}
+.semeia-step-card:hover {
+    background: rgba(168, 85, 247, 0.06);
+    border-color: rgba(168, 85, 247, 0.3);
+    transform: translateY(-2px);
+}
+
+.semeia-step-number {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.semeia-step-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.semeia-step-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 8px 0;
+}
+
+.semeia-step-card p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.45;
+    margin: 0;
+}
+
+.semeia-help-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 18px;
+}
+
+.semeia-help-tip {
+    font-size: 13px;
+    color: #cbd5e1;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: 10px;
+    padding: 10px 16px;
+    flex: 1;
+    min-width: 260px;
+}
+
+/* ======================================================================
+   MODAL: SEMENTIS PRO DO PROFESSOR
+====================================================================== */
+.modal-pro-card {
+    max-width: 840px !important;
+}
+
+.modal-header--pro {
+    border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.modal-icon--pro {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.35) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.6);
+    color: #fbbf24;
+}
+
+.modal-pro-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-pro-badge-row h2 span {
+    color: #fbbf24;
+}
+
+.pro-chip {
+    display: inline-block;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.pro-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.pro-benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 16px;
+    transition: all 0.2s ease;
+}
+.pro-benefit-item:hover {
+    background: rgba(245, 158, 11, 0.06);
+    border-color: rgba(245, 158, 11, 0.3);
+    transform: translateY(-1px);
+}
+
+.pro-benefit-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.pro-benefit-text h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 4px 0;
+}
+
+.pro-benefit-text p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.pro-modal-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 20px;
+}
+
+.btn-modal-confirm--pro {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 420px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 800;
+    padding: 14px 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.4);
+    transition: all 0.25s ease;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+.btn-modal-confirm--pro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.6);
+    filter: brightness(1.1);
+}
+
+.btn-modal-cancel {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.btn-modal-cancel:hover {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .semeia-steps-grid,
+    .pro-benefits-grid {
+        grid-template-columns: 1fr;
+    }
 }

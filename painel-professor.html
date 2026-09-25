@@ -201,9 +201,21 @@
                         <h1 class="prof-page-title">SemeIA <span>Gerar Trilha</span></h1>
                         <p class="prof-page-subtitle">Envie um PDF e a SemeIA cria uma trilha completa com questões e minigame.</p>
                     </div>
-                    <div class="semeia-cota-badge" id="semeia-cota-badge">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
-                        <span id="semeia-cota-texto">Carregando cota...</span>
+                    <div class="semeia-header-actions">
+                        <button type="button" class="btn-semeia-help" onclick="abrirModalComoFuncionaSemeIA()" title="Ver tutorial explicativo da SemeIA">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span>Como funciona?</span>
+                        </button>
+                        <div class="semeia-cota-container">
+                            <div class="semeia-cota-badge" id="semeia-cota-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                                <span id="semeia-cota-texto">Carregando cota...</span>
+                            </div>
+                            <button type="button" class="btn-semeia-pro-cta" onclick="abrirModalProProfessor()" title="Obter mais gerações com o Sementis PRO">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                <span>⚡ Seja PRO</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -432,6 +444,146 @@
                         </tbody>
                     </table>
                     <div class="ranking-empty" id="ranking-empty" style="display:none;">Nenhum aluno nesta turma ainda.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL: COMO FUNCIONA A SEMEIA (TUTORIAL ESTILO KAHOOT)
+    =================================================== -->
+    <div class="modal-overlay" id="modal-como-funciona-semeia" role="dialog" aria-modal="true" aria-labelledby="modal-semeia-help-title">
+        <div class="modal-card modal-card--wide modal-semeia-help">
+            <div class="modal-header">
+                <div class="modal-icon modal-icon--semeia">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                </div>
+                <div>
+                    <h2 id="modal-semeia-help-title">Como funciona a SemeIA?</h2>
+                    <p>Sua assistente pedagógica para transformar PDFs em trilhas gamificadas</p>
+                </div>
+                <button class="modal-close" onclick="fecharModalComoFuncionaSemeIA()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="semeia-steps-grid">
+                    <div class="semeia-step-card">
+                        <div class="semeia-step-number">1</div>
+                        <div class="semeia-step-icon">📄</div>
+                        <h3>Upload do Material</h3>
+                        <p>Envie resumos, apostilas ou slides em PDF (até 5MB no gratuito ou 20MB no PRO). Pode ter até 30 páginas de texto selecionável.</p>
+                    </div>
+
+                    <div class="semeia-step-card">
+                        <div class="semeia-step-number">2</div>
+                        <div class="semeia-step-icon">🛡️</div>
+                        <h3>Curadoria Pedagógica</h3>
+                        <p>A SemeIA aplica guardrails éticos garantindo que o tema seja estritamente educativo, seguro e alinhado aos objetivos pedagógicos.</p>
+                    </div>
+
+                    <div class="semeia-step-card">
+                        <div class="semeia-step-number">3</div>
+                        <div class="semeia-step-icon">🎮</div>
+                        <h3>Quiz & Minigame Coringa</h3>
+                        <p>A IA extrai conceitos-chave, elabora quizzes com curiosidades educativas e monta um minigame coringa interativo (Jogo da Memória ou Palavras Cruzadas)!</p>
+                    </div>
+
+                    <div class="semeia-step-card">
+                        <div class="semeia-step-number">4</div>
+                        <div class="semeia-step-icon">👥</div>
+                        <h3>Distribuição às Turmas</h3>
+                        <p>Vincule a trilha gerada às suas turmas com 1 clique! Os alunos recebem a missão, jogam e você acompanha o progresso no painel da turma.</p>
+                    </div>
+                </div>
+
+                <div class="semeia-help-footer">
+                    <div class="semeia-help-tip">
+                        💡 <strong>Dica Pro:</strong> Prefira PDFs com texto direto e limpo para a IA extrair o máximo de precisão em cada questão.
+                    </div>
+                    <button type="button" class="btn-modal-confirm" onclick="fecharModalComoFuncionaSemeIA()">
+                        <span>🚀 Entendi! Vamos Criar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL: SEMENTIS PRO DO PROFESSOR (UPGRADE / REFIL DE TOKENS)
+    =================================================== -->
+    <div class="modal-overlay" id="modal-pro-professor" role="dialog" aria-modal="true" aria-labelledby="modal-pro-title">
+        <div class="modal-card modal-card--wide modal-pro-card">
+            <div class="modal-header modal-header--pro">
+                <div class="modal-icon modal-icon--pro">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div>
+                    <div class="modal-pro-badge-row">
+                        <h2 id="modal-pro-title">Sementis <span>PRO</span></h2>
+                        <span class="pro-chip">PROFESSOR</span>
+                    </div>
+                    <p>Turbine o engajamento de suas turmas com IA sem limites</p>
+                </div>
+                <button class="modal-close" onclick="fecharModalProProfessor()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="pro-benefits-grid">
+                    <div class="pro-benefit-item">
+                        <div class="pro-benefit-icon">⚡</div>
+                        <div class="pro-benefit-text">
+                            <h4>Refil Mensal & Trilhas Ilimitadas</h4>
+                            <p>Crie quantas trilhas e atividades precisar todo mês para todas as suas turmas, sem bloqueios de cota.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-benefit-item">
+                        <div class="pro-benefit-icon">🧠</div>
+                        <div class="pro-benefit-text">
+                            <h4>Modelos de IA Mais Avançados</h4>
+                            <p>Acesso exclusivo aos modelos de ponta com raciocínio pedagógico refinado, maior rapidez e precisão conceitual.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-benefit-item">
+                        <div class="pro-benefit-icon">📁</div>
+                        <div class="pro-benefit-text">
+                            <h4>Limite de Upload até 20 MB</h4>
+                            <p>Envie livros didáticos, teses e apostilas completas em PDF sem precisar cortar páginas ou comprimir.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-benefit-item">
+                        <div class="pro-benefit-icon">🕹️</div>
+                        <div class="pro-benefit-text">
+                            <h4>Todos os Minigames Desbloqueados</h4>
+                            <p>Gere desafios com Jogo da Memória, Palavras Cruzadas, Quiz Relâmpago e modos colaborativos exclusivos.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-benefit-item">
+                        <div class="pro-benefit-icon">📊</div>
+                        <div class="pro-benefit-text">
+                            <h4>Relatórios Pedagógicos da Turma</h4>
+                            <p>Métricas detalhadas sobre as questões com maior taxa de erro e evolução individual de cada aluno.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-benefit-item">
+                        <div class="pro-benefit-icon">🌟</div>
+                        <div class="pro-benefit-text">
+                            <h4>Suporte Prioritário do Sementis</h4>
+                            <p>Atendimento prioritário da nossa equipe pedagógica e tecnológica para sua escola ou instituição.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pro-modal-actions">
+                    <a href="/perfil.html" class="btn-modal-confirm btn-modal-confirm--pro">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span>Ativar Sementis PRO com Teste Grátis</span>
+                    </a>
+                    <button type="button" class="btn-modal-cancel" onclick="fecharModalProProfessor()">
+                        Continuar no Plano Gratuito
+                    </button>
                 </div>
             </div>
         </div>
