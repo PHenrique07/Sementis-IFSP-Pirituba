@@ -839,6 +839,7 @@ function executarAnimacaoDroneLoot() {
 
   // Garantir que os eventos de clique estejam atribuídos
   inicializarEventosDroneModal();
+  modal.classList.remove("open");
 
   // 1. Prepara elementos
   stage.style.display = "block";
@@ -885,6 +886,7 @@ function executarAnimacaoDroneLoot() {
       try { window.sounds.stopDroneMotor(); } catch (e) {}
     }
     stage.style.display = "none";
+      actor.className = "drone-actor";
     smoke.className = "drone-smoke-burst";
     modal.classList.add("open");
 

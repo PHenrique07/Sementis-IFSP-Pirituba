@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         containerMissoes.innerHTML = `
             <div class="section-header">
                 <video autoplay loop muted playsinline class="missions-title-webm" aria-label="Alvo animado">
+                    <source src="assets/hevc/target.hevc.mp4" type="video/mp4; codecs=hvc1">
                     <source src="assets/webm/target.webm" type="video/webm">
                 </video>
                 <h2 class="section-title">MISSÕES DIÁRIAS</h2>

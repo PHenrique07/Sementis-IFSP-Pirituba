@@ -526,6 +526,11 @@ function abrirModalLive(topicoId = null) {
 
     if (modal) {
         modal.classList.add('open', 'active');
+        const video = modal.querySelector('.modal-live-webm');
+        if (video) {
+            video.load();
+            video.play().catch(() => {});
+        }
         if (inputNome) setTimeout(() => inputNome.focus(), 150);
     }
 }

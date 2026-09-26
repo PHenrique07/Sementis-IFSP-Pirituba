@@ -66,6 +66,7 @@
                 <div class="sidebar-live-header">
                     <div class="sidebar-live-icon">
                         <video autoplay loop muted playsinline class="sidebar-live-webm" aria-label="Sementis Live">
+                            <source src="assets/hevc/sementis-live.hevc.mp4" type="video/mp4; codecs=hvc1">
                             <source src="assets/webm/sementis-live.webm" type="video/webm">
                         </video>
                     </div>
@@ -173,9 +174,7 @@
         <div class="modal-card modal-card--wide">
             <div class="modal-header">
                 <div class="modal-icon modal-icon--live">
-                    <video autoplay loop muted playsinline class="modal-live-webm" aria-label="Sementis Live">
-                        <source src="assets/webm/sementis-live.webm" type="video/webm">
-                    </video>
+                    <video autoplay loop muted playsinline preload="auto" class="modal-live-webm" src="assets/webm/sementis-live.webm" aria-label="Sementis Live"></video>
                 </div>
                 <div>
                     <h2 id="modal-criar-live-title">Criar Sala Temporária — Sementis Live</h2>
