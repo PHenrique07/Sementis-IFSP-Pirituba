@@ -424,23 +424,31 @@ let topicosLiveCache = [];
 let topicoSelecionadoLive = 'todos';
 
 function trocarAbaPainel(aba) {
-    const viewTurmas = document.getElementById('view-turmas');
-    const viewLive   = document.getElementById('view-live');
-    const btnTurmas  = document.getElementById('nav-btn-turmas');
-    const btnLive    = document.getElementById('nav-btn-live');
+    const viewTurmas  = document.getElementById('view-turmas');
+    const viewLive    = document.getElementById('view-live');
+    const viewSemeia  = document.getElementById('view-semeia');
+    const btnTurmas   = document.getElementById('nav-btn-turmas');
+    const btnLive     = document.getElementById('nav-btn-live');
+    const btnSemeia   = document.getElementById('nav-btn-semeia');
+
+    // Oculta todas as views e remove 'active' de todos os botões
+    [viewTurmas, viewLive, viewSemeia].forEach(v => { if (v) v.style.display = 'none'; });
+    [btnTurmas, btnLive, btnSemeia].forEach(b => { if (b) b.classList.remove('active'); });
 
     if (aba === 'live') {
-        if (viewTurmas) viewTurmas.style.display = 'none';
-        if (viewLive)   viewLive.style.display   = 'block';
-        if (btnTurmas)  btnTurmas.classList.remove('active');
-        if (btnLive)    btnLive.classList.add('active');
+        if (viewLive)  viewLive.style.display  = 'block';
+        if (btnLive)   btnLive.classList.add('active');
         carregarTopicosLive();
         carregarSalasRecentesLive();
+    } else if (aba === 'semeia') {
+        if (viewSemeia) viewSemeia.style.display = 'block';
+        if (btnSemeia)  btnSemeia.classList.add('active');
+        carregarCotaSemeIA();
+        carregarTurmasChecklistSemeIA();
+        carregarMinhasTrilhasSemeIA();
     } else {
         if (viewTurmas) viewTurmas.style.display = 'block';
-        if (viewLive)   viewLive.style.display   = 'none';
         if (btnTurmas)  btnTurmas.classList.add('active');
-        if (btnLive)    btnLive.classList.remove('active');
     }
 }
 window.trocarAbaPainel = trocarAbaPainel;
@@ -662,4 +670,572 @@ document.addEventListener('keydown', (e) => {
 // =====================================================================
 carregarTurmas();
 carregarTopicosLive();
+
+// Se a URL tiver ?aba=semeia ou ?aba=live, abre direto
+const paramsUrl = new URLSearchParams(window.location.search);
+const abaParam = paramsUrl.get('aba');
+if (abaParam && ['turmas', 'live', 'semeia'].includes(abaParam)) {
+    trocarAbaPainel(abaParam);
+}
+
+
+// =====================================================================
+// SEMEIA — GERAÇÃO DE TRILHAS COM IA
+// =====================================================================
+
+let semeiaJobIntervalo = null;
+let semeiaArquivoAtual = null;
+
+// Mensagens rotatórias exibidas durante o processamento
+const SEMEIA_MSGS_PROCESSANDO = [
+    '🌱 SemeIA está lendo o material...',
+    '🧠 SemeIA está criando as questões...',
+    '✨ SemeIA está montando a trilha...',
+    '🎮 SemeIA está preparando o minigame...',
+    '📚 Finalizando e salvando sua trilha...',
+];
+
+async function carregarCotaSemeIA() {
+    try {
+        const res = await apiFetch('/api/professor/cota-ia');
+        if (!res) return;
+        const dados = await res.json();
+        const textoEl = document.getElementById('semeia-cota-texto');
+        const badge = document.getElementById('semeia-cota-badge');
+        if (!textoEl) return;
+        if (dados.plano_pro) {
+            textoEl.textContent = '★ Pro — gerações ilimitadas';
+            if (badge) {
+                badge.classList.remove('semeia-cota-esgotada');
+                badge.style.cursor = 'default';
+                badge.onclick = null;
+            }
+        } else {
+            const restantes = dados.restantes ?? 0;
+            const total     = dados.cota_total ?? 3;
+            textoEl.textContent = `${restantes}/${total} gerações este mês`;
+            if (badge) {
+                badge.style.cursor = 'pointer';
+                badge.onclick = abrirModalProProfessor;
+                if (restantes === 0) {
+                    badge.classList.add('semeia-cota-esgotada');
+                    badge.title = 'Cota esgotada! Clique para desbloquear o Sementis PRO e obter refil.';
+                } else {
+                    badge.classList.remove('semeia-cota-esgotada');
+                    badge.title = `${restantes} gerações disponíveis. Clique para ver benefícios PRO.`;
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Erro ao carregar cota SemeIA:', e);
+    }
+}
+
+async function carregarTurmasChecklistSemeIA() {
+    const checklist = document.getElementById('semeia-turmas-checklist');
+    if (!checklist) return;
+    try {
+        const res = await apiFetch('/api/professor/turmas');
+        if (!res) return;
+        const dados = await res.json();
+        const turmas = Array.isArray(dados) ? dados : (dados.turmas || []);
+        if (turmas.length === 0) {
+            checklist.innerHTML = '<span class="semeia-turmas-vazio">Nenhuma turma encontrada. A trilha será criada para sua biblioteca de trilhas.</span>';
+            return;
+        }
+        checklist.innerHTML = turmas.map(t => `
+            <label class="semeia-turma-chip" id="chip-turma-${t.id}">
+                <input type="checkbox" name="semeia_turma" value="${t.id}" onchange="toggleChipSemeIA(${t.id}, this.checked)">
+                <span>${escHtml(t.nome)}</span>
+            </label>
+        `).join('');
+    } catch (e) {
+        checklist.innerHTML = '<span class="semeia-turmas-vazio">Erro ao carregar turmas.</span>';
+    }
+}
+
+function toggleChipSemeIA(id, isChecked) {
+    const chip = document.getElementById(`chip-turma-${id}`);
+    if (chip) chip.classList.toggle('checked', isChecked);
+}
+window.toggleChipSemeIA = toggleChipSemeIA;
+window.carregarTurmasChecklistSemeIA = carregarTurmasChecklistSemeIA;
+
+// ---- Drag & Drop ----
+function semeiaOnDragOver(e) {
+    e.preventDefault();
+    document.getElementById('semeia-dropzone')?.classList.add('dragover');
+}
+function semeiaOnDragLeave() {
+    document.getElementById('semeia-dropzone')?.classList.remove('dragover');
+}
+function semeiaOnDrop(e) {
+    e.preventDefault();
+    semeiaOnDragLeave();
+    const arquivo = e.dataTransfer?.files?.[0];
+    if (arquivo) definirArquivoSemeIA(arquivo);
+}
+function semeiaOnFileSelect(e) {
+    const arquivo = e.target.files?.[0];
+    if (arquivo) definirArquivoSemeIA(arquivo);
+}
+function definirArquivoSemeIA(arquivo) {
+    semeiaArquivoAtual = arquivo;
+    const titulo = document.getElementById('semeia-drop-title');
+    if (titulo) titulo.textContent = `📄 ${arquivo.name}`;
+    document.getElementById('semeia-dropzone')?.classList.add('arquivo-selecionado');
+}
+window.semeiaOnDragOver  = semeiaOnDragOver;
+window.semeiaOnDragLeave = semeiaOnDragLeave;
+window.semeiaOnDrop      = semeiaOnDrop;
+window.semeiaOnFileSelect = semeiaOnFileSelect;
+
+// ---- Envio do formulário ----
+async function gerarTrilhaIA(evento) {
+    evento.preventDefault();
+
+    if (!semeiaArquivoAtual) {
+        mostrarMsgFormSemeIA('Selecione um arquivo PDF antes de continuar.', 'erro');
+        return;
+    }
+    const nomeTrilha = document.getElementById('ia-nome-trilha').value.trim();
+    if (!nomeTrilha) {
+        mostrarMsgFormSemeIA('Informe um nome para a trilha.', 'erro');
+        return;
+    }
+
+    const turmasSelecionadas = Array.from(document.querySelectorAll('input[name="semeia_turma"]:checked'))
+        .map(cb => cb.value);
+
+    const formData = new FormData();
+    formData.append('arquivo', semeiaArquivoAtual);
+    formData.append('nome_trilha', nomeTrilha);
+    if (turmasSelecionadas.length > 0) {
+        formData.append('turma_ids', turmasSelecionadas.join(','));
+    }
+
+    mostrarEstadoSemeIA('processando');
+    iniciarRotacaoMensagens();
+
+    try {
+        // SEM Content-Type header — o browser define com boundary correto
+        const res = await fetch(`${API_BASE_URL}/api/professor/gerar-trilha`, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+
+        if (!res.ok) {
+            const dados = await res.json();
+            pararRotacaoMensagens();
+            mostrarEstadoSemeIA('erro', dados.erro || 'Erro ao iniciar geração.');
+            return;
+        }
+
+        const { job_id } = await res.json();
+        aguardarJobSemeIA(job_id);
+    } catch (e) {
+        pararRotacaoMensagens();
+        mostrarEstadoSemeIA('erro', 'Erro de conexão. Verifique o servidor.');
+    }
+}
+window.gerarTrilhaIA = gerarTrilhaIA;
+
+// ---- Polling do status do job ----
+async function aguardarJobSemeIA(jobId) {
+    semeiaJobIntervalo = setInterval(async () => {
+        try {
+            const res = await apiFetch(`/api/professor/trilha-status/${jobId}`);
+            if (!res) { pararRotacaoMensagens(); return; }
+            const dados = await res.json();
+
+            if (dados.status === 'concluido') {
+                clearInterval(semeiaJobIntervalo);
+                pararRotacaoMensagens();
+                mostrarEstadoSemeIA('sucesso', `Trilha "${dados.trilha_id ? '#' + dados.trilha_id : ''}" criada e já disponível!`);
+                carregarCotaSemeIA(); // Atualiza contador após sucesso
+                carregarMinhasTrilhasSemeIA(); // Atualiza lista de trilhas criadas
+            } else if (dados.status === 'erro') {
+                clearInterval(semeiaJobIntervalo);
+                pararRotacaoMensagens();
+                mostrarEstadoSemeIA('erro', dados.erro || 'Erro durante a geração.');
+                carregarCotaSemeIA(); // Revalida a cota na tela para mostrar que nada foi gasto
+            }
+        } catch (e) {
+            console.error('Erro ao verificar status da SemeIA:', e);
+        }
+    }, 3000); // Polling a cada 3 segundos
+}
+
+// ---- Gerenciamento de estados da UI ----
+function mostrarEstadoSemeIA(estado, mensagem = '') {
+    const estados = ['idle', 'processando', 'sucesso', 'erro'];
+    estados.forEach(e => {
+        const el = document.getElementById(`semeia-estado-${e}`);
+        if (el) el.style.display = (e === estado) ? 'block' : 'none';
+    });
+    if (mensagem) {
+        const msgEl = document.getElementById(`semeia-msg-${estado}`);
+        if (msgEl) msgEl.textContent = mensagem;
+    }
+}
+
+function resetarSemeIA() {
+    if (semeiaJobIntervalo) clearInterval(semeiaJobIntervalo);
+    semeiaArquivoAtual = null;
+    const titulo = document.getElementById('semeia-drop-title');
+    if (titulo) titulo.textContent = 'Arraste seu PDF aqui';
+    document.getElementById('semeia-dropzone')?.classList.remove('arquivo-selecionado');
+    document.getElementById('ia-nome-trilha').value = '';
+    document.getElementById('ia-pdf-input').value = '';
+    mostrarEstadoSemeIA('idle');
+}
+window.resetarSemeIA = resetarSemeIA;
+
+function mostrarMsgFormSemeIA(texto, tipo = 'info') {
+    const el = document.getElementById('semeia-form-msg');
+    if (!el) return;
+    el.textContent = texto;
+    el.className = `semeia-form-msg semeia-msg-${tipo}`;
+    setTimeout(() => { el.textContent = ''; el.className = 'semeia-form-msg'; }, 5000);
+}
+
+// ---- Rotação de mensagens durante processamento ----
+let semeiaMsgIndex  = 0;
+let semeiaMsgTimer  = null;
+function iniciarRotacaoMensagens() {
+    semeiaMsgIndex = 0;
+    const el = document.getElementById('semeia-msg-processando');
+    if (el) el.textContent = SEMEIA_MSGS_PROCESSANDO[0];
+    semeiaMsgTimer = setInterval(() => {
+        semeiaMsgIndex = (semeiaMsgIndex + 1) % SEMEIA_MSGS_PROCESSANDO.length;
+        if (el) el.textContent = SEMEIA_MSGS_PROCESSANDO[semeiaMsgIndex];
+    }, 4000);
+}
+function pararRotacaoMensagens() {
+    if (semeiaMsgTimer) clearInterval(semeiaMsgTimer);
+}
+
+// ======================================================================
+// MODAIS: TUTORIAL COMO FUNCIONA A SEMEIA E SEMENTIS PRO
+// ======================================================================
+function abrirModalComoFuncionaSemeIA() {
+    const modal = document.getElementById('modal-como-funciona-semeia');
+    if (modal) {
+        modal.classList.add('open', 'active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function fecharModalComoFuncionaSemeIA() {
+    const modal = document.getElementById('modal-como-funciona-semeia');
+    if (modal) {
+        modal.classList.remove('open', 'active');
+        document.body.style.overflow = '';
+    }
+}
+
+function abrirModalProProfessor() {
+    const modal = document.getElementById('modal-pro-professor');
+    if (modal) {
+        modal.classList.add('open', 'active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function fecharModalProProfessor() {
+    const modal = document.getElementById('modal-pro-professor');
+    if (modal) {
+        modal.classList.remove('open', 'active');
+        document.body.style.overflow = '';
+    }
+}
+
+function assinarProIndisponivel() {
+    const msgEl = document.getElementById('pro-indisponivel-msg');
+    const btn = document.getElementById('btn-pro-trial');
+    const terms = document.getElementById('pro-terms-txt');
+    if (msgEl) {
+        msgEl.style.display = 'flex';
+    }
+    if (btn) {
+        btn.textContent = '✓ Adicionado à Lista de Espera!';
+        btn.style.backgroundColor = '#10b981';
+        btn.style.color = '#ffffff';
+        btn.style.boxShadow = '0 4px 0 #059669';
+    }
+    if (terms) {
+        terms.textContent = 'Entraremos em contato com você prioritariamente com condições exclusivas!';
+    }
+}
+
+window.abrirModalComoFuncionaSemeIA = abrirModalComoFuncionaSemeIA;
+window.fecharModalComoFuncionaSemeIA = fecharModalComoFuncionaSemeIA;
+window.abrirModalProProfessor = abrirModalProProfessor;
+window.fecharModalProProfessor = fecharModalProProfessor;
+window.assinarProIndisponivel = assinarProIndisponivel;
+
+// Fechar modais ao clicar no fundo (overlay)
+const modalHelpSemeiaEl = document.getElementById('modal-como-funciona-semeia');
+if (modalHelpSemeiaEl) {
+    modalHelpSemeiaEl.addEventListener('click', (e) => {
+        if (e.target === modalHelpSemeiaEl) fecharModalComoFuncionaSemeIA();
+    });
+}
+
+const modalProProfessorEl = document.getElementById('modal-pro-professor');
+if (modalProProfessorEl) {
+    modalProProfessorEl.addEventListener('click', (e) => {
+        if (e.target === modalProProfessorEl) fecharModalProProfessor();
+    });
+}
+
+// ======================================================================
+// GESTÃO DE TRILHAS CRIADAS COM A SEMEIA (LISTAGEM, ATRIBUIÇÃO, EXCLUSÃO)
+// ======================================================================
+let trilhasSemeIACache = [];
+let trilhaEmEdicaoId = null;
+
+async function carregarMinhasTrilhasSemeIA() {
+    const listaEl = document.getElementById('semeia-lista-trilhas');
+    if (!listaEl) return;
+
+    listaEl.innerHTML = '<div class="semeia-trilhas-loading">Carregando suas trilhas criadas com SemeIA...</div>';
+
+    try {
+        const res = await apiFetch('/api/professor/trilhas-ia');
+        if (!res) return;
+        const dados = await res.json();
+
+        if (!res.ok) {
+            listaEl.innerHTML = '<div class="semeia-trilhas-loading" style="color:#ef4444;">Erro ao buscar trilhas.</div>';
+            return;
+        }
+
+        trilhasSemeIACache = dados.trilhas || [];
+        renderizarMinhasTrilhasSemeIA(trilhasSemeIACache);
+    } catch (e) {
+        console.error('Erro ao buscar trilhas SemeIA:', e);
+        listaEl.innerHTML = '<div class="semeia-trilhas-loading" style="color:#ef4444;">Erro de conexão com o servidor.</div>';
+    }
+}
+
+function renderizarMinhasTrilhasSemeIA(trilhas) {
+    const listaEl = document.getElementById('semeia-lista-trilhas');
+    if (!listaEl) return;
+
+    listaEl.innerHTML = '';
+
+    if (trilhas.length === 0) {
+        listaEl.innerHTML = `
+            <div class="semeia-trilhas-empty">
+                <p>Você ainda não criou nenhuma trilha com a SemeIA.</p>
+                <p style="font-size: 13px; margin-top: 6px;">Envie uma apostila ou resumo em PDF no formulário acima para gerar sua primeira trilha gamificada!</p>
+            </div>
+        `;
+        return;
+    }
+
+    trilhas.forEach(trilha => {
+        const card = document.createElement('div');
+        card.className = 'semeia-trilha-gerenciada-card';
+
+        const turmasTags = (trilha.turmas && trilha.turmas.length > 0)
+            ? trilha.turmas.map(t => `<span class="trilha-turma-tag">🎓 ${escHtml(t.nome)}</span>`).join('')
+            : '<span class="trilha-turma-sem">Nenhuma turma atribuída ainda</span>';
+
+        const totalAtividades = trilha.total_atividades || 0;
+        const temMinigame = trilha.tipos_atividades && trilha.tipos_atividades.includes('minigame');
+        const tiposBadge = temMinigame ? '🕹️ Quiz + Minigame' : '🎯 Quiz';
+
+        const turmasIdsStr = JSON.stringify((trilha.turmas || []).map(t => t.id));
+
+        card.innerHTML = `
+            <div class="trilha-gerenciada-top">
+                <div>
+                    <h4 class="trilha-gerenciada-nome">${escHtml(trilha.nome)}</h4>
+                    <div class="trilha-gerenciada-meta">
+                        <span>🎯 ${totalAtividades} ${totalAtividades === 1 ? 'fase' : 'fases'}</span>
+                        <span>•</span>
+                        <span>${tiposBadge}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trilha-gerenciada-turmas-box">
+                <span class="trilha-turmas-label">Turmas com Acesso:</span>
+                <div class="trilha-turmas-chips">
+                    ${turmasTags}
+                </div>
+            </div>
+
+            <div class="trilha-gerenciada-actions">
+                <button type="button" class="btn-trilha-atribuir" onclick='abrirModalAtribuirTurmasTrilha(${trilha.id}, ${JSON.stringify(trilha.nome)}, ${turmasIdsStr})'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>Atribuir Turmas</span>
+                </button>
+                <a href="trilhas.html?trilha_id=${encodeURIComponent(trilha.id)}" target="_blank" class="btn-trilha-visualizar" title="Visualizar como aluno">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span>Testar Trilha</span>
+                </a>
+                <button type="button" class="btn-trilha-excluir" onclick='excluirTrilhaSemeIA(${trilha.id}, ${JSON.stringify(trilha.nome)})' title="Excluir esta trilha">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </div>
+        `;
+
+        listaEl.appendChild(card);
+    });
+}
+
+// ---- Modal Atribuir Turmas à Trilha ----
+async function abrirModalAtribuirTurmasTrilha(trilhaId, trilhaNome, turmasIdsAtuais) {
+    trilhaEmEdicaoId = trilhaId;
+    const modal = document.getElementById('modal-atribuir-turmas-trilha');
+    const descEl = document.getElementById('modal-atribuir-trilha-desc');
+    const checklistEl = document.getElementById('modal-trilha-turmas-checklist');
+    const feedbackEl = document.getElementById('feedback-atribuir-trilha');
+
+    if (!modal || !checklistEl) return;
+
+    if (descEl) descEl.textContent = `Trilha: ${trilhaNome}`;
+    if (feedbackEl) { feedbackEl.textContent = ''; feedbackEl.className = 'mensagem-feedback'; }
+    checklistEl.innerHTML = '<span style="color:var(--color-gray-400); font-size:13px;">Carregando turmas...</span>';
+
+    modal.classList.add('open', 'active');
+    document.body.style.overflow = 'hidden';
+
+    try {
+        const res = await apiFetch('/api/professor/turmas');
+        if (!res) return;
+        const dados = await res.json();
+        const turmas = Array.isArray(dados) ? dados : (dados.turmas || []);
+
+        if (turmas.length === 0) {
+            checklistEl.innerHTML = '<span style="color:var(--color-gray-400); font-size:13px;">Você ainda não possui turmas criadas. Crie uma turma primeiro.</span>';
+            return;
+        }
+
+        const idsSet = new Set(turmasIdsAtuais || []);
+
+        checklistEl.innerHTML = turmas.map(t => {
+            const isChecked = idsSet.has(t.id);
+            return `
+                <label class="modal-turma-checkbox-item ${isChecked ? 'checked' : ''}" id="modal-chip-turma-${t.id}">
+                    <input type="checkbox" name="modal_atribuir_turma" value="${t.id}" ${isChecked ? 'checked' : ''} onchange="toggleModalChipTurma(${t.id}, this.checked)">
+                    <span>${escHtml(t.nome)}</span>
+                </label>
+            `;
+        }).join('');
+
+    } catch (e) {
+        checklistEl.innerHTML = '<span style="color:#ef4444; font-size:13px;">Erro ao carregar lista de turmas.</span>';
+    }
+}
+
+function toggleModalChipTurma(turmaId, isChecked) {
+    const item = document.getElementById(`modal-chip-turma-${turmaId}`);
+    if (item) item.classList.toggle('checked', isChecked);
+}
+
+function fecharModalAtribuirTurmasTrilha() {
+    const modal = document.getElementById('modal-atribuir-turmas-trilha');
+    if (modal) {
+        modal.classList.remove('open', 'active');
+        document.body.style.overflow = '';
+    }
+    trilhaEmEdicaoId = null;
+}
+
+async function salvarAtribuicaoTurmasTrilha() {
+    if (!trilhaEmEdicaoId) return;
+
+    const feedbackEl = document.getElementById('feedback-atribuir-trilha');
+    const btnSalvar = document.getElementById('btn-salvar-atribuicao-trilha');
+
+    const selecionados = Array.from(document.querySelectorAll('input[name="modal_atribuir_turma"]:checked'))
+        .map(cb => parseInt(cb.value, 10));
+
+    if (btnSalvar) btnSalvar.disabled = true;
+    if (feedbackEl) {
+        feedbackEl.textContent = 'Salvando atribuições...';
+        feedbackEl.className = 'mensagem-feedback';
+    }
+
+    try {
+        const res = await apiFetch(`/api/professor/trilhas/${trilhaEmEdicaoId}/turmas`, {
+            method: 'POST',
+            body: JSON.stringify({ turma_ids: selecionados })
+        });
+
+        if (!res) return;
+        const dados = await res.json();
+
+        if (!res.ok) {
+            if (feedbackEl) {
+                feedbackEl.textContent = dados.erro || 'Erro ao salvar turmas.';
+                feedbackEl.className = 'mensagem-feedback erro';
+            }
+            return;
+        }
+
+        if (feedbackEl) {
+            feedbackEl.textContent = 'Turmas atualizadas com sucesso! 🎉';
+            feedbackEl.className = 'mensagem-feedback sucesso';
+        }
+
+        setTimeout(() => {
+            fecharModalAtribuirTurmasTrilha();
+            carregarMinhasTrilhasSemeIA();
+        }, 600);
+
+    } catch (e) {
+        if (feedbackEl) {
+            feedbackEl.textContent = 'Erro ao conectar ao servidor.';
+            feedbackEl.className = 'mensagem-feedback erro';
+        }
+    } finally {
+        if (btnSalvar) btnSalvar.disabled = false;
+    }
+}
+
+async function excluirTrilhaSemeIA(trilhaId, trilhaNome) {
+    const confirmou = confirm(`Deseja realmente excluir a trilha "${trilhaNome}"?\n\nEsta ação removerá a trilha das turmas atribuídas.`);
+    if (!confirmou) return;
+
+    try {
+        const res = await apiFetch(`/api/professor/trilhas/${trilhaId}`, {
+            method: 'DELETE'
+        });
+
+        if (!res) return;
+        const dados = await res.json();
+
+        if (!res.ok) {
+            alert(dados.erro || 'Não foi possível excluir a trilha.');
+            return;
+        }
+
+        alert('Trilha excluída com sucesso!');
+        carregarMinhasTrilhasSemeIA();
+
+    } catch (e) {
+        alert('Erro ao excluir trilha. Verifique a conexão com o servidor.');
+    }
+}
+
+window.carregarMinhasTrilhasSemeIA = carregarMinhasTrilhasSemeIA;
+window.abrirModalAtribuirTurmasTrilha = abrirModalAtribuirTurmasTrilha;
+window.fecharModalAtribuirTurmasTrilha = fecharModalAtribuirTurmasTrilha;
+window.salvarAtribuicaoTurmasTrilha = salvarAtribuicaoTurmasTrilha;
+window.excluirTrilhaSemeIA = excluirTrilhaSemeIA;
+window.toggleModalChipTurma = toggleModalChipTurma;
+
+const modalAtribuirTrilhaEl = document.getElementById('modal-atribuir-turmas-trilha');
+if (modalAtribuirTrilhaEl) {
+    modalAtribuirTrilhaEl.addEventListener('click', (e) => {
+        if (e.target === modalAtribuirTrilhaEl) fecharModalAtribuirTurmasTrilha();
+    });
+}
+
 

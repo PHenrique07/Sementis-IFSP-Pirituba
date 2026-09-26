@@ -91,6 +91,161 @@ function renderModulos(modulos) {
     }).join('');
 }
 
+// ===== RENDERIZAÇÃO DE TRILHAS DA SEMEIA =====
+function renderTrilhasSemeIA(trilhas = []) {
+    const container = document.getElementById('trilhas-semeia-container');
+    if (!container) return;
+
+    if (!trilhas || trilhas.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding: 28px 16px; background: rgba(16,16,55,0.4); border-radius:12px; border:1px dashed rgba(167,139,250,0.3);">
+                <p style="margin:0 0 14px; font-size:14px; color:var(--turma-muted);">
+                    Nenhuma trilha personalizada da SemeIA está atribuída a esta turma ainda.
+                </p>
+                <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+                    <button type="button" class="btn-semeia-atribuir" onclick="abrirModalAtribuirTrilha()">+ Atribuir Trilha Existente</button>
+                    <a href="painel-professor.html?aba=semeia" class="btn-semeia-gerar-link">✨ Gerar Trilha com IA</a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="trilhas-semeia-grid">
+            ${trilhas.map(t => `
+                <article class="trilha-semeia-card">
+                    <div class="trilha-semeia-card-top">
+                        <h4>${escapeHtml(t.nome)}</h4>
+                        <span class="trilha-semeia-badge">SemeIA</span>
+                    </div>
+                    <div class="trilha-semeia-meta">
+                        <span>🎯 ${t.total_atividades} atividades (quiz + minigame)</span>
+                        <span>·</span>
+                        <span>📅 ${t.data_atribuicao}</span>
+                    </div>
+                    <div class="trilha-semeia-card-footer">
+                        <button type="button" class="btn-remover-trilha-turma" onclick="removerTrilhaDaTurma(${t.id}, '${escapeHtml(t.nome)}')">
+                            ✕ Remover da turma
+                        </button>
+                        <a href="trilhas.html?trilha_id=${encodeURIComponent(t.id)}" target="_blank" class="btn-ver-trilha">
+                            Ver Trilha →
+                        </a>
+                    </div>
+                </article>
+            `).join('')}
+        </div>
+    `;
+}
+
+// Modal de Atribuir Trilha
+async function abrirModalAtribuirTrilha() {
+    const modal = document.getElementById('modal-atribuir-trilha');
+    const select = document.getElementById('select-trilha-existente');
+    const msg = document.getElementById('modal-atribuir-msg');
+    if (msg) msg.textContent = '';
+    if (modal) {
+        modal.classList.add('open');
+        modal.style.display = 'flex';
+    }
+
+    if (select) {
+        select.innerHTML = '<option value="">Carregando trilhas...</option>';
+        try {
+            const res = await apiFetch('/api/professor/trilhas-ia');
+            if (!res) return;
+            const dados = await res.json();
+            const trilhas = dados.trilhas || [];
+            if (trilhas.length === 0) {
+                select.innerHTML = '<option value="">Nenhuma trilha criada ainda. Use a SemeIA para gerar!</option>';
+                return;
+            }
+            select.innerHTML = '<option value="">Selecione uma trilha...</option>' + 
+                trilhas.map(t => `<option value="${t.id}">${escapeHtml(t.nome)} (${t.total_atividades} atividades)</option>`).join('');
+        } catch (e) {
+            select.innerHTML = '<option value="">Erro ao carregar trilhas</option>';
+        }
+    }
+}
+
+function fecharModalAtribuirTrilha() {
+    const modal = document.getElementById('modal-atribuir-trilha');
+    if (modal) {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+    }
+}
+
+// Fechar modal ao clicar no fundo escuro
+document.addEventListener('DOMContentLoaded', () => {
+    const modalAtribuir = document.getElementById('modal-atribuir-trilha');
+    if (modalAtribuir) {
+        modalAtribuir.addEventListener('click', (e) => {
+            if (e.target === modalAtribuir) fecharModalAtribuirTrilha();
+        });
+    }
+});
+
+async function confirmarAtribuicaoTrilha() {
+    const select = document.getElementById('select-trilha-existente');
+    const msg = document.getElementById('modal-atribuir-msg');
+    const btn = document.getElementById('btn-confirmar-atribuir');
+    const trilhaId = select ? select.value : '';
+
+    if (!trilhaId) {
+        if (msg) {
+            msg.textContent = 'Selecione uma trilha antes de prosseguir.';
+            msg.style.color = '#ef4444';
+        }
+        return;
+    }
+
+    if (btn) btn.disabled = true;
+
+    try {
+        const res = await apiFetch(`/api/professor/turmas/${turmaId}/atribuir-trilha`, {
+            method: 'POST',
+            body: JSON.stringify({ trilha_id: parseInt(trilhaId) })
+        });
+        const dados = await res.json();
+        if (!res.ok) throw new Error(dados.erro || 'Falha ao atribuir trilha.');
+
+        fecharModalAtribuirTrilha();
+        await carregarTurma();
+    } catch (e) {
+        if (msg) {
+            msg.textContent = e.message;
+            msg.style.color = '#ef4444';
+        }
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+async function removerTrilhaDaTurma(trilhaId, nomeTrilha) {
+    if (!confirm(`Deseja remover a trilha "${nomeTrilha}" desta turma?`)) {
+        return;
+    }
+    try {
+        const res = await apiFetch(`/api/professor/turmas/${turmaId}/trilhas/${trilhaId}`, {
+            method: 'DELETE'
+        });
+        if (!res.ok) {
+            const dados = await res.json();
+            alert(dados.erro || 'Falha ao remover trilha da turma.');
+            return;
+        }
+        await carregarTurma();
+    } catch (e) {
+        alert('Erro ao conectar com o servidor.');
+    }
+}
+
+window.abrirModalAtribuirTrilha = abrirModalAtribuirTrilha;
+window.fecharModalAtribuirTrilha = fecharModalAtribuirTrilha;
+window.confirmarAtribuicaoTrilha = confirmarAtribuicaoTrilha;
+window.removerTrilhaDaTurma = removerTrilhaDaTurma;
+
 // ===== RENDERIZAÇÃO E FILTRAGEM DE ALUNOS =====
 function obterAlunosFiltrados() {
     return todosAlunos.filter(aluno => {
@@ -247,6 +402,7 @@ function renderDados(dados) {
     renderTabelaAlunos();
     renderAvisos(dados.avisos);
     renderModulos(dados.modulos);
+    renderTrilhasSemeIA(dados.trilhas_personalizadas || []);
     renderGraficos(dados);
 }
 

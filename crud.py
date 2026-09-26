@@ -6,7 +6,7 @@ import string
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 # Importando todas as tabelas do models.py
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade, GeradorTrilha, TurmaTrilha
 from datetime import date, timedelta
 import math
 
@@ -1100,3 +1100,352 @@ def obter_perfil_publico(session: Session, usuario_id: int):
         "tema_url": imagem_tema,
         "badges": [] # Placeholder para futuros emblemas
     }
+
+
+# ======================================================
+# SEMEIA — Cota de Geração de Trilhas por IA
+# ======================================================
+
+def verificar_cota_geracao_ia(session: Session, professor_id: int) -> dict:
+    """
+    Verifica se o professor tem cota disponível e decrementa em 1.
+    A cota NUNCA acumula: o reset mensal sempre volta para COTA_MENSAL_GRATUITA.
+    Retorna dict com 'permitido', 'restantes' e 'pro'.
+    """
+    from semeia import COTA_MENSAL_GRATUITA  # fonte única da verdade da cota
+
+    professor = session.get(Usuario, professor_id)
+    if not professor:
+        return {"permitido": False, "motivo": "Professor não encontrado"}
+
+    hoje = date.today()
+    # Reset mensal: sempre retorna para COTA_MENSAL_GRATUITA, nunca acumula saldo
+    if (
+        professor.trilhas_ia_reset_mes is None
+        or professor.trilhas_ia_reset_mes.month != hoje.month
+        or professor.trilhas_ia_reset_mes.year != hoje.year
+    ):
+        professor.trilhas_ia_restantes = COTA_MENSAL_GRATUITA
+        professor.trilhas_ia_reset_mes = hoje
+        session.add(professor)
+        session.commit()
+
+    # Plano Pro: sem limite
+    if professor.trilhas_ia_plano_pro:
+        return {"permitido": True, "restantes": None, "pro": True}
+
+    # Plano gratuito: máximo COTA_MENSAL_GRATUITA por mês
+    if professor.trilhas_ia_restantes <= 0:
+        return {
+            "permitido": False,
+            "motivo": f"Você atingiu o limite de {COTA_MENSAL_GRATUITA} trilhas gratuitas este mês.",
+            "restantes": 0,
+            "pro": False,
+        }
+
+    # Apenas verifica — NÃO decrementa aqui!
+    # A cota só é consumida por consumir_cota_ia() após sucesso garantido.
+    return {"permitido": True, "restantes": professor.trilhas_ia_restantes, "pro": False}
+
+
+def consumir_cota_ia(session: Session, professor_id: int):
+    """
+    Consome 1 cota de geração APENAS quando a trilha for gerada e salva com sucesso.
+    Se o professor for Pro, não desconta nada.
+    """
+    professor = session.get(Usuario, professor_id)
+    if professor and not professor.trilhas_ia_plano_pro:
+        if professor.trilhas_ia_restantes > 0:
+            professor.trilhas_ia_restantes -= 1
+            session.add(professor)
+            session.commit()
+
+
+def estornar_cota_ia(session: Session, professor_id: int):
+    """
+    Restaura 1 cota de geração para o professor caso necessário,
+    respeitando o teto de COTA_MENSAL_GRATUITA (nunca ultrapassa a cota máxima).
+    """
+    professor = session.get(Usuario, professor_id)
+    if professor and not professor.trilhas_ia_plano_pro:
+        professor.trilhas_ia_restantes = min(COTA_MENSAL_GRATUITA, (professor.trilhas_ia_restantes or 0) + 1)
+        session.add(professor)
+        session.commit()
+
+
+def persistir_trilha_ia(session: Session, professor_id: int, dados_yaml: dict, turma_ids: list[int] | None = None) -> Trilha:
+    """
+    Converte o YAML gerado pela SemeIA e persiste nas tabelas existentes
+    (Modulo, Trilha, Atividade, Questao, TurmaTrilha). Não recria tabelas nem remove dados.
+    """
+    # Usa um módulo compartilhado para todas as trilhas geradas por professores
+    modulo = session.exec(
+        select(Modulo).where(Modulo.nome == "Trilhas Personalizadas")
+    ).first()
+    if not modulo:
+        modulo = Modulo(
+            nome="Trilhas Personalizadas",
+            descricao="Trilhas geradas pelos professores com a SemeIA",
+            ordem=99,
+        )
+        session.add(modulo)
+        session.flush()
+
+    trilha = Trilha(
+        nome=dados_yaml["trilha"]["nome"],
+        ordem=1,
+        modulo_id=modulo.id,
+        professor_id=professor_id,
+    )
+    session.add(trilha)
+    session.flush()
+
+    for i, atividade_yaml in enumerate(dados_yaml["atividades"]):
+        atividade = Atividade(
+            nome=atividade_yaml["nome"],
+            tipo=atividade_yaml["tipo"],
+            ordem=i + 1,
+            xp_recompensa=10,
+            moedas_recompensa=5,
+            trilha_id=trilha.id,
+        )
+        session.add(atividade)
+        session.flush()
+
+        if atividade_yaml["tipo"] == "minigame":
+            # Minigame: um único registro de Questao guarda os metadados do minigame
+            questao = Questao(
+                atividade_id=atividade.id,
+                tipo_layout="minigame",
+                conteudo={
+                    "subtipo":  atividade_yaml.get("subtipo", "quiz_rapido"),
+                    "pares":    atividade_yaml.get("pares", []),
+                    "palavras": atividade_yaml.get("palavras", []),
+                    "questoes": atividade_yaml.get("questoes", []),
+                }
+            )
+            session.add(questao)
+        else:
+            for q in atividade_yaml.get("questoes", []):
+                questao = Questao(
+                    atividade_id=atividade.id,
+                    tipo_layout=q["tipo"],
+                    conteudo={
+                        "pergunta":    q["pergunta"],
+                        "opcoes":      q["opcoes"],
+                        "curiosidade": q.get("curiosidade", ""),
+                    }
+                )
+                session.add(questao)
+
+    # Atribuição às turmas selecionadas pelo professor
+    if turma_ids:
+        for tid in turma_ids:
+            # Verifica se já não está atribuída
+            ja_existe = session.exec(
+                select(TurmaTrilha).where(TurmaTrilha.turma_id == tid, TurmaTrilha.trilha_id == trilha.id)
+            ).first()
+            if not ja_existe:
+                session.add(TurmaTrilha(turma_id=tid, trilha_id=trilha.id))
+
+    session.commit()
+    return trilha
+
+
+def atribuir_trilha_turma(session: Session, turma_id: int, trilha_id: int) -> TurmaTrilha:
+    """Associa uma trilha existente a uma turma."""
+    existente = session.exec(
+        select(TurmaTrilha).where(TurmaTrilha.turma_id == turma_id, TurmaTrilha.trilha_id == trilha_id)
+    ).first()
+    if existente:
+        return existente
+    associacao = TurmaTrilha(turma_id=turma_id, trilha_id=trilha_id)
+    session.add(associacao)
+    session.commit()
+    return associacao
+
+
+def remover_trilha_turma(session: Session, turma_id: int, trilha_id: int) -> bool:
+    """Remove a associação de uma trilha com a turma."""
+    associacao = session.exec(
+        select(TurmaTrilha).where(TurmaTrilha.turma_id == turma_id, TurmaTrilha.trilha_id == trilha_id)
+    ).first()
+    if associacao:
+        session.delete(associacao)
+        session.commit()
+        return True
+    return False
+
+
+def listar_trilhas_da_turma(session: Session, turma_id: int) -> list[dict]:
+    """Retorna todas as trilhas atribuídas a uma turma específica."""
+    registros = session.exec(
+        select(Trilha, TurmaTrilha.data_atribuicao)
+        .join(TurmaTrilha, TurmaTrilha.trilha_id == Trilha.id)
+        .where(TurmaTrilha.turma_id == turma_id)
+        .order_by(TurmaTrilha.data_atribuicao.desc())
+    ).all()
+
+    resultado = []
+    for trilha, data_atribuicao in registros:
+        atividades = session.exec(
+            select(Atividade).where(Atividade.trilha_id == trilha.id)
+        ).all()
+        resultado.append({
+            "id": trilha.id,
+            "nome": trilha.nome,
+            "total_atividades": len(atividades),
+            "tipos_atividades": list(set(a.tipo for a in atividades)),
+            "data_atribuicao": data_atribuicao.strftime("%d/%m/%Y"),
+        })
+    return resultado
+
+
+def listar_trilhas_do_professor(session: Session, professor_id: int) -> list[dict]:
+    """Retorna todas as trilhas criadas pelo professor via SemeIA com as turmas atribuídas."""
+    trilhas = session.exec(
+        select(Trilha)
+        .where(Trilha.professor_id == professor_id)
+        .order_by(Trilha.id.desc())
+    ).all()
+
+    resultado = []
+    for trilha in trilhas:
+        atividades = session.exec(
+            select(Atividade).where(Atividade.trilha_id == trilha.id).order_by(Atividade.ordem)
+        ).all()
+
+        turmas_atribuidas = session.exec(
+            select(Turma.id, Turma.nome)
+            .join(TurmaTrilha, TurmaTrilha.turma_id == Turma.id)
+            .where(TurmaTrilha.trilha_id == trilha.id)
+        ).all()
+
+        resultado.append({
+            "id": trilha.id,
+            "nome": trilha.nome,
+            "total_atividades": len(atividades),
+            "tipos_atividades": list(set(a.tipo for a in atividades)),
+            "turmas_atribuidas": len(turmas_atribuidas),
+            "turmas": [{"id": tid, "nome": tnome} for tid, tnome in turmas_atribuidas],
+        })
+    return resultado
+
+
+def sincronizar_turmas_da_trilha(session: Session, trilha_id: int, turma_ids: list[int]):
+    """Atualiza quais turmas têm acesso a uma trilha (adiciona as novas e remove as desmarcadas)."""
+    existentes = session.exec(
+        select(TurmaTrilha).where(TurmaTrilha.trilha_id == trilha_id)
+    ).all()
+    ids_existentes = {et.turma_id for et in existentes}
+    novos_ids = set(turma_ids)
+
+    for et in existentes:
+        if et.turma_id not in novos_ids:
+            session.delete(et)
+
+    for tid in novos_ids:
+        if tid not in ids_existentes:
+            session.add(TurmaTrilha(turma_id=tid, trilha_id=trilha_id))
+
+    session.commit()
+
+
+def obter_mapa_trilha_especifica(session: Session, trilha_id: int, usuario_id: int) -> list[dict]:
+    """Retorna a estrutura de uma trilha com suas atividades e status para o aluno jogar."""
+    trilha = session.get(Trilha, trilha_id)
+    if not trilha:
+        return []
+
+    atividades = session.exec(
+        select(Atividade).where(Atividade.trilha_id == trilha.id).order_by(Atividade.ordem)
+    ).all()
+
+    ids_atividades = [a.id for a in atividades]
+    concluidas_ids = set(session.exec(
+        select(ProgressoUsuario.atividade_id)
+        .where(
+            ProgressoUsuario.usuario_id == usuario_id,
+            ProgressoUsuario.atividade_id.in_(ids_atividades)
+        )
+    ).all())
+
+    primeira_fase_livre_encontrada = False
+    atividades_formatadas = []
+
+    for atv in atividades:
+        if atv.id in concluidas_ids:
+            status = "concluida"
+        elif not primeira_fase_livre_encontrada:
+            status = "liberada"
+            primeira_fase_livre_encontrada = True
+        else:
+            status = "bloqueada"
+
+        atividades_formatadas.append({
+            "id": atv.id,
+            "nome": atv.nome,
+            "tipo": atv.tipo,
+            "ordem": atv.ordem,
+            "status": status,
+            "xp_recompensa": atv.xp_recompensa,
+            "moedas_recompensa": atv.moedas_recompensa,
+        })
+
+    return [{
+        "trilha_id": trilha.id,
+        "trilha_nome": trilha.nome,
+        "trilha_ordem": trilha.ordem,
+        "atividades": atividades_formatadas,
+    }]
+
+
+def listar_turmas_do_aluno(session: Session, aluno_id: int) -> list[dict]:
+    """Retorna todas as turmas em que o aluno está inscrito."""
+    registros = session.exec(
+        select(Turma, Usuario.nome)
+        .join(TurmaAluno, TurmaAluno.turma_id == Turma.id)
+        .join(Usuario, Usuario.id == Turma.professor_id)
+        .where(TurmaAluno.aluno_id == aluno_id)
+        .order_by(Turma.nome)
+    ).all()
+
+    resultado = []
+    for turma, professor_nome in registros:
+        total_alunos = session.exec(
+            select(func.count(TurmaAluno.id)).where(TurmaAluno.turma_id == turma.id)
+        ).one() or 0
+        total_trilhas = session.exec(
+            select(func.count(TurmaTrilha.id)).where(TurmaTrilha.turma_id == turma.id)
+        ).one() or 0
+        resultado.append({
+            "id": turma.id,
+            "nome": turma.nome,
+            "professor_nome": professor_nome,
+            "codigo_convite": turma.codigo_convite,
+            "total_alunos": total_alunos,
+            "total_trilhas": total_trilhas,
+        })
+    return resultado
+
+
+def obter_ranking_da_turma(session: Session, turma_id: int) -> list[dict]:
+    """Retorna o ranking dos alunos de uma turma ordenados por XP semanal."""
+    alunos = session.exec(
+        select(Usuario)
+        .join(TurmaAluno, TurmaAluno.aluno_id == Usuario.id)
+        .where(TurmaAluno.turma_id == turma_id)
+        .order_by(Usuario.xp_semanal.desc(), Usuario.xp.desc())
+    ).all()
+
+    ranking = []
+    for i, a in enumerate(alunos, start=1):
+        ranking.append({
+            "posicao": i,
+            "id": a.id,
+            "nome": a.nome,
+            "xp_semanal": a.xp_semanal or 0,
+            "xp_total": a.xp or 0,
+            "ofensiva": a.ofensiva or 0,
+        })
+    return ranking

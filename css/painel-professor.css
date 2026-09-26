@@ -1,6 +1,6 @@
 /* ===================================================================
-   PAINEL DO PROFESSOR — CSS
-   Usa as variáveis globais de styles.css
+   PAINEL DO PROFESSOR â€” CSS
+   Usa as variÃ¡veis globais de styles.css
 =================================================================== */
 
 /* ---- Layout base ---- */
@@ -98,7 +98,7 @@
     color: #fff;
 }
 
-/* ---- Layout com Sidebar e Conteúdo ---- */
+/* ---- Layout com Sidebar e ConteÃºdo ---- */
 .prof-layout-container {
     max-width: 1280px;
     margin: 0 auto;
@@ -182,7 +182,7 @@
     letter-spacing: 0.5px;
 }
 
-/* Card da Barra Lateral: Criar Sala Rápida */
+/* Card da Barra Lateral: Criar Sala RÃ¡pida */
 .sidebar-live-card {
     background: linear-gradient(135deg, rgba(38, 48, 98, 0.9) 0%, rgba(26, 32, 75, 0.9) 100%);
     border: 2px solid rgba(169, 255, 113, 0.35);
@@ -257,7 +257,7 @@
     box-shadow: 0 6px 18px rgba(169, 255, 113, 0.45);
 }
 
-/* ---- Conteúdo Principal ---- */
+/* ---- ConteÃºdo Principal ---- */
 .prof-main-content {
     min-width: 0;
 }
@@ -292,7 +292,7 @@
     margin-top: 4px;
 }
 
-/* ---- Botão Nova Turma ---- */
+/* ---- BotÃ£o Nova Turma ---- */
 .btn-nova-turma {
     display: flex;
     align-items: center;
@@ -408,7 +408,7 @@
     flex-shrink: 0;
 }
 
-/* Código de convite */
+/* CÃ³digo de convite */
 .turma-codigo-wrapper {
     background: rgba(0,0,0,0.3);
     border: 1px solid rgba(169, 255, 113, 0.2);
@@ -515,7 +515,7 @@
 }
 
 /* =====================================================================
-   MODAL SHARED — Nova Turma e Ranking
+   MODAL SHARED â€” Nova Turma e Ranking
 ===================================================================== */
 .modal-overlay {
     position: fixed;
@@ -770,7 +770,7 @@
     vertical-align: middle;
 }
 
-/* Posição */
+/* PosiÃ§Ã£o */
 .rank-pos {
     font-weight: 800;
     font-size: 16px;
@@ -879,7 +879,7 @@
 }
 
 /* =====================================================================
-   SEMENTIS LIVE — ESTILOS DO PAINEL DO PROFESSOR
+   SEMENTIS LIVE â€” ESTILOS DO PAINEL DO PROFESSOR
 ===================================================================== */
 .live-hero-banner {
     background: linear-gradient(135deg, rgba(39, 50, 105, 0.95) 0%, rgba(22, 28, 70, 0.95) 100%);
@@ -985,7 +985,7 @@
     background: rgba(255, 255, 255, 0.18);
 }
 
-/* Seções de Tópicos */
+/* SeÃ§Ãµes de TÃ³picos */
 .live-topics-section,
 .live-recent-section {
     margin-bottom: 36px;
@@ -1211,7 +1211,7 @@
 }
 
 /* =====================================================================
-   BOTÃO FLUTUANTE ENTRAR EM TURMA (home.html — aluno)
+   BOTÃƒO FLUTUANTE ENTRAR EM TURMA (home.html â€” aluno)
 ===================================================================== */
 .btn-join-class {
     position: fixed;
@@ -1276,5 +1276,1127 @@
     .live-hero-banner { padding: 20px 16px; border-radius: 20px; flex-direction: column; align-items: flex-start; gap: 16px; }
     .live-hero-content h2 { font-size: 20px; }
     .stats-overview-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+
+
+/* ===================================================================
+   SEMEIA — ABA GERAR TRILHA COM IA
+=================================================================== */
+
+.nav-semeia-badge {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-left: auto;
+}
+
+.semeia-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-semeia-help {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #e2e8f0;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+.btn-semeia-help:hover {
+    background: rgba(168, 85, 247, 0.18);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.25);
+}
+
+.semeia-cota-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.semeia-cota-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124, 58, 237, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    color: #c4b5fd;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 10px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+.semeia-cota-badge.semeia-cota-esgotada {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+}
+
+.btn-semeia-pro-chamativo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: 1px solid rgba(169, 255, 113, 0.6);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 0 0 10px rgba(169, 255, 113, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+.btn-semeia-pro-chamativo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.55), 0 0 16px rgba(169, 255, 113, 0.4);
+    filter: brightness(1.1);
+}
+.btn-semeia-pro-chamativo:active {
+    transform: translateY(0);
+}
+
+.pro-chamativo-pulse {
+    width: 7px;
+    height: 7px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    animation: livePulse 1.2s infinite alternate;
+}
+
+/* Barra Chamativa de Incentivo */
+.semeia-pro-banner-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(20, 24, 60, 0.95) 0%, rgba(30, 27, 75, 0.95) 100%);
+    border: 1.5px solid rgba(169, 255, 113, 0.4);
+    border-radius: 16px;
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    max-width: 600px;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 16px rgba(169, 255, 113, 0.1);
+    animation: proBannerGlowPulse 2.8s ease-in-out infinite alternate;
+}
+.semeia-pro-banner-cta:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 28px rgba(169, 255, 113, 0.5);
+    transform: translateY(-2px);
+}
+
+@keyframes proBannerGlowPulse {
+    0% {
+        border-color: rgba(169, 255, 113, 0.35);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 12px rgba(169, 255, 113, 0.15);
+    }
+    50% {
+        border-color: rgba(169, 255, 113, 0.95);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 26px rgba(169, 255, 113, 0.45);
+        transform: translateY(-1px);
+    }
+    100% {
+        border-color: rgba(168, 85, 247, 0.8);
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.25), 0 0 18px rgba(168, 85, 247, 0.35);
+    }
+}
+
+.pro-banner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(169, 255, 113, 0.15);
+    border: 1px solid rgba(169, 255, 113, 0.4);
+    color: var(--color-accent);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.pro-banner-info {
+    font-size: 13px;
+    color: #e2e8f0;
+    flex: 1;
+    line-height: 1.45;
+}
+.pro-banner-info strong {
+    color: #fff;
+}
+
+.pro-banner-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-accent);
+    color: var(--color-primary-dark);
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 14px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(169, 255, 113, 0.3);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+.semeia-pro-banner-cta:hover .pro-banner-action {
+    transform: translateX(3px);
+}
+
+.semeia-upload-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+}
+
+.semeia-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 2px dashed rgba(168, 85, 247, 0.4);
+    border-radius: 16px;
+    padding: 36px 24px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: rgba(124, 58, 237, 0.05);
+    text-align: center;
+}
+.semeia-dropzone:hover,
+.semeia-dropzone.dragover {
+    border-color: #a855f7;
+    background: rgba(124, 58, 237, 0.12);
+    transform: scale(1.01);
+}
+.semeia-dropzone.arquivo-selecionado {
+    border-color: var(--color-accent);
+    background: rgba(169, 255, 113, 0.06);
+}
+.semeia-drop-icon { opacity: 0.7; color: #a855f7; }
+.semeia-dropzone.arquivo-selecionado .semeia-drop-icon { color: var(--color-accent); opacity: 1; }
+.semeia-drop-title { font-size: 15px; font-weight: 600; color: var(--color-white); margin: 0; }
+.semeia-drop-hint  { font-size: 12px; color: rgba(255,255,255,0.45); margin: 0; }
+
+.semeia-nome-group label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); display: block; margin-bottom: 8px; }
+.semeia-nome-group input {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 14px;
+    font-family: var(--font-family);
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+.semeia-nome-group input:focus {
+    outline: none;
+    border-color: #a855f7;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.semeia-form-msg { font-size: 13px; min-height: 18px; transition: all 0.2s; }
+.semeia-msg-erro  { color: #fca5a5; }
+.semeia-msg-info  { color: #93c5fd; }
+
+.btn-semeia-gerar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+}
+.btn-semeia-gerar:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124, 58, 237, 0.5); }
+.btn-semeia-gerar:active { transform: translateY(0); }
+
+.semeia-status-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 56px 32px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    max-width: 500px;
+    text-align: center;
+}
+.semeia-status-title { font-size: 20px; font-weight: 700; color: #fff; margin: 0; }
+.semeia-status-msg { font-size: 14px; color: rgba(255,255,255,0.6); margin: 0; min-height: 20px; transition: all 0.4s ease; }
+
+.semeia-progress-dots { display: flex; gap: 8px; }
+.semeia-progress-dots span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #a855f7;
+    animation: semeiaDotBounce 1.4s ease-in-out infinite;
+}
+.semeia-progress-dots span:nth-child(2) { animation-delay: 0.2s; }
+.semeia-progress-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes semeiaDotBounce {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.4; }
+    40%            { transform: scale(1.2); opacity: 1; }
+}
+
+.semeia-pulse-ring {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(124, 58, 237, 0.15);
+    display: flex; align-items: center; justify-content: center;
+    animation: semeiaRingPulse 2s ease-in-out infinite;
+}
+.semeia-pulse-inner {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(124, 58, 237, 0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: #c4b5fd;
+}
+@keyframes semeiaRingPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+    50%       { box-shadow: 0 0 0 16px rgba(168, 85, 247, 0); }
+}
+
+.semeia-sucesso-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(169, 255, 113, 0.15);
+    border: 2px solid rgba(169, 255, 113, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--color-accent);
+    animation: semeiaSucessoPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes semeiaSucessoPop {
+    0%   { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.semeia-erro-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(239, 68, 68, 0.12);
+    border: 2px solid rgba(239, 68, 68, 0.35);
+    display: flex; align-items: center; justify-content: center;
+    color: #fca5a5;
+}
+
+.semeia-sucesso-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+.btn-semeia-nova {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.85);
+    border-radius: 10px; padding: 10px 20px;
+    font-size: 14px; font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer; transition: all 0.2s ease;
+}
+.btn-semeia-nova:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+
+/* ======================================================================
+   SIDEBAR: CARD DE DESTAQUE SEMEIA (MODO IA)
+====================================================================== */
+.sidebar-semeia-card {
+    background: linear-gradient(135deg, rgba(45, 27, 85, 0.95) 0%, rgba(26, 32, 75, 0.95) 100%);
+    border: 2px solid rgba(167, 139, 250, 0.55);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 18px rgba(167, 139, 250, 0.25);
+    position: relative;
+    overflow: hidden;
+    animation: semeiaBorderGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes semeiaBorderGlow {
+    0% {
+        border-color: rgba(167, 139, 250, 0.45);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 14px rgba(167, 139, 250, 0.2);
+    }
+    50% {
+        border-color: rgba(169, 255, 113, 0.7);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 22px rgba(169, 255, 113, 0.3);
+    }
+    100% {
+        border-color: rgba(192, 132, 252, 0.8);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 24px rgba(192, 132, 252, 0.35);
+    }
+}
+
+.sidebar-semeia-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(169, 255, 113, 0.16);
+    border: 1px solid rgba(169, 255, 113, 0.45);
+    border-radius: var(--radius-full);
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--color-accent);
+    margin-bottom: 10px;
+}
+
+.semeia-live-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    animation: livePulse 1s infinite alternate;
+}
+
+.sidebar-semeia-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.sidebar-semeia-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.35) 0%, rgba(169, 255, 113, 0.25) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e9d5ff;
+    flex-shrink: 0;
+}
+
+.sidebar-semeia-header h4 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.sidebar-semeia-header p {
+    font-size: 11px;
+    color: #c4b5fd;
+    font-weight: 600;
+}
+
+.sidebar-semeia-desc {
+    font-size: 12px;
+    color: #cbd5e1;
+    line-height: 1.45;
+    margin-bottom: 14px;
+}
+
+.btn-sidebar-create-semeia {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+    transition: all 0.25s ease;
+    font-family: var(--font-family);
+}
+
+.btn-sidebar-create-semeia:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+    filter: brightness(1.1);
+}
+
+/* ======================================================================
+   CHECKLIST DE TURMAS NO FORMULÁRIO SEMEIA
+====================================================================== */
+.semeia-turmas-group {
+    margin-top: 14px;
+}
+
+.semeia-turmas-hint {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: -4px;
+    margin-bottom: 10px;
+}
+
+.semeia-turmas-checklist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.semeia-turma-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 7px 14px;
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.semeia-turma-chip:hover {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.4);
+}
+
+.semeia-turma-chip input[type="checkbox"] {
+    accent-color: #a855f7;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+}
+
+.semeia-turma-chip.checked {
+    background: rgba(168, 85, 247, 0.25);
+    border-color: #a855f7;
+    color: #fff;
+    font-weight: 600;
+}
+
+.semeia-turmas-loading,
+.semeia-turmas-vazio {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    padding: 6px 0;
+}
+
+.semeia-erro-cota-aviso {
+    font-size: 13px;
+    color: #a7f3d0;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin: 4px 0 16px;
+    line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+    .semeia-upload-card { padding: 20px 16px; }
+    .semeia-status-card { padding: 40px 20px; }
+    .semeia-cota-badge  { font-size: 11px; padding: 6px 10px; }
+}
+
+/* ======================================================================
+   MODAL: COMO FUNCIONA A SEMEIA
+====================================================================== */
+.modal-semeia-help {
+    max-width: 820px !important;
+}
+
+.modal-icon--semeia {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(124, 58, 237, 0.35) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    color: #c084fc;
+}
+
+.semeia-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.semeia-step-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.25s ease;
+}
+.semeia-step-card:hover {
+    background: rgba(168, 85, 247, 0.06);
+    border-color: rgba(168, 85, 247, 0.3);
+    transform: translateY(-2px);
+}
+
+.semeia-step-number {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.semeia-step-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.semeia-step-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 8px 0;
+}
+
+.semeia-step-card p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.45;
+    margin: 0;
+}
+
+.semeia-help-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 18px;
+}
+
+.semeia-help-tip {
+    font-size: 13px;
+    color: #cbd5e1;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: 10px;
+    padding: 10px 16px;
+    flex: 1;
+    min-width: 260px;
+}
+
+/* ======================================================================
+   MODAL PRO DO PROFESSOR (DESIGN IDÊNTICO AO PERFIL COM BOTÃO VERDE)
+====================================================================== */
+.modal-content.pro-modal-content {
+    background: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%);
+    border-radius: 24px;
+    padding: 34px 26px;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    animation: modalPopIn 0.25s ease-out;
+}
+
+@keyframes modalPopIn {
+    0% { transform: scale(0.92) translateY(10px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.pro-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.pro-modal-header img {
+    height: 32px;
+    object-fit: contain;
+}
+
+.pro-badge {
+    background-color: var(--color-accent);
+    color: #0b1329;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 8px;
+    letter-spacing: 1px;
+}
+
+.pro-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    text-align: center;
+    color: #fff;
+    line-height: 1.3;
+}
+
+.pro-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 28px 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pro-benefits li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #e2e8f0;
+}
+
+.pro-benefits li strong {
+    color: #fff;
+}
+
+.pro-benefits li svg {
+    flex-shrink: 0;
+}
+
+.pro-trial-btn {
+    background-color: var(--color-accent);
+    color: #0b1329;
+    border: none;
+    border-radius: 20px;
+    padding: 15px 22px;
+    font-size: 14px;
+    font-weight: 800;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #58cc02;
+    transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+    letter-spacing: 0.5px;
+    font-family: var(--font-family);
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    box-sizing: border-box;
+}
+
+.pro-trial-btn:hover {
+    filter: brightness(1.08);
+}
+
+.pro-trial-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #58cc02;
+}
+
+.pro-terms {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    text-align: center;
+    margin: 12px 0 0 0;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 26px;
+    cursor: pointer;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-modal-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* Caixa de aviso de indisponibilidade temporária */
+.pro-indisponivel-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(234, 179, 8, 0.15);
+    border: 1px solid rgba(234, 179, 8, 0.45);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    animation: modalPopIn 0.3s ease-out;
+}
+.pro-indisponivel-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.pro-indisponivel-msg strong {
+    display: block;
+    color: #fef08a;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.pro-indisponivel-msg p {
+    color: #fde047;
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+    .semeia-steps-grid {
+        grid-template-columns: 1fr;
+    }
+    .semeia-pro-banner-cta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}
+
+/* ======================================================================
+   SEÇÃO: MINHAS TRILHAS CRIADAS COM A SEMEIA
+   ====================================================================== */
+.semeia-minhas-trilhas-secao {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 900px;
+    width: 100%;
+}
+
+.semeia-secao-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.semeia-secao-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 4px 0;
+}
+
+.semeia-secao-subtitle {
+    font-size: 13px;
+    color: var(--color-gray-400);
+    margin: 0;
+}
+
+.btn-semeia-recarregar {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-semeia-recarregar:hover {
+    background: rgba(169, 255, 113, 0.12);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.semeia-trilhas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+@media (min-width: 768px) {
+    .semeia-trilhas-grid {
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    }
+}
+
+.semeia-trilhas-loading {
+    padding: 30px;
+    text-align: center;
+    color: var(--color-gray-400);
+    font-size: 14px;
+}
+
+.semeia-trilhas-empty {
+    background: rgba(26, 26, 74, 0.5);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 36px 20px;
+    text-align: center;
+    grid-column: 1 / -1;
+}
+
+.semeia-trilhas-empty p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-gray-400);
+}
+
+/* Card Individual de Trilha Gerenciada */
+.semeia-trilha-gerenciada-card {
+    background: linear-gradient(135deg, rgba(26, 26, 74, 0.8) 0%, rgba(20, 20, 58, 0.8) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.semeia-trilha-gerenciada-card:hover {
+    border-color: rgba(169, 255, 113, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.trilha-gerenciada-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.trilha-gerenciada-nome {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 6px 0;
+    line-height: 1.35;
+}
+
+.trilha-gerenciada-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--color-gray-400);
+}
+
+.trilha-gerenciada-turmas-box {
+    background: rgba(10, 10, 30, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.trilha-turmas-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-gray-400);
+    font-weight: 600;
+}
+
+.trilha-turmas-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.trilha-turma-tag {
+    background: rgba(169, 255, 113, 0.12);
+    border: 1px solid rgba(169, 255, 113, 0.25);
+    color: var(--color-accent);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.trilha-turma-sem {
+    font-size: 12px;
+    color: var(--color-gray-500);
+    font-style: italic;
+}
+
+.trilha-gerenciada-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.btn-trilha-atribuir {
+    background: rgba(169, 255, 113, 0.15);
+    border: 1px solid rgba(169, 255, 113, 0.35);
+    color: var(--color-accent);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-trilha-atribuir:hover {
+    background: var(--color-accent);
+    color: #0b1a06;
+}
+
+.btn-trilha-visualizar {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
+
+.btn-trilha-visualizar:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.btn-trilha-excluir {
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    transition: all 0.2s ease;
+}
+
+.btn-trilha-excluir:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+}
+
+/* Checklist no Modal de Atribuição */
+.semeia-modal-turmas-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.modal-turma-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-turma-checkbox-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.modal-turma-checkbox-item.checked {
+    background: rgba(169, 255, 113, 0.12);
+    border-color: rgba(169, 255, 113, 0.4);
+}
+
+.modal-turma-checkbox-item input[type="checkbox"] {
+    accent-color: var(--color-accent);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.modal-turma-checkbox-item span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
 }
 
