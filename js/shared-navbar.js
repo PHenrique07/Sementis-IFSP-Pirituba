@@ -1,6 +1,7 @@
 function getActiveSection() {
   const page = (window.location.pathname.split('/').pop() || '').toLowerCase();
 
+  if (page === 'turma-aluno.html') return 'Turmas';
   if (page === 'ligas.html') return 'Ligas';
   if (page === 'missions.html' || page === 'missoes.html') return 'Missoes';
   if (page === 'loja.html') return 'Loja';
@@ -12,6 +13,7 @@ function getActiveSection() {
 
 function buildSharedNavbar(activeSection) {
   const isTrilhas = activeSection === 'Trilhas';
+  const isTurmas = activeSection === 'Turmas';
   const isLigas = activeSection === 'Ligas';
   const isMissoes = activeSection === 'Missoes';
   const isLoja = activeSection === 'Loja';
@@ -30,6 +32,10 @@ function buildSharedNavbar(activeSection) {
     <a class="nav-item ${isTrilhas ? 'active' : ''}" href="home.html" ${isTrilhas ? 'aria-current="page"' : ''}>
       <img src="assets/icons/menu_rodape_tarefa.png" alt="Trilhas">
       <span>Trilhas</span>
+    </a>
+    <a class="nav-item ${isTurmas ? 'active' : ''}" href="turma-aluno.html" ${isTurmas ? 'aria-current="page"' : ''}>
+      <img src="assets/icons/menu_turmas.svg" alt="Turmas">
+      <span>Turmas</span>
     </a>
     <a class="nav-item ${isLigas ? 'active' : ''}" href="ligas.html" ${isLigas ? 'aria-current="page"' : ''}>
       <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="Ligas">

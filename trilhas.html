@@ -703,9 +703,18 @@ let lessons = [];
 // ==============================================================
 async function carregarMapaDinamico() {
   const urlParams = new URLSearchParams(window.location.search);
+  const trilhaIdParam = urlParams.get('trilha_id') || urlParams.get('trilha');
   const nomeClicado = urlParams.get('module'); 
+  const turmaIdParam = urlParams.get('turma_id');
+
+  // Ajusta botão de voltar caso venha da tela da turma
+  const backBtn = document.querySelector('.back-btn');
+  if (backBtn && (turmaIdParam || urlParams.get('origem') === 'turma')) {
+    backBtn.href = turmaIdParam ? `turma-aluno.html?turma_id=${encodeURIComponent(turmaIdParam)}` : 'turma-aluno.html';
+    backBtn.textContent = '← Voltar para Turma';
+  }
   
-  // O TRADUTOR: Descobre qual ID o Lucas precisa baseado no nome da URL
+  // O TRADUTOR: Descobre qual ID precisa baseado no nome da URL caso não tenha ID explícito
   let moduloId = '1'; 
   if (nomeClicado) {
       const nomeLimpo = nomeClicado.toLowerCase().trim();
@@ -725,8 +734,10 @@ async function carregarMapaDinamico() {
   }
 
   try {
-    const url = `${API_BASE_URL}/api/modulos/${moduloId}/trilhas`;
-    console.log('📡 Carregando trilhas:', url);
+    const url = trilhaIdParam 
+      ? `${API_BASE_URL}/api/trilhas/${encodeURIComponent(trilhaIdParam)}`
+      : `${API_BASE_URL}/api/modulos/${moduloId}/trilhas`;
+    console.log('📡 Carregando trilha:', url);
     console.log('🔐 Token enviado:', token.substring(0, 20) + '...');
 
     const response = await fetch(url, {

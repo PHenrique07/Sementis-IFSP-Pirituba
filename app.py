@@ -9,7 +9,8 @@ from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_ema
     criar_turma, listar_turmas_do_professor, listar_alunos_da_turma,
     listar_alunos_detalhados_da_turma, obter_progresso_modulos_turma, entrar_na_turma,
     verificar_cota_geracao_ia, persistir_trilha_ia, estornar_cota_ia, consumir_cota_ia,
-    atribuir_trilha_turma, remover_trilha_turma, listar_trilhas_da_turma, listar_trilhas_do_professor)
+    atribuir_trilha_turma, remover_trilha_turma, listar_trilhas_da_turma, listar_trilhas_do_professor,
+    sincronizar_turmas_da_trilha, obter_mapa_trilha_especifica, listar_turmas_do_aluno, obter_ranking_da_turma)
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -21,7 +22,7 @@ from urllib.parse import quote
 import jwt
 from sqlmodel import Session, select, create_engine, func
 from sqlalchemy.exc import IntegrityError
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma, GeradorTrilha, TurmaTrilha
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma, GeradorTrilha, TurmaTrilha, Questao
 from semeia import extrair_texto_pdf, moderar_conteudo, gerar_trilha_yaml, LIMITE_PDF_BYTES
 
 app = Flask(__name__)
@@ -1448,6 +1449,8 @@ def gerar_trilha_ia():
                 return
 
             dados_yaml = gerar_trilha_yaml(texto)
+            if nome_trilha:
+                dados_yaml["trilha"]["nome"] = nome_trilha
 
             with Session(engine) as s:
                 trilha = persistir_trilha_ia(s, professor_id, dados_yaml, turma_ids=turma_ids)
@@ -1562,6 +1565,110 @@ def obter_cota_ia():
             "cota_total":  None if professor.trilhas_ia_plano_pro else COTA_MENSAL_GRATUITA,
             "reset_mes":   str(professor.trilhas_ia_reset_mes),
         })
+
+
+@app.route('/api/trilhas/<int:trilha_id>', methods=['GET'])
+@token_obrigatorio
+def obter_mapa_trilha(trilha_id):
+    """Retorna os dados da trilha e o status das atividades para o jogador."""
+    with Session(engine) as session:
+        mapa = obter_mapa_trilha_especifica(session, trilha_id, request.usuario_id)
+        if not mapa:
+            return jsonify({"erro": "Trilha não encontrada"}), 404
+        return jsonify(mapa), 200
+
+
+@app.route('/api/professor/trilhas/<int:trilha_id>/turmas', methods=['POST'])
+@token_obrigatorio
+def atualizar_turmas_da_trilha(trilha_id):
+    """Sincroniza as turmas que possuem acesso a uma trilha criada pelo professor."""
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Acesso negado. Apenas professores."}), 403
+
+    dados = request.get_json(silent=True) or {}
+    turma_ids = dados.get("turma_ids", [])
+    if not isinstance(turma_ids, list):
+        return jsonify({"erro": "turma_ids deve ser uma lista de IDs"}), 400
+
+    with Session(engine) as session:
+        trilha = session.get(Trilha, trilha_id)
+        if not trilha or trilha.professor_id != request.usuario_id:
+            return jsonify({"erro": "Trilha não encontrada ou sem permissão"}), 404
+
+        sincronizar_turmas_da_trilha(session, trilha_id, [int(t) for t in turma_ids if str(t).isdigit()])
+        return jsonify({"sucesso": True, "mensagem": "Turmas atribuídas com sucesso!"}), 200
+
+
+@app.route('/api/professor/trilhas/<int:trilha_id>', methods=['DELETE'])
+@token_obrigatorio
+def excluir_trilha_professor(trilha_id):
+    """Permite ao professor excluir uma trilha criada por ele."""
+    if request.usuario_tipo != 'professor':
+        return jsonify({"erro": "Apenas professores"}), 403
+
+    with Session(engine) as session:
+        trilha = session.get(Trilha, trilha_id)
+        if not trilha or trilha.professor_id != request.usuario_id:
+            return jsonify({"erro": "Trilha não encontrada ou sem permissão"}), 404
+
+        # Remove associações com turmas
+        for tt in session.exec(select(TurmaTrilha).where(TurmaTrilha.trilha_id == trilha_id)).all():
+            session.delete(tt)
+
+        # Remove atividades, questões e progressos
+        atividades = session.exec(select(Atividade).where(Atividade.trilha_id == trilha_id)).all()
+        for atv in atividades:
+            for q in session.exec(select(Questao).where(Questao.atividade_id == atv.id)).all():
+                session.delete(q)
+            for p in session.exec(select(ProgressoUsuario).where(ProgressoUsuario.atividade_id == atv.id)).all():
+                session.delete(p)
+            session.delete(atv)
+
+        session.delete(trilha)
+        session.commit()
+        return jsonify({"sucesso": True, "mensagem": "Trilha excluída com sucesso."}), 200
+
+
+@app.route('/api/aluno/minhas-turmas', methods=['GET'])
+@token_obrigatorio
+def aluno_minhas_turmas():
+    """Retorna a lista de turmas em que o aluno está inscrito."""
+    with Session(engine) as session:
+        turmas = listar_turmas_do_aluno(session, request.usuario_id)
+        return jsonify({"turmas": turmas}), 200
+
+
+@app.route('/api/aluno/turmas/<int:turma_id>/dashboard', methods=['GET'])
+@token_obrigatorio
+def aluno_dashboard_turma(turma_id):
+    """Dashboard da turma para o aluno: dados da turma, trilhas atribuídas e ranking da sala."""
+    with Session(engine) as session:
+        # Trava de segurança: aluno deve pertencer à turma
+        inscrito = session.exec(
+            select(TurmaAluno).where(TurmaAluno.turma_id == turma_id, TurmaAluno.aluno_id == request.usuario_id)
+        ).first()
+        if not inscrito:
+            return jsonify({"erro": "Você não está matriculado nesta turma"}), 403
+
+        turma = session.get(Turma, turma_id)
+        if not turma:
+            return jsonify({"erro": "Turma não encontrada"}), 404
+
+        professor = session.get(Usuario, turma.professor_id)
+        trilhas = listar_trilhas_da_turma(session, turma_id)
+        ranking = obter_ranking_da_turma(session, turma_id)
+
+        return jsonify({
+            "turma": {
+                "id": turma.id,
+                "nome": turma.nome,
+                "professor_nome": professor.nome if professor else "Professor",
+                "codigo_convite": turma.codigo_convite,
+            },
+            "trilhas": trilhas,
+            "ranking": ranking,
+            "meu_id": request.usuario_id
+        }), 200
 
 
 if __name__ == '__main__':

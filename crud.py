@@ -1302,7 +1302,7 @@ def listar_trilhas_da_turma(session: Session, turma_id: int) -> list[dict]:
 
 
 def listar_trilhas_do_professor(session: Session, professor_id: int) -> list[dict]:
-    """Retorna todas as trilhas criadas pelo professor via SemeIA."""
+    """Retorna todas as trilhas criadas pelo professor via SemeIA com as turmas atribuídas."""
     trilhas = session.exec(
         select(Trilha)
         .where(Trilha.professor_id == professor_id)
@@ -1312,16 +1312,140 @@ def listar_trilhas_do_professor(session: Session, professor_id: int) -> list[dic
     resultado = []
     for trilha in trilhas:
         atividades = session.exec(
-            select(Atividade).where(Atividade.trilha_id == trilha.id)
+            select(Atividade).where(Atividade.trilha_id == trilha.id).order_by(Atividade.ordem)
         ).all()
-        # Quantas turmas têm essa trilha
-        turmas_count = session.exec(
-            select(func.count(TurmaTrilha.id)).where(TurmaTrilha.trilha_id == trilha.id)
-        ).one() or 0
+
+        turmas_atribuidas = session.exec(
+            select(Turma.id, Turma.nome)
+            .join(TurmaTrilha, TurmaTrilha.turma_id == Turma.id)
+            .where(TurmaTrilha.trilha_id == trilha.id)
+        ).all()
+
         resultado.append({
             "id": trilha.id,
             "nome": trilha.nome,
             "total_atividades": len(atividades),
-            "turmas_atribuidas": turmas_count,
+            "tipos_atividades": list(set(a.tipo for a in atividades)),
+            "turmas_atribuidas": len(turmas_atribuidas),
+            "turmas": [{"id": tid, "nome": tnome} for tid, tnome in turmas_atribuidas],
         })
-    return resultado
+    return resultado
+
+
+def sincronizar_turmas_da_trilha(session: Session, trilha_id: int, turma_ids: list[int]):
+    """Atualiza quais turmas têm acesso a uma trilha (adiciona as novas e remove as desmarcadas)."""
+    existentes = session.exec(
+        select(TurmaTrilha).where(TurmaTrilha.trilha_id == trilha_id)
+    ).all()
+    ids_existentes = {et.turma_id for et in existentes}
+    novos_ids = set(turma_ids)
+
+    for et in existentes:
+        if et.turma_id not in novos_ids:
+            session.delete(et)
+
+    for tid in novos_ids:
+        if tid not in ids_existentes:
+            session.add(TurmaTrilha(turma_id=tid, trilha_id=trilha_id))
+
+    session.commit()
+
+
+def obter_mapa_trilha_especifica(session: Session, trilha_id: int, usuario_id: int) -> list[dict]:
+    """Retorna a estrutura de uma trilha com suas atividades e status para o aluno jogar."""
+    trilha = session.get(Trilha, trilha_id)
+    if not trilha:
+        return []
+
+    atividades = session.exec(
+        select(Atividade).where(Atividade.trilha_id == trilha.id).order_by(Atividade.ordem)
+    ).all()
+
+    ids_atividades = [a.id for a in atividades]
+    concluidas_ids = set(session.exec(
+        select(ProgressoUsuario.atividade_id)
+        .where(
+            ProgressoUsuario.usuario_id == usuario_id,
+            ProgressoUsuario.atividade_id.in_(ids_atividades)
+        )
+    ).all())
+
+    primeira_fase_livre_encontrada = False
+    atividades_formatadas = []
+
+    for atv in atividades:
+        if atv.id in concluidas_ids:
+            status = "concluida"
+        elif not primeira_fase_livre_encontrada:
+            status = "liberada"
+            primeira_fase_livre_encontrada = True
+        else:
+            status = "bloqueada"
+
+        atividades_formatadas.append({
+            "id": atv.id,
+            "nome": atv.nome,
+            "tipo": atv.tipo,
+            "ordem": atv.ordem,
+            "status": status,
+            "xp_recompensa": atv.xp_recompensa,
+            "moedas_recompensa": atv.moedas_recompensa,
+        })
+
+    return [{
+        "trilha_id": trilha.id,
+        "trilha_nome": trilha.nome,
+        "trilha_ordem": trilha.ordem,
+        "atividades": atividades_formatadas,
+    }]
+
+
+def listar_turmas_do_aluno(session: Session, aluno_id: int) -> list[dict]:
+    """Retorna todas as turmas em que o aluno está inscrito."""
+    registros = session.exec(
+        select(Turma, Usuario.nome)
+        .join(TurmaAluno, TurmaAluno.turma_id == Turma.id)
+        .join(Usuario, Usuario.id == Turma.professor_id)
+        .where(TurmaAluno.aluno_id == aluno_id)
+        .order_by(Turma.nome)
+    ).all()
+
+    resultado = []
+    for turma, professor_nome in registros:
+        total_alunos = session.exec(
+            select(func.count(TurmaAluno.id)).where(TurmaAluno.turma_id == turma.id)
+        ).one() or 0
+        total_trilhas = session.exec(
+            select(func.count(TurmaTrilha.id)).where(TurmaTrilha.turma_id == turma.id)
+        ).one() or 0
+        resultado.append({
+            "id": turma.id,
+            "nome": turma.nome,
+            "professor_nome": professor_nome,
+            "codigo_convite": turma.codigo_convite,
+            "total_alunos": total_alunos,
+            "total_trilhas": total_trilhas,
+        })
+    return resultado
+
+
+def obter_ranking_da_turma(session: Session, turma_id: int) -> list[dict]:
+    """Retorna o ranking dos alunos de uma turma ordenados por XP semanal."""
+    alunos = session.exec(
+        select(Usuario)
+        .join(TurmaAluno, TurmaAluno.aluno_id == Usuario.id)
+        .where(TurmaAluno.turma_id == turma_id)
+        .order_by(Usuario.xp_semanal.desc(), Usuario.xp.desc())
+    ).all()
+
+    ranking = []
+    for i, a in enumerate(alunos, start=1):
+        ranking.append({
+            "posicao": i,
+            "id": a.id,
+            "nome": a.nome,
+            "xp_semanal": a.xp_semanal or 0,
+            "xp_total": a.xp or 0,
+            "ofensiva": a.ofensiva or 0,
+        })
+    return ranking

@@ -128,7 +128,7 @@ function renderTrilhasSemeIA(trilhas = []) {
                         <button type="button" class="btn-remover-trilha-turma" onclick="removerTrilhaDaTurma(${t.id}, '${escapeHtml(t.nome)}')">
                             ✕ Remover da turma
                         </button>
-                        <a href="trilhas.html" target="_blank" class="btn-ver-trilha">
+                        <a href="trilhas.html?trilha_id=${encodeURIComponent(t.id)}" target="_blank" class="btn-ver-trilha">
                             Ver Trilha →
                         </a>
                     </div>
