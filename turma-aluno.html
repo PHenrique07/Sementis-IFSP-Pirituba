@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script src="/js/api-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a4a">
+    <meta name="application-name" content="Sementis">
+    <link rel="manifest" href="pwa/manifest.webmanifest">
+    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <title>Sementis - Minhas Turmas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/shared-navbar.css">
+    <link rel="stylesheet" href="/css/turma-aluno.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="turma-aluno-page">
+
+    <div class="turma-page-container">
+        <!-- Cabeçalho Principal -->
+        <header class="turma-header">
+            <div class="turma-header-content">
+                <div class="turma-header-title-wrap">
+                    <span class="turma-badge-pill">🎓 Sala de Aula</span>
+                    <h1 class="turma-page-title">Minhas Turmas</h1>
+                    <p class="turma-page-desc">Jogue as trilhas exclusivas criadas pelo seu professor e dispute no ranking da sua sala!</p>
+                </div>
+
+                <div class="turma-header-actions">
+                    <!-- Seletor de turmas (preenchido dinamicamente) -->
+                    <div class="turma-select-wrapper" id="turma-select-wrapper" style="display: none;">
+                        <label for="select-turma-ativa" class="turma-select-label">Turma selecionada:</label>
+                        <select id="select-turma-ativa" class="turma-select">
+                            <!-- Opções inseridas via JS -->
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-entrar-turma" id="btn-abrir-modal-entrar">
+                        <span>+ Entrar em Turma</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Estado de Carregamento -->
+        <div id="turma-loading-state" class="state-container">
+            <div class="loading-spinner"></div>
+            <p>Carregando dados da sua turma...</p>
+        </div>
+
+        <!-- Estado Vazio: Aluno não possui turmas -->
+        <div id="turma-sem-matricula" class="state-container" style="display: none;">
+            <div class="sem-turma-card">
+                <div class="sem-turma-icon">🏫</div>
+                <h2>Você ainda não está em nenhuma turma!</h2>
+                <p>Peça o código de convite de 6 dígitos para o seu professor e digite abaixo para ter acesso às trilhas especiais e ao ranking da sua sala.</p>
+                
+                <form id="form-entrar-turma-card" class="form-entrar-inline">
+                    <div class="input-codigo-group">
+                        <input type="text" id="input-codigo-turma-card" placeholder="Ex: ABC123" maxlength="10" required autocomplete="off">
+                        <button type="submit" class="btn-confirmar-codigo" id="btn-submit-codigo-card">Entrar na Sala</button>
+                    </div>
+                    <div class="mensagem-feedback" id="feedback-codigo-card"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard da Turma Selecionada -->
+        <main id="turma-dashboard-content" class="turma-main-layout" style="display: none;">
+            <!-- Cartão Resumo da Turma -->
+            <section class="turma-summary-card">
+                <div class="summary-left">
+                    <div class="turma-avatar-icon">🏫</div>
+                    <div class="summary-info">
+                        <h2 id="dashboard-turma-nome">Carregando...</h2>
+                        <p class="professor-nome">Professor: <strong id="dashboard-professor-nome">—</strong></p>
+                    </div>
+                </div>
+
+                <div class="summary-metrics">
+                    <div class="metric-pill">
+                        <span class="metric-num" id="metric-total-trilhas">0</span>
+                        <span class="metric-label">Trilhas da Turma</span>
+                    </div>
+                    <div class="metric-pill">
+                        <span class="metric-num" id="metric-total-alunos">0</span>
+                        <span class="metric-label">Alunos na Sala</span>
+                    </div>
+                    <div class="metric-pill highlight">
+                        <span class="metric-num" id="metric-minha-posicao">—</span>
+                        <span class="metric-label">Sua Posição</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Grid de Duas Colunas: Trilhas à Esquerda, Ranking à Direita -->
+            <div class="turma-grid-panels">
+                <!-- Coluna de Trilhas da Turma -->
+                <section class="panel-section trilhas-section">
+                    <div class="panel-header">
+                        <div class="panel-header-icon">🌿</div>
+                        <div>
+                            <h2 class="panel-title">Trilhas da Turma</h2>
+                            <p class="panel-subtitle">Desafios e lições criadas com a SemeIA para esta sala</p>
+                        </div>
+                    </div>
+
+                    <div id="lista-trilhas-turma" class="cards-trilhas-container">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </section>
+
+                <!-- Coluna de Ranking da Turma -->
+                <section class="panel-section ranking-section">
+                    <div class="panel-header">
+                        <div class="panel-header-icon">🏆</div>
+                        <div>
+                            <h2 class="panel-title">Ranking da Sala</h2>
+                            <p class="panel-subtitle">Classificação semanal de XP entre os colegas</p>
+                        </div>
+                    </div>
+
+                    <div class="ranking-card-box">
+                        <ol class="ranking-lista-turma" id="lista-ranking-turma">
+                            <!-- Preenchido via JS -->
+                        </ol>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Entrar em Nova Turma -->
+    <div id="modal-entrar-turma" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <button class="modal-close-btn" id="btn-fechar-modal-entrar" aria-label="Fechar">&times;</button>
+            <div class="modal-header">
+                <span class="modal-badge">Novo Acesso</span>
+                <h3>Entrar em uma Turma</h3>
+                <p>Insira o código de convite fornecido pelo seu professor.</p>
+            </div>
+
+            <form id="form-entrar-turma-modal" class="modal-form">
+                <label for="input-codigo-modal">Código de Convite:</label>
+                <input type="text" id="input-codigo-modal" placeholder="Ex: ABC123" maxlength="10" required autocomplete="off">
+                <div class="mensagem-feedback" id="feedback-codigo-modal"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancelar" id="btn-cancelar-modal-entrar">Cancelar</button>
+                    <button type="submit" class="btn-confirmar" id="btn-submit-modal-entrar">Entrar na Turma</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="shared-navbar-root"></div>
+
+    <script src="pwa/pwa-register.js"></script>
+    <script src="/js/shared-navbar.js"></script>
+    <script src="/js/turma-aluno.js"></script>
+</body>
+</html>

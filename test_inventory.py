@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from models import Usuario, ItemLoja
+from models import Usuario, ItemLoja, InventarioUsuario
 from crud import engine, criar_tabelas, rolar_gacha, equipar_item, obter_loja_diaria
 
 def criar_dados_de_teste(session: Session):
@@ -14,6 +14,13 @@ def criar_dados_de_teste(session: Session):
             moedas=0
         )
         session.add(usuario)
+        session.commit()
+        session.refresh(usuario)
+
+    # Limpar inventário para evitar recompensa por item duplicado nos testes locais
+    itens_inv = session.exec(select(InventarioUsuario).where(InventarioUsuario.usuario_id == usuario.id)).all()
+    for inv in itens_inv:
+        session.delete(inv)
 
     # Garantir que existam itens suficientes no banco para a loja diária e o gacha
     item_existente = session.exec(select(ItemLoja).where(ItemLoja.nome == "Avatar Teste 1")).first()

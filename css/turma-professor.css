@@ -1105,3 +1105,265 @@ body.turma-professor-page {
     .export-dropdown-wrap { width: 100%; }
     .btn-exportar { width: 100%; min-height: 52px; font-size: 14px; padding: 14px; border-radius: 18px; }
 }
+
+/* ======================================================================
+   PAINEL DE TRILHAS DA SEMEIA NA TURMA
+====================================================================== */
+.trilhas-semeia-panel {
+    border: 1px solid rgba(167, 139, 250, 0.35);
+    background: linear-gradient(135deg, rgba(39, 39, 94, 0.85) 0%, rgba(30, 25, 75, 0.85) 100%);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25), 0 0 16px rgba(167, 139, 250, 0.12);
+}
+
+.semeia-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(168, 85, 247, 0.18);
+    border: 1px solid rgba(168, 85, 247, 0.45);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #d8b4fe;
+    margin-bottom: 6px;
+}
+
+.semeia-pill-badge .semeia-live-dot {
+    width: 6px;
+    height: 6px;
+    background: #a855f7;
+    border-radius: 50%;
+    animation: livePulse 1s infinite alternate;
+}
+
+.trilhas-semeia-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-semeia-atribuir {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.btn-semeia-atribuir:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-semeia-gerar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+    color: #fff;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-semeia-gerar-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+    filter: brightness(1.1);
+}
+
+.trilhas-semeia-container {
+    margin-top: 14px;
+}
+
+.trilhas-semeia-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.trilha-semeia-card {
+    background: rgba(16, 16, 55, 0.65);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.trilha-semeia-card:hover {
+    border-color: rgba(167, 139, 250, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.trilha-semeia-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.trilha-semeia-badge {
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.trilha-semeia-card-top h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.35;
+}
+
+.trilha-semeia-meta {
+    font-size: 12px;
+    color: var(--turma-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.trilha-semeia-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-remover-trilha-turma {
+    background: transparent;
+    border: none;
+    color: rgba(239, 68, 68, 0.8);
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.btn-remover-trilha-turma:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.btn-ver-trilha {
+    background: rgba(169, 255, 113, 0.15);
+    border: 1px solid rgba(169, 255, 113, 0.35);
+    color: var(--turma-green);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-ver-trilha:hover {
+    background: rgba(169, 255, 113, 0.28);
+    transform: translateY(-1px);
+}
+
+/* ======================================================================
+   MODAL PADRÃO CENTRALIZADO (ATRIBUIR TRILHA)
+====================================================================== */
+.modal-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    display: none;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    background: rgba(5, 5, 28, 0.85) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.modal-overlay.open {
+    display: flex !important;
+}
+
+.modal-card {
+    width: min(520px, 92vw) !important;
+    background: #1e1e4a !important;
+    border: 1px solid rgba(167, 139, 250, 0.4) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.75), 0 0 24px rgba(167, 139, 250, 0.25) !important;
+    overflow: hidden !important;
+    animation: modalPopIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    margin: auto !important;
+}
+
+@keyframes modalPopIn {
+    0% { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    padding: 22px 24px 16px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    position: relative !important;
+}
+
+.modal-header .modal-close {
+    position: absolute !important;
+    top: 20px !important;
+    right: 20px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: none !important;
+    color: #fff !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+}
+
+.modal-header .modal-close:hover {
+    background: rgba(239, 68, 68, 0.25) !important;
+    color: #ef4444 !important;
+}
+
+.modal-body {
+    padding: 24px !important;
+}
+
+

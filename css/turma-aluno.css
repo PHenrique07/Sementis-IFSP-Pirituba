@@ -1,0 +1,814 @@
+/* ================================================================
+   TURMA ALUNO - SEMENTIS
+   Estilos da página de turmas com trilhas do professor e ranking da sala
+   ================================================================ */
+
+:root {
+  --bg-primary: #27275e;
+  --bg-dark: #1a1a4a;
+  --bg-card: rgba(26, 26, 74, 0.75);
+  --bg-card-hover: rgba(35, 35, 95, 0.85);
+  --green: #a9ff71;
+  --green-dark: #7acc44;
+  --green-glow: rgba(169, 255, 113, 0.25);
+  --border-glass: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-muted: #8d92bc;
+  --text-sub: #b7b9d8;
+  --gold: #ffd700;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
+}
+
+body.turma-aluno-page {
+  background: var(--bg-primary);
+  background-image: radial-gradient(circle at 15% 10%, rgba(169, 255, 113, 0.08) 0%, transparent 40%),
+                    radial-gradient(circle at 85% 80%, rgba(169, 255, 113, 0.05) 0%, transparent 40%),
+                    linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-dark) 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 100px;
+}
+
+@media (min-width: 1024px) {
+  body.turma-aluno-page {
+    padding-left: 250px;
+    padding-bottom: 40px;
+  }
+}
+
+.turma-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+/* ── CABEÇALHO ────────────────────────── */
+.turma-header {
+  margin-bottom: 28px;
+}
+
+.turma-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@media (min-width: 768px) {
+  .turma-header-content {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.turma-badge-pill {
+  display: inline-block;
+  background: rgba(169, 255, 113, 0.15);
+  color: var(--green);
+  border: 1px solid rgba(169, 255, 113, 0.3);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.turma-page-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  background: linear-gradient(135deg, #ffffff 40%, var(--green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.turma-page-desc {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 0;
+  max-width: 600px;
+}
+
+.turma-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.turma-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.turma-select-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.turma-select {
+  background: rgba(15, 15, 45, 0.85);
+  border: 1px solid rgba(169, 255, 113, 0.4);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  min-width: 200px;
+  transition: all 0.2s ease;
+}
+
+.turma-select:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 12px var(--green-glow);
+}
+
+.btn-entrar-turma {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glass);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 42px;
+  display: flex;
+  align-items: center;
+}
+
+.btn-entrar-turma:hover {
+  background: rgba(169, 255, 113, 0.15);
+  border-color: var(--green);
+  color: var(--green);
+  transform: translateY(-2px);
+}
+
+/* ── ESTADOS (LOADING / SEM MATRICULA) ── */
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sem-turma-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 40px 28px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.sem-turma-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.sem-turma-card h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.sem-turma-card p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.form-entrar-inline {
+  width: 100%;
+}
+
+.input-codigo-group {
+  display: flex;
+  gap: 8px;
+}
+
+.input-codigo-group input {
+  flex: 1;
+  background: rgba(10, 10, 30, 0.7);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-codigo-group input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 12px var(--green-glow);
+}
+
+.btn-confirmar-codigo {
+  background: var(--green);
+  color: #0b1a06;
+  border: none;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-confirmar-codigo:hover {
+  background: #baff8a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px var(--green-glow);
+}
+
+.mensagem-feedback {
+  font-size: 13px;
+  margin-top: 10px;
+  min-height: 20px;
+}
+
+.mensagem-feedback.sucesso {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.mensagem-feedback.erro {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+/* ── CARTÃO RESUMO DA TURMA ───────────── */
+.turma-summary-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 768px) {
+  .turma-summary-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.summary-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.turma-avatar-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(169, 255, 113, 0.15);
+  border: 1px solid rgba(169, 255, 113, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.summary-info h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  color: #fff;
+}
+
+.summary-info .professor-nome {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.summary-info .professor-nome strong {
+  color: var(--text-sub);
+}
+
+.summary-metrics {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.metric-pill {
+  background: rgba(15, 15, 45, 0.6);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 90px;
+}
+
+.metric-pill.highlight {
+  border-color: rgba(169, 255, 113, 0.4);
+  background: rgba(169, 255, 113, 0.08);
+}
+
+.metric-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.metric-pill.highlight .metric-num {
+  color: var(--green);
+}
+
+.metric-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── GRID PRINCIPAL (TRILHAS + RANKING) ── */
+.turma-grid-panels {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 900px) {
+  .turma-grid-panels {
+    grid-template-columns: 1.25fr 1fr;
+    align-items: start;
+  }
+}
+
+.panel-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.panel-header-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.panel-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+.panel-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 2px 0 0 0;
+}
+
+/* ── LISTA DE TRILHAS DA TURMA ───────── */
+.cards-trilhas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.trilha-card {
+  background: rgba(15, 15, 45, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.trilha-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(169, 255, 113, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.trilha-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--green);
+  opacity: 0.6;
+}
+
+.trilha-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trilha-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px 0;
+}
+
+.trilha-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(169, 255, 113, 0.12);
+  color: var(--green);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.trilha-card-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.trilha-card-info span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-jogar-trilha {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+  color: #0b1a06;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.btn-jogar-trilha:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--green-glow);
+  background: linear-gradient(135deg, #c0ff95 0%, var(--green) 100%);
+}
+
+.trilhas-vazio {
+  text-align: center;
+  padding: 36px 16px;
+  color: var(--text-muted);
+}
+
+.trilhas-vazio .vazio-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.trilhas-vazio p {
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── RANKING DA SALA ─────────────────── */
+.ranking-card-box {
+  background: rgba(12, 12, 36, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 8px 12px;
+}
+
+.ranking-lista-turma {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ranking-item-turma {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ranking-item-turma:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ranking-item-turma.is-me {
+  background: rgba(169, 255, 113, 0.12);
+  border-color: rgba(169, 255, 113, 0.35);
+}
+
+.ranking-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.posicao-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-sub);
+}
+
+.posicao-badge.ouro {
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+.posicao-badge.prata {
+  background: rgba(192, 192, 192, 0.2);
+  color: #e0e0e0;
+  border: 1px solid rgba(192, 192, 192, 0.4);
+}
+
+.posicao-badge.bronze {
+  background: rgba(205, 127, 50, 0.2);
+  color: #ff9d5c;
+  border: 1px solid rgba(205, 127, 50, 0.4);
+}
+
+.aluno-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.aluno-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voce-tag {
+  background: var(--green);
+  color: #0b1a06;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.ranking-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.aluno-ofensiva {
+  font-size: 12px;
+  color: #ffaa5a;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.aluno-xp {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* ── MODAL ENTRAR EM TURMA ───────────── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(8, 8, 25, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-box {
+  background: #1e1e52;
+  border: 1px solid rgba(169, 255, 113, 0.3);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 440px;
+  padding: 28px;
+  position: relative;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 75, 75, 0.2);
+  color: #ff6b6b;
+}
+
+.modal-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-header h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 4px 0 6px 0;
+  color: #fff;
+}
+
+.modal-header p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+.modal-form label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-sub);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.modal-form input {
+  width: 100%;
+  background: rgba(10, 10, 30, 0.7);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.modal-form input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 12px var(--green-glow);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancelar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glass);
+  color: var(--text-sub);
+}
+
+.btn-cancelar:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.btn-confirmar {
+  background: var(--green);
+  border: none;
+  color: #0b1a06;
+}
+
+.btn-confirmar:hover {
+  background: #baff8a;
+  box-shadow: 0 4px 16px var(--green-glow);
+}

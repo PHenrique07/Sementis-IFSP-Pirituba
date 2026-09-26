@@ -58,10 +58,38 @@
                         <span>Sementis Live</span>
                         <span class="nav-live-badge">NOVO</span>
                     </button>
+                    <button class="prof-nav-item" id="nav-btn-semeia" onclick="trocarAbaPainel('semeia')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                        <span>SemeIA</span>
+                        <span class="nav-live-badge nav-semeia-badge">IA</span>
+                    </button>
                 </nav>
             </div>
 
-            <!-- Card de Destaque: Criar Sala Rápida (Estilo Kahoot) -->
+            <!-- Card de Destaque 1: Modo IA SemeIA (Gerador de Trilhas) -->
+            <div class="sidebar-semeia-card">
+                <div class="sidebar-semeia-pill">
+                    <span class="semeia-live-dot"></span>
+                    <span>MODO IA ATIVO</span>
+                </div>
+                <div class="sidebar-semeia-header">
+                    <div class="sidebar-semeia-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>SemeIA Studio</h4>
+                        <p>Criador de Trilhas</p>
+                    </div>
+                </div>
+                <p class="sidebar-semeia-desc">Transforme PDFs em trilhas com quiz e minigame coringa em segundos!</p>
+                <button class="btn-sidebar-create-semeia" onclick="trocarAbaPainel('semeia')">
+                    <span>✨ Gerar com SemeIA</span>
+                </button>
+            </div>
+
+            <!-- Card de Destaque 2: Criar Sala Rápida (Estilo Kahoot) -->
             <div class="sidebar-live-card">
                 <div class="sidebar-live-header">
                     <div class="sidebar-live-icon">
@@ -162,6 +190,158 @@
                         </div>
                     </div>
                 </div>
+            </section>
+
+
+            <!-- ===================================================
+                 ABA 3: SEMEIA — GERAR TRILHA COM IA
+            =================================================== -->
+            <section class="prof-view-section" id="view-semeia" style="display: none;">
+                <div class="prof-title-row">
+                    <div>
+                        <h1 class="prof-page-title">SemeIA <span>Gerar Trilha</span></h1>
+                        <p class="prof-page-subtitle">Envie um PDF e a SemeIA cria uma trilha completa com questões e minigame.</p>
+                    </div>
+                    <div class="semeia-header-actions">
+                        <button type="button" class="btn-semeia-help" onclick="abrirModalComoFuncionaSemeIA()" title="Ver tutorial explicativo da SemeIA">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span>Como funciona?</span>
+                        </button>
+                        <div class="semeia-cota-container">
+                            <div class="semeia-cota-badge" id="semeia-cota-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                                <span id="semeia-cota-texto">Carregando cota...</span>
+                            </div>
+                            <button type="button" class="btn-semeia-pro-chamativo" onclick="abrirModalProProfessor()" title="Desbloqueie IA ilimitada e mais recursos">
+                                <span class="pro-chamativo-pulse"></span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                <span>Faça mais com o PRO</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner Chamativo de Incentivo Sementis PRO -->
+                <div class="semeia-pro-banner-cta" onclick="abrirModalProProfessor()" title="Clique para conhecer o Sementis PRO">
+                    <div class="pro-banner-tag">
+                        <span class="pro-live-dot"></span>
+                        <span>SEMENTIS PRO</span>
+                    </div>
+                    <div class="pro-banner-info">
+                        <strong>Turbine suas aulas com o Sementis PRO:</strong> Crie trilhas com modelos de IA mais avançados e rápidos, tenha refil mensal de tokens de criação e envie apostilas completas em PDF de até 20 MB!
+                    </div>
+                    <div class="pro-banner-action">
+                        <span>14 Dias Grátis</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                </div>
+
+                <!-- ---- ESTADO 1: FORMULÁRIO IDLE ---- -->
+                <div id="semeia-estado-idle">
+                    <form id="semeia-form" onsubmit="gerarTrilhaIA(event)" class="semeia-upload-card">
+
+                        <!-- Drop zone -->
+                        <label for="ia-pdf-input" class="semeia-dropzone" id="semeia-dropzone"
+                               ondragover="semeiaOnDragOver(event)" ondragleave="semeiaOnDragLeave(event)"
+                               ondrop="semeiaOnDrop(event)">
+                            <div class="semeia-drop-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            </div>
+                            <p class="semeia-drop-title" id="semeia-drop-title">Arraste seu PDF aqui</p>
+                            <p class="semeia-drop-hint">ou clique para selecionar &nbsp;·&nbsp; máx. 5 MB · 30 páginas</p>
+                            <input type="file" id="ia-pdf-input" accept=".pdf" style="display:none;"
+                                   onchange="semeiaOnFileSelect(event)">
+                        </label>
+
+                        <!-- Nome da trilha -->
+                        <div class="input-group semeia-nome-group">
+                            <label for="ia-nome-trilha">Nome da Trilha</label>
+                            <input type="text" id="ia-nome-trilha"
+                                   placeholder="Ex: Energia Solar no Cotidiano"
+                                   maxlength="80" autocomplete="off" required>
+                        </div>
+
+                        <!-- Atribuir às turmas (opcional) -->
+                        <div class="input-group semeia-turmas-group">
+                            <label>Atribuir a Turmas (opcional):</label>
+                            <p class="semeia-turmas-hint">Marque as turmas que terão acesso a esta trilha logo após a geração:</p>
+                            <div class="semeia-turmas-checklist" id="semeia-turmas-checklist">
+                                <span class="semeia-turmas-loading">Carregando suas turmas...</span>
+                            </div>
+                        </div>
+
+                        <div class="semeia-form-msg" id="semeia-form-msg"></div>
+
+                        <button type="submit" class="btn-semeia-gerar" id="btn-semeia-gerar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <span>Gerar com SemeIA</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- ---- ESTADO 2: PROCESSANDO ---- -->
+                <div id="semeia-estado-processando" style="display:none;" class="semeia-status-card">
+                    <div class="semeia-pulse-ring">
+                        <div class="semeia-pulse-inner">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                        </div>
+                    </div>
+                    <h3 class="semeia-status-title">SemeIA está trabalhando...</h3>
+                    <p class="semeia-status-msg" id="semeia-msg-processando">🌱 Lendo o material...</p>
+                    <div class="semeia-progress-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+
+                <!-- ---- ESTADO 3: SUCESSO ---- -->
+                <div id="semeia-estado-sucesso" style="display:none;" class="semeia-status-card semeia-sucesso">
+                    <div class="semeia-sucesso-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <h3 class="semeia-status-title">Trilha criada com sucesso! 🎉</h3>
+                    <p class="semeia-status-msg" id="semeia-msg-sucesso">A trilha já está disponível na plataforma.</p>
+                    <div class="semeia-sucesso-actions">
+                        <button class="btn-semeia-nova" onclick="resetarSemeIA()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.64"/></svg>
+                            Gerar outra
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ---- ESTADO 4: ERRO ---- -->
+                <div id="semeia-estado-erro" style="display:none;" class="semeia-status-card semeia-erro">
+                    <div class="semeia-erro-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <h3 class="semeia-status-title">Não foi possível gerar a trilha</h3>
+                    <p class="semeia-status-msg" id="semeia-msg-erro">Ocorreu um erro inesperado</p>
+                    <div class="semeia-erro-cota-aviso">
+                        <span>💡 <strong>Fique tranquilo:</strong> Nenhuma cota de geração foi consumida nesta tentativa.</span>
+                    </div>
+                    <button class="btn-semeia-nova" onclick="resetarSemeIA()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.64"/></svg>
+                        Tentar novamente
+                    </button>
+                </div>
+
+                <!-- ---- SEÇÃO: MINHAS TRILHAS CRIADAS COM A SEMEIA ---- -->
+                <div class="semeia-minhas-trilhas-secao" id="semeia-minhas-trilhas-secao">
+                    <div class="semeia-secao-header">
+                        <div>
+                            <h3 class="semeia-secao-title">🌿 Minhas Trilhas Criadas com SemeIA</h3>
+                            <p class="semeia-secao-subtitle">Gerencie suas trilhas geradas, visualize as fases e defina quais turmas têm acesso.</p>
+                        </div>
+                        <button type="button" class="btn-semeia-recarregar" onclick="carregarMinhasTrilhasSemeIA()" title="Atualizar lista de trilhas">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            <span>Atualizar</span>
+                        </button>
+                    </div>
+
+                    <div id="semeia-lista-trilhas" class="semeia-trilhas-grid">
+                        <div class="semeia-trilhas-loading">Carregando suas trilhas...</div>
+                    </div>
+                </div>
+
             </section>
 
         </main>
@@ -298,6 +478,145 @@
                     </table>
                     <div class="ranking-empty" id="ranking-empty" style="display:none;">Nenhum aluno nesta turma ainda.</div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL: COMO FUNCIONA A SEMEIA (TUTORIAL ESTILO KAHOOT)
+    =================================================== -->
+    <div class="modal-overlay" id="modal-como-funciona-semeia" role="dialog" aria-modal="true" aria-labelledby="modal-semeia-help-title">
+        <div class="modal-card modal-card--wide modal-semeia-help">
+            <div class="modal-header">
+                <div class="modal-icon modal-icon--semeia">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                </div>
+                <div>
+                    <h2 id="modal-semeia-help-title">Como funciona a SemeIA?</h2>
+                    <p>Sua assistente pedagógica para transformar PDFs em trilhas gamificadas</p>
+                </div>
+                <button class="modal-close" onclick="fecharModalComoFuncionaSemeIA()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="semeia-steps-grid">
+                    <div class="semeia-step-card">
+                        <div class="semeia-step-number">1</div>
+                        <div class="semeia-step-icon">📄</div>
+                        <h3>Upload do Material</h3>
+                        <p>Envie resumos, apostilas ou slides em PDF (até 5MB no gratuito ou 20MB no PRO). Pode ter até 30 páginas de texto selecionável.</p>
+                    </div>
+
+                    <div class="semeia-step-card">
+                        <div class="semeia-step-number">2</div>
+                        <div class="semeia-step-icon">🛡️</div>
+                        <h3>Curadoria Pedagógica</h3>
+                        <p>A SemeIA aplica guardrails éticos garantindo que o tema seja estritamente educativo, seguro e alinhado aos objetivos pedagógicos.</p>
+                    </div>
+
+                    <div class="semeia-step-card">
+                        <div class="semeia-step-number">3</div>
+                        <div class="semeia-step-icon">🎮</div>
+                        <h3>Quiz & Minigame Coringa</h3>
+                        <p>A IA extrai conceitos-chave, elabora quizzes com curiosidades educativas e monta um minigame coringa interativo (Jogo da Memória ou Palavras Cruzadas)!</p>
+                    </div>
+
+                    <div class="semeia-step-card">
+                        <div class="semeia-step-number">4</div>
+                        <div class="semeia-step-icon">👥</div>
+                        <h3>Distribuição às Turmas</h3>
+                        <p>Vincule a trilha gerada às suas turmas com 1 clique! Os alunos recebem a missão, jogam e você acompanha o progresso no painel da turma.</p>
+                    </div>
+                </div>
+
+                <div class="semeia-help-footer">
+                    <div class="semeia-help-tip">
+                        💡 <strong>Dica Pro:</strong> Prefira PDFs com texto direto e limpo para a IA extrair o máximo de precisão em cada questão.
+                    </div>
+                    <button type="button" class="btn-modal-confirm" onclick="fecharModalComoFuncionaSemeIA()">
+                        <span>🚀 Entendi! Vamos Criar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL: SEMENTIS PRO DO PROFESSOR (UPGRADE / REFIL DE TOKENS)
+    =================================================== -->
+    <!-- ===================================================
+         MODAL: SEMENTIS PRO DO PROFESSOR (ESTILO DO PERFIL COM BOTÃO VERDE)
+    =================================================== -->
+    <div class="modal-overlay" id="modal-pro-professor" role="dialog" aria-modal="true" aria-labelledby="modal-pro-title">
+        <div class="modal-content pro-modal-content">
+            <button class="close-modal-btn" onclick="fecharModalProProfessor()" aria-label="Fechar">&times;</button>
+            <div class="pro-modal-header">
+                <img src="/assets/brand/logo_sementis_branco.png" alt="Sementis Logo">
+                <span class="pro-badge">PRO</span>
+            </div>
+            <h2 class="pro-title" id="modal-pro-title">Faça muito mais com o PRO!</h2>
+            <ul class="pro-benefits">
+                <li>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <span><strong>Gerações ilimitadas de trilhas:</strong> Refil mensal de tokens para criar sempre</span>
+                </li>
+                <li>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/><path d="M12 22a10 10 0 0 1-10-10"/></svg>
+                    <span><strong>Modelos de IA mais avançados:</strong> Raciocínio pedagógico mais inteligente e rápido</span>
+                </li>
+                <li>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                    <span><strong>Upload até 20 MB:</strong> Envie apostilas completas e livros didáticos em PDF</span>
+                </li>
+                <li>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M16 10v4"/><path d="M14 12h4"/></svg>
+                    <span><strong>Todos os minigames liberados:</strong> Memória, Palavras Cruzadas e Desafios</span>
+                </li>
+                <li>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    <span><strong>Relatórios da turma:</strong> Acompanhe as dificuldades e evolução dos alunos</span>
+                </li>
+            </ul>
+            <button type="button" class="pro-trial-btn" id="btn-pro-trial" onclick="assinarProIndisponivel()">
+                INICIAR TESTE DE 14 DIAS GRÁTIS
+            </button>
+            <div id="pro-indisponivel-msg" class="pro-indisponivel-msg" style="display: none;">
+                <span class="pro-indisponivel-icon">🚧</span>
+                <div>
+                    <strong>Recurso em Lançamento!</strong>
+                    <p>O Sementis PRO com refil de tokens e IA avançada está em fase final de testes. Você já está na lista de espera prioritária e será avisado assim que liberarmos!</p>
+                </div>
+            </div>
+            <p class="pro-terms" id="pro-terms-txt">Após o teste, R$ 14,90/mês. Cancele quando quiser.</p>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL: ATRIBUIR TRILHA DA SEMEIA A TURMAS
+    =================================================== -->
+    <div class="modal-overlay" id="modal-atribuir-turmas-trilha" role="dialog" aria-modal="true" aria-labelledby="modal-atribuir-trilha-title">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-icon modal-icon--semeia">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div>
+                    <h2 id="modal-atribuir-trilha-title">Atribuir Trilha a Turmas</h2>
+                    <p id="modal-atribuir-trilha-desc">Selecione quais turmas terão acesso a esta trilha</p>
+                </div>
+                <button class="modal-close" onclick="fecharModalAtribuirTurmasTrilha()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-help-text" style="color: var(--color-gray-400); font-size: 13px; margin-bottom: 16px;">
+                    Marque as turmas que devem acessar esta trilha. Os alunos matriculados verão os novos desafios imediatamente no painel da turma.
+                </p>
+                <div class="semeia-modal-turmas-checklist" id="modal-trilha-turmas-checklist">
+                    <!-- Checkboxes dinâmicos -->
+                </div>
+                <div id="feedback-atribuir-trilha" class="mensagem-feedback" style="min-height: 20px; font-size: 13px; margin-top: 12px;"></div>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn-modal-cancel" onclick="fecharModalAtribuirTurmasTrilha()">Cancelar</button>
+                <button type="button" class="btn-modal-confirm" id="btn-salvar-atribuicao-trilha" onclick="salvarAtribuicaoTurmasTrilha()">Salvar Atribuições</button>
             </div>
         </div>
     </div>
