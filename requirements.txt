@@ -4,6 +4,7 @@ passlib==1.7.4
 PyJWT==2.12.1
 sqlmodel==0.0.38
 SQLAlchemy==2.0.49
-argon2-cffi==25.1.0pypdf==4.3.1
+argon2-cffi==25.1.0
+pypdf==4.3.1
 httpx==0.27.2
 PyYAML==6.0.2
