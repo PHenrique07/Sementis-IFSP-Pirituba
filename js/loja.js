@@ -167,22 +167,6 @@ const toast = {
   info: (title, options) => showToast(title, options?.description, "info"),
 };
 
-// Sorteio de Prêmio Gacha
-function rollPrize() {
-  const roll = Math.random() * 100;
-  let acc = 0;
-  let rarity = "comum";
-  for (const [r, w] of RARITY_WEIGHTS) {
-    acc += w;
-    if (roll < acc) {
-      rarity = r;
-      break;
-    }
-  }
-  const pool = GACHA_POOL.filter((p) => p.rarity === rarity);
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
 // Variáveis de Estado de UI e Elementos DOM
 let spinning = false;
 let currentPrize = null;
@@ -198,6 +182,8 @@ const gachaSpinBtn = document.querySelector("[data-testid='gacha-spin-btn']");
 const soundToggleBtn = document.querySelector("[data-testid='sound-toggle-btn']");
 const resetBalanceBtn = document.querySelector("[data-testid='reset-balance-btn']");
 const shopItensContainer = document.getElementById("itens");
+let itensDiarios = [];
+const itensDiariosAdquiridos = new Set();
 const inventoryCountEl = document.querySelector("[data-testid='inventory-count']");
 const inventoryContainer = document.getElementById("inventory-container-wrapper");
 
@@ -239,6 +225,133 @@ function sincronizarPerfil(dados) {
 window.addEventListener("perfil:atualizado", (event) => {
   sincronizarPerfil(event.detail);
 });
+
+function criarCampoItemDiario(classe, texto) {
+  const elemento = document.createElement("p");
+  elemento.className = classe;
+  elemento.textContent = texto;
+  return elemento;
+}
+
+function criarCardItemDiario(item) {
+  const card = document.createElement("article");
+  card.setAttribute("data-testid", `shop-card-diario-${item.id}`);
+  card.className = "loja-shop-card";
+
+  if (item.imagem) {
+    const imagem = document.createElement("img");
+    imagem.className = "loja-shop-card-image";
+    imagem.src = item.imagem;
+    imagem.alt = item.nome;
+    card.appendChild(imagem);
+  }
+
+  const titulo = document.createElement("h3");
+  titulo.className = "loja-shop-card-name";
+  titulo.textContent = item.nome;
+  card.appendChild(titulo);
+  card.appendChild(criarCampoItemDiario("loja-shop-card-desc", item.descricao));
+  card.appendChild(criarCampoItemDiario("loja-shop-card-type", `Tipo: ${item.tipo}`));
+  card.appendChild(criarCampoItemDiario("loja-shop-card-price", `Preço: ${Number(item.preco).toLocaleString("pt-BR")} moedas`));
+
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.setAttribute("data-testid", `buy-btn-diario-${item.id}`);
+  botao.className = "loja-buy-btn";
+  botao.textContent = itensDiariosAdquiridos.has(item.id) ? "Adquirido" : "Comprar";
+  botao.disabled = itensDiariosAdquiridos.has(item.id);
+  botao.addEventListener("click", () => comprarItemDiario(item, botao));
+  card.appendChild(botao);
+
+  return card;
+}
+
+function renderItensDiarios() {
+  if (!shopItensContainer || itensDiarios.length === 0) return;
+
+  const secao = document.createElement("div");
+  secao.setAttribute("data-testid", "shop-section-diaria");
+  secao.className = "loja-shop-section";
+  secao.style.marginBottom = "56px";
+
+  const cabecalho = document.createElement("div");
+  cabecalho.className = "loja-shop-section-header";
+  cabecalho.innerHTML = '<span class="loja-shop-section-num">05</span><div><h2 class="loja-shop-section-title">Oferta diária</h2><p class="loja-shop-section-tagline">Itens disponíveis por tempo limitado.</p></div>';
+  secao.appendChild(cabecalho);
+
+  const grade = document.createElement("div");
+  grade.className = "loja-shop-grid";
+  itensDiarios.forEach((item) => grade.appendChild(criarCardItemDiario(item)));
+  secao.appendChild(grade);
+  shopItensContainer.appendChild(secao);
+}
+
+async function carregarItensDiarios() {
+  try {
+    const resposta = await fetch("/api/loja/diaria");
+    if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+    const dados = await resposta.json();
+    if (!Array.isArray(dados)) throw new Error("Formato inválido");
+    itensDiarios = dados.filter((item) => item && item.id != null);
+    renderShop();
+  } catch (erro) {
+    console.error("Erro ao carregar itens diários:", erro);
+    toast.error("Não foi possível carregar a oferta diária", { description: "O catálogo local continua disponível." });
+  }
+}
+
+async function comprarItemDiario(item, botao) {
+  if (itensDiariosAdquiridos.has(item.id)) return;
+
+  botao.disabled = true;
+  botao.textContent = "Carregando...";
+  try {
+    const token = localStorage.getItem("token");
+    const cabecalhos = { "Content-Type": "application/json" };
+    if (token) cabecalhos.Authorization = `Bearer ${token}`;
+
+    const resposta = await fetch("/api/loja/comprar", {
+      method: "POST",
+      headers: cabecalhos,
+      body: JSON.stringify({ item_id: item.id }),
+    });
+    let dados = {};
+    try {
+      dados = await resposta.json();
+    } catch (erro) {
+      dados = {};
+    }
+
+    if (resposta.status === 401) throw new Error("401");
+    if (resposta.status === 400) throw new Error(dados.mensagem || "400");
+    if (resposta.status === 409) throw new Error(dados.mensagem || "409");
+    if (!resposta.ok) throw new Error(dados.mensagem || `HTTP ${resposta.status}`);
+    if (typeof dados.saldo !== "number" || !Number.isFinite(dados.saldo) || dados.saldo < 0) {
+      throw new Error("Saldo inválido retornado pela API");
+    }
+
+    state.coins = dados.saldo;
+    itensDiariosAdquiridos.add(item.id);
+    saveState();
+    updateBalanceUI();
+    renderShop();
+    renderInventory();
+    const gasto = dados.valor_gasto ?? dados.gasto ?? dados.preco ?? item.preco;
+    toast.success(dados.mensagem || `${item.nome} adquirido!`, { description: `Gasto: ${Number(gasto).toLocaleString("pt-BR")} moedas.` });
+  } catch (erro) {
+    console.error("Erro ao comprar item diário:", erro);
+    const mensagem = erro.message === "401"
+      ? "Faça login para comprar este item."
+      : erro.message === "400"
+        ? "Dados inválidos para a compra."
+        : erro.message === "409"
+          ? "Este item não está disponível ou já foi adquirido."
+          : erro.message || "Verifique sua conexão e tente novamente.";
+    toast.error("Não foi possível concluir a compra", { description: mensagem });
+    botao.disabled = false;
+    botao.textContent = "Comprar";
+  }
+}
 
 // Renderização dos Itens da Loja
 function renderShop() {
@@ -337,6 +450,8 @@ function renderShop() {
     shopItensContainer.appendChild(secDiv);
   });
 
+  renderItensDiarios();
+
   if (window.lucide) lucide.createIcons();
 }
 
@@ -404,8 +519,26 @@ function updateGachaStatus(text) {
   }
 }
 
+function normalizarPremioGacha(premio) {
+  if (!premio || typeof premio !== "object") {
+    throw new Error("Prêmio inválido retornado pela API");
+  }
+
+  const raridade = String(premio.rarity ?? premio.raridade ?? "comum").toLowerCase();
+  return {
+    id: premio.id,
+    itemId: premio.itemId ?? premio.item_id,
+    type: premio.type ?? premio.tipo ?? "item",
+    name: premio.name ?? premio.nome ?? "Prêmio do gacha",
+    desc: premio.desc ?? premio.descricao ?? "Prêmio recebido no gacha.",
+    icon: premio.icon ?? premio.icone ?? "gift",
+    rarity: RARITY[raridade] ? raridade : "comum",
+    amount: premio.amount ?? premio.quantidade,
+  };
+}
+
 // Ação de Girar a Máquina (Spin)
-function handleSpin() {
+async function handleSpin() {
   if (spinning) return;
 
   if (state.coins < GACHA_COST) {
@@ -430,12 +563,6 @@ function handleSpin() {
     return;
   }
 
-  // Deduz moedas
-  state.coins -= GACHA_COST;
-  saveState();
-  updateBalanceUI();
-  renderShop();
-
   // Inicia animação
   spinning = true;
   gachaSpinBtn.disabled = true;
@@ -449,16 +576,33 @@ function handleSpin() {
   // Limpa chute de prêmio
   if (gachaChute) gachaChute.innerHTML = "";
 
-  // Sorteio
-  const rolled = rollPrize();
+  try {
+    const dados = await ganharItem(undefined, GACHA_COST);
+    const resultado = dados.resultado ?? dados;
+    const sucesso = dados.success === true || dados.sucesso === true || resultado.success === true || resultado.sucesso === true || resultado.status === "sucesso";
+    if (!sucesso) {
+      throw new Error(resultado.mensagem || resultado.message || resultado.erro || resultado.error || "Não foi possível girar o gacha");
+    }
+    const saldo = resultado.saldo ?? resultado.moedas ?? resultado.moedas_atuais ?? resultado.saldo_atual;
+    if (typeof saldo !== "number" || !Number.isFinite(saldo)) {
+      throw new Error("Saldo inválido retornado pela API");
+    }
 
-  // Finaliza giro após 1.9s
-  setTimeout(() => {
+    const premio = resultado.premio ?? resultado.prize ?? resultado.item ?? resultado;
+    const rolled = normalizarPremioGacha(premio);
+    state.coins = saldo;
+    moedasConfirmadas = saldo;
+    saveState();
+    updateBalanceUI();
+    renderShop();
+
+    // Finaliza giro após 1.9s
+    setTimeout(() => {
     spinning = false;
     if (gachaMachineEl) gachaMachineEl.classList.remove("spinning-machine");
     updateGachaStatus("PRÊMIO!");
     gachaSpinBtn.innerHTML = `GIRAR <span class="gacha-spin-btn-price"><img src="assets/icons/icone_moeda.png" alt="Moeda" /> ${GACHA_COST}</span>`;
-    gachaSpinBtn.disabled = false;
+    if (gachaSpinBtn) gachaSpinBtn.disabled = true;
 
     if (window.sounds?.playPop) window.sounds.playPop();
 
@@ -473,9 +617,19 @@ function handleSpin() {
       `;
     }
 
-    revealingPrize = rolled;
-    showCapsuleReveal(rolled);
-  }, 1900);
+      revealingPrize = rolled;
+      showCapsuleReveal(rolled);
+    }, 1900);
+  } catch (erro) {
+    spinning = false;
+    if (gachaMachineEl) gachaMachineEl.classList.remove("spinning-machine");
+    if (gachaSpinBtn) {
+      gachaSpinBtn.disabled = false;
+      gachaSpinBtn.innerHTML = `GIRAR <span class="gacha-spin-btn-price"><img src="assets/icons/icone_moeda.png" alt="Moeda" /> ${GACHA_COST}</span>`;
+    }
+    updateGachaStatus("PRONTO");
+    toast.error("Não foi possível girar", { description: erro.message });
+  }
 }
 
 // Tela de Revelação da Cápsula (Split Capsule Animation)
@@ -654,20 +808,6 @@ function showPrizeModal(prize) {
 function collectPrize() {
   if (!currentPrize) return;
 
-  const prize = currentPrize;
-  if (prize.type === "coins") {
-    state.coins += prize.amount;
-    toast.success(`+${prize.amount} moedas no cofrinho!`);
-  } else {
-    state.owned[prize.itemId] = true;
-    toast.success(`${prize.name} foi para a sua coleção!`);
-  }
-
-  saveState();
-  updateBalanceUI();
-  renderShop();
-  renderInventory();
-
   // Limpa chute
   if (gachaChute) gachaChute.innerHTML = `<span class="gacha-chute-label">Saída do prêmio</span>`;
   updateGachaStatus("PRONTO");
@@ -680,6 +820,11 @@ function collectPrize() {
       overlay.remove();
       currentPrize = null;
       revealingPrize = null;
+      if (gachaSpinBtn) {
+        gachaSpinBtn.disabled = false;
+        gachaSpinBtn.innerHTML = `GIRAR <span class="gacha-spin-btn-price"><img src="assets/icons/icone_moeda.png" alt="Moeda" /> ${GACHA_COST}</span>`;
+      }
+      spinning = false;
     }, 300);
   }
 }
@@ -719,6 +864,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBalanceUI();
   renderShop();
   renderInventory();
+  carregarItensDiarios();
   updateSoundButton();
 
   // Listeners estáticos
