@@ -16,3 +16,7 @@ sementis.db
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Saídas do /brag (vídeos renderizados e composições)
+brag-output*/
+*.mp4
