@@ -453,7 +453,7 @@ def obter_progresso_modulos():
 @app.route('/<pasta>/<path:filename>')
 def serve_estaticos(pasta, filename):
     # Se a pasta for uma das pastas de assets ou a do minigame, serve o arquivo direto
-    if pasta in ['css', 'js', 'assets', 'pwa', 'FlapFish']:
+    if pasta in ['css', 'js', 'assets', 'pwa', 'FlapFish', 'project']:
         return send_from_directory(os.path.join(BASE_DIR, pasta), filename)
     return "Pasta não encontrada", 404
 

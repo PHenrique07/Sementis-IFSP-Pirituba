@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#1a1a4a">
     <meta name="application-name" content="Sementis">
     <link rel="manifest" href="pwa/manifest.webmanifest">
-    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/selo_sementis_branco.png" type="image/png">
     <title>Sementis - Minhas Turmas</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/shared-navbar.css">
@@ -21,7 +21,10 @@
         <header class="turma-header">
             <div class="turma-header-content">
                 <div class="turma-header-title-wrap">
-                    <span class="turma-badge-pill">🎓 Sala de Aula</span>
+                    <span class="turma-badge-pill">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-2px; margin-right:4px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                        Sala de Aula
+                    </span>
                     <h1 class="turma-page-title">Minhas Turmas</h1>
                     <p class="turma-page-desc">Jogue as trilhas exclusivas criadas pelo seu professor e dispute no ranking da sua sala!</p>
                 </div>
@@ -51,7 +54,9 @@
         <!-- Estado Vazio: Aluno não possui turmas -->
         <div id="turma-sem-matricula" class="state-container" style="display: none;">
             <div class="sem-turma-card">
-                <div class="sem-turma-icon">🏫</div>
+                <div class="sem-turma-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path><path d="M9 9h1"></path><path d="M9 13h1"></path><path d="M9 17h1"></path></svg>
+                </div>
                 <h2>Você ainda não está em nenhuma turma!</h2>
                 <p>Peça o código de convite de 6 dígitos para o seu professor e digite abaixo para ter acesso às trilhas especiais e ao ranking da sua sala.</p>
                 
@@ -70,7 +75,9 @@
             <!-- Cartão Resumo da Turma -->
             <section class="turma-summary-card">
                 <div class="summary-left">
-                    <div class="turma-avatar-icon">🏫</div>
+                    <div class="turma-avatar-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path><path d="M9 9h1"></path><path d="M9 13h1"></path><path d="M9 17h1"></path></svg>
+                    </div>
                     <div class="summary-info">
                         <h2 id="dashboard-turma-nome">Carregando...</h2>
                         <p class="professor-nome">Professor: <strong id="dashboard-professor-nome">—</strong></p>
@@ -98,7 +105,9 @@
                 <!-- Coluna de Trilhas da Turma -->
                 <section class="panel-section trilhas-section">
                     <div class="panel-header">
-                        <div class="panel-header-icon">🌿</div>
+                        <div class="panel-header-icon" style="color: #a9ff71;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
+                        </div>
                         <div>
                             <h2 class="panel-title">Trilhas da Turma</h2>
                             <p class="panel-subtitle">Desafios e lições criadas com a SemeIA para esta sala</p>
@@ -113,7 +122,9 @@
                 <!-- Coluna de Ranking da Turma -->
                 <section class="panel-section ranking-section">
                     <div class="panel-header">
-                        <div class="panel-header-icon">🏆</div>
+                        <div class="panel-header-icon" style="color: #ffd700;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 9H4a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-2"></path><path d="M8 22v-4m8 4v-4M5 22h14"></path></svg>
+                        </div>
                         <div>
                             <h2 class="panel-title">Ranking da Sala</h2>
                             <p class="panel-subtitle">Classificação semanal de XP entre os colegas</p>

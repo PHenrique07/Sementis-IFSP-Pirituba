@@ -257,7 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!trilhas || trilhas.length === 0) {
             containerTrilhas.innerHTML = `
                 <div class="trilhas-vazio">
-                    <div class="vazio-icon">🌱</div>
+                    <div class="vazio-icon">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
+                    </div>
                     <p><strong>Nenhuma trilha foi liberada para esta turma ainda.</strong></p>
                     <p style="font-size: 13px; margin-top: 4px;">Assim que seu professor atribuir novas trilhas criadas com a SemeIA, elas aparecerão aqui!</p>
                 </div>
@@ -279,12 +281,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div>
                         <h3 class="trilha-card-title">${escapeHtml(trilha.nome)}</h3>
                         <div class="trilha-card-info">
-                            <span>🎯 ${totalAtividades} ${totalAtividades === 1 ? 'fase' : 'fases'}</span>
+                            <span><strong>${totalAtividades}</strong> ${totalAtividades === 1 ? 'fase' : 'fases'}</span>
                             <span>•</span>
-                            <span>🕹️ ${tiposTexto}</span>
+                            <span>${tiposTexto}</span>
                         </div>
                     </div>
-                    <span class="trilha-card-badge">✨ SemeIA</span>
+                    <span class="trilha-card-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:-1px; margin-right:3px;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+                        SemeIA
+                    </span>
                 </div>
                 <div style="margin-top: 6px;">
                     <a href="trilhas.html?trilha_id=${encodeURIComponent(trilha.id)}&turma_id=${encodeURIComponent(turmaId)}&origem=turma" class="btn-jogar-trilha">
@@ -317,9 +322,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let badgeClasse = '';
             let badgeIcon = `${pos}º`;
-            if (pos === 1) { badgeClasse = 'ouro'; badgeIcon = '🥇'; }
-            else if (pos === 2) { badgeClasse = 'prata'; badgeIcon = '🥈'; }
-            else if (pos === 3) { badgeClasse = 'bronze'; badgeIcon = '🥉'; }
+            if (pos === 1) { badgeClasse = 'ouro'; badgeIcon = '1º'; }
+            else if (pos === 2) { badgeClasse = 'prata'; badgeIcon = '2º'; }
+            else if (pos === 3) { badgeClasse = 'bronze'; badgeIcon = '3º'; }
 
             const li = document.createElement('li');
             li.className = `ranking-item-turma ${isMe ? 'is-me' : ''}`;
@@ -333,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 <div class="ranking-right">
-                    <span class="aluno-ofensiva" title="Dias de ofensiva">🔥 ${aluno.ofensiva || 0}</span>
+                    <span class="aluno-ofensiva" title="Dias de ofensiva"><img src="assets/icons/icone_sequencia_fogo.png" alt="Ofensiva" style="width:14px; height:14px; display:inline-block; vertical-align:-2px; margin-right:3px;">${aluno.ofensiva || 0}</span>
                     <span class="aluno-xp">+${aluno.xp_semanal || 0} XP</span>
                 </div>
             `;
