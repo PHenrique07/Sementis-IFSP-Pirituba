@@ -94,6 +94,10 @@
   display: none !important;
 }
 
+.turmas-desktop-only {
+  display: none !important;
+}
+
 .mobile-only {
   display: flex !important;
 }
@@ -156,6 +160,10 @@
 
 .more-menu-popup.open .more-menu-item:nth-child(2) {
   animation-delay: 0.12s;
+}
+
+.more-menu-popup.open .more-menu-item:nth-child(3) {
+  animation-delay: 0.19s;
 }
 
 .more-menu-item img {
@@ -248,6 +256,11 @@
     height: 28px;
   }
 
+  .nav-item.turmas-desktop-only img {
+    width: 36px;
+    height: 36px;
+  }
+
   .nav-item span {
     font-size: 18px;
     font-weight: 700;
@@ -268,8 +281,17 @@
     display: flex !important;
   }
 
+  .turmas-desktop-only {
+    display: flex !important;
+  }
+
   .mobile-only {
     display: none !important;
   }
+}
+
+.more-menu-item[href="turma-aluno.html"] img {
+  width: 34px;
+  height: 34px;
 }
 
