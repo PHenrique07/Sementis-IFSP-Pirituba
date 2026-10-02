@@ -84,8 +84,8 @@ function renderModulos(modulos) {
                 </div>
             </div>
             <div class="modulo-stats-row">
-                <span>🎯 ${modulo.alunos_completaram} ${modulo.alunos_completaram === 1 ? 'aluno completou' : 'alunos completaram'}</span>
-                <span>📚 ${modulo.total_atividades} lições</span>
+                <span><strong>${modulo.alunos_completaram}</strong> ${modulo.alunos_completaram === 1 ? 'aluno completou' : 'alunos completaram'}</span>
+                <span><strong>${modulo.total_atividades}</strong> lições</span>
             </div>
         </article>`;
     }).join('');
@@ -104,7 +104,10 @@ function renderTrilhasSemeIA(trilhas = []) {
                 </p>
                 <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
                     <button type="button" class="btn-semeia-atribuir" onclick="abrirModalAtribuirTrilha()">+ Atribuir Trilha Existente</button>
-                    <a href="painel-professor.html?aba=semeia" class="btn-semeia-gerar-link">✨ Gerar Trilha com IA</a>
+                    <a href="painel-professor.html?aba=semeia" class="btn-semeia-gerar-link">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-2px; margin-right:4px;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+                        <span>Gerar Trilha com IA</span>
+                    </a>
                 </div>
             </div>
         `;
@@ -120,9 +123,9 @@ function renderTrilhasSemeIA(trilhas = []) {
                         <span class="trilha-semeia-badge">SemeIA</span>
                     </div>
                     <div class="trilha-semeia-meta">
-                        <span>🎯 ${t.total_atividades} atividades (quiz + minigame)</span>
+                        <span>${t.total_atividades} atividades (quiz + minigame)</span>
                         <span>·</span>
-                        <span>📅 ${t.data_atribuicao}</span>
+                        <span>${t.data_atribuicao}</span>
                     </div>
                     <div class="trilha-semeia-card-footer">
                         <button type="button" class="btn-remover-trilha-turma" onclick="removerTrilhaDaTurma(${t.id}, '${escapeHtml(t.nome)}')">
@@ -331,7 +334,7 @@ function renderTabelaAlunos() {
                 </div>
             </td>
             <td class="xp-value">${(aluno.xp_semanal || 0).toLocaleString('pt-BR')} XP</td>
-            <td class="streak">🔥 ${aluno.ofensiva || 0}</td>
+            <td class="streak"><img src="assets/icons/icone_sequencia_fogo.png" alt="Ofensiva" style="width:16px; height:16px; display:inline-block; vertical-align:-2px; margin-right:4px;">${aluno.ofensiva || 0}d</td>
             <td>
                 <span class="status-badge ${badgeClass}">
                     ${escapeHtml(aluno.status_texto || 'Iniciando')}
@@ -779,7 +782,7 @@ async function abrirRaioX(alunoId) {
         document.getElementById('raiox-licoes').textContent = `${dados.atividades_concluidas}/${dados.total_atividades}`;
         document.getElementById('raiox-xp-semanal').textContent = `${(dados.xp_semanal || 0).toLocaleString('pt-BR')} XP`;
         document.getElementById('raiox-xp-total').textContent = `${(dados.xp_total || 0).toLocaleString('pt-BR')} XP`;
-        document.getElementById('raiox-ofensiva').textContent = `🔥 ${dados.ofensiva || 0} dias`;
+        document.getElementById('raiox-ofensiva').innerHTML = `<img src="assets/icons/icone_sequencia_fogo.png" alt="Ofensiva" style="width:16px; height:16px; display:inline-block; vertical-align:-2px; margin-right:4px;">${dados.ofensiva || 0} dias`;
         document.getElementById('raiox-entrada').textContent = `Aluno ingressou na turma em: ${dados.data_entrada}`;
 
         const modulosList = document.getElementById('raiox-modulos-lista');

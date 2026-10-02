@@ -197,8 +197,16 @@ body.turma-aluno-page {
 }
 
 .sem-turma-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 22px;
+  background: rgba(169, 255, 113, 0.08);
+  border: 1px solid rgba(169, 255, 113, 0.25);
+  box-shadow: 0 0 20px rgba(169, 255, 113, 0.1);
 }
 
 .sem-turma-card h2 {
@@ -411,8 +419,15 @@ body.turma-aluno-page {
 }
 
 .panel-header-icon {
-  font-size: 24px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
 }
 
 .panel-title {
