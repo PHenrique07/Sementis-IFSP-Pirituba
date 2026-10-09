@@ -10,7 +10,9 @@ from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_ema
     listar_alunos_detalhados_da_turma, obter_progresso_modulos_turma, entrar_na_turma,
     verificar_cota_geracao_ia, persistir_trilha_ia, estornar_cota_ia, consumir_cota_ia,
     atribuir_trilha_turma, remover_trilha_turma, listar_trilhas_da_turma, listar_trilhas_do_professor,
-    sincronizar_turmas_da_trilha, obter_mapa_trilha_especifica, listar_turmas_do_aluno, obter_ranking_da_turma)
+    sincronizar_turmas_da_trilha, obter_mapa_trilha_especifica, listar_turmas_do_aluno, obter_ranking_da_turma,
+    listar_amigos, listar_solicitacoes_pendentes, enviar_solicitacao_amizade, aceitar_amizade, rejeitar_amizade, obter_perfil_publico)
+# pyrefly: ignore [missing-import]
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -19,6 +21,7 @@ import io
 import threading
 from datetime import date, datetime, timezone, timedelta
 from urllib.parse import quote
+# pyrefly: ignore [missing-import]
 import jwt
 from sqlmodel import Session, select, create_engine, func
 from sqlalchemy.exc import IntegrityError
@@ -1669,6 +1672,123 @@ def aluno_dashboard_turma(turma_id):
             "ranking": ranking,
             "meu_id": request.usuario_id
         }), 200
+
+# =====================================================================
+# --- ROTAS DE AMIZADES ---
+# =====================================================================
+
+@app.route('/api/amigos', methods=['GET'])
+@token_obrigatorio
+def api_listar_amigos():
+    """Retorna a lista de amigos do usuário autenticado."""
+    with Session(engine) as session:
+        amigos = listar_amigos(session, request.usuario_id)
+        return jsonify(amigos), 200
+
+
+@app.route('/api/amigos/pedidos', methods=['GET'])
+@token_obrigatorio
+def api_listar_solicitacoes_amigos():
+    """Retorna as solicitações de amizade pendentes recebidas."""
+    with Session(engine) as session:
+        pedidos = listar_solicitacoes_pendentes(session, request.usuario_id)
+        return jsonify(pedidos), 200
+
+
+@app.route('/api/amigos/adicionar', methods=['POST'])
+@token_obrigatorio
+def api_adicionar_amigo():
+    """
+    Envia solicitação de amizade.
+    Aceita {"email": "..."} ou {"id": ...} ou {"convite_amizade": "..."}.
+    """
+    dados = request.get_json() or {}
+    destinatario = dados.get('email') or dados.get('id') or dados.get('usuario_id') or dados.get('convite_amizade')
+    
+    if destinatario is None or str(destinatario).strip() == '':
+        return jsonify({"status": "erro", "mensagem": "Identificador do amigo (email ou ID) não fornecido."}), 400
+
+    with Session(engine) as session:
+        resultado = enviar_solicitacao_amizade(session, request.usuario_id, destinatario)
+        status_code = 200 if resultado.get('status') == 'sucesso' else 400
+        return jsonify(resultado), status_code
+
+
+@app.route('/api/amigos/aceitar', methods=['POST'])
+@token_obrigatorio
+def api_aceitar_amigo():
+    """Aceita solicitação de amizade recebendo {"amizade_id": X}."""
+    dados = request.get_json() or {}
+    amizade_id = dados.get('amizade_id') or dados.get('id')
+    
+    if not amizade_id:
+        return jsonify({"status": "erro", "mensagem": "amizade_id não fornecido."}), 400
+
+    with Session(engine) as session:
+        resultado = aceitar_amizade(session, int(amizade_id), request.usuario_id)
+        status_code = 200 if resultado.get('status') == 'sucesso' else 400
+        return jsonify(resultado), status_code
+
+
+@app.route('/api/amigos/rejeitar', methods=['POST'])
+@token_obrigatorio
+def api_rejeitar_amigo():
+    """Rejeita solicitação de amizade recebendo {"amizade_id": X}."""
+    dados = request.get_json() or {}
+    amizade_id = dados.get('amizade_id') or dados.get('id')
+    
+    if not amizade_id:
+        return jsonify({"status": "erro", "mensagem": "amizade_id não fornecido."}), 400
+
+    with Session(engine) as session:
+        resultado = rejeitar_amizade(session, int(amizade_id), request.usuario_id)
+        status_code = 200 if resultado.get('status') == 'sucesso' else 400
+        return jsonify(resultado), status_code
+
+
+@app.route('/api/amigos/pedidos/<int:amizade_id>', methods=['POST'])
+@token_obrigatorio
+def api_responder_pedido_amizade(amizade_id):
+    """
+    Compatibilidade com listaAmigos.js:
+    Recebe POST em /api/amigos/pedidos/<id> com {"acao": "aceitar" | "recusar"}
+    """
+    dados = request.get_json() or {}
+    acao = dados.get('acao')
+    
+    with Session(engine) as session:
+        if acao == 'aceitar':
+            resultado = aceitar_amizade(session, amizade_id, request.usuario_id)
+        elif acao in ('recusar', 'rejeitar'):
+            resultado = rejeitar_amizade(session, amizade_id, request.usuario_id)
+        else:
+            return jsonify({"status": "erro", "mensagem": "Ação inválida. Use 'aceitar' ou 'recusar'."}), 400
+            
+        status_code = 200 if resultado.get('status') == 'sucesso' else 400
+        return jsonify(resultado), status_code
+
+
+@app.route('/api/amigos/<int:amigo_id>/perfil', methods=['GET'])
+@app.route('/api/amigos/perfil', methods=['GET'])
+@token_obrigatorio
+def api_perfil_amigo(amigo_id=None):
+    """Retorna o perfil público do amigo informado."""
+    if amigo_id is None:
+        amigo_id = request.args.get('id') or request.args.get('amigo_id')
+        if amigo_id:
+            try:
+                amigo_id = int(amigo_id)
+            except ValueError:
+                amigo_id = None
+                
+    if not amigo_id:
+        return jsonify({"status": "erro", "mensagem": "ID do amigo não fornecido."}), 400
+
+    with Session(engine) as session:
+        perfil = obter_perfil_publico(session, amigo_id)
+        if isinstance(perfil, dict) and perfil.get('status') == 'erro':
+            return jsonify(perfil), 404
+        return jsonify(perfil), 200
 
 
 if __name__ == '__main__':
