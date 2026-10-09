@@ -11,7 +11,8 @@ from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_ema
     verificar_cota_geracao_ia, persistir_trilha_ia, estornar_cota_ia, consumir_cota_ia,
     atribuir_trilha_turma, remover_trilha_turma, listar_trilhas_da_turma, listar_trilhas_do_professor,
     sincronizar_turmas_da_trilha, obter_mapa_trilha_especifica, listar_turmas_do_aluno, obter_ranking_da_turma,
-    listar_amigos, listar_solicitacoes_pendentes, enviar_solicitacao_amizade, aceitar_amizade, rejeitar_amizade, obter_perfil_publico)
+    listar_amigos, listar_solicitacoes_pendentes, enviar_solicitacao_amizade, aceitar_amizade, rejeitar_amizade, obter_perfil_publico,
+    obter_loja_diaria, rolar_gacha, listar_inventario, equipar_item, consumir_item_inventario)
 # pyrefly: ignore [missing-import]
 from passlib.hash import argon2
 from functools import wraps
@@ -25,7 +26,7 @@ from urllib.parse import quote
 import jwt
 from sqlmodel import Session, select, create_engine, func
 from sqlalchemy.exc import IntegrityError
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma, GeradorTrilha, TurmaTrilha, Questao
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, Turma, TurmaAluno, AvisoTurma, GeradorTrilha, TurmaTrilha, Questao, ItemLoja, InventarioUsuario
 from semeia import extrair_texto_pdf, moderar_conteudo, gerar_trilha_yaml, LIMITE_PDF_BYTES
 
 app = Flask(__name__)
@@ -1789,6 +1790,124 @@ def api_perfil_amigo(amigo_id=None):
         if isinstance(perfil, dict) and perfil.get('status') == 'erro':
             return jsonify(perfil), 404
         return jsonify(perfil), 200
+
+# =====================================================================
+# --- ROTAS DE LOJA, GACHA E INVENTÁRIO ---
+# =====================================================================
+
+@app.route('/api/loja/diaria', methods=['GET'])
+def api_loja_diaria():
+    """Retorna os 3 itens do dia da loja diária."""
+    with Session(engine) as session:
+        itens = obter_loja_diaria(session)
+        return jsonify(itens), 200
+
+
+@app.route('/api/loja/gacha', methods=['POST'])
+@token_obrigatorio
+def api_rolar_gacha():
+    """
+    Rola a máquina de gacha para o usuário autenticado.
+    Deduz moedas e adiciona o avatar sorteado ao inventário (ou compensa se repetido).
+    """
+    dados = request.get_json() or {}
+    custo = dados.get('custo', 100)
+    try:
+        custo = int(custo)
+    except (TypeError, ValueError):
+        custo = 100
+
+    with Session(engine) as session:
+        resultado = rolar_gacha(session, request.usuario_id, custo=custo)
+        if resultado.get('status') == 'erro':
+            return jsonify(resultado), 400
+        return jsonify(resultado), 200
+
+
+@app.route('/api/inventario', methods=['GET'])
+@app.route('/api/inventario/<int:aluno_id>', methods=['GET'])
+@token_obrigatorio
+def api_listar_inventario(aluno_id=None):
+    """
+    Retorna todos os itens do inventário do usuário autenticado (ou aluno_id se especificado).
+    """
+    id_alvo = aluno_id if aluno_id is not None else request.usuario_id
+    with Session(engine) as session:
+        inventario = listar_inventario(session, id_alvo)
+        return jsonify(inventario), 200
+
+
+@app.route('/api/inventario/equipar', methods=['POST'])
+@token_obrigatorio
+def api_equipar_item():
+    """
+    Equipa um item (avatar ou tema).
+    Recebe item_id ou idItem no corpo da requisição.
+    """
+    dados = request.get_json() or {}
+    item_id = dados.get('item_id') or dados.get('idItem')
+    
+    if not item_id:
+        return jsonify({"status": "erro", "mensagem": "item_id não informado."}), 400
+
+    try:
+        item_id = int(item_id)
+    except ValueError:
+        return jsonify({"status": "erro", "mensagem": "item_id inválido."}), 400
+
+    with Session(engine) as session:
+        resultado = equipar_item(session, request.usuario_id, item_id)
+        status_code = 200 if resultado.get('status') == 'sucesso' else 400
+        return jsonify(resultado), status_code
+
+
+@app.route('/api/inventario/usar', methods=['POST'])
+@token_obrigatorio
+def api_usar_item():
+    """
+    Consome um item consumível/poder do inventário (ex: vida extra, freeze).
+    Aceita {"item_id": X, "quantidade": Y} ou {"coracao": 1} ou {"freeze": true}.
+    """
+    dados = request.get_json() or {}
+    item_id = dados.get('item_id') or dados.get('idItem')
+    quantidade = dados.get('quantidade', 1)
+
+    with Session(engine) as session:
+        # Se veio coracao ou freeze diretamente pelo nome do efeito
+        if not item_id:
+            if dados.get('coracao') or dados.get('vidas'):
+                item_busca = session.exec(select(ItemLoja).where(ItemLoja.nome == "Vida Extra")).first()
+                if item_busca:
+                    item_id = item_busca.id
+                    quantidade = int(dados.get('coracao') or dados.get('vidas') or 1)
+            elif dados.get('freeze'):
+                item_busca = session.exec(select(ItemLoja).where(ItemLoja.nome == "Freeze de Ofensiva")).first()
+                if item_busca:
+                    item_id = item_busca.id
+                    quantidade = 1
+
+        if not item_id:
+            return jsonify({"status": "erro", "mensagem": "Item a ser consumido não identificado."}), 400
+
+        try:
+            item_id = int(item_id)
+            quantidade = int(quantidade)
+        except ValueError:
+            return jsonify({"status": "erro", "mensagem": "Parâmetros inválidos."}), 400
+
+        resultado = consumir_item_inventario(session, request.usuario_id, item_id, quantidade_uso=quantidade)
+        status_code = 200 if resultado.get('status') == 'sucesso' else 400
+
+        # Adiciona os contadores atualizados na resposta para facilitar o front-end
+        usuario = session.get(Usuario, request.usuario_id)
+        if usuario and isinstance(resultado, dict):
+            resultado["totais"] = {
+                "vidas": usuario.vidas,
+                "coracoes": usuario.vidas,
+                "freezes": usuario.freezes
+            }
+
+        return jsonify(resultado), status_code
 
 
 if __name__ == '__main__':
