@@ -75,10 +75,34 @@ Ao executar o `/brag`, é criada a pasta `brag-output/` contendo:
 
 ---
 
+### 5. `rea` / `reverse-engineer-anything` (Engenharia Reversa com REA)
+> **Objetivo:** Analisar comportamento de bibliotecas minificadas, pacotes externos, bundles JavaScript, inspeção profunda de banco SQLite, Electron, APKs e evidências de runtime via REA.
+
+O [REA (`morluto/rea`)](https://github.com/morluto/rea) é uma suíte e servidor MCP (*Model Context Protocol*) avançado para agentes de IA investigarem artefatos de software, entenderem implementações complexas e realizarem engenharia reversa segura e local:
+
+* 📦 **Instalação Global:**
+  ```bash
+  npm install --global rea-agents
+  ```
+* 🛠️ **Comandos Principais da CLI:**
+  * `rea --help`: Exibe o catálogo completo de mais de 200 ferramentas de análise estática, inspeção de pacotes e observação de runtime.
+  * `rea setup`: Registra e alinha automaticamente os servidores MCP nos clientes detectados (Google Antigravity, GitHub Copilot, VS Code, Claude Code).
+  * `rea mcp doctor`: Executa diagnóstico completo de saúde e integridade do servidor MCP do REA.
+  * `rea inspect-sqlite-database`: Inspeciona o esquema relacional e registros de snapshots locais do SQLite (`sementis.db`).
+  * `rea analyze-javascript-application [caminho]`: Mapeia árvores de módulos, grafos de dependência e sintaxe de bundles JavaScript complexos.
+
+**Casos de uso no Sementis:**
+1. **Inspeção de Dependências e Engines:** Auditar o comportamento interno de bundles minificados (ex.: Phaser 3 para o *Flappy Fish* ou scripts externos de áudio/PWA).
+2. **Auditoria de Banco de Dados:** Inspecionar e validar estruturas relacionais de snapshots do banco SQLite sem depender de ferramentas gráficas externas.
+3. **Tracing de Execução Web:** Mapear *event listeners*, fluxos assíncronos e tráfego de rede das páginas do Sementis.
+
+---
+
 ## 🧭 Resumo das Demais Skills Disponíveis
 
 | Skill | Finalidade |
 |---|---|
+| `rea` / `reverse-engineer-anything` | Engenharia reversa, análise de bundles JS, SQLite e inspeção de runtime via MCP. |
 | `test-driven-development` | Conduz o desenvolvimento guiado por testes unitários e de integração (Pytest). |
 | `browser-testing-with-devtools` | Inspeciona DOM, rede e erros de console em navegadores headless. |
 | `code-review-and-quality` | Revisa segurança, legibilidade e conformidade com o `AGENTS.md`. |
@@ -91,4 +115,5 @@ Ao executar o `/brag`, é criada a pasta `brag-output/` contendo:
 ## 🚀 Como Invocar as Skills
 
 * **Diretamente por slash command:** Digite `/plan`, `/brag`, `/learn` na conversa.
-* **Por linguagem natural:** Peça normalmente para a IA (ex.: *"Use o esquadrão para planejar a nova missão diária"* ou *"Gere um vídeo em formato horizontal mostrando a arena multiplayer"*).
+* **Por linguagem natural:** Peça normalmente para a IA (ex.: *"Use a skill rea para analisar este arquivo bundle JS"*, *"Use o esquadrão para planejar a nova missão diária"* ou *"Gere um vídeo em formato horizontal mostrando a arena multiplayer"*).
+

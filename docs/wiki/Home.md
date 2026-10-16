@@ -129,6 +129,7 @@ Navegue pelos capítulos técnicos detalhados da documentação:
 4. **[04. Como Funciona o Front-end](./04-frontend.md)** — Arquitetura Vanilla JS, PWA, estilos modulares em CSS, gerenciamento global de estado e consumo de API.
 5. **[05. Os Games em JS e Interatividade](./05-games-js.md)** — Quiz Engine interativo, Sementis Live Arena (Kahoot multiplayer) e Flappy Fish em Phaser 3.
 6. **[06. Guia de Contribuição e Execução Local](./06-guia-de-contribuicao.md)** — Como clonar, rodar o ambiente de desenvolvimento e padrões de código seguidos pelo time.
+7. **[07. Guia de Skills de IA e REA](./07-guia-de-skills.md)** — Catálogo de Agent Skills, orquestração do Esquadrão Sementis e engenharia reversa com o toolkit REA.
 
 ---
 
