@@ -39,6 +39,12 @@
   - Regras Inegociáveis
   - O Esquadrão Sementis (Pipeline de Agentes)
 
+- **[07. Guia de Skills & REA](07-guia-de-skills)**
+  - O que são Agent Skills?
+  - Esquadrão Sementis & Comandos (`/plan`, `/brag`, `/learn`)
+  - REA (Engenharia Reversa & Inspeção MCP)
+  - Tabela de Skills & Invocação
+
 ---
 
 <sub>Desenvolvido com carinho no **IFSP Campus Pirituba**</sub>

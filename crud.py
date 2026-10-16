@@ -879,13 +879,24 @@ def rolar_gacha(session: Session, usuario_id: int, custo: int = 100):
 
     resultado = adicionar_item_inventario(session, usuario_id, item_sorteado.id, 1)
 
+    session.refresh(usuario)
     return {
         "status": "sucesso", 
         "mensagem": f"Você tirou {item_sorteado.nome} no Gacha! {resultado['mensagem']}",
         "item_id": item_sorteado.id,
+        "id": item_sorteado.id,
+        "nome": item_sorteado.nome,
+        "name": item_sorteado.nome,
+        "descricao": item_sorteado.descricao,
+        "desc": item_sorteado.descricao,
+        "tipo": item_sorteado.tipo,
+        "type": item_sorteado.tipo,
         "imagem": item_sorteado.imagem,
         "raridade": item_sorteado.raridade,
-        "trait": item_sorteado.trait
+        "rarity": item_sorteado.raridade,
+        "trait": item_sorteado.trait,
+        "saldo": usuario.moedas,
+        "moedas": usuario.moedas
     }
 
 # 28. Obter Loja Diária
@@ -929,12 +940,20 @@ def obter_loja_diaria(session: Session):
 # ==========================================
 
 # 29. Enviar Solicitação de Amizade
-def enviar_solicitacao_amizade(session: Session, remetente_id: int, destinatario_email: str):
+def enviar_solicitacao_amizade(session: Session, remetente_id: int, destinatario_identificador: str | int):
     remetente = session.get(Usuario, remetente_id)
-    destinatario = session.exec(select(Usuario).where(Usuario.email == destinatario_email)).first()
+    destinatario = None
+    
+    # Se for número ou string puramente numérica, tenta buscar por ID primeiro
+    identificador_str = str(destinatario_identificador).strip()
+    if identificador_str.isdigit():
+        destinatario = session.get(Usuario, int(identificador_str))
+        
+    if not destinatario:
+        destinatario = session.exec(select(Usuario).where(Usuario.email == identificador_str)).first()
     
     if not destinatario:
-        return {"status": "erro", "mensagem": "Usuário não encontrado com esse email."}
+        return {"status": "erro", "mensagem": "Usuário não encontrado."}
         
     if remetente_id == destinatario.id:
         return {"status": "erro", "mensagem": "Você não pode adicionar a si mesmo."}

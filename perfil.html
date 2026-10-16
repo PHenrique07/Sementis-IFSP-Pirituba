@@ -98,11 +98,11 @@
         <section class="friends-section">
             <div class="friends-header">
                 <h3 class="friends-title">AMIGOS</h3>
-                <button class="add-friends-btn">+ Adicionar Amigos</button>
+                <button type="button" class="add-friends-btn" id="btn-open-add-friends">+ Adicionar Amigos</button>
             </div>
-            <div class="friends-list">
+            <div class="friends-list" id="perfil-friends-list">
                 <!-- Vazio ou placeholders podem vir aqui -->
-                <div class="friend-placeholder">
+                <div class="friend-placeholder" id="btn-add-friend-circle" title="Adicionar amigo">
                     <div class="friend-avatar-placeholder"></div>
                 </div>
             </div>
@@ -153,6 +153,68 @@
             </ul>
             <button class="pro-trial-btn">INICIAR TESTE DE 14 DIAS GRÁTIS</button>
             <p class="pro-terms">Após o teste, R$ 14,90/mês. Cancele quando quiser.</p>
+        </div>
+    </div>
+
+    <!-- Window / Modal de Adicionar Amigos com a cara do Sementis -->
+    <div id="modal-adicionar-amigos" class="modal-overlay">
+        <div class="modal-content sementis-friend-modal-content">
+            <button type="button" class="close-modal-btn" id="btn-fechar-modal-sementis" aria-label="Fechar">&times;</button>
+            
+            <div class="sf-modal-mascot">
+                <img src="/assets/selo_sementis_branco.png" alt="Sementis" class="sf-mascot-img">
+            </div>
+
+            <h2 class="sf-modal-title">Adicionar Amigos</h2>
+            <p class="sf-modal-subtitle">Encontre seus colegas de turma e dispute as ligas semanais juntos!</p>
+
+            <!-- Abas com a identidade do Sementis -->
+            <div class="sf-modal-tabs">
+                <button type="button" class="sf-tab-btn active" id="sf-tab-adicionar">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                    <span>Adicionar</span>
+                </button>
+                <button type="button" class="sf-tab-btn" id="sf-tab-pedidos">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <span>Convites</span>
+                    <span class="sf-badge-alert" id="sf-badge-pedidos" style="display: none;">0</span>
+                </button>
+            </div>
+
+            <!-- Aba 1: Enviar Solicitação -->
+            <div class="sf-tab-view" id="sf-view-adicionar">
+                <div class="sf-share-box">
+                    <div class="sf-sb-left">
+                        <span class="sf-sb-label">SEU IDENTIFICADOR</span>
+                        <strong class="sf-sb-code" id="sf-meu-identificador">—</strong>
+                    </div>
+                    <button type="button" class="sf-sb-copy-btn" id="sf-btn-copiar-id" title="Copiar identificador">
+                        <span id="sf-copy-status">Copiar</span>
+                    </button>
+                </div>
+
+                <form id="sf-form-enviar" class="sf-form" onsubmit="return false;">
+                    <label class="sf-label" for="sf-input-amigo">E-mail ou ID do seu amigo</label>
+                    <div class="sf-input-wrap">
+                        <input type="text" id="sf-input-amigo" placeholder="ex: colega@ifsp.edu.br ou ID" autocomplete="off" required>
+                    </div>
+
+                    <div id="sf-feedback" class="sf-feedback-msg" style="display: none;"></div>
+
+                    <button type="submit" class="sf-btn-primary" id="sf-btn-enviar-pedido">
+                        <span>ENVIAR CONVITE</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Aba 2: Convites Recebidos -->
+            <div class="sf-tab-view" id="sf-view-pedidos" style="display: none;">
+                <div class="sf-requests-list" id="sf-lista-pedidos">
+                    <div class="sf-empty-reqs">
+                        <p>Buscando convites...</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
