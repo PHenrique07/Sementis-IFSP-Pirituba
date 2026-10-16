@@ -607,3 +607,394 @@
     text-align: center;
     margin: 0;
 }
+
+/* ===== LISTA DE AMIGOS NO PERFIL (HORIZONTAL ORIGINAL) ===== */
+.friend-item-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.friend-item-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2.5px solid var(--color-accent, #a9ff71);
+    object-fit: cover;
+    background: var(--color-primary-dark, #1a1a4a);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.friend-item-avatar:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 16px rgba(169, 255, 113, 0.4);
+}
+
+.friend-item-name {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--color-white, #ffffff);
+    max-width: 65px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ===== MODAL ADICIONAR AMIGO (IDENTIDADE SEMENTIS) ===== */
+.modal-content.sementis-friend-modal-content {
+    background: linear-gradient(160deg, #27275e 0%, #161642 100%);
+    border-radius: 28px;
+    padding: 36px 28px 28px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.7),
+        0 0 0 2px rgba(169, 255, 113, 0.3);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.modal-overlay.active .sementis-friend-modal-content {
+    transform: translateY(0);
+}
+
+.sf-modal-mascot {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(169, 255, 113, 0.2) 0%, rgba(26, 26, 74, 0.8) 100%);
+    border: 2px solid rgba(169, 255, 113, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    box-shadow: 0 0 24px rgba(169, 255, 113, 0.3);
+}
+
+.sf-mascot-img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.sf-modal-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.3px;
+}
+
+.sf-modal-subtitle {
+    font-size: 13px;
+    color: var(--color-gray-300, #d1d1d9);
+    margin: 0 0 20px 0;
+    line-height: 1.45;
+}
+
+/* Abas estilo Sementis / Duolingo */
+.sf-modal-tabs {
+    display: flex;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 4px;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.sf-tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all 0.18s ease;
+}
+
+.sf-tab-btn:hover {
+    color: #ffffff;
+}
+
+.sf-tab-btn.active {
+    background: rgba(169, 255, 113, 0.15);
+    color: var(--color-accent, #a9ff71);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(169, 255, 113, 0.35);
+}
+
+.sf-badge-alert {
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 1px 6px;
+    border-radius: 999px;
+    line-height: 1.3;
+}
+
+.sf-tab-view {
+    width: 100%;
+    text-align: left;
+}
+
+/* Box Compartilhar Meu Código */
+.sf-share-box {
+    background: rgba(0, 0, 0, 0.28);
+    border: 1.5px dashed rgba(169, 255, 113, 0.45);
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.sf-sb-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.sf-sb-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: var(--color-accent, #a9ff71);
+    text-transform: uppercase;
+}
+
+.sf-sb-code {
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sf-sb-copy-btn {
+    background: rgba(169, 255, 113, 0.2);
+    border: 1px solid var(--color-accent, #a9ff71);
+    color: var(--color-accent, #a9ff71);
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+}
+
+.sf-sb-copy-btn:hover {
+    background: var(--color-accent, #a9ff71);
+    color: var(--color-primary-dark, #1a1a4a);
+}
+
+/* Formulário de Envio */
+.sf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sf-label {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+}
+
+.sf-input-wrap input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 14px 16px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.sf-input-wrap input:focus {
+    border-color: var(--color-accent, #a9ff71);
+    box-shadow: 0 0 16px rgba(169, 255, 113, 0.25);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.sf-feedback-msg {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.sf-feedback-msg.sucesso {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    color: #6ee7b7;
+}
+
+.sf-feedback-msg.erro {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fca5a5;
+}
+
+/* Botão 3D estilo Sementis */
+.sf-btn-primary {
+    background-color: var(--color-accent, #a9ff71);
+    color: var(--color-primary-dark, #1a1a4a);
+    border: none;
+    border-radius: 18px;
+    padding: 15px 20px;
+    font-size: 14.5px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--color-accent-dark, #8ce05a);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    margin-top: 6px;
+}
+
+.sf-btn-primary:hover {
+    background-color: var(--color-accent-light, #c4ff9e);
+}
+
+.sf-btn-primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 var(--color-accent-dark, #8ce05a);
+}
+
+.sf-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 0 var(--color-accent-dark, #8ce05a);
+}
+
+/* Lista de Convites Recebidos */
+.sf-requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.sf-request-item {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.sf-req-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.sf-req-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-accent, #a9ff71);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.sf-req-info {
+    overflow: hidden;
+}
+
+.sf-req-info strong {
+    font-size: 13.5px;
+    color: #ffffff;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sf-req-info span {
+    font-size: 11px;
+    color: var(--color-gray-400);
+}
+
+.sf-req-btns {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.sf-btn-accept {
+    background: #10b981;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #047857;
+    transition: transform 0.1s;
+}
+
+.sf-btn-accept:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+.sf-btn-reject {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    border-radius: 10px;
+    padding: 7px 10px;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.sf-empty-reqs {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--color-gray-400);
+    font-size: 13px;
+}
