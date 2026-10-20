@@ -1,43 +1,76 @@
-# Sementis 🌱🌍
+# Sementis 🌱 ![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-blue.svg)
 
-Projeto acadêmico de extensão do IFSP Pirituba, voltado para engajar usuários por meio de gamificação e educação ambiental.
+Plataforma educacional gamificada desenvolvida como projeto acadêmico no IFSP Pirituba. O Sementis utiliza mecânicas de jogos para engajar os usuários no aprendizado através de trilhas de conhecimento e desafios interativos.
 
-## Sobre o projeto
+## 🏗️ Arquitetura do Projeto
 
-- Plataforma educacional com trilhas, desafios e aprendizagem interativa
-- Front-end em HTML, CSS e JavaScript
-- Back-end em Python com Flask
-- Banco de dados SQLite
-- Arquitetura desacoplada entre frontend e API
+O Sementis utiliza uma arquitetura **desacoplada**:
+- **Front-end (Client):** Progressive Web App (PWA) construído com HTML/CSS/JS puro (Vanilla). Hospedado na **Vercel** (`sementis.com.br`).
+- **Back-end (API):** Servidor construído em Python com **Flask**, responsável pelas regras de negócio e banco de dados. Hospedado no **PythonAnywhere**.
+- O sistema possui configuração de ambiente dinâmica (`js/api-config.js`) que direciona as requisições (Fetch API) automaticamente para a API correta (Localhost ou Produção).
 
-## Objetivo
+## 🛠 Tecnologias
 
-Promover experiências de aprendizado mais envolventes, usando mecânicas de jogo para facilitar o entendimento de temas relacionados à sustentabilidade e ao ensino.
+**Backend:**
+- Python 3.10+
+- Flask (Rotas e API Rest)
+- Flask-CORS (Comunicação Cross-Origin com credenciais)
+- SQLite (Banco de Dados)
 
-## Como rodar localmente
+**Frontend:**
+- HTML5 / CSS3
+- Vanilla JavaScript
+- PWA (Manifest e Service Workers)
 
-### 1. API
-```bash
-git clone https://github.com/PHenrique07/Sementis-IFSP-Pirituba.git
-cd Sementis-IFSP-Pirituba
-python -m venv venv
-source venv/bin/activate   # Linux/macOS
-# ou venv\Scripts\activate   # Windows
-pip install -r requirements.txt
-python seeds.py
-flask run
-```
+## ⚙️ Como rodar localmente
 
-### 2. Front-end
-Abra o projeto no VS Code e execute o site com Live Server (ou equivalente), mantendo a API em execução.
+Como o projeto é desacoplado, você precisa rodar a API (Back-end) e abrir o Front-end simultaneamente.
 
-## Tecnologias principais
+### 1. Rodando a API (Back-end)
+1. Clone o repositório e entre na pasta:
+   ```bash
+   git clone https://github.com/PHenrique07/Sementis-IFSP-Pirituba.git
+   cd Sementis-IFSP-Pirituba
+   ```
 
-- Python
-- Flask
-- SQLite
-- HTML/CSS/JavaScript
+   Crie e ative o ambiente virtual:
 
-## Licença
+   Windows: python -m venv venv e depois venv\Scripts\activate
 
-Todos os direitos reservados.
+   Linux/macOS: python3 -m venv venv e depois source venv/bin/activate
+
+   Instale as dependências e inicie o banco de testes:
+   ```bash
+   pip install -r requirements.txt
+   python seeds.py
+   ```
+
+   Inicie o servidor Flask:
+   ```bash
+   flask run
+   ```
+
+   A API estará rodando em http://127.0.0.1:5000.
+
+### 2. Rodando o Site (Front-end)
+
+Com a API rodando no terminal, abra o código do Sementis no VS Code.
+
+Utilize a extensão Live Server para abrir o arquivo index.html.
+
+O script api-config.js detectará que você está no localhost e fará com que o site se conecte automaticamente à sua API local da porta 5000.
+
+## 👥 Integrantes e Contribuições
+
+- **[Pedro Henrique Santos da Silva](https://www.linkedin.com/in/pedro-henrique-santos-da-silva-40b521349/)** — **Líder Técnico & Desenvolvedor Backend:** Responsável pela coordenação geral do projeto e pela arquitetura da API.
+
+- **[Lucas Peres Gomes](https://www.linkedin.com/in/lucas-peres-gomes-747318276/)** — **Desenvolvedor Backend:** Responsável pela estruturação do servidor, configuração da aplicação (`app.py`, `crud.py`, `models.py`), além da implementação de regras de negócio e lógica da API.
+
+- **[Vinícius Ruza Magalhães](https://www.linkedin.com/in/vinicius-ruza-magalhães-394104353/)** — **Desenvolvedor de Integração:** Responsável por conectar o frontend ao backend utilizando as APIs e garantir a comunicação eficiente entre as camadas do sistema.
+
+- **[Wellington Mendes](https://www.linkedin.com/in/wmendesc/)** — **Desenvolvedor Frontend:** Responsável pela criação da interface, estilização visual (UI/UX) e garantia da responsividade.
+
+## 📄 Licença
+
+Todos os Direitos Reservados (All Rights Reserved)
+Este repositório e seu código-fonte são de propriedade exclusiva da equipe criadora.
