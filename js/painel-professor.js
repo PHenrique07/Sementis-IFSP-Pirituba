@@ -92,7 +92,6 @@ function renderizarTurmas(turmas) {
 function criarCardTurma(turma, idx) {
     const card = document.createElement('div');
     card.className = 'turma-card';
-    card.style.animationDelay = `${idx * 60}ms`;
     card.dataset.turmaId = turma.id;
     card.tabIndex = 0;
     card.setAttribute('role', 'link');
@@ -230,7 +229,7 @@ function abrirModalNovaTurma() {
     if (inputNomeTurma) inputNomeTurma.value = '';
     limparMsg(msgNovaTurma);
     modalNovaTurma.classList.add('open');
-    setTimeout(() => inputNomeTurma && inputNomeTurma.focus(), 150);
+    inputNomeTurma?.focus({ preventScroll: true });
 }
 
 function fecharModalNovaTurma() {
@@ -534,12 +533,7 @@ function abrirModalLive(topicoId = null) {
 
     if (modal) {
         modal.classList.add('open', 'active');
-        const video = modal.querySelector('.modal-live-webm');
-        if (video) {
-            video.load();
-            video.play().catch(() => {});
-        }
-        if (inputNome) setTimeout(() => inputNome.focus(), 150);
+        inputNome?.focus({ preventScroll: true });
     }
 }
 window.abrirModalLive = abrirModalLive;

@@ -98,6 +98,8 @@ body.turma-aluno-page {
 
 .turma-header-actions {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
@@ -105,6 +107,8 @@ body.turma-aluno-page {
 
 .turma-select-wrapper {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   flex-direction: column;
   gap: 4px;
 }
@@ -128,8 +132,9 @@ body.turma-aluno-page {
   font-family: inherit;
   outline: none;
   cursor: pointer;
-  min-width: 200px;
-  transition: all 0.2s ease;
+  width: 100%;
+  min-width: 0;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .turma-select:focus {
@@ -147,17 +152,18 @@ body.turma-aluno-page {
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
   height: 42px;
   display: flex;
   align-items: center;
 }
-
-.btn-entrar-turma:hover {
-  background: rgba(169, 255, 113, 0.15);
-  border-color: var(--green);
-  color: var(--green);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-entrar-turma:hover {
+        background: rgba(169, 255, 113, 0.15);
+        border-color: var(--green);
+        color: var(--green);
+        transform: translateY(-2px);
+    }
 }
 
 /* ── ESTADOS (LOADING / SEM MATRICULA) ── */
@@ -244,7 +250,7 @@ body.turma-aluno-page {
   text-transform: uppercase;
   text-align: center;
   outline: none;
-  transition: all 0.2s ease;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .input-codigo-group input:focus {
@@ -262,14 +268,15 @@ body.turma-aluno-page {
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
   white-space: nowrap;
 }
-
-.btn-confirmar-codigo:hover {
-  background: #baff8a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px var(--green-glow);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-confirmar-codigo:hover {
+        background: #baff8a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px var(--green-glow);
+    }
 }
 
 .mensagem-feedback {
@@ -389,18 +396,19 @@ body.turma-aluno-page {
 /* ── GRID PRINCIPAL (TRILHAS + RANKING) ── */
 .turma-grid-panels {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
 }
 
 @media (min-width: 900px) {
   .turma-grid-panels {
-    grid-template-columns: 1.25fr 1fr;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
     align-items: start;
   }
 }
 
 .panel-section {
+  min-width: 0;
   background: var(--bg-card);
   border: 1px solid var(--border-glass);
   backdrop-filter: blur(12px);
@@ -417,6 +425,8 @@ body.turma-aluno-page {
   padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
+
+.panel-header > div { min-width: 0; }
 
 .panel-header-icon {
   display: flex;
@@ -458,16 +468,17 @@ body.turma-aluno-page {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  transition: all 0.25s ease;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
   position: relative;
   overflow: hidden;
 }
-
-.trilha-card:hover {
-  background: var(--bg-card-hover);
-  border-color: rgba(169, 255, 113, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .trilha-card:hover {
+        background: var(--bg-card-hover);
+        border-color: rgba(169, 255, 113, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
 }
 
 .trilha-card::before {
@@ -534,14 +545,15 @@ body.turma-aluno-page {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
   align-self: flex-start;
 }
-
-.btn-jogar-trilha:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px var(--green-glow);
-  background: linear-gradient(135deg, #c0ff95 0%, var(--green) 100%);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-jogar-trilha:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px var(--green-glow);
+        background: linear-gradient(135deg, #c0ff95 0%, var(--green) 100%);
+    }
 }
 
 .trilhas-vazio {
@@ -586,7 +598,7 @@ body.turma-aluno-page {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid transparent;
-  transition: all 0.2s ease;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
 .ranking-item-turma:hover {
@@ -686,6 +698,9 @@ body.turma-aluno-page {
 
 /* ── MODAL ENTRAR EM TURMA ───────────── */
 .modal-overlay {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-slow), visibility var(--transition-slow);
   position: fixed;
   top: 0;
   left: 0;
@@ -700,7 +715,11 @@ body.turma-aluno-page {
   padding: 20px;
 }
 
+.modal-overlay.open { opacity: 1; visibility: visible; }
+
 .modal-box {
+  transform: translateY(8px) scale(0.97);
+  transition: transform var(--transition-slow);
   background: #1e1e52;
   border: 1px solid rgba(169, 255, 113, 0.3);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
@@ -727,7 +746,7 @@ body.turma-aluno-page {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .modal-close-btn:hover {
@@ -781,7 +800,7 @@ body.turma-aluno-page {
   text-align: center;
   box-sizing: border-box;
   outline: none;
-  transition: all 0.2s ease;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .modal-form input:focus {
@@ -803,7 +822,7 @@ body.turma-aluno-page {
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .btn-cancelar {
@@ -827,3 +846,5 @@ body.turma-aluno-page {
   background: #baff8a;
   box-shadow: 0 4px 16px var(--green-glow);
 }
+
+.modal-overlay.open .modal-box { transform: none; }

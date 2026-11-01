@@ -34,10 +34,6 @@
     --radius-lg: 16px;
     --radius-xl: 24px;
     --radius-full: 9999px;
-    
-    --transition-fast: 150ms ease;
-    --transition-base: 300ms ease;
-    --transition-slow: 500ms ease;
 }
 
 /* ===== Reset & Base ===== */
@@ -98,7 +94,7 @@ body {
 .ranking-wrapper,
 .perfil-container,
 .trilhas-view {
-    animation: sementisContentFadeIn 0.2s ease-out;
+    animation: sementisContentFadeIn var(--transition-base);
 }
 
 img {
@@ -148,7 +144,7 @@ input {
     font-size: 14px;
     font-weight: 600;
     border-radius: var(--radius-full);
-    transition: all var(--transition-base);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     cursor: pointer;
     border: 2px solid transparent;
 }
@@ -157,11 +153,12 @@ input {
     background: var(--color-accent);
     color: var(--color-primary-dark);
 }
-
-.btn--primary:hover {
-    background: var(--color-accent-dark);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn--primary:hover {
+        background: var(--color-accent-dark);
+        box-shadow: var(--shadow-glow);
+        transform: translateY(-2px);
+    }
 }
 
 .btn--outline {
@@ -303,18 +300,19 @@ input {
     height: 45px;
     border-radius: 50%;
     cursor: pointer;
-    transition: var(--transition-base);
+    transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
     background-color: rgba(255, 255, 255, 0.08); /* Fundo sutil */
     padding: 6px;
     border: 2px solid transparent;
 }
-
 /* Efeito clássico verde ao passar o mouse */
-.profile-icon-btn:hover {
-    background-color: rgba(169, 255, 113, 0.15); /* var(--color-accent) com opacidade */
-    border-color: var(--color-accent);
-    transform: scale(1.1);
-    box-shadow: var(--shadow-glow); /* Cria o brilho verde característico da marca */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .profile-icon-btn:hover {
+        background-color: rgba(169, 255, 113, 0.15); /* var(--color-accent) com opacidade */
+        border-color: var(--color-accent);
+        transform: scale(1.1);
+        box-shadow: var(--shadow-glow); /* Cria o brilho verde característico da marca */
+    }
 }
 
 .profile-dropdown {
@@ -331,7 +329,7 @@ input {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-15px);
-    transition: var(--transition-base);
+    transition: opacity var(--transition-base), transform var(--transition-base), visibility var(--transition-base);
     z-index: 100;
     overflow: hidden;
 }

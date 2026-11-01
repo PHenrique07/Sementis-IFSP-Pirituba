@@ -55,14 +55,14 @@
   border: none;
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.2s ease;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
   text-align: center;
 }
 
 .nav-item img {
   width: 24px;
   height: 24px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, scale var(--duration-press) var(--ease-out);
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -116,18 +116,21 @@
   border-radius: 16px;
   padding: 8px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-  display: none !important;
+  display: block !important;
+  visibility: hidden;
+  pointer-events: none;
   opacity: 0;
   transform: translateY(16px) scale(0.95);
   transform-origin: bottom right;
-  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity var(--transition-base), transform var(--transition-base), visibility 0s var(--duration-menu);
 }
 
 .more-menu-popup.open {
-  display: block !important;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
   opacity: 1;
   transform: translateY(0) scale(1);
-  animation: cascadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .more-menu-content {
@@ -146,24 +149,7 @@
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-  opacity: 0;
-}
-
-.more-menu-popup.open .more-menu-item {
-  animation: cascadeItem 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.more-menu-popup.open .more-menu-item:nth-child(1) {
-  animation-delay: 0.05s;
-}
-
-.more-menu-popup.open .more-menu-item:nth-child(2) {
-  animation-delay: 0.12s;
-}
-
-.more-menu-popup.open .more-menu-item:nth-child(3) {
-  animation-delay: 0.19s;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .more-menu-item img {
@@ -180,29 +166,6 @@
 .more-menu-item:hover:not(.active) {
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
-}
-
-/* Keyframes Animação em Cascata */
-@keyframes cascadeUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes cascadeItem {
-  0% {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @media (min-width: 1024px) {

@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="/css/turma-professor.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="/js/html2pdf.bundle.min.js"></script>
+    <script src="/js/ui-motion.js" defer></script>
+    <link rel="stylesheet" href="/css/shared-motion.css">
 </head>
 <body class="turma-professor-page">
     <header class="turma-topbar">
@@ -46,7 +48,7 @@
                 <!-- Código de Convite com Ícone WebM 3D Integrado -->
                 <div class="turma-convite">
                     <div class="convite-webm-thumb">
-                        <video autoplay loop muted playsinline class="convite-webm-video">
+                        <video loop muted playsinline class="convite-webm-video" preload="metadata" data-video-decorativo>
                             <source src="assets/hevc/3d-stickle-spreadsheet-document-with-pie-charts-and-data-table-for-analytics.hevc.mp4" type="video/mp4; codecs=hvc1">
                             <source src="assets/webm/3d-stickle-spreadsheet-document-with-pie-charts-and-data-table-for-analytics.webm" type="video/webm">
                         </video>
@@ -361,7 +363,7 @@
     <!-- ===================================================
          MODAL: ATRIBUIR TRILHA DA SEMEIA À TURMA
     =================================================== -->
-    <div class="modal-overlay" id="modal-atribuir-trilha" role="dialog" aria-modal="true" aria-labelledby="modal-atribuir-title" style="display:none;">
+    <div class="modal-overlay" id="modal-atribuir-trilha" role="dialog" aria-modal="true" aria-labelledby="modal-atribuir-title">
         <div class="modal-card">
             <div class="modal-header">
                 <div class="modal-icon" style="background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:12px; color:#c084fc;">

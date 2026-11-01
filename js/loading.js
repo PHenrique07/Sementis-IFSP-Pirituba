@@ -13,7 +13,6 @@ const ECO_TIPS = [
 
 let tipInterval = null;
 let loadingHideTimeout = null;
-let loadingStartedAt = 0;
 const LOADING_MAX_DURATION = 8000; // segurança: fecha sozinho após 8s se hideLoading não for chamado
 
 function ensureLoadingDOM() {
@@ -22,14 +21,17 @@ function ensureLoadingDOM() {
         overlay = document.createElement('div');
         overlay.id = 'sementis-global-loading';
         overlay.className = 'sementis-loading-overlay';
+        overlay.setAttribute('role', 'status');
+        overlay.setAttribute('aria-live', 'polite');
+        overlay.setAttribute('aria-hidden', 'true');
         overlay.innerHTML = `
             <div class="sementis-loading-card">
-                <div class="sementis-loading-gif-wrap">
-                    <img src="/assets/gifs/loading.gif" alt="Carregando..." class="sementis-loading-gif">
+                <div class="sementis-loading-logo-wrap">
+                    <img src="/assets/brand/logo_sementis_branco.png" alt="" class="sementis-loading-logo" width="280" height="100">
                 </div>
                 <div class="sementis-loading-text">
                     <span id="sementis-loading-msg">Carregando</span>
-                    <span class="loading-animated-dots"><span>.</span><span>.</span><span>.</span></span>
+                    <span class="loading-animated-dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span>
                 </div>
                 <p class="sementis-loading-subtext" id="sementis-loading-subtext">Plantando ideias sustentáveis 🌱</p>
             </div>
@@ -59,7 +61,7 @@ function showLoading(msg = "Carregando", subtext = null) {
     }
 
     clearTimeout(loadingHideTimeout);
-    loadingStartedAt = Date.now();
+    overlay.setAttribute('aria-hidden', 'false');
     overlay.classList.add('active');
     // Segurança: fecha sozinho após LOADING_MAX_DURATION caso hideLoading não seja chamado
     loadingHideTimeout = setTimeout(hideLoading, LOADING_MAX_DURATION);
@@ -72,6 +74,7 @@ function hideLoading() {
     const overlay = document.getElementById('sementis-global-loading');
     if (!overlay) return;
     overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden', 'true');
 }
 
 // Expõe globalmente no window

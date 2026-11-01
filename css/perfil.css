@@ -81,11 +81,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s;
+    transition: transform 0.2s, scale var(--duration-press) var(--ease-out);
 }
-
-.settings-btn:hover {
-    transform: rotate(45deg);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .settings-btn:hover {
+        transform: rotate(45deg);
+    }
 }
 
 /* ===== Main Content ===== */
@@ -135,11 +136,17 @@
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-
-.user-avatar-large:hover, .user-avatar-large:focus {
+.user-avatar-large:focus {
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     outline: none;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .user-avatar-large:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        outline: none;
+    }
 }
 
 .user-avatar-large img {
@@ -206,7 +213,7 @@
     font-family: inherit;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, scale var(--duration-press) var(--ease-out);
 }
 
 .avatar-menu-btn:hover {
@@ -247,7 +254,7 @@
     border-radius: 24px;
     box-shadow: 0 4px 0 var(--color-accent-dark);
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: transform 0.1s, box-shadow 0.1s, scale var(--duration-press) var(--ease-out);
 }
 
 .pro-btn:active {
@@ -327,9 +334,10 @@
     text-align: center;
     transition: transform 0.2s;
 }
-
-.stat-card:hover {
-    transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
 }
 
 .stat-card img {
@@ -374,7 +382,7 @@
     gap: 8px;
     cursor: pointer;
     margin-bottom: 48px;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, scale var(--duration-press) var(--ease-out);
 }
 
 .share-btn:hover {
@@ -473,7 +481,7 @@
     z-index: 100;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity var(--transition-slow), visibility var(--transition-slow);
     padding: 20px;
     backdrop-filter: blur(5px);
 }
@@ -491,7 +499,7 @@
     max-width: 400px;
     position: relative;
     transform: translateY(20px);
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-slow);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--color-white);
@@ -520,7 +528,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, scale var(--duration-press) var(--ease-out);
 }
 
 .close-modal-btn:hover {
@@ -592,7 +600,7 @@
     width: 100%;
     cursor: pointer;
     box-shadow: 0 4px 0 var(--color-accent-dark);
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: transform 0.1s, box-shadow 0.1s, scale var(--duration-press) var(--ease-out);
     margin-bottom: 16px;
 }
 
@@ -628,10 +636,11 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
-.friend-item-avatar:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 16px rgba(169, 255, 113, 0.4);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .friend-item-avatar:hover {
+        transform: scale(1.08);
+        box-shadow: 0 0 16px rgba(169, 255, 113, 0.4);
+    }
 }
 
 .friend-item-name {
@@ -654,7 +663,7 @@
     max-width: 420px;
     position: relative;
     transform: translateY(20px);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform var(--transition-slow);
     box-shadow: 
         0 20px 50px rgba(0, 0, 0, 0.7),
         0 0 0 2px rgba(169, 255, 113, 0.3);
@@ -730,7 +739,7 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    transition: all 0.18s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .sf-tab-btn:hover {
@@ -806,7 +815,7 @@
     border-radius: 12px;
     cursor: pointer;
     flex-shrink: 0;
-    transition: all 0.15s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .sf-sb-copy-btn:hover {
@@ -839,7 +848,7 @@
     font-size: 14px;
     font-weight: 600;
     outline: none;
-    transition: all 0.2s ease;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .sf-input-wrap input:focus {
@@ -881,7 +890,7 @@
     width: 100%;
     cursor: pointer;
     box-shadow: 0 4px 0 var(--color-accent-dark, #8ce05a);
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    transition: transform 0.1s ease, box-shadow 0.1s ease, scale var(--duration-press) var(--ease-out);
     margin-top: 6px;
 }
 
@@ -973,7 +982,7 @@
     font-weight: 800;
     cursor: pointer;
     box-shadow: 0 3px 0 #047857;
-    transition: transform 0.1s;
+    transition: transform 0.1s, scale var(--duration-press) var(--ease-out);
 }
 
 .sf-btn-accept:active {

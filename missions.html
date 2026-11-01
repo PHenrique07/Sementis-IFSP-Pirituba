@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/shared-navbar.css">
     <link rel="stylesheet" href="/css/missions.css">
+    <script src="/js/ui-motion.js" defer></script>
+    <link rel="stylesheet" href="/css/shared-motion.css">
 </head>
 <body class="missions-page">
     <!-- Navegação -->
@@ -89,7 +91,7 @@
             <!-- Lista de Missões -->
             <section class="missions-list">
                 <div class="section-header">
-                    <video autoplay loop muted playsinline class="missions-title-webm" aria-label="Alvo animado">
+                    <video loop muted playsinline class="missions-title-webm" aria-label="Alvo animado" preload="metadata" data-video-decorativo>
                         <source src="assets/hevc/target.hevc.mp4" type="video/mp4; codecs=hvc1">
                         <source src="assets/webm/target.webm" type="video/webm">
                     </video>
@@ -333,7 +335,7 @@
     <div id="xpModal" class="xp-modal-overlay" onclick="toggleXpModal(event)">
         <div class="xp-modal-content" onclick="event.stopPropagation()">
             <button class="close-modal-btn" onclick="toggleXpModal()">×</button>
-            <video autoplay loop muted playsinline class="xp-modal-webm" aria-label="Alvo animado">
+            <video loop muted playsinline class="xp-modal-webm" aria-label="Alvo animado" preload="metadata" data-video-decorativo>
                 <source src="assets/hevc/target.hevc.mp4" type="video/mp4; codecs=hvc1">
                 <source src="assets/webm/target.webm" type="video/webm">
             </video>
@@ -392,7 +394,7 @@
 
 
     <!-- Modal de Recompensa Resgatada (Estilo Fortnite Unboxing) -->
-    <div id="pass-reward-modal" class="pass-modal-overlay" style="display: none;">
+    <div id="pass-reward-modal" class="pass-modal-overlay">
         <div class="pass-modal-backdrop" onclick="fecharModalRecompensaPasse()"></div>
         <div class="pass-modal-card">
             <div class="pass-modal-sunburst"></div>

@@ -365,12 +365,12 @@
         var card = modal.querySelector(".pass-modal-card");
         if (card) card.style.borderColor = rar.cor;
 
-        modal.style.display = "flex";
+        modal.classList.add("open");
     }
 
     window.fecharModalRecompensaPasse = function () {
         var modal = document.getElementById("pass-reward-modal");
-        if (modal) modal.style.display = "none";
+        if (modal) modal.classList.remove("open");
     };
 
     // Abertura do Passe Vertical (In-Page, integrando toda a área ao lado da navbar)
@@ -483,7 +483,7 @@
         var token = localStorage.getItem("token");
         if (!token) return;
         var base = (typeof API_BASE_URL !== "undefined") ? API_BASE_URL : "";
-        fetch(base + "/usuario/perfil", { credentials: "include", headers: { "Authorization": "Bearer " + token }, cache: "no-store" })
+        fetch(base + "/api/perfil", { credentials: "include", headers: { "Authorization": "Bearer " + token }, cache: "no-store" })
             .then(function (r) { if (r.ok) return r.json(); })
             .then(function (d) {
                 if (!d) return;

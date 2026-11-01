@@ -106,14 +106,21 @@
     user-select: none;
     outline: none;
 }
-
-.pass-entry-card:hover,
 .pass-entry-card:focus-visible {
     transform: translateY(-5px) scale(1.008);
     border-color: rgba(251, 191, 36, 0.9);
     box-shadow:
         0 28px 65px rgba(0, 0, 0, 0.75),
         0 0 60px rgba(251, 191, 36, 0.28);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-entry-card:hover {
+        transform: translateY(-5px) scale(1.008);
+        border-color: rgba(251, 191, 36, 0.9);
+        box-shadow:
+        0 28px 65px rgba(0, 0, 0, 0.75),
+        0 0 60px rgba(251, 191, 36, 0.28);
+    }
 }
 
 .pass-entry-bg-img {
@@ -126,9 +133,10 @@
     transition: transform 0.5s ease;
     z-index: 0;
 }
-
-.pass-entry-card:hover .pass-entry-bg-img {
-    transform: scale(1.07);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-entry-card:hover .pass-entry-bg-img {
+        transform: scale(1.07);
+    }
 }
 
 .pass-entry-overlay {
@@ -329,7 +337,6 @@
     background: linear-gradient(90deg, #d97706 0%, #fbbf24 55%, #fef08a 100%);
     border-radius: 999px;
     box-shadow: 0 0 14px rgba(251, 191, 36, 0.7);
-    transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .pass-entry-xp-shine {
@@ -368,18 +375,19 @@
         0 4px 0 #78350f,
         0 6px 20px rgba(245, 158, 11, 0.45);
     text-transform: uppercase;
-    transition: all 0.18s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     margin-left: auto;
     flex-shrink: 0;
 }
-
-.pass-entry-cta-btn:hover {
-    background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
-    transform: translateY(-2px);
-    box-shadow:
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-entry-cta-btn:hover {
+        background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+        transform: translateY(-2px);
+        box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.55),
         0 4px 0 #78350f,
         0 10px 28px rgba(245, 158, 11, 0.65);
+    }
 }
 
 .pass-entry-cta-btn:active {
@@ -452,7 +460,7 @@
     box-shadow: 
         0 4px 16px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     white-space: nowrap;
 }
 
@@ -460,24 +468,26 @@
 .pass-footer-return-btn svg {
     color: #fbbf24;
     filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
-    transition: transform 0.22s ease;
+    transition: transform 0.22s ease, scale var(--duration-press) var(--ease-out);
 }
-
-.pass-back-btn:hover,
-.pass-footer-return-btn:hover {
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, rgba(217, 119, 6, 0.16) 100%);
-    border-color: #fbbf24;
-    color: #ffffff;
-    transform: translateX(-4px);
-    box-shadow: 
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-back-btn:hover,
+    .pass-footer-return-btn:hover {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, rgba(217, 119, 6, 0.16) 100%);
+        border-color: #fbbf24;
+        color: #ffffff;
+        transform: translateX(-4px);
+        box-shadow:
         0 6px 24px rgba(0, 0, 0, 0.6),
         0 0 22px rgba(251, 191, 36, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
 }
-
-.pass-back-btn:hover svg,
-.pass-footer-return-btn:hover svg {
-    transform: translateX(-3px);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-back-btn:hover svg,
+    .pass-footer-return-btn:hover svg {
+        transform: translateX(-3px);
+    }
 }
 
 .pass-back-btn:active,
@@ -540,7 +550,7 @@
         0 4px 16px rgba(0, 0, 0, 0.5),
         0 0 14px rgba(251, 191, 36, 0.18),
         inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     white-space: nowrap;
 }
 
@@ -548,24 +558,26 @@
 .pass-footer-jump-btn svg {
     color: #fbbf24;
     filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
-    transition: transform 0.22s ease;
+    transition: transform 0.22s ease, scale var(--duration-press) var(--ease-out);
 }
-
-.pass-jump-pill-btn:hover,
-.pass-footer-jump-btn:hover {
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(217, 119, 6, 0.25) 100%);
-    border-color: #fef08a;
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-jump-pill-btn:hover,
+    .pass-footer-jump-btn:hover {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(217, 119, 6, 0.25) 100%);
+        border-color: #fef08a;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow:
         0 8px 26px rgba(0, 0, 0, 0.6),
         0 0 26px rgba(251, 191, 36, 0.45),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
 }
-
-.pass-jump-pill-btn:hover svg,
-.pass-footer-jump-btn:hover svg {
-    transform: scale(1.15) rotate(15deg);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-jump-pill-btn:hover svg,
+    .pass-footer-jump-btn:hover svg {
+        transform: scale(1.15) rotate(15deg);
+    }
 }
 
 .pass-jump-pill-btn:active,
@@ -720,7 +732,6 @@
     background: linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fef08a 100%);
     border-radius: 999px;
     box-shadow: 0 0 14px rgba(251, 191, 36, 0.7);
-    transition: width 0.5s ease;
 }
 
 .pass-v-bar-label {
@@ -803,7 +814,7 @@
         0 4px 12px rgba(245, 158, 11, 0.4);
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.14s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .pvr-action-btn:hover {
@@ -927,13 +938,14 @@
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
     pointer-events: none;
 }
-
-.pass-v-cell-free:hover {
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow:
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-v-cell-free:hover {
+        border-color: rgba(255, 255, 255, 0.22);
+        box-shadow:
         0 8px 22px rgba(0, 0, 0, 0.55),
         inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    transform: translateY(-2px);
+        transform: translateY(-2px);
+    }
 }
 
 /* — Divisor Central + Losango de Nível — */
@@ -975,7 +987,7 @@
     position: relative;
     z-index: 2;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-    transition: all 0.22s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     backdrop-filter: blur(4px);
 }
 
@@ -1042,14 +1054,15 @@
     pointer-events: none;
     border-radius: 8px 20px 0 0;
 }
-
-.pass-v-cell-premium:hover {
-    border-color: rgba(251, 191, 36, 0.75);
-    box-shadow:
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-v-cell-premium:hover {
+        border-color: rgba(251, 191, 36, 0.75);
+        box-shadow:
         0 8px 26px rgba(0, 0, 0, 0.6),
         0 0 32px rgba(251, 191, 36, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+        transform: translateY(-2px);
+    }
 }
 
 /* Partículas cintilantes douradas */
@@ -1092,10 +1105,11 @@
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
     transition: transform 0.22s ease;
 }
-
-.pass-v-cell-free:hover .pv-item-img,
-.pass-v-cell-premium:hover .pv-item-img {
-    transform: scale(1.14) translateY(-2px);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-v-cell-free:hover .pv-item-img,
+    .pass-v-cell-premium:hover .pv-item-img {
+        transform: scale(1.14) translateY(-2px);
+    }
 }
 
 .pv-item-info-wrap {
@@ -1192,7 +1206,7 @@
         0 4px 0 #047857,
         0 6px 16px rgba(16, 185, 129, 0.45);
     animation: claimPulse 1.8s infinite;
-    transition: background 0.15s ease;
+    transition: background 0.15s ease, scale var(--duration-press) var(--ease-out);
 }
 
 @keyframes claimPulse {
@@ -1246,16 +1260,17 @@
         0 3px 0 #78350f,
         0 5px 14px rgba(245, 158, 11, 0.45);
     text-transform: uppercase;
-    transition: all 0.15s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
-
-.pv-premium-lock-btn:hover {
-    background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
-    box-shadow:
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pv-premium-lock-btn:hover {
+        background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+        box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.55),
         0 3px 0 #78350f,
         0 8px 20px rgba(245, 158, 11, 0.7);
-    transform: translateY(-1px);
+        transform: translateY(-1px);
+    }
 }
 
 .pv-premium-lock-btn:active {
@@ -1386,6 +1401,9 @@
 
 /* Modal de Recompensa Resgatada (Estilo Unboxing) */
 .pass-modal-overlay {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-slow), visibility var(--transition-slow);
     position: fixed;
     inset: 0;
     z-index: 9999;
@@ -1400,7 +1418,6 @@
     inset: 0;
     background: rgba(8, 8, 24, 0.88);
     backdrop-filter: blur(16px);
-    animation: modalFadeIn 0.3s ease-out;
 }
 
 @keyframes modalFadeIn {
@@ -1419,7 +1436,8 @@
     padding: 36px 28px 28px;
     text-align: center;
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7), 0 0 60px rgba(169, 255, 113, 0.2);
-    animation: modalPop 0.45s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    transform: scale(0.97) translateY(8px);
+    transition: transform var(--transition-slow);
     overflow: hidden;
 }
 
@@ -1527,14 +1545,15 @@
     letter-spacing: 0.5px;
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(169, 255, 113, 0.4);
-    transition: transform 0.2s ease, filter 0.2s ease;
+    transition: transform var(--transition-slow), scale var(--duration-press) var(--ease-out);
     position: relative;
     z-index: 1;
 }
-
-.pass-modal-claim-btn:hover {
-    transform: scale(1.02);
-    filter: brightness(1.1);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .pass-modal-claim-btn:hover {
+        transform: scale(1.02);
+        filter: brightness(1.1);
+    }
 }
 
 
@@ -1688,14 +1707,15 @@
     align-items: center;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, scale var(--duration-press) var(--ease-out);
     border: none;
     outline: none;
 }
-
-.info-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(169, 255, 113, 0.5);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .info-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(169, 255, 113, 0.5);
+    }
 }
 
 /* Lista de Missões */
@@ -1735,10 +1755,11 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
-.mission-item:hover {
-    transform: translateY(-3px);
-    background: rgba(26, 26, 58, 0.6);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .mission-item:hover {
+        transform: translateY(-3px);
+        background: rgba(26, 26, 58, 0.6);
+    }
 }
 
 .mission-info {
@@ -1779,7 +1800,6 @@
 .rpg-fill {
     height: 100%;
     border-radius: 6px;
-    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 0 10px rgba(169, 255, 113, 0.5); 
 }
 
@@ -1888,9 +1908,11 @@
     border-left: 5px solid #555566;
     filter: grayscale(80%);
 }
-.tier-locked:hover {
-    transform: none; /* Remove efeito de pular */
-    background: rgba(26, 26, 58, 0.4);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .tier-locked:hover {
+        transform: none; /* Remove efeito de pular */
+        background: rgba(26, 26, 58, 0.4);
+    }
 }
 .tier-locked .mission-title {
     color: #8d92bc;
@@ -1935,7 +1957,7 @@
     align-items: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--transition-slow), visibility var(--transition-slow);
 }
 
 .xp-modal-overlay.active {
@@ -1952,8 +1974,8 @@
     position: relative;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transform: scale(0.8) translateY(20px);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(0.97) translateY(8px);
+    transition: transform var(--transition-slow);
 }
 
 .xp-modal-overlay.active .xp-modal-content {
@@ -1985,7 +2007,7 @@
     align-items: center;
     cursor: pointer;
     border: none;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, scale var(--duration-press) var(--ease-out);
 }
 
 .close-modal-btn:hover {
@@ -2061,3 +2083,6 @@
 .color-prata { color: #c0c0c0; box-shadow: 0 0 10px rgba(192, 192, 192, 0.1); }
 .color-ouro { color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
 .color-diamante { color: #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.1); text-shadow: 0 0 8px rgba(0, 255, 255, 0.4); }
+
+.pass-modal-overlay.open { opacity: 1; visibility: visible; }
+.pass-modal-overlay.open .pass-modal-card { transform: none; }

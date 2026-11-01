@@ -65,7 +65,7 @@ body.jogos-page {
 
 .jogos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 24px;
 }
 
@@ -81,11 +81,12 @@ body.jogos-page {
   text-decoration: none;
   color: inherit;
 }
-
-.game-card:hover {
-  transform: translateY(-6px);
-  border-color: rgba(169, 255, 113, 0.4);
-  box-shadow: 0 14px 36px rgba(169, 255, 113, 0.15);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .game-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(169, 255, 113, 0.4);
+        box-shadow: 0 14px 36px rgba(169, 255, 113, 0.15);
+    }
 }
 
 .game-banner {
@@ -188,10 +189,11 @@ body.jogos-page {
   from { transform: rotate(0deg) scale(1); }
   to { transform: rotate(360deg) scale(1); }
 }
-
-.game-card:hover .game-banner img,
-.game-card:hover .game-banner-video {
-  transform: scale(1.06);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .game-card:hover .game-banner img,
+    .game-card:hover .game-banner-video {
+        transform: scale(1.06);
+    }
 }
 
 .game-tag {
@@ -245,10 +247,11 @@ body.jogos-page {
   padding: 12px 20px;
   border-radius: 12px;
   text-align: center;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, scale var(--duration-press) var(--ease-out);
 }
-
-.game-card:hover .game-play-btn {
-  background: #bdff94;
-  transform: scale(1.02);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .game-card:hover .game-play-btn {
+        background: #bdff94;
+        transform: scale(1.02);
+    }
 }

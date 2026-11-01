@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── GESTÃO DO MODAL ──────────────────────────────────────────
     function abrirModal() {
         if (modalEntrar) {
-            modalEntrar.style.display = 'flex';
+            modalEntrar.classList.add('open');
             inputCodigoModal.value = '';
             feedbackModal.textContent = '';
             feedbackModal.className = 'mensagem-feedback';
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fecharModal() {
         if (modalEntrar) {
-            modalEntrar.style.display = 'none';
+            modalEntrar.classList.remove('open');
         }
     }
 

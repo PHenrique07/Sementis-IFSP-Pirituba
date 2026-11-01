@@ -149,7 +149,6 @@ async function abrirModalAtribuirTrilha() {
     if (msg) msg.textContent = '';
     if (modal) {
         modal.classList.add('open');
-        modal.style.display = 'flex';
     }
 
     if (select) {
@@ -175,7 +174,6 @@ function fecharModalAtribuirTrilha() {
     const modal = document.getElementById('modal-atribuir-trilha');
     if (modal) {
         modal.classList.remove('open');
-        modal.style.display = 'none';
     }
 }
 

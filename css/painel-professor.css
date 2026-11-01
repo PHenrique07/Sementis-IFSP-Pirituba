@@ -89,7 +89,7 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .prof-btn-logout:hover {
@@ -157,7 +157,7 @@
     font-weight: 600;
     text-align: left;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .prof-nav-item:hover {
@@ -248,13 +248,14 @@
     font-size: 13px;
     font-weight: 800;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     box-shadow: 0 4px 14px rgba(169, 255, 113, 0.3);
 }
-
-.btn-sidebar-create-live:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(169, 255, 113, 0.45);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-sidebar-create-live:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(169, 255, 113, 0.45);
+    }
 }
 
 /* ---- ConteÃºdo Principal ---- */
@@ -305,14 +306,15 @@
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     box-shadow: 0 4px 15px rgba(169, 255, 113, 0.25);
 }
-
-.btn-nova-turma:hover {
-    background: var(--color-accent-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-glow);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-nova-turma:hover {
+        background: var(--color-accent-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow);
+    }
 }
 
 /* ---- Estado vazio ---- */
@@ -355,10 +357,10 @@
     cursor: pointer;
     padding: 24px;
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     position: relative;
     overflow: hidden;
-    animation: cardEntrada 0.35s ease both;
+    animation: sementisContentFadeIn var(--transition-base);
 }
 
 .turma-card:focus-visible {
@@ -381,11 +383,12 @@
     opacity: 0;
     transition: opacity var(--transition-base);
 }
-
-.turma-card:hover {
-    border-color: rgba(169, 255, 113, 0.35);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(169,255,113,0.1);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .turma-card:hover {
+        border-color: rgba(169, 255, 113, 0.35);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(169,255,113,0.1);
+    }
 }
 
 .turma-card:hover::before {
@@ -446,7 +449,7 @@
     padding: 7px 10px;
     color: var(--color-accent);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     display: flex;
     align-items: center;
     gap: 5px;
@@ -506,7 +509,7 @@
     border-radius: var(--radius-full);
     padding: 6px 12px;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .btn-ver-ranking:hover {
@@ -517,217 +520,6 @@
 /* =====================================================================
    MODAL SHARED â€” Nova Turma e Ranking
 ===================================================================== */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-    opacity: 0;
-    visibility: hidden;
-    transition: all var(--transition-base);
-    padding: 20px;
-}
-
-.modal-overlay.open,
-.modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-card {
-    background: linear-gradient(135deg, #27275e 0%, #1e1e50 100%);
-    border: 1px solid rgba(169, 255, 113, 0.2);
-    border-radius: var(--radius-xl);
-    width: 100%;
-    max-width: 460px;
-    padding: 32px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-    transform: scale(0.92) translateY(10px);
-    transition: all var(--transition-base);
-}
-
-.modal-overlay.open .modal-card,
-.modal-overlay.active .modal-card {
-    transform: scale(1) translateY(0);
-}
-
-/* Modal grande para ranking */
-.modal-card--wide {
-    max-width: 700px;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.modal-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 28px;
-}
-
-.modal-icon {
-    background: rgba(169, 255, 113, 0.12);
-    border: 1px solid rgba(169, 255, 113, 0.25);
-    border-radius: var(--radius-md);
-    padding: 10px;
-    color: var(--color-accent);
-    flex-shrink: 0;
-}
-
-.modal-header h2 {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--color-white);
-    margin-bottom: 4px;
-}
-
-.modal-header p {
-    font-size: 13px;
-    color: var(--color-gray-400);
-}
-
-.modal-close {
-    margin-left: auto;
-    background: rgba(255,255,255,0.06);
-    border: none;
-    color: var(--color-gray-400);
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-fast);
-    flex-shrink: 0;
-}
-
-.modal-close:hover {
-    background: rgba(255,255,255,0.12);
-    color: var(--color-white);
-}
-
-.modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-right: 4px;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.input-group label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--color-gray-300);
-    letter-spacing: 0.3px;
-}
-
-.input-group input {
-    background: rgba(0,0,0,0.35);
-    border: 1.5px solid rgba(169, 255, 113, 0.2);
-    border-radius: var(--radius-md);
-    padding: 13px 16px;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--color-white);
-    font-family: var(--font-family);
-    transition: border-color var(--transition-fast);
-    width: 100%;
-}
-
-.input-group input:focus {
-    outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(169,255,113,0.1);
-}
-
-.input-group input::placeholder {
-    color: var(--color-gray-500);
-    font-weight: 400;
-}
-
-.modal-msg {
-    min-height: 20px;
-    font-size: 13px;
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-    padding: 0;
-    transition: all var(--transition-fast);
-}
-
-.modal-msg--erro {
-    color: #fc8181;
-    background: rgba(239,68,68,0.1);
-    border: 1px solid rgba(239,68,68,0.2);
-    padding: 10px 14px;
-}
-
-.modal-msg--sucesso {
-    color: #6ee7b7;
-    background: rgba(16,185,129,0.1);
-    border: 1px solid rgba(16,185,129,0.2);
-    padding: 10px 14px;
-}
-
-.btn-modal-confirm {
-    background: var(--color-accent);
-    color: var(--color-primary-dark);
-    border: none;
-    border-radius: var(--radius-full);
-    padding: 14px;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-    transition: all var(--transition-base);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 50px;
-}
-
-.btn-modal-confirm:hover:not(:disabled) {
-    background: var(--color-accent-dark);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-1px);
-}
-
-.btn-modal-confirm:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.btn-spinner {
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(39,39,94,0.4);
-    border-top-color: var(--color-primary-dark);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
 /* =====================================================================
    RANKING TABLE
 ===================================================================== */
@@ -962,12 +754,13 @@
     font-weight: 800;
     cursor: pointer;
     box-shadow: 0 6px 20px rgba(169, 255, 113, 0.35);
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
-
-.btn-hero-create-live:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(169, 255, 113, 0.5);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-hero-create-live:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(169, 255, 113, 0.5);
+    }
 }
 
 .btn-hero-student-link {
@@ -978,7 +771,7 @@
     padding: 14px 24px;
     font-size: 14px;
     font-weight: 700;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .btn-hero-student-link:hover {
@@ -1016,18 +809,19 @@
     border-radius: var(--radius-lg);
     padding: 22px;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     display: flex;
     align-items: flex-start;
     gap: 16px;
     position: relative;
     overflow: hidden;
 }
-
-.topic-quick-card:hover {
-    border-color: var(--color-accent);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(169, 255, 113, 0.15);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .topic-quick-card:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(169, 255, 113, 0.15);
+    }
 }
 
 .topic-quick-icon {
@@ -1154,7 +948,7 @@
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     text-align: left;
 }
 
@@ -1213,33 +1007,6 @@
 /* =====================================================================
    BOTÃƒO FLUTUANTE ENTRAR EM TURMA (home.html â€” aluno)
 ===================================================================== */
-.btn-join-class {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    background: var(--color-accent);
-    color: var(--color-primary-dark);
-    border: none;
-    border-radius: var(--radius-full);
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: var(--font-family);
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(169,255,113,0.35);
-    transition: all var(--transition-base);
-}
-
-.btn-join-class:hover {
-    background: var(--color-accent-dark);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-glow);
-}
-
 /* =====================================================================
    RESPONSIVO
 ===================================================================== */
@@ -1270,9 +1037,6 @@
     .ranking-table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .ranking-table thead th:nth-child(4),
     .ranking-table tbody td:nth-child(4) { display: none; }
-    .modal-card { width: 92vw; max-height: 85vh; overflow-y: auto; padding: 22px 16px; border-radius: 20px; }
-    .btn-join-class span { display: none; }
-    .btn-join-class { padding: 14px; border-radius: 50%; }
     .live-hero-banner { padding: 20px 16px; border-radius: 20px; flex-direction: column; align-items: flex-start; gap: 16px; }
     .live-hero-content h2 { font-size: 20px; }
     .stats-overview-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -1314,14 +1078,16 @@
     font-weight: 600;
     font-family: var(--font-family);
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
-.btn-semeia-help:hover {
-    background: rgba(168, 85, 247, 0.18);
-    border-color: rgba(168, 85, 247, 0.5);
-    color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.25);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-semeia-help:hover {
+        background: rgba(168, 85, 247, 0.18);
+        border-color: rgba(168, 85, 247, 0.5);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(168, 85, 247, 0.25);
+    }
 }
 
 .semeia-cota-container {
@@ -1343,7 +1109,7 @@
     padding: 8px 14px;
     border-radius: 10px;
     white-space: nowrap;
-    transition: all 0.3s ease;
+    transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
 }
 .semeia-cota-badge.semeia-cota-esgotada {
     background: rgba(239, 68, 68, 0.15);
@@ -1365,15 +1131,17 @@
     border-radius: 12px;
     font-family: var(--font-family);
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 0 0 10px rgba(169, 255, 113, 0.25);
     position: relative;
     overflow: hidden;
 }
-.btn-semeia-pro-chamativo:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.55), 0 0 16px rgba(169, 255, 113, 0.4);
-    filter: brightness(1.1);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-semeia-pro-chamativo:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.55), 0 0 16px rgba(169, 255, 113, 0.4);
+        filter: brightness(1.1);
+    }
 }
 .btn-semeia-pro-chamativo:active {
     transform: translateY(0);
@@ -1402,14 +1170,16 @@
     width: 100%;
     box-sizing: border-box;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 16px rgba(169, 255, 113, 0.1);
     animation: proBannerGlowPulse 2.8s ease-in-out infinite alternate;
 }
-.semeia-pro-banner-cta:hover {
-    border-color: var(--color-accent);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 28px rgba(169, 255, 113, 0.5);
-    transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .semeia-pro-banner-cta:hover {
+        border-color: var(--color-accent);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 28px rgba(169, 255, 113, 0.5);
+        transform: translateY(-2px);
+    }
 }
 
 @keyframes proBannerGlowPulse {
@@ -1467,8 +1237,10 @@
     flex-shrink: 0;
     transition: transform 0.2s ease;
 }
-.semeia-pro-banner-cta:hover .pro-banner-action {
-    transform: translateX(3px);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .semeia-pro-banner-cta:hover .pro-banner-action {
+        transform: translateX(3px);
+    }
 }
 
 .semeia-upload-card {
@@ -1492,15 +1264,21 @@
     border-radius: 16px;
     padding: 36px 24px;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     background: rgba(124, 58, 237, 0.05);
     text-align: center;
 }
-.semeia-dropzone:hover,
 .semeia-dropzone.dragover {
     border-color: #a855f7;
     background: rgba(124, 58, 237, 0.12);
     transform: scale(1.01);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .semeia-dropzone:hover {
+        border-color: #a855f7;
+        background: rgba(124, 58, 237, 0.12);
+        transform: scale(1.01);
+    }
 }
 .semeia-dropzone.arquivo-selecionado {
     border-color: var(--color-accent);
@@ -1530,7 +1308,7 @@
     box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
 }
 
-.semeia-form-msg { font-size: 13px; min-height: 18px; transition: all 0.2s; }
+.semeia-form-msg { font-size: 13px; min-height: 18px; transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast); }
 .semeia-msg-erro  { color: #fca5a5; }
 .semeia-msg-info  { color: #93c5fd; }
 
@@ -1549,10 +1327,12 @@
     font-weight: 700;
     font-family: var(--font-family);
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
 }
-.btn-semeia-gerar:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124, 58, 237, 0.5); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-semeia-gerar:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124, 58, 237, 0.5); }
+}
 .btn-semeia-gerar:active { transform: translateY(0); }
 
 .semeia-status-card {
@@ -1569,7 +1349,7 @@
     text-align: center;
 }
 .semeia-status-title { font-size: 20px; font-weight: 700; color: #fff; margin: 0; }
-.semeia-status-msg { font-size: 14px; color: rgba(255,255,255,0.6); margin: 0; min-height: 20px; transition: all 0.4s ease; }
+.semeia-status-msg { font-size: 14px; color: rgba(255,255,255,0.6); margin: 0; min-height: 20px; transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast); }
 
 .semeia-progress-dots { display: flex; gap: 8px; }
 .semeia-progress-dots span {
@@ -1632,9 +1412,11 @@
     border-radius: 10px; padding: 10px 20px;
     font-size: 14px; font-weight: 600;
     font-family: var(--font-family);
-    cursor: pointer; transition: all 0.2s ease;
+    cursor: pointer; transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
-.btn-semeia-nova:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-semeia-nova:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+}
 
 /* ======================================================================
    SIDEBAR: CARD DE DESTAQUE SEMEIA (MODO IA)
@@ -1743,14 +1525,15 @@
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
-    transition: all 0.25s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
     font-family: var(--font-family);
 }
-
-.btn-sidebar-create-semeia:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
-    filter: brightness(1.1);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .btn-sidebar-create-semeia:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+        filter: brightness(1.1);
+    }
 }
 
 /* ======================================================================
@@ -1787,7 +1570,7 @@
     font-size: 13px;
     color: #e2e8f0;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     user-select: none;
 }
 
@@ -1861,12 +1644,14 @@
     border-radius: 16px;
     padding: 20px;
     position: relative;
-    transition: all 0.25s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
-.semeia-step-card:hover {
-    background: rgba(168, 85, 247, 0.06);
-    border-color: rgba(168, 85, 247, 0.3);
-    transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .semeia-step-card:hover {
+        background: rgba(168, 85, 247, 0.06);
+        border-color: rgba(168, 85, 247, 0.3);
+        transform: translateY(-2px);
+    }
 }
 
 .semeia-step-number {
@@ -1950,7 +1735,8 @@
     flex-direction: column;
     align-items: center;
     margin: auto;
-    animation: modalPopIn 0.25s ease-out;
+    transform: scale(0.97) translateY(8px);
+    transition: transform var(--transition-slow);
 }
 
 @keyframes modalPopIn {
@@ -2027,7 +1813,7 @@
     width: 100%;
     cursor: pointer;
     box-shadow: 0 5px 0 #58cc02;
-    transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+    transition: transform 0.15s, box-shadow 0.15s, filter 0.15s, scale var(--duration-press) var(--ease-out);
     letter-spacing: 0.5px;
     font-family: var(--font-family);
     text-align: center;
@@ -2068,7 +1854,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: all 0.2s;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .close-modal-btn:hover {
@@ -2089,7 +1875,8 @@
     text-align: left;
     width: 100%;
     box-sizing: border-box;
-    animation: modalPopIn 0.3s ease-out;
+    transform: scale(0.97) translateY(8px);
+    transition: transform var(--transition-slow);
 }
 .pro-indisponivel-icon {
     font-size: 24px;
@@ -2167,7 +1954,7 @@
     align-items: center;
     gap: 6px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .btn-semeia-recarregar:hover {
@@ -2219,14 +2006,15 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
-    transition: all 0.25s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
-
-.semeia-trilha-gerenciada-card:hover {
-    border-color: rgba(169, 255, 113, 0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .semeia-trilha-gerenciada-card:hover {
+        border-color: rgba(169, 255, 113, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
 }
 
 .trilha-gerenciada-top {
@@ -2313,7 +2101,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .btn-trilha-atribuir:hover {
@@ -2334,7 +2122,7 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .btn-trilha-visualizar:hover {
@@ -2355,7 +2143,7 @@
     align-items: center;
     justify-content: center;
     margin-left: auto;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
 }
 
 .btn-trilha-excluir:hover {
@@ -2382,7 +2170,7 @@
     border-radius: 10px;
     padding: 10px 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
 .modal-turma-checkbox-item:hover {
@@ -2407,3 +2195,5 @@
     color: #fff;
 }
 
+
+.modal-overlay:is(.open, .active) .modal-content { transform: none; }
