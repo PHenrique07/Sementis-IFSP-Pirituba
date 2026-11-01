@@ -128,12 +128,11 @@ body.turma-professor-page {
     min-height: 110px;
     transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .turma-convite:hover {
-        border-color: rgba(169, 255, 113, 0.45);
-        box-shadow: 0 12px 32px rgba(169, 255, 113, 0.15);
-        transform: translateY(-2px);
-    }
+
+.turma-convite:hover {
+    border-color: rgba(169, 255, 113, 0.45);
+    box-shadow: 0 12px 32px rgba(169, 255, 113, 0.15);
+    transform: translateY(-2px);
 }
 
 .convite-webm-thumb {
@@ -190,7 +189,7 @@ body.turma-professor-page {
     font-size: 13px;
     font-weight: 700;
     padding: 0;
-    transition: color 0.2s, scale var(--duration-press) var(--ease-out);
+    transition: color 0.2s;
 }
 
 .convite-content button:hover {
@@ -210,15 +209,14 @@ body.turma-professor-page {
     background: linear-gradient(135deg, #b7ff8e, #8fe858);
     font: 800 15px 'Poppins', sans-serif;
     box-shadow: 0 8px 20px rgba(169, 255, 113, .22);
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s ease;
     white-space: nowrap;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .btn-pdf-hero:hover {
-        filter: brightness(1.1);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 28px rgba(169, 255, 113, .38);
-    }
+
+.btn-pdf-hero:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(169, 255, 113, .38);
 }
 
 .btn-pdf-hero svg { flex-shrink: 0; }
@@ -244,14 +242,13 @@ body.turma-professor-page {
     gap: 12px;
     min-height: 110px;
     box-shadow: 0 10px 26px rgba(169, 255, 113, .28);
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s ease;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .btn-exportar:hover {
-        filter: brightness(1.08);
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(169, 255, 113, .4);
-    }
+
+.btn-exportar:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(169, 255, 113, .4);
 }
 
 .chevron-down { font-size: 14px; margin-left: 4px; }
@@ -331,10 +328,9 @@ body.turma-professor-page {
     align-items: center;
     transition: transform 0.2s;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .kpi-card:hover {
-        transform: translateY(-2px);
-    }
+
+.kpi-card:hover {
+    transform: translateY(-2px);
 }
 
 .kpi-icon {
@@ -374,14 +370,9 @@ body.turma-professor-page {
 
 .turma-primary-column, .turma-aside {
     display: grid;
-    min-width: 0;
     gap: 22px;
     align-content: start;
 }
-
-.turma-aside > * { min-width: 0; }
-
-.turma-primary-column { grid-template-columns: minmax(0, 1fr); }
 
 .panel { border-radius: 20px; padding: 24px; }
 .panel-heading, .modal-heading {
@@ -403,13 +394,12 @@ body.turma-professor-page {
     color: #171744;
     background: var(--turma-green);
     font: 700 13px Poppins, sans-serif;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s ease;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .btn-primary:hover {
-        filter: brightness(1.08);
-        transform: translateY(-1px);
-    }
+
+.btn-primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
 }
 
 /* Mural de Avisos */
@@ -612,7 +602,7 @@ body.turma-professor-page {
     border-radius: 10px;
     font: 600 12px Poppins, sans-serif;
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s;
 }
 
 .filter-btn:hover {
@@ -784,7 +774,7 @@ body.turma-professor-page {
     border-radius: 8px;
     font: 600 11px Poppins, sans-serif;
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s;
     white-space: nowrap;
 }
 
@@ -882,10 +872,7 @@ body.turma-professor-page {
     position: fixed;
     inset: 0;
     z-index: 100;
-    display: grid;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity var(--transition-slow), visibility var(--transition-slow);
+    display: none;
     padding: 18px;
     place-items: center;
     background: rgba(5, 5, 28, .75);
@@ -893,8 +880,7 @@ body.turma-professor-page {
 }
 
 .aviso-modal.open, .raiox-modal.open {
-    opacity: 1;
-    visibility: visible;
+    display: grid;
 }
 
 .modal-close {
@@ -906,7 +892,7 @@ body.turma-professor-page {
     line-height: 1;
     padding: 0 4px;
     border-radius: 6px;
-    transition: background 0.15s, scale var(--duration-press) var(--ease-out);
+    transition: background 0.15s;
 }
 
 .modal-close:hover {
@@ -1085,8 +1071,8 @@ body.turma-professor-page {
 
 @media (max-width: 860px) {
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    .turma-layout { grid-template-columns: minmax(0, 1fr); }
-    .turma-aside { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .turma-layout { grid-template-columns: 1fr; }
+    .turma-aside { grid-template-columns: 1fr 1fr; }
     .turma-hero { align-items: flex-start; flex-direction: column; gap: 18px; }
     .turma-hero-actions { width: 100%; justify-content: space-between; gap: 14px; }
     .turma-convite, .export-dropdown-wrap { flex: 1; min-width: 0; }
@@ -1177,14 +1163,13 @@ body.turma-professor-page {
     font-weight: 600;
     cursor: pointer;
     font-family: inherit;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s ease;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .btn-semeia-atribuir:hover {
-        background: rgba(255, 255, 255, 0.16);
-        border-color: rgba(255, 255, 255, 0.35);
-        transform: translateY(-1px);
-    }
+
+.btn-semeia-atribuir:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-1px);
 }
 
 .btn-semeia-gerar-link {
@@ -1199,14 +1184,13 @@ body.turma-professor-page {
     font-weight: 700;
     text-decoration: none;
     box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s ease;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .btn-semeia-gerar-link:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
-        filter: brightness(1.1);
-    }
+
+.btn-semeia-gerar-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+    filter: brightness(1.1);
 }
 
 .trilhas-semeia-container {
@@ -1227,14 +1211,13 @@ body.turma-professor-page {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    transition: all 0.2s ease;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .trilha-semeia-card:hover {
-        border-color: rgba(167, 139, 250, 0.6);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-    }
+
+.trilha-semeia-card:hover {
+    border-color: rgba(167, 139, 250, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
 
 .trilha-semeia-card-top {
@@ -1290,7 +1273,7 @@ body.turma-professor-page {
     font-weight: 600;
     padding: 4px 8px;
     border-radius: 6px;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s;
 }
 
 .btn-remover-trilha-turma:hover {
@@ -1307,13 +1290,12 @@ body.turma-professor-page {
     padding: 5px 12px;
     border-radius: 8px;
     text-decoration: none;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .btn-ver-trilha:hover {
-        background: rgba(169, 255, 113, 0.28);
-        transform: translateY(-1px);
-    }
+
+.btn-ver-trilha:hover {
+    background: rgba(169, 255, 113, 0.28);
+    transform: translateY(-1px);
 }
 
 /* ======================================================================
@@ -1327,10 +1309,7 @@ body.turma-professor-page {
     width: 100vw !important;
     height: 100vh !important;
     z-index: 99999 !important;
-    display: flex;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity var(--transition-slow), visibility var(--transition-slow);
+    display: none;
     align-items: center !important;
     justify-content: center !important;
     padding: 20px !important;
@@ -1340,8 +1319,7 @@ body.turma-professor-page {
 }
 
 .modal-overlay.open {
-    opacity: 1;
-    visibility: visible;
+    display: flex !important;
 }
 
 .modal-card {
@@ -1351,8 +1329,7 @@ body.turma-professor-page {
     border-radius: 20px !important;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.75), 0 0 24px rgba(167, 139, 250, 0.25) !important;
     overflow: hidden !important;
-    transform: scale(0.97);
-    transition: transform var(--transition-slow);
+    animation: modalPopIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     margin: auto !important;
 }
 
@@ -1385,7 +1362,7 @@ body.turma-professor-page {
     justify-content: center !important;
     font-size: 20px !important;
     cursor: pointer !important;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast) !important, scale var(--duration-press) var(--ease-out);
+    transition: all 0.15s ease !important;
 }
 
 .modal-header .modal-close:hover {
@@ -1398,5 +1375,3 @@ body.turma-professor-page {
 }
 
 
-
-.modal-overlay.open .modal-card { transform: none; }

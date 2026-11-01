@@ -352,13 +352,13 @@
     border-radius: 12px;
     color: #8d92bc;
     text-decoration: none;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all 0.2s ease;
 }
 
 .nav-item img {
     width: 30px;
     height: 30px;
-    transition: transform 0.2s ease, scale var(--duration-press) var(--ease-out);
+    transition: transform 0.2s ease;
 }
 
 .nav-item span {

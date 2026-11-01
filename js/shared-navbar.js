@@ -57,13 +57,13 @@ function buildSharedNavbar(activeSection) {
       <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil">
       <span>Perfil</span>
     </a>
-    <button class="nav-item mobile-only ${isMais ? 'active' : ''}" id="nav-item-mais" type="button" aria-controls="more-menu-popup" aria-expanded="false" aria-label="Mais opções">
+    <button class="nav-item mobile-only ${isMais ? 'active' : ''}" id="nav-item-mais" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Mais opções">
       <img src="assets/icons/menu_mais.png" alt="Mais">
       <span>Mais</span>
     </button>
   </div>
 
-  <div class="more-menu-popup mobile-only" id="more-menu-popup" aria-hidden="true" inert>
+  <div class="more-menu-popup mobile-only" id="more-menu-popup" aria-hidden="true">
     <div class="more-menu-content">
       <a class="more-menu-item ${isTurmas ? 'active' : ''}" href="turma-aluno.html">
         <img src="assets/icons/turma_icon.png" alt="Turmas">
@@ -91,20 +91,25 @@ function mountSharedNavbar() {
   host.innerHTML = buildSharedNavbar(activeSection);
   host.dataset.mounted = 'true';
 
+  const sidebarLogoLink = host.querySelector('.sidebar-logo-link');
+  if (sidebarLogoLink) {
+    sidebarLogoLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.location.href = 'index.html';
+    });
+  }
+
   const btnMais = host.querySelector('#nav-item-mais');
   const popupMais = host.querySelector('#more-menu-popup');
 
   if (btnMais && popupMais) {
     function fecharMaisMenu() {
-      if (popupMais.contains(document.activeElement)) btnMais.focus();
-      popupMais.inert = true;
       popupMais.classList.remove('open');
       btnMais.setAttribute('aria-expanded', 'false');
       popupMais.setAttribute('aria-hidden', 'true');
     }
 
     function abrirMaisMenu() {
-      popupMais.inert = false;
       popupMais.classList.add('open');
       btnMais.setAttribute('aria-expanded', 'true');
       popupMais.setAttribute('aria-hidden', 'false');
@@ -124,22 +129,6 @@ function mountSharedNavbar() {
       if (!host.contains(e.target)) {
         fecharMaisMenu();
       }
-    });
-
-    host.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && popupMais.classList.contains('open')) {
-        e.preventDefault();
-        fecharMaisMenu();
-        btnMais.focus();
-      } else if (e.key === 'ArrowDown' && e.target === btnMais) {
-        e.preventDefault();
-        abrirMaisMenu();
-        popupMais.querySelector('a').focus();
-      }
-    });
-
-    host.addEventListener('focusout', (e) => {
-      if (!popupMais.contains(e.relatedTarget) && e.relatedTarget !== btnMais) fecharMaisMenu();
     });
 
     window.addEventListener('scroll', () => {

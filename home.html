@@ -12,10 +12,8 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/shared-navbar.css">
-    <link rel="stylesheet" href="/css/shared-modal.css">
+    <link rel="stylesheet" href="/css/painel-professor.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="/js/ui-motion.js" defer></script>
-    <link rel="stylesheet" href="/css/shared-motion.css">
 </head>
 <body class="home-page">
     <!-- Header -->
@@ -68,7 +66,7 @@
         <!-- Banner de Acesso ao Sementis Live -->
         <a href="arena.html" class="live-home-banner" id="banner-live-arena">
             <div class="live-home-icon">
-                <video loop muted playsinline class="live-home-webm" aria-label="Sementis Live" preload="metadata" data-video-decorativo>
+                <video autoplay loop muted playsinline class="live-home-webm" aria-label="Sementis Live">
                     <source src="assets/hevc/sementis-live.hevc.mp4" type="video/mp4; codecs=hvc1">
                     <source src="assets/webm/sementis-live.webm" type="video/webm">
                 </video>
@@ -284,14 +282,14 @@
             <section class="quick-games">
                 <h2 class="section-title">Mini-Jogos Rápidos</h2>
                 <div class="games-grid">
-                    <div class="game-quick-card" role="button" tabindex="0" aria-label="Jogar Flappy Fish">
+                    <div class="game-quick-card">
                         <img src="/assets/jogos/flappy-fish/jogo_flappy_fish_peixe.png" alt="Flappy Fish" class="game-thumb">
                         <div class="game-overlay">
                             <h3>Flappy Fish</h3>
                             <p>Desvie da poluição</p>
                         </div>
                     </div>
-                    <div class="game-quick-card" role="button" tabindex="0" aria-label="Jogar Garbage Recycle">
+                    <div class="game-quick-card">
                         <img src="/assets/jogos/garbage-recycle/jogo_garbage_recycle_cesto_lixo_reciclavel.png" alt="Garbage Recycle" class="game-thumb">
                         <div class="game-overlay">
                             <h3>Garbage Recycle</h3>

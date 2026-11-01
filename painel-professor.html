@@ -8,11 +8,8 @@
     <title>Painel do Professor — Sementis</title>
     <link rel="icon" href="/assets/selo_sementis_branco.png" type="image/png">
     <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/shared-modal.css">
     <link rel="stylesheet" href="/css/painel-professor.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="/js/ui-motion.js" defer></script>
-    <link rel="stylesheet" href="/css/shared-motion.css">
 </head>
 <body class="professor-page">
 
@@ -97,7 +94,7 @@
             <div class="sidebar-live-card">
                 <div class="sidebar-live-header">
                     <div class="sidebar-live-icon">
-                        <video loop muted playsinline class="sidebar-live-webm" aria-label="Sementis Live" preload="metadata" data-video-decorativo>
+                        <video autoplay loop muted playsinline class="sidebar-live-webm" aria-label="Sementis Live">
                             <source src="assets/hevc/sementis-live.hevc.mp4" type="video/mp4; codecs=hvc1">
                             <source src="assets/webm/sementis-live.webm" type="video/webm">
                         </video>
@@ -363,7 +360,7 @@
         <div class="modal-card modal-card--wide">
             <div class="modal-header">
                 <div class="modal-icon modal-icon--live">
-                    <video loop muted playsinline preload="metadata" class="modal-live-webm" src="assets/webm/sementis-live.webm" aria-label="Sementis Live" data-video-decorativo></video>
+                    <video autoplay loop muted playsinline preload="auto" class="modal-live-webm" src="assets/webm/sementis-live.webm" aria-label="Sementis Live"></video>
                 </div>
                 <div>
                     <h2 id="modal-criar-live-title">Criar Sala Temporária — Sementis Live</h2>

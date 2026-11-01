@@ -191,7 +191,7 @@
     background: rgba(255, 255, 255, 0.05);
     color: var(--loja-muted);
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all var(--transition-fast);
 }
 
 .loja-icon-btn:hover {
@@ -351,7 +351,7 @@
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all var(--transition-fast);
 }
 
 .loja-btn-primary:hover {
@@ -377,7 +377,7 @@
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all var(--transition-fast);
 }
 
 .loja-btn-secondary:hover {
@@ -977,7 +977,7 @@
     font-weight: 800;
     letter-spacing: 0.02em;
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all var(--transition-fast);
 }
 
 .gacha-spin-btn:hover {
@@ -1156,17 +1156,16 @@
     transition: transform 240ms ease, filter 240ms ease, border-color 240ms ease, box-shadow 240ms ease, background-image 240ms ease;
     pointer-events: none;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .loja-shop:hover::after {
-        transform: translateX(-50%) scale(1.035);
-        background-image:
+
+.loja-shop:hover::after {
+    transform: translateX(-50%) scale(1.035);
+    background-image:
         linear-gradient(135deg, rgba(169, 255, 113, 0.22), rgba(105, 204, 255, 0.08) 52%, rgba(169, 255, 113, 0.16)),
         url('../assets/gifs/Design sem nome (1).gif');
-        background-blend-mode: screen;
-        border-color: rgba(169, 255, 113, 0.55);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 34px rgba(169, 255, 113, 0.3), 0 22px 48px rgba(8, 18, 24, 0.35);
-        filter: drop-shadow(0 0 16px rgba(169, 255, 113, 0.22));
-    }
+    background-blend-mode: screen;
+    border-color: rgba(169, 255, 113, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 34px rgba(169, 255, 113, 0.3), 0 22px 48px rgba(8, 18, 24, 0.35);
+    filter: drop-shadow(0 0 16px rgba(169, 255, 113, 0.22));
 }
 
 .loja-shop-section {
@@ -1287,11 +1286,10 @@
     background: var(--loja-card);
     transition: transform var(--transition-base), border-color var(--transition-base);
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .loja-shop-card:hover {
-        transform: translateY(-6px);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
+
+.loja-shop-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .loja-shop-card-icon {
@@ -1304,10 +1302,9 @@
     border-bottom: 4px solid transparent;
     transition: transform var(--transition-base);
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .loja-shop-card:hover .loja-shop-card-icon {
-        transform: scale(1.1) rotate(-6deg);
-    }
+
+.loja-shop-card:hover .loja-shop-card-icon {
+    transform: scale(1.1) rotate(-6deg);
 }
 
 .loja-shop-card-icon i {
@@ -1348,7 +1345,7 @@
     font-size: 13px;
     font-weight: 800;
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all var(--transition-fast);
 }
 
 .loja-buy-btn:hover {
@@ -1695,7 +1692,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     transform: translateY(16px);
     opacity: 0;
-    transition: transform var(--transition-slow), opacity var(--transition-slow);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .toast-item.show {
@@ -1839,7 +1836,7 @@
     font-size: 15px;
     font-weight: 800;
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), scale var(--duration-press) var(--ease-out);
+    transition: all var(--transition-fast);
 }
 
 .prize-collect-btn:hover {
@@ -1869,7 +1866,7 @@
     position: relative;
     width: 176px;
     height: 176px;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     transform: scale(0.75);
     opacity: 0;
 }
@@ -1892,7 +1889,7 @@
     border-radius: 50% 50% 0 0;
     border: 5px solid #1a1a40;
     border-bottom: none;
-    transition: transform 0.7s ease-out, opacity 0.7s ease-out;
+    transition: all 0.7s ease-out;
 }
 
 .reveal-capsule-top-glare {
@@ -1916,7 +1913,7 @@
     box-shadow:
         inset -8px -12px 16px rgba(10, 10, 35, 0.28),
         inset 6px 4px 10px rgba(255, 255, 255, 0.5);
-    transition: transform 0.7s ease-out, opacity 0.7s ease-out;
+    transition: all 0.7s ease-out;
 }
 
 .reveal-capsule-seam {
@@ -1955,7 +1952,7 @@
     height: 10px;
     border-radius: 2px;
     pointer-events: none;
-    transition: transform 0.7s ease-out, opacity 0.7s ease-out;
+    transition: all 0.7s ease-out;
     transform: scale(0);
 }
 
@@ -1969,7 +1966,7 @@
     border-radius: 2px;
     pointer-events: none;
     transform: translate(-50%, -50%) scale(0);
-    transition: transform 1s ease-out, opacity 1s ease-out;
+    transition: all 1s ease-out;
 }
 
 /* ===== Animations ===== */
@@ -2371,7 +2368,7 @@ body.screen-shaking {
     padding: 20px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--transition-slow), visibility var(--transition-slow);
+    transition: opacity 0.3s ease;
 }
 
 .drone-modal-overlay.open {
@@ -2389,8 +2386,8 @@ body.screen-shaking {
     padding: 32px 28px;
     text-align: center;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(169, 255, 113, 0.2);
-    transform: scale(0.97) translateY(8px);
-    transition: transform var(--transition-slow);
+    transform: scale(0.8) translateY(20px);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
 }
 
@@ -2411,13 +2408,12 @@ body.screen-shaking {
     align-items: center;
     justify-content: center;
     z-index: 15;
-    transition: background 0.2s ease, transform 0.2s ease, scale var(--duration-press) var(--ease-out);
+    transition: background 0.2s ease, transform 0.2s ease;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .drone-modal-close-btn:hover {
-        background: rgba(255, 255, 255, 0.25);
-        transform: scale(1.1);
-    }
+
+.drone-modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
 }
 
 .drone-modal-overlay.open .drone-modal-card {
@@ -2522,13 +2518,12 @@ body.screen-shaking {
     font-size: 16px;
     font-weight: 800;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease, scale var(--duration-press) var(--ease-out);
+    transition: transform 0.15s ease, background 0.15s ease;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .drone-claim-btn:hover {
-        background: #bdff94;
-        transform: translateY(-2px);
-    }
+
+.drone-claim-btn:hover {
+    background: #bdff94;
+    transform: translateY(-2px);
 }
 
 .drone-claim-btn:active {

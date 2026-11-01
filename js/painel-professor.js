@@ -92,6 +92,7 @@ function renderizarTurmas(turmas) {
 function criarCardTurma(turma, idx) {
     const card = document.createElement('div');
     card.className = 'turma-card';
+    card.style.animationDelay = `${idx * 60}ms`;
     card.dataset.turmaId = turma.id;
     card.tabIndex = 0;
     card.setAttribute('role', 'link');
@@ -229,7 +230,7 @@ function abrirModalNovaTurma() {
     if (inputNomeTurma) inputNomeTurma.value = '';
     limparMsg(msgNovaTurma);
     modalNovaTurma.classList.add('open');
-    inputNomeTurma?.focus({ preventScroll: true });
+    setTimeout(() => inputNomeTurma && inputNomeTurma.focus(), 150);
 }
 
 function fecharModalNovaTurma() {
@@ -533,7 +534,12 @@ function abrirModalLive(topicoId = null) {
 
     if (modal) {
         modal.classList.add('open', 'active');
-        inputNome?.focus({ preventScroll: true });
+        const video = modal.querySelector('.modal-live-webm');
+        if (video) {
+            video.load();
+            video.play().catch(() => {});
+        }
+        if (inputNome) setTimeout(() => inputNome.focus(), 150);
     }
 }
 window.abrirModalLive = abrirModalLive;

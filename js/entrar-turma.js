@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!modal) return;
         limparModal();
         modal.classList.add('open');
-        inputCodigo?.focus({ preventScroll: true });
+        setTimeout(() => inputCodigo && inputCodigo.focus(), 150);
     }
     function fecharModal() {
         if (!modal) return;

@@ -55,8 +55,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         const containerMissoes = document.querySelectorAll('.missions-list')[0]; 
         if (!containerMissoes) return;
 
-        // Preserva o cabeçalho e seu vídeo, já registrado no controle de mídia.
-        containerMissoes.querySelectorAll(':scope > .mission-item').forEach(item => item.remove());
+        // Limpa as missões "chumbadas" no HTML, mas mantém o título e o botão de interrogação
+        containerMissoes.innerHTML = `
+            <div class="section-header">
+                <video autoplay loop muted playsinline class="missions-title-webm" aria-label="Alvo animado">
+                    <source src="assets/hevc/target.hevc.mp4" type="video/mp4; codecs=hvc1">
+                    <source src="assets/webm/target.webm" type="video/webm">
+                </video>
+                <h2 class="section-title">MISSÕES DIÁRIAS</h2>
+                <button class="info-btn" aria-label="Informações sobre Recompensas" onclick="toggleXpModal()">?</button>
+            </div>
+        `; 
 
         dados.forEach((missao) => {
             const tier = definirTierVisual(missao.xp);

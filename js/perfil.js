@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Abre modal
         sementisFriendModal.classList.add('active');
-        sfInputAmigo?.focus({ preventScroll: true });
+        setTimeout(() => sfInputAmigo?.focus(), 120);
 
         // Atualiza pedidos em background
         carregarPedidosModal();
