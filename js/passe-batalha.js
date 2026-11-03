@@ -123,6 +123,50 @@
         premiumAtivo: false
     };
 
+    var ultimoNivelRenderizado = null;
+    var ultimoPremiumRenderizado = null;
+    var timeoutRolagem = null;
+    var observadorAnimacoes = null;
+    var elementosProximos = new Set();
+
+    function carregarSombrasPasse() {
+        var carregadas = 0;
+        var falhou = false;
+        ["/assets/ui/passe/sombra-gratis.png", "/assets/ui/passe/sombra-premium.png"].forEach(function (url) {
+            var imagem = new Image();
+            imagem.onload = function () {
+                carregadas++;
+                if (carregadas === 2 && !falhou) document.body.classList.add("pass-sombras-prontas");
+            };
+            imagem.onerror = function () { falhou = true; };
+            imagem.src = url;
+        });
+    }
+
+    function atualizarAnimacoesPasse() {
+        var passView = document.getElementById("missions-pass-view");
+        if (!passView) return;
+        var pausado = document.hidden || passView.style.display !== "block";
+        passView.classList.toggle("pass-animacao-pausada", pausado);
+        passView.querySelectorAll(".pass-inpage-top-bar, .pass-inpage-header-card, .pass-v-row").forEach(function (elemento) {
+            elemento.classList.toggle("pass-animacao-pausada", pausado || !elementosProximos.has(elemento));
+        });
+    }
+
+    function observarAnimacoes(elemento) {
+        elemento.classList.add("pass-animacao-pausada");
+        if (observadorAnimacoes) {
+            observadorAnimacoes.observe(elemento);
+        } else {
+            elementosProximos.add(elemento);
+        }
+    }
+
+    function atualizarVisibilidadeDaAba() {
+        document.body.classList.toggle("missoes-aba-oculta", document.hidden);
+        atualizarAnimacoesPasse();
+    }
+
     function calcularNivel(xpTotal) {
         var n = Math.min(Math.floor(xpTotal / XP_POR_NIVEL) + 1, TOTAL_NIVEIS);
         var xpNoNivel = xpTotal % XP_POR_NIVEL;
@@ -188,12 +232,32 @@
         }
     }
 
+    function gerarAcaoRecompensa(nivel, trilha) {
+        if (estado.coletadas[nivel + "_" + trilha]) {
+            return "<span class=\"pv-claimed-tag\"><svg width=\"10\" height=\"10\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><polyline points=\"20 6 9 17 4 12\"></polyline></svg> Coletado</span>";
+        }
+        if (nivel > estado.nivelAtual) {
+            return "<span class=\"pv-locked-tag\"><svg width=\"9\" height=\"9\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><rect x=\"3\" y=\"11\" width=\"18\" height=\"11\" rx=\"2\"></rect><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"></path></svg> Nv. " + nivel + "</span>";
+        }
+        if (trilha === "premium" && !estado.premiumAtivo) {
+            return "<button type=\"button\" class=\"pv-premium-lock-btn\" onclick=\"ativarPassePremium()\">★ UPGRADE</button>";
+        }
+        return "<button type=\"button\" class=\"pv-claim-btn\" data-nivel=\"" + nivel + "\" data-trilha=\"" + trilha + "\">COLETAR</button>";
+    }
+
+    function atualizarAcaoRecompensa(nivel, trilha) {
+        var acao = document.querySelector("#pass-v-tier-" + nivel + " .pass-v-cell-" + trilha + " .pv-item-action-wrap");
+        if (acao) acao.innerHTML = gerarAcaoRecompensa(nivel, trilha);
+    }
+
     // Renderiza a trilha vertical com as 2 colunas e conectores centrais
     function renderizarTrilhaVertical() {
         var container = document.getElementById("pass-v-track");
         if (!container) return;
 
-        container.innerHTML = "";
+        if (ultimoNivelRenderizado === estado.nivelAtual && ultimoPremiumRenderizado === estado.premiumAtivo) return;
+
+        var fragmento = document.createDocumentFragment();
 
         estado.recompensas.forEach(function (item) {
             var n = item.nivel;
@@ -205,23 +269,16 @@
             row.id = "pass-v-tier-" + n;
 
             // 1. Célula GRÁTIS (Lado Esquerdo - Azul)
-            var coletadaFree = !!estado.coletadas[n + "_free"];
             var cellFree = document.createElement("div");
             var freeClasses = "pass-v-cell-free";
             if (!desbloqueado) freeClasses += " pass-v-cell-locked";
             cellFree.className = freeClasses;
 
-            var acaoFreeHtml = "";
-            if (coletadaFree) {
-                acaoFreeHtml = "<span class=\"pv-claimed-tag\"><svg width=\"10\" height=\"10\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><polyline points=\"20 6 9 17 4 12\"></polyline></svg> Coletado</span>";
-            } else if (desbloqueado) {
-                acaoFreeHtml = "<button type=\"button\" class=\"pv-claim-btn\" data-nivel=\"" + n + "\" data-trilha=\"free\">COLETAR</button>";
-            } else {
-                acaoFreeHtml = "<span class=\"pv-locked-tag\"><svg width=\"9\" height=\"9\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><rect x=\"3\" y=\"11\" width=\"18\" height=\"11\" rx=\"2\"></rect><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"></path></svg> Nv. " + n + "</span>";
-            }
+            var acaoFreeHtml = gerarAcaoRecompensa(n, "free");
 
             var rarFree = RARIDADES[item.free.raridade] || RARIDADES.comum;
             cellFree.innerHTML =
+                "<div class=\"pv-cell-inner\">" +
                 "<div class=\"pv-cell-content\">" +
                     "<div class=\"pv-item-visual\">" +
                         "<img src=\"" + item.free.icone + "\" alt=\"" + item.free.nome + "\" class=\"pv-item-img\" loading=\"lazy\">" +
@@ -237,7 +294,7 @@
                 "</div>" +
                 "<div class=\"pv-item-action-wrap\">" +
                     acaoFreeHtml +
-                "</div>";
+                "</div></div>";
 
             // 2. Conector Central (Losango com o Número do Nível)
             var divider = document.createElement("div");
@@ -253,25 +310,16 @@
                 "</div>";
 
             // 3. Célula PREMIUM (Lado Direito - Dourado)
-            var coletadaPrem = !!estado.coletadas[n + "_premium"];
             var cellPrem = document.createElement("div");
             var premClasses = "pass-v-cell-premium";
             if (!desbloqueado || !estado.premiumAtivo) premClasses += " pass-v-cell-locked";
             cellPrem.className = premClasses;
 
-            var acaoPremHtml = "";
-            if (coletadaPrem) {
-                acaoPremHtml = "<span class=\"pv-claimed-tag\"><svg width=\"10\" height=\"10\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><polyline points=\"20 6 9 17 4 12\"></polyline></svg> Coletado</span>";
-            } else if (desbloqueado && estado.premiumAtivo) {
-                acaoPremHtml = "<button type=\"button\" class=\"pv-claim-btn\" data-nivel=\"" + n + "\" data-trilha=\"premium\">COLETAR</button>";
-            } else if (desbloqueado && !estado.premiumAtivo) {
-                acaoPremHtml = "<button type=\"button\" class=\"pv-premium-lock-btn\" onclick=\"ativarPassePremium()\">★ UPGRADE</button>";
-            } else {
-                acaoPremHtml = "<span class=\"pv-locked-tag\"><svg width=\"9\" height=\"9\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><rect x=\"3\" y=\"11\" width=\"18\" height=\"11\" rx=\"2\"></rect><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"></path></svg> Nv. " + n + "</span>";
-            }
+            var acaoPremHtml = gerarAcaoRecompensa(n, "premium");
 
             var rarPrem = RARIDADES[item.premium.raridade] || RARIDADES.lendario;
             cellPrem.innerHTML =
+                "<div class=\"pv-cell-inner\">" +
                 "<div class=\"pv-sparkles\"></div>" +
                 "<div class=\"pv-cell-content\">" +
                     "<div class=\"pv-item-visual\">" +
@@ -288,27 +336,24 @@
                 "</div>" +
                 "<div class=\"pv-item-action-wrap\">" +
                     acaoPremHtml +
-                "</div>";
+                "</div></div>";
 
             row.appendChild(cellFree);
             row.appendChild(divider);
             row.appendChild(cellPrem);
 
-            container.appendChild(row);
+            fragmento.appendChild(row);
         });
 
-        // Delegação de cliques para os botões de coletar
-        container.querySelectorAll(".pv-claim-btn").forEach(function (btn) {
-            btn.addEventListener("click", function (e) {
-                e.stopPropagation();
-                var nivel = parseInt(btn.dataset.nivel, 10);
-                var trilha = btn.dataset.trilha;
-                var recompItem = estado.recompensas[nivel - 1];
-                if (!recompItem) return;
-                var payload = (trilha === "premium") ? recompItem.premium : recompItem.free;
-                coletarRecompensa(nivel, trilha, payload);
-            });
+        container.querySelectorAll(".pass-v-row").forEach(function (row) {
+            if (observadorAnimacoes) observadorAnimacoes.unobserve(row);
+            elementosProximos.delete(row);
         });
+        fragmento.querySelectorAll(".pass-v-row").forEach(observarAnimacoes);
+        container.replaceChildren(fragmento);
+        ultimoNivelRenderizado = estado.nivelAtual;
+        ultimoPremiumRenderizado = estado.premiumAtivo;
+        atualizarAnimacoesPasse();
     }
 
     // Coletar Recompensa
@@ -339,7 +384,7 @@
         }
 
         abrirModalRecompensa(item, nivel, trilha);
-        renderizarTrilhaVertical();
+        atualizarAcaoRecompensa(nivel, trilha);
         atualizarCardEntrada();
     }
 
@@ -366,11 +411,15 @@
         if (card) card.style.borderColor = rar.cor;
 
         modal.style.display = "flex";
+        modal.classList.remove("pass-animacao-pausada");
     }
 
     window.fecharModalRecompensaPasse = function () {
         var modal = document.getElementById("pass-reward-modal");
-        if (modal) modal.style.display = "none";
+        if (modal) {
+            modal.style.display = "none";
+            modal.classList.add("pass-animacao-pausada");
+        }
     };
 
     // Abertura do Passe Vertical (In-Page, integrando toda a área ao lado da navbar)
@@ -388,10 +437,13 @@
 
         atualizarHeaderModalVertical();
         renderizarTrilhaVertical();
+        atualizarAnimacoesPasse();
 
         // Rola automaticamente até o nível atual do jogador
-        setTimeout(function () {
-            rolarParaNivelAtual();
+        clearTimeout(timeoutRolagem);
+        timeoutRolagem = setTimeout(function () {
+            timeoutRolagem = null;
+            if (passView.style.display === "block") rolarParaNivelAtual();
         }, 150);
 
         if (typeof playPop === "function") playPop();
@@ -399,11 +451,14 @@
 
     // Fechamento do Passe Vertical (Retorna para as missões)
     window.fecharPasseVertical = function () {
+        clearTimeout(timeoutRolagem);
+        timeoutRolagem = null;
         var homeView = document.getElementById("missions-home-view");
         var passView = document.getElementById("missions-pass-view");
         if (!passView) return;
 
         passView.style.display = "none";
+        atualizarAnimacoesPasse();
         if (homeView) homeView.style.display = "block";
 
         var mainContent = document.getElementById("missions-main-content");
@@ -491,12 +546,45 @@
                 if (xp !== estado.xpTotal) {
                     estado.xpTotal = xp;
                     atualizarCardEntrada();
+                    atualizarHeaderModalVertical();
+                    if (ultimoNivelRenderizado !== null) renderizarTrilhaVertical();
                 }
             })
             .catch(function () {});
     }
 
     function inicializar() {
+        carregarSombrasPasse();
+        if (typeof IntersectionObserver !== "undefined") {
+            observadorAnimacoes = new IntersectionObserver(function (entradas) {
+                entradas.forEach(function (entrada) {
+                    if (entrada.isIntersecting && entrada.target.isConnected) elementosProximos.add(entrada.target);
+                    else elementosProximos.delete(entrada.target);
+                });
+                atualizarAnimacoesPasse();
+            }, { rootMargin: "100px" });
+        }
+        document.querySelectorAll(".pass-inpage-top-bar, .pass-inpage-header-card").forEach(observarAnimacoes);
+        var modalRecompensa = document.getElementById("pass-reward-modal");
+        if (modalRecompensa) modalRecompensa.classList.add("pass-animacao-pausada");
+        document.addEventListener("visibilitychange", atualizarVisibilidadeDaAba);
+        atualizarVisibilidadeDaAba();
+
+        var container = document.getElementById("pass-v-track");
+        if (container) {
+            container.addEventListener("click", function (e) {
+                var btn = e.target.closest(".pv-claim-btn");
+                if (!btn || !container.contains(btn)) return;
+                e.stopPropagation();
+                var nivel = parseInt(btn.dataset.nivel, 10);
+                var trilha = btn.dataset.trilha;
+                var recompItem = estado.recompensas[nivel - 1];
+                if (!recompItem) return;
+                var payload = (trilha === "premium") ? recompItem.premium : recompItem.free;
+                coletarRecompensa(nivel, trilha, payload);
+            });
+        }
+
         estado.recompensas = gerarRecompensas();
         carregarEstado();
         try {

@@ -71,7 +71,6 @@
 /* ===== CONTAINER PRINCIPAL E TRANSIÇÃO IN-PAGE (AO LADO DA NAVBAR) ===== */
 .missions-view-panel {
     width: 100%;
-    animation: fadeInView 0.3s ease-out;
 }
 
 @keyframes fadeInView {
@@ -398,7 +397,18 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
-    animation: passInpageSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pass-animacao-pausada,
+.pass-animacao-pausada::before,
+.pass-animacao-pausada::after,
+.pass-animacao-pausada *,
+.pass-animacao-pausada *::before,
+.pass-animacao-pausada *::after,
+.missoes-aba-oculta *,
+.missoes-aba-oculta *::before,
+.missoes-aba-oculta *::after {
+    animation-play-state: paused !important;
 }
 
 @keyframes passInpageSlideIn {
@@ -902,12 +912,13 @@
 /* — Célula Grátis: Dark Glass elegante, sem cor intrusiva — */
 .pass-v-cell-free {
     flex: 1;
+    min-width: 0;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px 8px 8px 20px;
-    padding: 12px 16px;
+    padding: 0;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     position: relative;
     backdrop-filter: blur(12px);
@@ -917,7 +928,19 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         inset 0 -1px 0 rgba(0, 0, 0, 0.2);
     transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    overflow: visible;
+}
+
+.pv-cell-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
+    border-radius: inherit;
+    padding: 12px 16px;
 }
 
 .pass-v-cell-free::before {
@@ -925,7 +948,42 @@
     position: absolute;
     inset: 0;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+    border-radius: inherit;
     pointer-events: none;
+}
+
+.pass-v-cell-free::after,
+.pass-v-cell-premium::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 0 solid transparent;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.pass-v-cell-free::after {
+    border-image: url('../assets/ui/passe/sombra-gratis.png') 120 fill / 60px / 40px;
+}
+
+.pass-v-cell-premium::after {
+    border-image: url('../assets/ui/passe/sombra-premium.png') 120 fill / 60px / 40px;
+}
+
+.pass-sombras-prontas .pass-v-cell-free:not(:hover),
+.pass-sombras-prontas .pass-v-cell-premium:not(:hover) {
+    box-shadow: none;
+}
+
+.pass-sombras-prontas .pass-v-cell-free:not(:hover)::after,
+.pass-sombras-prontas .pass-v-cell-premium:not(:hover)::after {
+    opacity: 1;
+}
+
+.pass-v-cell-free:hover::after,
+.pass-v-cell-premium:hover::after {
+    opacity: 0;
 }
 
 .pass-v-cell-free:hover {
@@ -990,13 +1048,13 @@
 .pass-v-diamond-node.node-current {
     background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
     border-color: #fef08a;
-    box-shadow: 0 0 24px rgba(251, 191, 36, 1);
+    box-shadow: 0 0 32px rgba(251, 191, 36, 1);
     animation: currentDiamondPulse 1.8s infinite;
 }
 
 @keyframes currentDiamondPulse {
-    0%, 100% { transform: rotate(45deg) scale(1); box-shadow: 0 0 18px rgba(251, 191, 36, 0.8); }
-    50% { transform: rotate(45deg) scale(1.14); box-shadow: 0 0 32px rgba(251, 191, 36, 1.0); }
+    0%, 100% { transform: rotate(45deg) scale(1); }
+    50% { transform: rotate(45deg) scale(1.14); }
 }
 
 .pvn-number {
@@ -1011,12 +1069,13 @@
 /* — Célula Premium: Gold Glass — a estrela do show — */
 .pass-v-cell-premium {
     flex: 1;
+    min-width: 0;
     background: rgba(251, 191, 36, 0.07);
     border: 1px solid rgba(251, 191, 36, 0.4);
     border-radius: 8px 20px 20px 8px;
-    padding: 12px 16px;
+    padding: 0;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     position: relative;
     backdrop-filter: blur(14px);
@@ -1027,7 +1086,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.12),
         inset 0 -1px 0 rgba(0, 0, 0, 0.2);
     transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Reflexo superior sutil de vidro dourado */
@@ -1177,6 +1236,7 @@
 
 /* Botão COLETAR: Esmeralda Sementis pulsante */
 .pv-claim-btn {
+    position: relative;
     background: linear-gradient(180deg, #10b981 0%, #059669 100%);
     border: 1.5px solid #6ee7b7;
     border-radius: 12px;
@@ -1189,19 +1249,23 @@
     cursor: pointer;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        0 4px 0 #047857,
-        0 6px 16px rgba(16, 185, 129, 0.45);
-    animation: claimPulse 1.8s infinite;
+        0 4px 0 #047857;
     transition: background 0.15s ease;
 }
 
+.pv-claim-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 28px rgba(16, 185, 129, 0.8);
+    animation: claimPulse 1.8s infinite;
+}
+
 @keyframes claimPulse {
-    0%, 100% {
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 4px 0 #047857, 0 0 14px rgba(16, 185, 129, 0.45);
-    }
-    50% {
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 4px 0 #047857, 0 0 28px rgba(16, 185, 129, 0.8);
-    }
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 .pv-claim-btn:hover {
@@ -1211,6 +1275,11 @@
 .pv-claim-btn:active {
     transform: translateY(3px);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 0 #047857;
+}
+
+.pv-claim-btn:active::before {
+    animation: none;
+    opacity: 0;
 }
 
 /* Tag COLETADO: glass esmeralda */
@@ -1301,19 +1370,17 @@
     border-radius: 22px;
     pointer-events: none;
     box-shadow:
-        0 0 18px rgba(251, 191, 36, 0.35),
-        inset 0 0 16px rgba(251, 191, 36, 0.08);
+        0 0 28px rgba(251, 191, 36, 0.6),
+        0 0 50px rgba(251, 191, 36, 0.15);
     animation: currentGoldGlow 2.5s ease-in-out infinite alternate;
 }
 
 @keyframes currentGoldGlow {
     from {
         opacity: 0.65;
-        box-shadow: 0 0 14px rgba(251, 191, 36, 0.3);
     }
     to {
         opacity: 1;
-        box-shadow: 0 0 28px rgba(251, 191, 36, 0.6), 0 0 50px rgba(251, 191, 36, 0.15);
     }
 }
 
@@ -1334,8 +1401,7 @@
         min-height: 96px;
     }
 
-    .pass-v-cell-free,
-    .pass-v-cell-premium {
+    .pv-cell-inner {
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
@@ -1934,13 +2000,22 @@
     justify-content: center;
     align-items: center;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
 }
 
 .xp-modal-overlay.active {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
+    transition-delay: 0s;
+}
+
+.xp-modal-overlay:not(.active) *,
+.xp-modal-overlay:not(.active) *::before,
+.xp-modal-overlay:not(.active) *::after {
+    animation-play-state: paused !important;
 }
 
 .xp-modal-content {
