@@ -90,17 +90,6 @@ body {
     }
 }
 
-.home-header,
-.content-wrapper,
-.modules-view,
-.loja-container,
-.page-container,
-.ranking-wrapper,
-.perfil-container,
-.trilhas-view {
-    animation: sementisContentFadeIn 0.2s ease-out;
-}
-
 img {
     max-width: 100%;
     height: auto;

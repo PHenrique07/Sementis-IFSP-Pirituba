@@ -40,3 +40,25 @@ As definições detalhadas de cada agente estão preservadas em [`.github/agents
    * Escreve o código funcional (Flask + SQLModel + Vanilla JS) respeitando estritamente o plano da CaIA e as convenções do Sementis.
 5. **XimbeIA (Review & Optimizer - `ximbeia.agent.md`):**
    * Revisa o código gerado, remove overengineering, melhora a legibilidade e garante que nenhuma convenção foi quebrada.
+
+
+---
+
+## 5. Compatibilidade com Codex
+
+As orientações desta seção adaptam o uso no Codex. Os arquivos de .github/agents/, .github/skills/, .agents/rules/ e o índice .agents/skills.json continuam atendendo ao Antigravity e ao GitHub Copilot.
+
+### Descoberta e leitura das skills
+
+- O Codex pode descobrir as entradas locais em .agents/skills/. As entradas de compatibilidade apontam para as skills originais em .github/skills/; abra e leia o SKILL.md original antes de seguir seu fluxo.
+- Resolva os links, referências, scripts e assets dessas skills a partir da pasta original, não da ponte em .agents/skills/. Preserve as skills que já possuem conteúdo próprio nessa pasta.
+- A atualização do catálogo pode exigir reabrir a sessão. Enquanto isso, as skills podem ser lidas diretamente pelo caminho no repositório.
+
+### Ferramentas e agentes
+
+- Traduza search/codebase e search/usages para pesquisa com rg e leitura dos arquivos; web/fetch para navegação disponível; edit para a ferramenta de edição disponível. Os nomes de ferramentas do Copilot não são comandos nativos do Codex.
+- SemeIA mantém a coordenação. Leia sua definição em .github/agents/semeia.agent.md e escolha Fast Path ou Full Pipeline conforme a tarefa.
+- No Full Pipeline, use a delegação nativa disponível no Codex, leia a definição de cada especialista em .github/agents/ e passe suas instruções explicitamente ao subagente. Execute BrinIA → CaIA → GratIA → XimbeIA em sequência, entregando o resultado de cada etapa à seguinte.
+- O frontmatter dos agentes do Copilot não limita automaticamente as ferramentas de um subagente no Codex. Respeite seus papéis nas instruções: BrinIA pesquisa sem editar; CaIA planeja sem implementar; GratIA implementa o plano; XimbeIA revisa.
+- Confira as ferramentas e os servidores MCP realmente disponíveis antes de usar uma skill. A descoberta da skill não instala nem disponibiliza DevTools, REA ou outros serviços. Informe uma limitação concreta e use uma alternativa disponível quando ela atender à tarefa; não invente ferramentas nem instale dependências apenas para carregar uma skill.
+- Se uma referência já estiver ausente na origem, informe a ausência. Não invente seu conteúdo: suspenda somente o trabalho que depender dela e continue as etapas independentes.

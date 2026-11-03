@@ -35,6 +35,13 @@
   cursor: pointer;
 }
 
+.sidebar-logo img,
+.nav-item img,
+.more-menu-item img {
+  font-size: 0;
+  color: transparent;
+}
+
 .nav-items-wrapper {
   display: contents;
 }
@@ -230,6 +237,7 @@
   .sidebar-logo img {
     width: 100%;
     height: auto;
+    aspect-ratio: 1707 / 420;
     display: block;
   }
 

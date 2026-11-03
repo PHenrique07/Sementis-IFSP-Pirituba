@@ -1,5 +1,39 @@
 document.addEventListener('DOMContentLoaded', async () => {
     let missoesGlobais = []; 
+    const videosDecorativos = new Map();
+    const modalXp = document.getElementById('xpModal');
+
+    const sincronizarVideo = (video) => {
+        const modal = video.closest('#xpModal');
+        const visivel = !document.hidden && videosDecorativos.get(video) &&
+            video.getClientRects().length > 0 && (!modal || modal.classList.contains('active'));
+        if (visivel) {
+            if (video.paused) video.play().catch(() => {});
+        } else {
+            video.pause();
+        }
+    };
+
+    const sincronizarVideos = () => videosDecorativos.forEach((visivel, video) => sincronizarVideo(video));
+    const observadorVideos = typeof IntersectionObserver !== 'undefined' ? new IntersectionObserver((entradas) => {
+        entradas.forEach((entrada) => {
+            if (!videosDecorativos.has(entrada.target)) return;
+            videosDecorativos.set(entrada.target, entrada.isIntersecting);
+            sincronizarVideo(entrada.target);
+        });
+    }) : null;
+
+    const registrarVideo = (video) => {
+        videosDecorativos.set(video, !observadorVideos);
+        sincronizarVideo(video);
+        if (observadorVideos) observadorVideos.observe(video);
+    };
+
+    document.querySelectorAll('video[autoplay]').forEach(registrarVideo);
+    document.addEventListener('visibilitychange', sincronizarVideos);
+    if (modalXp) {
+        new MutationObserver(sincronizarVideos).observe(modalXp, { attributes: true, attributeFilter: ['class'] });
+    }
 
     const buscarMissoes = async () => {
         const tempoReal = new Date().getTime();
@@ -54,6 +88,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Busca a primeira caixa de missões da sua tela
         const containerMissoes = document.querySelectorAll('.missions-list')[0]; 
         if (!containerMissoes) return;
+
+        containerMissoes.querySelectorAll('video[autoplay]').forEach((video) => {
+            video.pause();
+            if (observadorVideos) observadorVideos.unobserve(video);
+            videosDecorativos.delete(video);
+        });
 
         // Limpa as missões "chumbadas" no HTML, mas mantém o título e o botão de interrogação
         containerMissoes.innerHTML = `
@@ -120,6 +160,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             containerMissoes.appendChild(item);
         });
+        containerMissoes.querySelectorAll('video[autoplay]').forEach(registrarVideo);
     };
 
     // Carregamento instantâneo via cache (0ms)
