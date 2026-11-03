@@ -15,102 +15,194 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="perfil-page">
-    <header class="perfil-header">
-        <h1 class="perfil-title">PERFIL</h1>
-        <button class="settings-btn" aria-label="Configurações">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-        </button>
-    </header>
-
-    <main class="perfil-content">
-        <section class="user-intro">
-            <div class="user-avatar-wrapper">
-                <div class="user-avatar-large" id="avatar-container" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0">
-                    <img src="/assets/icons/icone_usuario.png" alt="Foto de Perfil" id="profile-picture">
-                    <div class="avatar-edit-overlay">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                    </div>
-                </div>
-                
-                <!-- Menu de Avatar -->
-                <div class="avatar-menu" id="avatar-menu">
-                    <button class="avatar-menu-btn" id="btn-add-photo">Adicionar foto</button>
-                    <button class="avatar-menu-btn danger" id="btn-remove-photo">Remover foto</button>
-                </div>
-                <input type="file" id="file-input-avatar" accept="image/*" style="display: none;">
-            </div>
-            <!-- ID adicionado aqui -->
-            <h2 class="user-name-large" id="perfil-user-name">...</h2>
-            <button class="add-bio-btn">Adicionar Biografia</button>
-            <button class="pro-btn">SEJA PRO - Teste Grátis</button>
-        </section>
-
-        <section class="user-level-progress">
-            <div class="level-header">
-                <!-- ID adicionado aqui -->
-                <span class="level-title" id="perfil-user-level">...</span>
-            </div>
-            <div class="level-bar-container">
-                <!-- ID adicionado aqui -->
-                <div class="level-bar-fill" id="perfil-progress-fill" style="width: 0%"></div>
-            </div>
-            <div class="level-footer">
-                <!-- ID adicionado aqui -->
-                <span class="level-points" id="perfil-progress-text">—/—</span>
-            </div>
-        </section>
-
-        <section class="user-stats-cards">
-           <div class="stat-card">
-                <!-- id="perfil-user-liga-icon" na imagem -->
-                <img id="perfil-user-liga-icon" src="/assets/ligas/liga_medalha_bronze.png" alt="Liga">
-                
-                <span class="stat-card-title">LIGA</span>
-                
-                <!--  id="perfil-user-liga-text" no texto -->
-                <span class="stat-card-value" id="perfil-user-liga-text">...</span>
-            </div>
-            <div class="stat-card">
-                <img src="/assets/icons/icone_sequencia_fogo_prata.png" alt="Sequência" onerror="this.src='/assets/icons/icone_sequencia_fogo.png';">
-                <span class="stat-card-title">SEQUÊNCIA</span>
-                <!-- ID adicionado aqui -->
-                <span class="stat-card-value" id="perfil-user-streak">—</span>
-            </div>
-            <div class="stat-card">
-                <img src="/assets/icons/icone_experiencia_prata.png" alt="Experiência">
-                <span class="stat-card-title">EXPERIÊNCIA</span>
-                <!-- ID adicionado aqui -->
-                <span class="stat-card-value" id="perfil-user-xp-total">—</span>
-            </div>
-        </section>
-
-        <button class="share-btn">
-            <span>COMPARTILHE SEU PROGRESSO</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-        </button>
-
-        <section class="friends-section">
-            <div class="friends-header">
-                <h3 class="friends-title">AMIGOS</h3>
-                <button type="button" class="add-friends-btn" id="btn-open-add-friends">+ Adicionar Amigos</button>
-            </div>
-            <div class="friends-list" id="perfil-friends-list">
-                <!-- Vazio ou placeholders podem vir aqui -->
-                <div class="friend-placeholder" id="btn-add-friend-circle" title="Adicionar amigo">
-                    <div class="friend-avatar-placeholder"></div>
-                </div>
-            </div>
-        </section>
-    </main>
-
+    <!-- Navbar compartilhada (Desktop Sidebar / Mobile Bottom Nav) -->
     <div id="shared-navbar-root"></div>
     <script src="/js/shared-navbar.js"></script>
+
+    <div class="perfil-container">
+        <!-- Header Superior Fixo -->
+        <header class="perfil-header">
+            <h1 class="perfil-title">PERFIL</h1>
+            <button class="settings-btn" aria-label="Configurações">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- CAPA / BANNER FULL-WIDTH (Ocupa toda a largura do topo) -->
+        <section class="perfil-banner-hero" id="perfil-banner">
+            <div class="banner-image" id="banner-image">
+                <div class="banner-gradient"></div>
+            </div>
+            <button class="banner-edit-btn" id="btn-editar-banner" title="Personalizar Capa">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>Editar Capa</span>
+            </button>
+            <input type="file" id="file-input-banner" accept="image/*" style="display: none;">
+        </section>
+
+        <!-- CONTEÚDO PRINCIPAL (Centralizado e proporcional) -->
+        <main class="perfil-content">
+            <!-- Bloco do Avatar e Identidade (Sobreposto à Capa) -->
+            <section class="user-intro-card">
+                <div class="user-avatar-hero" id="avatar-container" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0">
+                    <div class="avatar-ring">
+                        <div class="avatar-inner" id="avatar-inner">
+                            <img src="/assets/icons/icone_usuario.png" alt="Foto de Perfil" id="profile-picture" class="avatar-img">
+                            <div class="avatar-letter" id="avatar-letter" style="display: none;"></div>
+                        </div>
+                        <div class="avatar-edit-icon" title="Trocar foto de perfil">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown do Avatar -->
+                    <div class="avatar-menu" id="avatar-menu">
+                        <button class="avatar-menu-btn" id="btn-add-photo">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Adicionar foto
+                        </button>
+                        <button class="avatar-menu-btn danger" id="btn-remove-photo">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Remover foto
+                        </button>
+                    </div>
+                    <input type="file" id="file-input-avatar" accept="image/*" style="display: none;">
+                </div>
+
+                <div class="user-intro-info">
+                    <h2 class="user-name-large" id="perfil-user-name">...</h2>
+                    <button class="add-bio-btn" id="btn-add-bio">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        <span>Adicionar Biografia</span>
+                    </button>
+                    <p class="user-bio-text" id="user-bio-text" style="display: none;"></p>
+                </div>
+            </section>
+
+            <!-- Barra de Level -->
+            <section class="user-level-progress">
+                <div class="level-header">
+                    <div class="level-badge-tag">
+                        <span class="level-title" id="perfil-user-level">LEVEL 1</span>
+                    </div>
+                    <span class="level-points" id="perfil-progress-text">—/— XP</span>
+                </div>
+                <div class="level-bar-container">
+                    <div class="level-bar-fill" id="perfil-progress-fill" style="width: 0%"></div>
+                </div>
+            </section>
+
+            <!-- 3 Cards de Estatística (Liga, Sequência, Experiência) -->
+            <section class="user-stats-cards">
+                <div class="stat-card">
+                    <div class="stat-card-icon-wrap">
+                        <img id="perfil-user-liga-icon" src="/assets/ligas/liga_medalha_ouro.png" alt="Liga" onerror="this.src='/assets/ligas/liga_medalha_bronze.png';">
+                    </div>
+                    <span class="stat-card-title">LIGA</span>
+                    <span class="stat-card-value" id="perfil-user-liga-text">OURO</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon-wrap">
+                        <img src="/assets/icons/icone_sequencia_fogo_prata.png" alt="Sequência" onerror="this.src='/assets/icons/icone_sequencia_fogo.png';">
+                    </div>
+                    <span class="stat-card-title">SEQUÊNCIA</span>
+                    <span class="stat-card-value" id="perfil-user-streak">—</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon-wrap">
+                        <img src="/assets/icons/icone_experiencia_prata.png" alt="Experiência">
+                    </div>
+                    <span class="stat-card-title">EXPERIÊNCIA</span>
+                    <span class="stat-card-value" id="perfil-user-xp-total">—</span>
+                </div>
+            </section>
+
+            <!-- Banner Seja PRO integrado e elegante -->
+            <section class="pro-card-banner">
+                <div class="pro-card-content">
+                    <div class="pro-card-badge">PRO</div>
+                    <div class="pro-card-texts">
+                        <h3 class="pro-card-title">Acelere seu aprendizado com o Sementis PRO</h3>
+                        <p class="pro-card-desc">Vidas infinitas, ligas exclusivas e refil de tokens na SemeIA.</p>
+                    </div>
+                </div>
+                <button class="pro-btn">Testar Grátis</button>
+            </section>
+
+            <!-- Seção de Emblemas (12 Badges em SVG) -->
+            <section class="badges-section">
+                <div class="badges-header">
+                    <h3 class="badges-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="7"/>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                        </svg>
+                        <span>EMBLEMAS CONQUISTADOS</span>
+                    </h3>
+                    <span class="badges-count" id="badges-count">0/12</span>
+                </div>
+                <div class="badges-grid" id="badges-grid">
+                    <!-- Renderizado dinamicamente via JS -->
+                </div>
+            </section>
+
+            <!-- Botão Compartilhar -->
+            <button class="share-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                <span>COMPARTILHE SEU PROGRESSO</span>
+            </button>
+
+            <!-- Seção de Amigos -->
+            <section class="friends-section">
+                <div class="friends-header">
+                    <h3 class="friends-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>AMIGOS</span>
+                    </h3>
+                    <button type="button" class="add-friends-btn" id="btn-open-add-friends">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <span>Adicionar</span>
+                    </button>
+                </div>
+
+                <!-- Amigos Online -->
+                <div class="friends-group" id="friends-online-group" style="display: none;">
+                    <span class="friends-group-label">
+                        <span class="status-dot online"></span> Online
+                        <span class="friends-group-count" id="friends-online-count">0</span>
+                    </span>
+                    <div class="friends-list-cards" id="friends-online-list"></div>
+                </div>
+
+                <!-- Amigos Offline -->
+                <div class="friends-group" id="friends-offline-group" style="display: none;">
+                    <span class="friends-group-label">
+                        <span class="status-dot offline"></span> Offline
+                        <span class="friends-group-count" id="friends-offline-count">0</span>
+                    </span>
+                    <div class="friends-list-cards" id="friends-offline-list"></div>
+                </div>
+
+                <!-- Estado vazio -->
+                <div class="friends-empty" id="friends-empty">
+                    <div class="friends-empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                    </div>
+                    <p>Adicione amigos e acompanhe o progresso juntos!</p>
+                    <button type="button" class="friends-empty-btn" id="btn-add-friend-empty">Encontrar Amigos</button>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <!-- Modal Seja PRO -->
     <div id="pro-modal" class="modal-overlay">
@@ -156,7 +248,7 @@
         </div>
     </div>
 
-    <!-- Window / Modal de Adicionar Amigos com a cara do Sementis -->
+    <!-- Modal Adicionar Amigos -->
     <div id="modal-adicionar-amigos" class="modal-overlay">
         <div class="modal-content sementis-friend-modal-content">
             <button type="button" class="close-modal-btn" id="btn-fechar-modal-sementis" aria-label="Fechar">&times;</button>
@@ -168,7 +260,6 @@
             <h2 class="sf-modal-title">Adicionar Amigos</h2>
             <p class="sf-modal-subtitle">Encontre seus colegas de turma e dispute as ligas semanais juntos!</p>
 
-            <!-- Abas com a identidade do Sementis -->
             <div class="sf-modal-tabs">
                 <button type="button" class="sf-tab-btn active" id="sf-tab-adicionar">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
@@ -214,6 +305,37 @@
                         <p>Buscando convites...</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Badge (detalhe) -->
+    <div id="modal-badge-detalhe" class="modal-overlay">
+        <div class="modal-content badge-modal-content">
+            <button class="close-modal-btn" id="btn-fechar-badge" aria-label="Fechar">&times;</button>
+            <div class="badge-modal-icon" id="badge-modal-icon"></div>
+            <h3 class="badge-modal-titulo" id="badge-modal-titulo"></h3>
+            <p class="badge-modal-descricao" id="badge-modal-descricao"></p>
+            <span class="badge-modal-raridade" id="badge-modal-raridade"></span>
+            <span class="badge-modal-data" id="badge-modal-data"></span>
+        </div>
+    </div>
+
+    <!-- Modal Escolher Capa / Banner -->
+    <div id="modal-banner" class="modal-overlay">
+        <div class="modal-content banner-modal-content">
+            <button class="close-modal-btn" id="btn-fechar-modal-banner" aria-label="Fechar">&times;</button>
+            <h3 class="banner-modal-title">Personalizar Capa</h3>
+            <p class="banner-modal-subtitle">Escolha um estilo visual ou envie uma imagem do seu dispositivo</p>
+            <div class="banner-presets-grid" id="banner-presets-grid"></div>
+            <div class="banner-modal-actions">
+                <button type="button" class="banner-upload-btn" id="btn-banner-upload">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Carregar Imagem Própria
+                </button>
+                <button type="button" class="banner-reset-btn" id="btn-banner-reset">
+                    Restaurar Padrão
+                </button>
             </div>
         </div>
     </div>
