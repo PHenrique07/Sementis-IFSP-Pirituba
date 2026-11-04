@@ -197,3 +197,13 @@ class TurmaTrilha(SQLModel, table=True):
     trilha_id: int = Field(foreign_key="trilha.id", index=True)
     data_atribuicao: datetime = Field(default_factory=datetime.utcnow)
 
+
+
+# 17. Baús da trilha já abertos pelo aluno
+class BauColetado(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    usuario_id: int = Field(foreign_key="usuario.id", index=True)
+    trilha_id: int = Field(foreign_key="trilha.id", index=True)
+    posicao: int  # Quantidade de atividades que vêm antes do baú na trilha
+    raridade: str = Field(default="comum")  # "comum", "raro", "epico", "lendario"
+    data_coleta: datetime = Field(default_factory=datetime.utcnow)

@@ -6,7 +6,7 @@ import string
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 # Importando todas as tabelas do models.py
-from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade, GeradorTrilha, TurmaTrilha
+from models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade, GeradorTrilha, TurmaTrilha, BauColetado
 from datetime import date, timedelta
 import math
 
@@ -1397,6 +1397,7 @@ def obter_mapa_trilha_especifica(session: Session, trilha_id: int, usuario_id: i
         "trilha_nome": trilha.nome,
         "trilha_ordem": trilha.ordem,
         "atividades": atividades_formatadas,
+        "baus": montar_baus_da_trilha(session, usuario_id, trilha.id, atividades_formatadas),
     }]
 
 
@@ -1448,4 +1449,119 @@ def obter_ranking_da_turma(session: Session, turma_id: int) -> list[dict]:
             "xp_total": a.xp or 0,
             "ofensiva": a.ofensiva or 0,
         })
-    return ranking
+    return ranking
+
+# ==============================================================
+# BAÚS DA TRILHA (recompensa no meio do caminho, estilo Duolingo)
+# ==============================================================
+INTERVALO_BAUS = 3  # Um baú a cada 3 atividades
+TOQUES_BAU = 3  # Cada toque tem chance de evoluir a raridade
+CHANCE_EVOLUIR_BAU = 50  # Porcentagem de chance por toque
+ORDEM_RARIDADES = ["comum", "raro", "epico", "lendario"]
+RECOMPENSAS_BAU = {
+    "comum": {"moedas": 10, "xp": 5},
+    "raro": {"moedas": 20, "xp": 10},
+    "epico": {"moedas": 40, "xp": 20},
+    "lendario": {"moedas": 80, "xp": 40},
+}
+
+
+def calcular_posicoes_baus(total_atividades: int) -> list[int]:
+    """Posição = quantas atividades vêm antes do baú. Nunca coloca baú depois da última."""
+    return list(range(INTERVALO_BAUS, total_atividades, INTERVALO_BAUS))
+
+
+def montar_baus_da_trilha(session: Session, usuario_id: int, trilha_id: int, atividades_formatadas: list[dict]) -> list[dict]:
+    """Retorna os baús da trilha com o status para o aluno: bloqueado, disponivel ou coletado."""
+    coletados = {
+        bau.posicao: bau
+        for bau in session.exec(
+            select(BauColetado).where(
+                BauColetado.usuario_id == usuario_id,
+                BauColetado.trilha_id == trilha_id
+            )
+        ).all()
+    }
+
+    baus = []
+    for posicao in calcular_posicoes_baus(len(atividades_formatadas)):
+        bau = coletados.get(posicao)
+        if bau:
+            status = "coletado"
+        elif all(atv["status"] == "concluida" for atv in atividades_formatadas[:posicao]):
+            status = "disponivel"
+        else:
+            status = "bloqueado"
+
+        baus.append({
+            "posicao": posicao,
+            "status": status,
+            "raridade": bau.raridade if bau else None,
+        })
+    return baus
+
+
+def abrir_bau_trilha(session: Session, usuario_id: int, trilha_id: int, posicao: int):
+    """Sorteia a evolução do baú (um resultado por toque), entrega a recompensa e salva."""
+    atividades = session.exec(
+        select(Atividade).where(Atividade.trilha_id == trilha_id).order_by(Atividade.ordem)
+    ).all()
+
+    if posicao not in calcular_posicoes_baus(len(atividades)):
+        return {"erro": "Baú não encontrado nesta trilha"}, 404
+
+    ids_anteriores = [atv.id for atv in atividades[:posicao]]
+    concluidas = set(session.exec(
+        select(ProgressoUsuario.atividade_id).where(
+            ProgressoUsuario.usuario_id == usuario_id,
+            ProgressoUsuario.atividade_id.in_(ids_anteriores)
+        )
+    ).all())
+    if len(concluidas) < len(ids_anteriores):
+        return {"erro": "Conclua as atividades anteriores para abrir este baú"}, 403
+
+    ja_coletado = session.exec(
+        select(BauColetado).where(
+            BauColetado.usuario_id == usuario_id,
+            BauColetado.trilha_id == trilha_id,
+            BauColetado.posicao == posicao
+        )
+    ).first()
+    if ja_coletado:
+        return {"erro": "Este baú já foi aberto"}, 409
+
+    usuario = session.get(Usuario, usuario_id)
+    if not usuario:
+        return {"erro": "Usuário não encontrado"}, 404
+
+    # Cada toque pode subir um nível de raridade
+    indice_raridade = 0
+    evolucao = []
+    for _ in range(TOQUES_BAU):
+        if indice_raridade < len(ORDEM_RARIDADES) - 1 and secrets.randbelow(100) < CHANCE_EVOLUIR_BAU:
+            indice_raridade += 1
+        evolucao.append(ORDEM_RARIDADES[indice_raridade])
+
+    raridade = ORDEM_RARIDADES[indice_raridade]
+    recompensa = RECOMPENSAS_BAU[raridade]
+
+    usuario.moedas += recompensa["moedas"]
+    usuario.xp += recompensa["xp"]
+    usuario.xp_semanal += recompensa["xp"]
+    session.add(usuario)
+    session.add(BauColetado(usuario_id=usuario_id, trilha_id=trilha_id, posicao=posicao, raridade=raridade))
+
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        return {"erro": "Não foi possível salvar o baú"}, 500
+
+    return {
+        "evolucao": evolucao,
+        "raridade": raridade,
+        "moedas": recompensa["moedas"],
+        "xp": recompensa["xp"],
+        "moedas_totais": usuario.moedas,
+    }, 200
+

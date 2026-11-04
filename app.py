@@ -10,7 +10,8 @@ from crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_ema
     listar_alunos_detalhados_da_turma, obter_progresso_modulos_turma, entrar_na_turma,
     verificar_cota_geracao_ia, persistir_trilha_ia, estornar_cota_ia, consumir_cota_ia,
     atribuir_trilha_turma, remover_trilha_turma, listar_trilhas_da_turma, listar_trilhas_do_professor,
-    sincronizar_turmas_da_trilha, obter_mapa_trilha_especifica, listar_turmas_do_aluno, obter_ranking_da_turma)
+    sincronizar_turmas_da_trilha, obter_mapa_trilha_especifica, listar_turmas_do_aluno, obter_ranking_da_turma,
+    montar_baus_da_trilha, abrir_bau_trilha)
 from passlib.hash import argon2
 from functools import wraps
 import os
@@ -418,7 +419,8 @@ def obter_mapa_modulo(modulo_id):
                 "trilha_id": trilha.id,
                 "trilha_nome": trilha.nome,
                 "trilha_ordem": trilha.ordem,
-                "atividades": lista_atividades_formatadas
+                "atividades": lista_atividades_formatadas,
+                "baus": montar_baus_da_trilha(session, id_usuario, trilha.id, lista_atividades_formatadas)
             })
 
         return jsonify(resposta_mapa), 200
@@ -1576,6 +1578,15 @@ def obter_mapa_trilha(trilha_id):
         if not mapa:
             return jsonify({"erro": "Trilha não encontrada"}), 404
         return jsonify(mapa), 200
+
+
+@app.route('/api/trilhas/<int:trilha_id>/baus/<int:posicao>/abrir', methods=['POST'])
+@token_obrigatorio
+def abrir_bau(trilha_id, posicao):
+    """Abre o baú da trilha: o backend sorteia a evolução de raridade e entrega a recompensa."""
+    with Session(engine) as session:
+        resposta, status = abrir_bau_trilha(session, request.usuario_id, trilha_id, posicao)
+        return jsonify(resposta), status
 
 
 @app.route('/api/professor/trilhas/<int:trilha_id>/turmas', methods=['POST'])
