@@ -519,11 +519,11 @@
     94% { transform: translate(-50%, -50%) rotate(0); }
   }
 
-  /* ── PERSONAGENS AO LADO DA TRILHA ───────── */
+  /* ── ELEMENTOS DE SUSTENTABILIDADE E PERSONAGEM AO LADO DA TRILHA ───────── */
   .personagem {
     position: absolute;
-    width: 100px;
-    height: 112px;
+    width: 96px;
+    height: 106px;
     transform: translate(-50%, -50%);
     padding: 0;
     border: none;
@@ -537,24 +537,17 @@
     align-items: center;
     justify-content: flex-end;
   }
-  .personagem video {
+  .personagem-svg {
     position: relative;
     z-index: 1;
-    width: 92px;
-    height: 92px;
-    object-fit: contain;
-    transition: transform 0.2s ease;
+    width: 86px;
+    height: 94px;
+    overflow: visible;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  .personagem:hover video {
-    transform: translateY(-4px) scale(1.04);
-  }
-  .personagem-base {
-    width: 76px;
-    height: 18px;
-    margin-top: -12px;
-    border-radius: 50%;
-    background: var(--bg-light);
-    box-shadow: 0 5px 0 var(--bg-dark);
+  .personagem:hover .personagem-svg {
+    transform: translateY(-4px) scale(1.08);
   }
   .personagem-fala {
     position: absolute;
@@ -580,6 +573,17 @@
   .personagem.falando .personagem-fala {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Ícone exclusivo para nó ativo (não concluído) */
+  .node-active-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--green) 0%, var(--green-dark) 100%);
   }
 
   .bau-node:focus-visible,
@@ -1222,11 +1226,80 @@ const TOQUES_BAU  = 3;
 
 const NOMES_RARIDADE = { comum: 'Comum', raro: 'Raro', epico: 'Épico', lendario: 'Lendário' };
 
-// Personagens decorativos (stickers 3D que o site já usa) com dicas rápidas
-const PERSONAGENS_TRILHA = [
-  { nome: 'Recicla', video: 'garbage', dica: 'Separe o reciclável limpo e seco: assim ele realmente volta para a indústria!' },
-  { nome: 'Mira', video: 'target', dica: 'Uma lição por dia mantém sua ofensiva acesa. Bora para a próxima?' },
-  { nome: 'Drone Eco', video: '3d-stickle-drone-with-parcel', dica: 'Comprar de produtores locais reduz o transporte e as emissões de CO₂.' }
+// Elementos de sustentabilidade e personagens da trilha (SVG 2D puro alinhado à identidade Sementis)
+const ELEMENTOS_TRILHA = [
+  {
+    nome: 'Árvore Nativa',
+    dica: 'Uma árvore preservada absorve até 22 kg de CO₂ por ano e protege o solo!',
+    svg: `<svg class="personagem-svg" viewBox="0 0 100 110" aria-hidden="true" focusable="false">
+      <ellipse cx="50" cy="102" rx="34" ry="6" fill="rgba(0,0,0,0.22)"/>
+      <path d="M46 56 L44 98 C44 100 46 102 50 102 C54 102 56 100 56 98 L54 56 Z" fill="#78350f"/>
+      <path d="M48 62 L42 52 M52 68 L58 58" stroke="#78350f" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="50" cy="46" rx="32" ry="32" fill="#58cc02"/>
+      <ellipse cx="44" cy="40" rx="24" ry="24" fill="#a9ff71"/>
+      <circle cx="58" cy="38" r="14" fill="#7acc44"/>
+      <circle cx="38" cy="50" r="10" fill="#a9ff71"/>
+      <circle cx="42" cy="36" r="3" fill="#ffffff" opacity="0.8"/>
+      <circle cx="56" cy="44" r="2.5" fill="#ffffff" opacity="0.8"/>
+    </svg>`
+  },
+  {
+    nome: 'Painel Solar',
+    dica: 'A energia solar é 100% limpa e renovável: o sol abastece sem emitir poluentes!',
+    svg: `<svg class="personagem-svg" viewBox="0 0 100 110" aria-hidden="true" focusable="false">
+      <ellipse cx="50" cy="102" rx="36" ry="6" fill="rgba(0,0,0,0.22)"/>
+      <path d="M50 68 L50 98 M38 100 L62 100" stroke="#3a3a6a" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="18,65 82,65 74,32 26,32" fill="#1e293b" stroke="#3b82f6" stroke-width="2.5"/>
+      <polygon points="20,63 80,63 73,34 27,34" fill="#0f172a"/>
+      <line x1="38" y1="34" x2="34" y2="63" stroke="#38bdf8" stroke-width="1.5"/>
+      <line x1="50" y1="34" x2="50" y2="63" stroke="#38bdf8" stroke-width="1.5"/>
+      <line x1="62" y1="34" x2="66" y2="63" stroke="#38bdf8" stroke-width="1.5"/>
+      <line x1="23" y1="48" x2="77" y2="48" stroke="#38bdf8" stroke-width="1.5"/>
+      <circle cx="50" cy="67" r="3" fill="#a9ff71"/>
+      <circle cx="78" cy="22" r="5" fill="#facc15"/>
+      <line x1="78" y1="13" x2="78" y2="16" stroke="#facc15" stroke-width="2" stroke-linecap="round"/>
+      <line x1="86" y1="18" x2="84" y2="20" stroke="#facc15" stroke-width="2" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    nome: 'Estudante Sementis',
+    dica: 'Cada lição concluída reduz sua pegada de carbono. Continue focado nos estudos!',
+    svg: `<svg class="personagem-svg" viewBox="0 0 100 110" aria-hidden="true" focusable="false">
+      <ellipse cx="50" cy="102" rx="32" ry="6" fill="rgba(0,0,0,0.22)"/>
+      <rect x="24" y="70" width="52" height="6" rx="3" fill="#a9ff71"/>
+      <rect x="28" y="76" width="5" height="24" rx="2" fill="#3a3a7a"/>
+      <rect x="67" y="76" width="5" height="24" rx="2" fill="#3a3a7a"/>
+      <path d="M38 60 L62 60 L65 84 L35 84 Z" fill="#1a1a4a"/>
+      <path d="M42 60 C42 66 58 66 58 60" stroke="#a9ff71" stroke-width="3" fill="none"/>
+      <path d="M36 64 L28 78 L46 78" stroke="#1a1a4a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="48" cy="78" r="3.5" fill="#fed7aa"/>
+      <rect x="46" y="73" width="14" height="9" rx="2" fill="#0f172a" stroke="#a9ff71" stroke-width="1.2"/>
+      <polygon points="47,73 59,73 55,66 43,66" fill="rgba(169, 255, 113, 0.2)"/>
+      <ellipse cx="50" cy="40" rx="15" ry="15" fill="#fed7aa"/>
+      <path d="M35 38 C35 23 46 19 63 23 C65 29 65 37 63 38 C59 30 52 28 35 38 Z" fill="#451a03"/>
+      <path d="M48 20 C46 16 42 16 40 22" stroke="#451a03" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="43" cy="40" r="5" stroke="#1a1a4a" stroke-width="1.8" fill="none"/>
+      <circle cx="57" cy="40" r="5" stroke="#1a1a4a" stroke-width="1.8" fill="none"/>
+      <line x1="48" y1="40" x2="52" y2="40" stroke="#1a1a4a" stroke-width="1.8"/>
+      <circle cx="43" cy="40" r="1.8" fill="#1a1a4a"/>
+      <circle cx="57" cy="40" r="1.8" fill="#1a1a4a"/>
+      <path d="M47 48 C49 49.5 51 49.5 53 48" stroke="#1a1a4a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    </svg>`
+  },
+  {
+    nome: 'Turbina Eólica',
+    dica: 'A força dos ventos move pás eólicas sem poluir o ar nem consumir água potável!',
+    svg: `<svg class="personagem-svg" viewBox="0 0 100 110" aria-hidden="true" focusable="false">
+      <ellipse cx="50" cy="102" rx="28" ry="5" fill="rgba(0,0,0,0.22)"/>
+      <polygon points="48,46 52,46 54,100 46,100" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+      <circle cx="50" cy="46" r="4" fill="#0284c7"/>
+      <path d="M50 46 L50 14 C48 14 48 30 50 46 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <path d="M50 46 L76 60 C74 62 62 53 50 46 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <path d="M50 46 L24 60 C26 62 38 53 50 46 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <path d="M12 28 C20 24 28 28 36 26" stroke="#a9ff71" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+      <path d="M68 34 C76 30 84 34 90 32" stroke="#a9ff71" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+    </svg>`
+  }
 ];
 
 function seededNoise(n) {
@@ -1315,16 +1388,17 @@ function build() {
 
   renderizarPersonagens(scene, itens, pts, W);
 
+  const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
+
   itens.forEach((item, i) => {
     if (item.tipo === 'bau') {
       criarNoBau(scene, item.dados, pts[i]);
     } else {
-      criarNoLicao(scene, item.dados, pts[i]);
+      criarNoLicao(scene, item.dados, pts[i], concluidas);
     }
   });
 
   // Animação da Barra de XP verde
-  const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
   const totalFases = Math.max(1, lessons.length - 1);
   const percentage = (concluidas / totalFases * 100).toFixed(0);
 
@@ -1334,7 +1408,7 @@ function build() {
   }, 500);
 }
 
-function criarNoLicao(scene, lesson, {x, y}) {
+function criarNoLicao(scene, lesson, {x, y}, concluidas) {
   const div = document.createElement('div');
   div.className = `node ${lesson.state}`;
   div.style.left = x + 'px';
@@ -1343,12 +1417,30 @@ function criarNoLicao(scene, lesson, {x, y}) {
   const inner = document.createElement('div');
   inner.className = 'node-inner';
 
-  const img = document.createElement('img');
-  img.src = (lesson.state === 'locked')
-    ? 'assets/tarefas/tarefa_bloqueada.png'
-    : 'assets/tarefas/tarefa_concluida.png';
-  img.alt = lesson.state;
-  inner.appendChild(img);
+  if (lesson.state === 'active') {
+    // Nó ativo da vez: NÃO exibe checkmark! Exibe ícone ativo de estrela/semente
+    const activeIcon = document.createElement('div');
+    activeIcon.className = 'node-active-icon';
+    activeIcon.innerHTML = `
+      <svg viewBox="0 0 24 24" width="44" height="44" fill="#ffffff" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>`;
+    inner.appendChild(activeIcon);
+
+    // Balão de ação: "COMEÇAR" apenas na primeira lição do aluno; nas demais, muda para "CONTINUAR"
+    const tooltip = document.createElement('div');
+    tooltip.className = 'start-tooltip';
+    tooltip.textContent = (concluidas === 0) ? 'COMEÇAR' : 'CONTINUAR';
+    div.appendChild(tooltip);
+  } else {
+    // Nó concluído (com checkmark) ou bloqueado (com cadeado)
+    const img = document.createElement('img');
+    img.src = (lesson.state === 'locked')
+      ? 'assets/tarefas/tarefa_bloqueada.png'
+      : 'assets/tarefas/tarefa_concluida.png';
+    img.alt = lesson.state;
+    inner.appendChild(img);
+  }
 
   if (lesson.state === 'done' && lesson.label !== 'Introdução') {
     const star = document.createElement('div');
@@ -1358,14 +1450,6 @@ function criarNoLicao(scene, lesson, {x, y}) {
   }
 
   div.appendChild(inner);
-
-  // Balão "COMEÇAR" acima da lição liberada (no lugar da setinha)
-  if (lesson.state === 'active') {
-    const tooltip = document.createElement('div');
-    tooltip.className = 'start-tooltip';
-    tooltip.textContent = 'COMEÇAR';
-    div.appendChild(tooltip);
-  }
 
   const lbl = document.createElement('span');
   lbl.className = 'node-label';
@@ -1461,14 +1545,13 @@ function criarNoBau(scene, bau, {x, y}) {
 function renderizarPersonagens(scene, itens, pts, W) {
   if (W < 340) return; // Em telas muito estreitas não sobra espaço lateral
 
-  const reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let indicePersonagem = 0;
+  let indiceElemento = 0;
 
   for (let i = 2; i < itens.length; i += 4) {
     if (itens[i].tipo !== 'licao') continue;
 
-    const personagem = PERSONAGENS_TRILHA[indicePersonagem % PERSONAGENS_TRILHA.length];
-    indicePersonagem++;
+    const elemento = ELEMENTOS_TRILHA[indiceElemento % ELEMENTOS_TRILHA.length];
+    indiceElemento++;
 
     const { x, y } = pts[i];
     const lado = x < W / 2 ? 'direita' : 'esquerda';
@@ -1476,34 +1559,21 @@ function renderizarPersonagens(scene, itens, pts, W) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = `personagem ${lado}`;
-    btn.style.left = (lado === 'direita' ? W - 62 : 62) + 'px';
+    btn.style.left = (lado === 'direita' ? W - 60 : 60) + 'px';
     btn.style.top  = y + 'px';
-    btn.setAttribute('aria-label', `Ouvir dica de ${personagem.nome}`);
+    btn.setAttribute('aria-label', `Dica ecológica: ${elemento.nome}`);
 
     const fala = document.createElement('span');
     fala.className = 'personagem-fala';
     fala.setAttribute('role', 'status');
 
-    const video = document.createElement('video');
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.autoplay = !reduzirMovimento;
-    video.setAttribute('aria-hidden', 'true');
-    video.innerHTML = `
-      <source src="assets/hevc/${personagem.video}.hevc.mp4" type="video/mp4; codecs=hvc1">
-      <source src="assets/webm/${personagem.video}.webm" type="video/webm">`;
-
-    const base = document.createElement('span');
-    base.className = 'personagem-base';
-    base.setAttribute('aria-hidden', 'true');
-
-    btn.append(fala, video, base);
+    btn.innerHTML = elemento.svg;
+    btn.appendChild(fala);
 
     let timerFala = null;
     btn.onclick = () => {
       const falando = btn.classList.toggle('falando');
-      fala.textContent = falando ? `${personagem.nome}: ${personagem.dica}` : '';
+      fala.textContent = falando ? `${elemento.nome}: ${elemento.dica}` : '';
       clearTimeout(timerFala);
       if (falando) {
         window.sounds?.playPop();
