@@ -1,76 +1,89 @@
 # Sementis 🌱 ![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-blue.svg)
 
-Plataforma educacional gamificada desenvolvida como projeto acadêmico no IFSP Pirituba. O Sementis utiliza mecânicas de jogos para engajar os usuários no aprendizado através de trilhas de conhecimento e desafios interativos.
+Plataforma educacional gamificada desenvolvida como projeto acadêmico no IFSP Pirituba. O Sementis ensina sustentabilidade com trilhas, quizzes, missões, avatares, ligas e atividades para turmas.
 
-## 🏗️ Arquitetura do Projeto
+## Organização
 
-O Sementis utiliza uma arquitetura **desacoplada**:
-- **Front-end (Client):** Progressive Web App (PWA) construído com HTML/CSS/JS puro (Vanilla). Hospedado na **Vercel** (`sementis.com.br`).
-- **Back-end (API):** Servidor construído em Python com **Flask**, responsável pelas regras de negócio e banco de dados. Hospedado no **PythonAnywhere**.
-- O sistema possui configuração de ambiente dinâmica (`js/api-config.js`) que direciona as requisições (Fetch API) automaticamente para a API correta (Localhost ou Produção).
+| Diretório/entrada | Responsabilidade | Contexto |
+| --- | --- | --- |
+| `backend/` | Flask, modelos SQLModel, regras de negócio, IA e Arena | [backend/CONTEXT.md](backend/CONTEXT.md) |
+| `backend/dados/` | Currículo e perguntas em JSON | [backend/dados/CONTEXT.md](backend/dados/CONTEXT.md) |
+| `frontend/` | HTML, CSS, JavaScript, assets, PWA e FlapFish | [frontend/CONTEXT.md](frontend/CONTEXT.md) |
+| `tests/` | Testes unitários, integração e scripts manuais | [tests/CONTEXT.md](tests/CONTEXT.md) |
+| `docs/` | Wiki e referências de manutenção | [docs/CONTEXT.md](docs/CONTEXT.md) |
+| `app.py`, `seeds.py` | Entradas de execução compatíveis na raiz | [CONTEXT.md](CONTEXT.md) |
+| `.github/`, `.agents/` | Perfis, skills e instruções existentes | [.github/CONTEXT.md](.github/CONTEXT.md) |
 
-## 🛠 Tecnologias
+O banco `sementis.db` e o arquivo `.env` continuam na raiz e são ignorados pelo Git. Os caminhos são definidos em `backend/caminhos.py`. Veja o [registro da reorganização](docs/reestruturacao.md) para imports, hospedagem e contratos preservados.
 
-**Backend:**
-- Python 3.10+
-- Flask (Rotas e API Rest)
-- Flask-CORS (Comunicação Cross-Origin com credenciais)
-- SQLite (Banco de Dados)
+## Contexto para agentes
 
-**Frontend:**
-- HTML5 / CSS3
-- Vanilla JavaScript
-- PWA (Manifest e Service Workers)
+Comece pelo [AGENTS.md](AGENTS.md) e siga os `CONTEXT.md` das áreas envolvidas. A [metodologia adotada](docs/metodologia-contexto.md) explica os perfis opcionais e os caminhos de leitura. Consulte os [fluxos do back-end](docs/referencias/fluxos-backend.md) e a [validação por escopo](docs/referencias/validacao.md) conforme a tarefa.
 
-## ⚙️ Como rodar localmente
+## Tecnologias
 
-Como o projeto é desacoplado, você precisa rodar a API (Back-end) e abrir o Front-end simultaneamente.
+Python 3.10+, Flask, SQLModel/SQLAlchemy, SQLite, JWT e Argon2 no back-end. HTML5, CSS3 e JavaScript Vanilla na interface, com Phaser no FlapFish. A API e o front-end podem ser servidos separadamente.
 
-### 1. Rodando a API (Back-end)
-1. Clone o repositório e entre na pasta:
-   ```bash
-   git clone https://github.com/PHenrique07/Sementis-IFSP-Pirituba.git
-   cd Sementis-IFSP-Pirituba
-   ```
+## Execução local
 
-   Crie e ative o ambiente virtual:
+Na raiz do repositório, crie e ative o ambiente virtual. No Windows PowerShell:
 
-   Windows: python -m venv venv e depois venv\Scripts\activate
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
 
-   Linux/macOS: python3 -m venv venv e depois source venv/bin/activate
+No Linux/macOS, ative com `source venv/bin/activate`. Para configuração de IA, copie `.env.example` para `.env` e use suas próprias configurações. Para trabalhar sem chamadas externas, defina `SEMEIA_ADAPTADOR=mock` no ambiente.
 
-   Instale as dependências e inicie o banco de testes:
-   ```bash
-   pip install -r requirements.txt
-   python seeds.py
-   ```
+Em um banco de desenvolvimento novo, o povoamento inicial continua disponível:
 
-   Inicie o servidor Flask:
-   ```bash
-   flask run
-   ```
+```powershell
+python seeds.py
+```
 
-   A API estará rodando em http://127.0.0.1:5000.
+Se já houver usuário, o povoamento inicial é interrompido. Leia o [contrato de conteúdo](backend/dados/CONTEXT.md) antes de usar `--atualizar-conteudo` em um banco existente.
 
-### 2. Rodando o Site (Front-end)
+Inicie a API e a interface juntas:
 
-Com a API rodando no terminal, abra o código do Sementis no VS Code.
+```powershell
+python app.py
+```
 
-Utilize a extensão Live Server para abrir o arquivo index.html.
+Abra `http://127.0.0.1:5000/`. O comando `flask run` também continua disponível na raiz.
 
-O script api-config.js detectará que você está no localhost e fará com que o site se conecte automaticamente à sua API local da porta 5000.
+Para servir somente a interface em outro terminal, mantendo a API na porta 5000:
+
+```powershell
+python -m http.server 3000 --directory frontend
+```
+
+Abra `http://localhost:3000/`. No Live Server, use `frontend/` como raiz pública e uma origem permitida pelo CORS. `frontend/js/api-config.js` escolhe a URL da API; as URLs públicas de páginas e assets continuam sem o prefixo `/frontend`.
+
+## Testes
+
+```powershell
+python -m pip install pytest
+python -m pytest --tb=short -v
+```
+
+A suíte usa bancos isolados e inclui modelos, regras, inventário, fluxos HTTP e arquivos públicos. Scripts históricos em `tests/manuais/` não são executados automaticamente; veja [Validação](docs/referencias/validacao.md) antes de usá-los.
+
+## Hospedagem
+
+`vercel.json` configura a publicação estática de `frontend/` a partir da raiz do repositório. A API continua podendo ser hospedada no PythonAnywhere com `from app import app as application` no WSGI. Os detalhes e limites de validação estão no [registro da reorganização](docs/reestruturacao.md).
 
 ## 👥 Integrantes e Contribuições
 
 - **[Pedro Henrique Santos da Silva](https://www.linkedin.com/in/pedro-henrique-santos-da-silva-40b521349/)** — **Líder Técnico & Desenvolvedor Backend:** Responsável pela coordenação geral do projeto e pela arquitetura da API.
 
-- **[Lucas Peres Gomes](https://www.linkedin.com/in/lucas-peres-gomes-747318276/)** — **Desenvolvedor Backend:** Responsável pela estruturação do servidor, configuração da aplicação (`app.py`, `crud.py`, `models.py`), além da implementação de regras de negócio e lógica da API.
+- **[Lucas Peres Gomes](https://www.linkedin.com/in/lucas-peres-gomes-747318276/)** — **Desenvolvedor Backend:** Responsável pela estruturação do servidor, configuração da aplicação (`app.py`, `backend/crud.py`, `backend/models.py`), além da implementação de regras de negócio e lógica da API.
 
-- **[Vinícius Ruza Magalhães](https://www.linkedin.com/in/vinicius-ruza-magalhães-394104353/)** — **Desenvolvedor de Integração:** Responsável por conectar o frontend ao backend utilizando as APIs e garantir a comunicação eficiente entre as camadas do sistema.
+- **[Vinícius Ruza Magalhães](https://www.linkedin.com/in/vinicius-ruza-magalhães-394104353/)** — **Desenvolvedor de Integração:** Responsável por conectar o frontend ao backend utilizando JavaScript assíncrono e APIs, garantindo a comunicação eficiente entre as camadas do sistema.
 
-- **[Wellington Mendes](https://www.linkedin.com/in/wmendesc/)** — **Desenvolvedor Frontend:** Responsável pela criação da interface, estilização visual (UI/UX) e garantia da responsividade.
+- **[Wellington Mendes](https://www.linkedin.com/in/wmendesc/)** — **Desenvolvedor Frontend:** Responsável pela criação da interface, estilização visual (UI/UX) e garantia da responsividade da aplicação.
 
 ## 📄 Licença
 
-Todos os Direitos Reservados (All Rights Reserved)
+Todos os Direitos Reservados (All Rights Reserved)  
 Este repositório e seu código-fonte são de propriedade exclusiva da equipe criadora.

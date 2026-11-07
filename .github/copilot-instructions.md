@@ -1,22 +1,7 @@
-# Sementis - Copilot Instructions
+# Sementis — instruções do Copilot
 
-## Visão Geral do Repositório
-O Sementis é uma aplicação web acadêmica e gamificada voltada para o ensino de sustentabilidade. A arquitetura é dividida em um back-end leve em Python servindo APIs e um front-end dinâmico em HTML/CSS/JS puro (Vanilla).
+Leia [AGENTS.md da raiz](../AGENTS.md) para as regras globais e o mapa das áreas. Abra explicitamente o `CONTEXT.md` indicado para a tarefa e os contratos locais necessários; não presuma que arquivos de contexto sejam carregados automaticamente.
 
-## Stack Tecnológica
-*   **Back-end:** Python, Flask (Rotas/API).
-*   **Banco de Dados:** SQLite, gerenciado exclusivamente via SQLModel e SQLAlchemy (não usamos scripts SQL puros ou MySQL).
-*   **Front-end:** HTML5, CSS3, Vanilla JavaScript.
-*   **Segurança/Autenticação:** JWT (PyJWT) e Argon2 para hash de senhas.
+Use o mesmo contexto ao pesquisar, planejar, implementar e revisar. Os perfis existentes seguem [agents/CONTEXT.md](agents/CONTEXT.md); múltiplos arquivos não exigem um pipeline de subagentes.
 
-## Divisão do Time (Para contexto de tarefas)
-*   **Banco de Dados & Regras de Negócio:** Responsável pelos arquivos `models.py` e `crud.py`.
-*   **API & Backend:** Responsável por gerenciar o `app.py` e proteger as rotas com decoradores.
-*   **Front-end (Lógica):** Responsável pelos arquivos `.js` que consomem a API e manipulam o DOM.
-*   **Front-end (UI/UX):** Responsável pelos arquivos `.html` e `.css`.
-
-## Convenções e Regras Inegociáveis
-*   **Mimetismo de Código (NÃO INVENTE):** Siga estritamente o padrão de código, formatação e arquitetura já estabelecidos nos outros arquivos do projeto. Se o projeto usa uma abordagem específica para rotas, banco de dados ou manipulação de DOM, replique-a. Não introduza novas bibliotecas, frameworks ou padrões de design que não existam atualmente no repositório.
-*   **Modelagem de Dados:** Todo e qualquer acesso ou alteração estrutural no banco de dados DEVE ser feito através das classes do `models.py`.
-*   **Separação de Responsabilidades:** O Front-end NUNCA deve calcular regras de negócio pesadas (como dias de ofensiva ou nível de XP). O back-end calcula, envia no payload JSON, e o front-end apenas exibe.
-*   **Idioma e Nomenclatura:** Código fonte com variáveis, funções e comentários escritos prioritariamente em Português (ex: `atualizar_ofensiva` ao invés de `updateStreak`).
+Antes de concluir, execute as verificações pertinentes descritas em [Validação](../docs/referencias/validacao.md) e atualize a orientação se um contrato ou caminho mudar.

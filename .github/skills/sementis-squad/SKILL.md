@@ -1,43 +1,20 @@
 ---
 name: sementis-squad
 description: >-
-  Coordena o esquadrão de agentes do Sementis (SemeIA, BrinIA, CaIA, GratIA, XimbeIA)
-  para qualquer tarefa de pesquisa, planejamento, implementação ou revisão de código.
+  Organiza uma passagem de tarefa ou colaboração entre os perfis do Sementis quando
+  o usuário solicitar o esquadrão ou houver delegação autorizada entre esses perfis.
 ---
 
-# Sementis Squad Orchestrator
+# Colaboração entre perfis do Sementis
 
-Esta skill orienta o fluxo de trabalho do esquadrão Sementis conforme definido em [.github/agents/](file:///d:/Programacao/Sementis-2/.github/agents/) e no [AGENTS.md](file:///d:/Programacao/Sementis-2/AGENTS.md).
+Use esta skill para organizar uma colaboração solicitada ou autorizada. Tarefas comuns podem ser resolvidas pelo mesmo agente usando [AGENTS.md](../../../AGENTS.md) e os contextos das áreas; não precisam ativar o esquadrão.
 
-## Papéis do Esquadrão
+## Procedimento
 
-1. **SemeIA (Main Orchestrator):** 
-   - Avalia a complexidade:
-     - **Fast Path:** Dúvidas simples, ajustes pontuais em 1 arquivo → responde direto sem pipeline pesado.
-     - **Full Pipeline:** Tarefas que tocam múltiplos arquivos, novas features ou regras de banco → aciona o fluxo sequencial obrigatório (BrinIA → CaIA → GratIA → XimbeIA).
-   - Documento base: [.github/agents/semeia.agent.md](file:///d:/Programacao/Sementis-2/.github/agents/semeia.agent.md).
+1. Leia o [contrato dos perfis](../../agents/CONTEXT.md) e localize os contextos da tarefa no mapa global.
+2. Defina objetivo, limites e resultado verificável da subtarefa. Escolha só o perfil pertinente: pesquisa (BrinIA), planejamento (CaIA), implementação (GratIA) ou revisão (XimbeIA); SemeIA integra o resultado quando estiver conduzindo o trabalho.
+3. Passe caminhos dos contextos, arquivos relevantes, contratos/decisões já definidos e validações esperadas. Para alteração de modelo, inclua o plano de compatibilidade dos dados.
+4. Ao receber o resultado, confira evidências, integração com os consumidores e pendências; valide conforme a [referência do repositório](../../../docs/referencias/validacao.md).
+5. Consolide uma entrega com resultado e verificações reais. Se não houver ferramenta de delegação, execute as perspectivas necessárias na mesma sessão, respeitando o pedido e as capacidades disponíveis.
 
-2. **BrinIA (Research Specialist):**
-   - Extrai requisitos funcionais/não-funcionais.
-   - Identifica restrições de arquitetura (Flask, SQLite, SQLModel, Vanilla JS).
-   - Propõe de 2 a 3 abordagens técnicas com prós e contras (sem decidir).
-   - Documento base: [.github/agents/brinia.agent.md](file:///d:/Programacao/Sementis-2/.github/agents/brinia.agent.md).
-
-3. **CaIA (Strategic Planner):**
-   - Escolhe a abordagem técnica ideal e justifica.
-   - Define os módulos afetados e contratos de payloads JSON entre Back-end e Front-end.
-   - Define estratégia de testes.
-   - Se houver alteração em `models.py`, destaca explicitamente no plano.
-   - Documento base: [.github/agents/caia.agent.md](file:///d:/Programacao/Sementis-2/.github/agents/caia.agent.md).
-
-4. **GratIA (UI & Implementation Specialist):**
-   - Escreve código limpo, tipado e modular estritamente guiada pelo plano da CaIA.
-   - Respeita as convenções (nomes em português, sem frameworks extras no front).
-   - Nunca altera `models.py` sem previsão no plano da CaIA.
-   - Documento base: [.github/agents/gratia.agent.md](file:///d:/Programacao/Sementis-2/.github/agents/gratia.agent.md).
-
-5. **XimbeIA (Reviewer & Optimizer):**
-   - Remove complexidade excessiva e overengineering.
-   - Melhora legibilidade e DX.
-   - Garante conformidade com todas as regras do projeto.
-   - Documento base: [.github/agents/ximbeia.agent.md](file:///d:/Programacao/Sementis-2/.github/agents/ximbeia.agent.md).
+Não existe sequência obrigatória de perfis nem gatilho por quantidade de arquivos. Regras do produto e fatos de arquitetura permanecem nos contextos correspondentes, não nesta skill.

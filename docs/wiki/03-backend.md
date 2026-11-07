@@ -1,5 +1,7 @@
 # Como Funciona o Back-end ⚙️
 
+A implementacao Python fica em `backend/`; `app.py` e `seeds.py` na raiz preservam os comandos de execucao. Consulte a referencia de fluxos em `docs/referencias/fluxos-backend.md` para contratos atuais.
+
 O back-end do Sementis foi arquitetado para ser **enxuto, previsível e altamente confiável**. Ele é construído em **Python** utilizando **Flask** para a camada de controle/rotas e **SQLModel** (que combina SQLAlchemy com Pydantic) para a camada de modelo e persistência de dados.
 
 ---
@@ -17,7 +19,7 @@ O back-end do Sementis foi arquitetado para ser **enxuto, previsível e altament
 
 ## 📊 Modelo de Dados (`models.py`)
 
-Todo e qualquer acesso aos dados do Sementis segue a convenção estrita de utilizar os modelos definidos em [`models.py`](file:///d:/Programacao/Sementis-2/models.py). Não são utilizados comandos SQL puros.
+Todo e qualquer acesso aos dados do Sementis segue a convenção estrita de utilizar os modelos definidos em [`models.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/models.py). Não são utilizados comandos SQL puros.
 
 ### Diagrama Entidade-Relacionamento (ER)
 
@@ -67,7 +69,7 @@ erDiagram
 
 ## 🧠 Regras de Negócio e Gamificação (`crud.py`)
 
-O arquivo [`crud.py`](file:///d:/Programacao/Sementis-2/crud.py) é o motor da inteligência de dados do Sementis. Uma das regras inegociáveis do projeto é:
+O arquivo [`crud.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/crud.py) é o motor da inteligência de dados do Sementis. Uma das regras inegociáveis do projeto é:
 
 > **Regra de Ouro:** O Front-end NUNCA deve calcular regras de negócio pesadas (como XP, dias de ofensiva ou nível). O back-end calcula, aplica as travas de integridade no banco e entrega o resultado final consolidado.
 
@@ -91,7 +93,7 @@ A função `sortear_missoes_diarias(usuario_id)` verifica se o aluno já possui 
 
 ## 🚀 Camada de Controle e Endpoints (`app.py`)
 
-O arquivo [`app.py`](file:///d:/Programacao/Sementis-2/app.py) expõe os serviços RESTful consumidos pelo front-end:
+O arquivo [`app.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/app.py) expõe os serviços RESTful consumidos pelo front-end:
 
 ### Principais Grupos de Rotas
 

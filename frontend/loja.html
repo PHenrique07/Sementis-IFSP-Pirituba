@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script src="js/api-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a4a">
+    <meta name="application-name" content="Sementis">
+    <link rel="manifest" href="pwa/manifest.webmanifest">
+    <link rel="icon" href="/assets/selo_sementis_branco.png" type="image/png">
+    
+    <title>Sementis - Loja Oficial</title>
+    
+    <!-- Google Fonts Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/shared-navbar.css">
+    <link rel="stylesheet" href="css/loja.css">
+    
+</head>
+<body class="loja-page">
+
+    <!-- Navegação Compartilhada (Desktop Sidebar / Mobile Bottom Nav) -->
+
+    <div id="shared-navbar-root"></div>
+    <script src="js/shared-navbar.js"></script>
+
+    <div class="loja-container">
+        
+        <!-- Header da Loja -->
+        <header class="loja-header" data-testid="loja-header">
+            <a href="home.html" aria-label="Voltar para a página inicial" class="loja-header-logo-link">
+                <img src="assets/brand/logo_sementis_branco.png" alt="Sementis Logo" class="loja-header-logo">
+            </a>
+
+            <div class="loja-header-stats">
+                <div class="loja-stat" title="Ofensiva de estudos">
+                    <img src="assets/icons/icone_sequencia_fogo.png" alt="Ofensiva">
+                    <span class="loja-stat-value" id="header-ofensiva">—</span>
+                </div>
+                <div class="loja-stat" title="Suas Moedas" data-testid="coin-balance">
+                    <img src="assets/icons/icone_moeda.png" alt="Moedas">
+                    <span class="loja-stat-value" data-testid="coin-balance-val" id="header-moedas">—</span>
+                </div>
+                <div class="loja-stat" title="Vidas">
+                    <img src="assets/icons/icone_vida.png" alt="Vidas">
+                    <span class="loja-stat-value" id="header-vidas">—</span>
+                </div>
+            </div>
+
+            <div class="loja-header-actions">
+                <button class="loja-icon-btn" onclick="window.testarDroneLoot()" title="Chamar Drone de Loot (Teste)" aria-label="Chamar Drone">
+                    <i data-lucide="plane" style="width: 18px; height: 18px;"></i>
+                </button>
+                <button class="loja-icon-btn" data-testid="sound-toggle-btn" title="Silenciar / Ativar sons" aria-label="Alternar som">
+                    <i data-lucide="volume-2" style="width: 18px; height: 18px;"></i>
+                </button>
+                <button class="loja-icon-btn" data-testid="reset-balance-btn" title="Reiniciar moedas de teste" aria-label="Reiniciar saldo">
+                    <i data-lucide="rotate-ccw" style="width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="loja-main">
+            
+            <!-- HERO SECTION -->
+            <section id="topo" class="loja-hero" data-testid="hero-section">
+                <div class="loja-hero-glow-left"></div>
+                <div class="loja-hero-glow-right"></div>
+
+                <div class="loja-hero-grid">
+                    <div>
+                        <div class="loja-hero-badge">
+                            <img src="assets/icons/icone_sequencia_fogo.png" alt="Fogo">
+                            Loja Oficial Sementis
+                        </div>
+
+                        <h1>
+                            A MÁQUINA <br>
+                            <span class="accent">DE PRÊMIOS</span> <br>
+                            DA FLORESTA
+                        </h1>
+
+                        <p class="loja-hero-desc">
+                            Gaste suas moedas de estudo em avatares, temas, vidas e power-ups — ou arrisque na máquina de cápsulas e torça por um prêmio lendário.
+                        </p>
+
+                        <div class="loja-hero-ctas">
+                            <button onclick="scrollToTarget('#maquina')" class="loja-btn-primary" data-testid="hero-cta-girar">
+                                Girar agora
+                                <i data-lucide="chevron-right" style="width: 18px; height: 18px; stroke-width: 3;"></i>
+                            </button>
+                            <button onclick="scrollToTarget('#itens')" class="loja-btn-secondary" data-testid="hero-cta-itens">
+                                Ver itens
+                            </button>
+                        </div>
+
+                        <div class="loja-hero-stats" data-testid="hero-stats">
+                            <div>
+                                <div class="loja-hero-stat-value">13</div>
+                                <div class="loja-hero-stat-label">prêmios possíveis</div>
+                            </div>
+                            <div>
+                                <div class="loja-hero-stat-value">4</div>
+                                <div class="loja-hero-stat-label">níveis de raridade</div>
+                            </div>
+                            <div>
+                                <div class="loja-hero-stat-value">100</div>
+                                <div class="loja-hero-stat-label">moedas por giro</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hero Art visual 3D -->
+                    <div class="loja-hero-art" data-testid="hero-art">
+                        <div class="loja-hero-art-ring">
+                            <div class="loja-hero-art-ring-inner"></div>
+                        </div>
+                        <div class="loja-hero-capsule-big">
+                            <div class="loja-hero-capsule-sphere" style="--float-r: -8deg;">
+                                <div class="loja-hero-capsule-top"></div>
+                                <div class="loja-hero-capsule-bottom"></div>
+                                <div class="loja-hero-capsule-glare"></div>
+                            </div>
+                        </div>
+                        <div class="loja-hero-float-icon loja-hero-float-coins" style="--float-r: 10deg;">
+                            <img src="assets/icons/icone_moeda.png" alt="Moedas">
+                        </div>
+                        <div class="loja-hero-float-icon loja-hero-float-leaf" style="--float-r: -12deg;">
+                            <img src="assets/icons/menu_rodape_tarefa.png" alt="Folha">
+                        </div>
+                        <div class="loja-hero-float-icon loja-hero-float-star" style="--float-r: 6deg;">
+                            <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="Troféu">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GACHA MACHINE SECTION -->
+            <section id="maquina" class="loja-gacha-section" data-testid="gacha-section">
+                <div class="loja-gacha-glow-bg"></div>
+
+                <div class="loja-gacha-header">
+                    <div class="loja-gacha-header-tag">
+                        <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> A atração principal
+                    </div>
+                    <h2>Sementeador <span class="accent">de Prêmios</span></h2>
+                    <p>
+                        Uma cápsula, um destino. Cada giro pode render moedas, vidas, power-ups e até o lendário Espírito da Floresta.
+                    </p>
+                </div>
+
+                <div class="loja-gacha-layout">
+                    
+                    <!-- Machine wrapper -->
+                    <div class="loja-gacha-wrapper">
+                        
+                        <!-- The Machine object -->
+                        <div class="gacha-machine" data-testid="gacha-machine-container">
+                            <div class="gacha-halo"></div>
+
+                            <!-- Dome Glass -->
+                            <div class="gacha-dome-wrap">
+                                <div class="gacha-dome gacha-body">
+                                    
+                                    <!-- Statically generated capsules with coords -->
+                                    <div class="gacha-capsule" style="top: 12%; left: 18%; width: 46px; height: 46px; --r: -14deg; background: linear-gradient(180deg, #a9ff71 0%, #a9ff71 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-14deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 8%; left: 46%; width: 48px; height: 48px; --r: 8deg; background: linear-gradient(180deg, #FF4B6E 0%, #FF4B6E 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(8deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 14%; left: 70%; width: 44px; height: 44px; --r: 20deg; background: linear-gradient(180deg, #4FC3F7 0%, #4FC3F7 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(20deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 30%; left: 8%; width: 42px; height: 42px; --r: -24deg; background: linear-gradient(180deg, #FFC107 0%, #FFC107 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-24deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 27%; left: 36%; width: 48px; height: 48px; --r: 4deg; background: linear-gradient(180deg, #C084FC 0%, #C084FC 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(4deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 29%; left: 62%; width: 46px; height: 46px; --r: 16deg; background: linear-gradient(180deg, #a9ff71 0%, #a9ff71 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(16deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 33%; left: 82%; width: 38px; height: 38px; --r: -10deg; background: linear-gradient(180deg, #FF8A00 0%, #FF8A00 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-10deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 50%; left: 16%; width: 46px; height: 46px; --r: 12deg; background: linear-gradient(180deg, #4FC3F7 0%, #4FC3F7 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(12deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 47%; left: 44%; width: 42px; height: 42px; --r: -18deg; background: linear-gradient(180deg, #FF4B6E 0%, #FF4B6E 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-18deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 51%; left: 68%; width: 46px; height: 46px; --r: 6deg; background: linear-gradient(180deg, #FFC107 0%, #FFC107 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(6deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 66%; left: 28%; width: 42px; height: 42px; --r: -6deg; background: linear-gradient(180deg, #C084FC 0%, #C084FC 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(-6deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+                                    <div class="gacha-capsule" style="top: 66%; left: 54%; width: 44px; height: 44px; --r: 22deg; background: linear-gradient(180deg, #a9ff71 0%, #a9ff71 47%, #f5f5ff 53%, #d5d5ee 100%); box-shadow: inset -3px -4px 6px rgba(10,10,35,0.3), inset 3px 4px 6px rgba(255,255,255,0.4), 0 5px 8px rgba(10,10,35,0.35); transform: rotate(22deg);">
+                                        <div class="gacha-capsule-glare"></div>
+                                        <div class="gacha-capsule-seam"></div>
+                                    </div>
+
+                                    <!-- Reflexos de vidro realistas -->
+                                    <div class="gacha-dome-glare-1"></div>
+                                    <div class="gacha-dome-glare-2"></div>
+                                    <div class="gacha-dome-glow-bottom"></div>
+                                </div>
+                                <div class="gacha-dome-ring"></div>
+                            </div>
+
+                            <!-- Body of Machine -->
+                            <div class="gacha-body">
+                                <div class="gacha-name-badge">
+                                    <span class="gacha-name-badge-dot"></span>
+                                    <span>SEMENTEADOR DE PRÊMIOS</span>
+                                    <span class="gacha-name-badge-dot"></span>
+                                </div>
+
+                                <div class="gacha-display-row">
+                                    <div class="gacha-screen">
+                                        <i data-lucide="sparkles" class="gacha-screen-icon"></i>
+                                        <span class="gacha-screen-text" data-testid="gacha-status">PRONTO</span>
+                                    </div>
+                                    <div class="gacha-price-display">
+                                        <img src="assets/icons/icone_moeda.png" alt="Moeda">
+                                        <span class="gacha-price-display-value">100</span>
+                                        <div class="gacha-price-slot"></div>
+                                    </div>
+                                </div>
+
+                                <div class="gacha-controls-row">
+                                    <!-- Knob (manivela) -->
+                                    <div class="gacha-knob-group">
+                                        <div class="gacha-knob" data-testid="gacha-knob">
+                                            <div class="gacha-knob-center">
+                                                <div class="gacha-knob-pointer"></div>
+                                            </div>
+                                        </div>
+                                        <span class="gacha-knob-label">Gire a manivela</span>
+                                    </div>
+
+                                    <!-- Chute de saída do prêmio -->
+                                    <div class="gacha-chute" id="gacha-chute-container">
+                                        <span class="gacha-chute-label">Saída do prêmio</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pés de suporte -->
+                            <div class="gacha-feet">
+                                <div class="gacha-foot"></div>
+                                <div class="gacha-foot"></div>
+                            </div>
+                        </div>
+
+                        <!-- Spin button -->
+                        <button type="button" class="gacha-spin-btn" data-testid="gacha-spin-btn">
+                            GIRAR
+                            <span class="gacha-spin-btn-price">
+                                <img src="assets/icons/icone_moeda.png" alt="Moedas">
+                                100
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- Sidebar Chances -->
+                    <aside class="loja-odds-panel" data-testid="gacha-odds">
+                        <h3>Chances de raridade</h3>
+                        <p>Toda cápsula tem um nível. Quanto mais raro, mais brilho.</p>
+                        
+                        <ul class="loja-odds-list">
+                            <li class="loja-odds-item">
+                                <div class="loja-odds-item-info">
+                                    <span class="loja-odds-dot" style="background-color: #b8b8e6; box-shadow: 0 0 10px #b8b8e6;"></span>
+                                    <span class="loja-odds-label" style="color: #b8b8e6;">Comum</span>
+                                </div>
+                                <span class="loja-odds-pct">55%</span>
+                            </li>
+                            <li class="loja-odds-item">
+                                <div class="loja-odds-item-info">
+                                    <span class="loja-odds-dot" style="background-color: #4FC3F7; box-shadow: 0 0 10px #4FC3F7;"></span>
+                                    <span class="loja-odds-label" style="color: #4FC3F7;">Raro</span>
+                                </div>
+                                <span class="loja-odds-pct">30%</span>
+                            </li>
+                            <li class="loja-odds-item">
+                                <div class="loja-odds-item-info">
+                                    <span class="loja-odds-dot" style="background-color: #C084FC; box-shadow: 0 0 10px #C084FC;"></span>
+                                    <span class="loja-odds-label" style="color: #C084FC;">Épico</span>
+                                </div>
+                                <span class="loja-odds-pct">12%</span>
+                            </li>
+                            <li class="loja-odds-item">
+                                <div class="loja-odds-item-info">
+                                    <span class="loja-odds-dot" style="background-color: #FFC107; box-shadow: 0 0 10px #FFC107;"></span>
+                                    <span class="loja-odds-label" style="color: #FFC107;">Lendário</span>
+                                </div>
+                                <span class="loja-odds-pct">3%</span>
+                            </li>
+                        </ul>
+
+                        <div class="loja-odds-tip">
+                            Dica de colecionador: prêmios em moedas podem pagar o próximo giro. O jackpot lendário dá +777 moedas.
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- MARQUEE RIBBON -->
+            <div class="loja-marquee" data-testid="loja-marquee">
+                <div class="loja-marquee-track">
+                    <div class="loja-marquee-group">
+                        <span class="loja-marquee-item">
+                            LOJA SEMENTIS <img src="assets/icons/menu_rodape_tarefa.png" alt="*">
+                        </span>
+                        <span class="loja-marquee-item">
+                            GIRE E GANHE <img src="assets/icons/icone_sequencia_fogo.png" alt="*">
+                        </span>
+                        <span class="loja-marquee-item">
+                            PRÊMIOS LENDÁRIOS <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="*">
+                        </span>
+                        <span class="loja-marquee-item">
+                            MOEDAS DE ESTUDO <img src="assets/icons/icone_moeda.png" alt="*">
+                        </span>
+                        <span class="loja-marquee-item">
+                            COLECIONE TUDO <img src="assets/icons/menu_rodape_alvo.png" alt="*">
+                        </span>
+                    </div>
+                    <div class="loja-marquee-group">
+                        <span class="loja-marquee-item">
+                            LOJA SEMENTIS <img src="assets/icons/menu_rodape_tarefa.png" alt="*">
+                        </span>
+                        <span class="loja-marquee-item">
+                            GIRE E GANHE <img src="assets/icons/icone_sequencia_fogo.png" alt="*">
+                        </span>
+                        <span class="loja-marquee-item">
+                            PRÊMIOS LENDÁRIOS <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="*">
+                        </span>
+                        <span class="loja-marquee-item">
+                            MOEDAS DE ESTUDO <img src="assets/icons/icone_moeda.png" alt="*">
+                        </span>
+                        <span class="loja-marquee-item">
+                            COLECIONE TUDO <img src="assets/icons/menu_rodape_alvo.png" alt="*">
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SHOP ITEMS SECTIONS -->
+            <section id="itens" class="loja-shop">
+                <!-- Gerado dinamicamente em loja.js -->
+            </section>
+
+            <!-- INVENTORY COLLECTION SECTION -->
+            <section id="colecao" class="loja-inventory" data-testid="inventory-section">
+                <div class="loja-inventory-glow"></div>
+                
+                <div class="loja-inventory-inner">
+                    <div class="loja-inventory-head">
+                        <div>
+                            <div class="loja-inventory-tag">
+                                <img src="assets/icons/menu_rodape_trofeu_liga.png" alt="Troféu">
+                                Inventário
+                            </div>
+                            <h2>Sua Coleção</h2>
+                        </div>
+                        <div class="loja-inventory-count" data-testid="inventory-count">
+                            — <span class="muted">de 12</span>
+                        </div>
+                    </div>
+
+                    <!-- Grid dinâmico -->
+                    <div id="inventory-container-wrapper" class="w-full">
+                        <!-- Gerado dinamicamente em loja.js -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="loja-footer" data-testid="loja-footer">
+            <div class="loja-footer-inner">
+                <div class="loja-footer-brand">
+                    <div class="loja-footer-brand-icon">
+                        <img src="assets/brand/logo_sementis_branco.png" alt="Sementis">
+                    </div>
+                    <div>
+                        <div class="loja-footer-brand-name">Sementis · Raízes do Saber</div>
+                        <div class="loja-footer-brand-sub">Plante a semente do conhecimento</div>
+                    </div>
+                </div>
+                <div class="loja-footer-note">
+                    Loja gamificada — moedas e conquistas de estudo
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Stage do Drone Sustentável e Loot Diário -->
+    <div id="drone-loot-stage" class="drone-loot-stage">
+        <div class="drone-focus-overlay" aria-hidden="true"></div>
+
+        <!-- Drone Voador em WebM -->
+        <div id="drone-actor" class="drone-actor">
+            <video autoplay loop muted playsinline class="drone-video">
+                <source src="assets/hevc/3d-stickle-drone-with-parcel.hevc.mp4" type="video/mp4; codecs=hvc1">
+                <source src="assets/webm/3d-stickle-drone-with-parcel.webm" type="video/webm">
+            </video>
+        </div>
+
+        <!-- Caixa de loot se soltando e caindo -->
+        <div id="drone-parcel" class="drone-parcel">
+            <div class="parcel-box">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#a9ff71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 8px rgba(169, 255, 113, 0.6));"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+        </div>
+
+        <!-- Fumaça Cartoon & Explosão de Partículas -->
+        <div id="drone-smoke-burst" class="drone-smoke-burst">
+            <div class="smoke-puff puff-1"></div>
+            <div class="smoke-puff puff-2"></div>
+            <div class="smoke-puff puff-3"></div>
+            <div class="smoke-puff puff-4"></div>
+            <div class="sparkle-star star-1">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#a9ff71" stroke="none"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2"></polygon></svg>
+            </div>
+            <div class="sparkle-star star-2">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#ffd700" stroke="none"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2"></polygon></svg>
+            </div>
+            <div class="sparkle-star star-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffd700" stroke="none"><circle cx="12" cy="12" r="9"></circle></svg>
+            </div>
+            <div class="sparkle-star star-4">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#69ccff" stroke="none"><polygon points="6 3 18 3 22 9 12 22 2 9 6 3"></polygon></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Resgate do Loot Diário do Drone -->
+    <div id="drone-loot-modal" class="drone-modal-overlay">
+        <div class="drone-modal-card">
+            <button class="drone-modal-close-btn" id="btn-close-drone-modal" type="button" aria-label="Fechar modal">✕</button>
+            <div class="drone-modal-glow"></div>
+            <div class="drone-modal-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-2px; margin-right:4px;"><circle cx="12" cy="12" r="2"></circle><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+                ENTREGA ESPECIAL SEMENTIS
+            </div>
+            <h2 class="drone-modal-title">LOOT DIÁRIO DROPOU!</h2>
+            <p class="drone-modal-desc">O Drone Sustentável sobrevoou a sua loja e entregou um suprimento especial de moedas de estudo!</p>
+            <div class="drone-loot-reward-box">
+                <img src="assets/icons/icone_moeda.png" alt="Moedas" class="reward-coin-icon">
+                <div class="reward-values">
+                    <span class="reward-amount">+67</span>
+                    <span class="reward-label">Moedas Gratuitas</span>
+                </div>
+            </div>
+            <button id="btn-claim-drone-loot" class="drone-claim-btn" type="button">
+                <span>Resgatar 67 Moedas!</span>
+                <i data-lucide="sparkles" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/sounds.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="js/gacha.js"></script>
+    <script src="js/loja.js"></script>
+
+</body>
+</html>

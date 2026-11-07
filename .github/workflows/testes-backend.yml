@@ -34,4 +34,4 @@ jobs:
 
       # d) Executa a suíte de testes
       - name: Rodar testes com Pytest
-        run: pytest --tb=short -v
+        run: python -m pytest --tb=short -v
