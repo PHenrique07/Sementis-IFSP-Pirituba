@@ -9,28 +9,25 @@ Este documento serve como página da Wiki para orientar desenvolvedores e colabo
 As **Skills** são pacotes de instruções modulares, fluxos de trabalho e scripts que ensinam a IA a executar tarefas especializadas dentro do repositório, garantindo conformidade com a arquitetura do Sementis, boas práticas de engenharia e automações criativas.
 
 * **Onde residem no projeto:**
-  * [`.agents/skills/`](file:///d:/Programacao/Sementis-2/.agents/skills/): Descoberta nativa do Google Antigravity.
-  * [`.github/skills/`](file:///d:/Programacao/Sementis-2/.github/skills/): Compatibilidade com o GitHub Copilot e CI/CD.
-  * Indexadas centralmente no arquivo [`.agents/skills.json`](file:///d:/Programacao/Sementis-2/.agents/skills.json).
+  * [`.agents/skills/`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/tree/main/.agents/skills): Descoberta nativa do Google Antigravity.
+  * [`.github/skills/`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/tree/main/.github/skills): Compatibilidade com o GitHub Copilot e CI/CD.
+  * Indexadas centralmente no arquivo [`.agents/skills.json`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/.agents/skills.json).
 
 ---
 
 ## 🌟 Skills em Destaque
 
 ### 1. `sementis-squad` (O Esquadrão Sementis)
-> **Objetivo:** Orquestrar o fluxo de desenvolvimento respeitando a arquitetura única do Sementis.
+> **Objetivo:** Organizar passagens de tarefa e colaboração solicitada ou autorizada entre os perfis do Sementis.
 
 O esquadrão define o papel de cada agente especializado:
-* 🤖 **SemeIA (Orquestradora):** Avalia se a tarefa é simples (*Fast Path*) ou estrutural (*Full Pipeline*).
+* 🤖 **SemeIA (Agente principal):** Resolve a tarefa usando os contextos da área e pode delegar uma subtarefa quando houver solicitação ou autorização aplicável.
 * 🔍 **BrinIA (Pesquisa & Análise):** Investiga o problema e propõe abordagens técnicas sem modificar código.
 * 📐 **CaIA (Planejamento Estratégico):** Define contratos de dados (JSON), arquitetura e testes antes da implementação.
 * 💻 **GratIA (Implementação & UI):** Codifica no padrão do projeto (Flask + SQLModel + Vanilla JS/HTML/CSS).
 * 🛡️ **XimbeIA (Revisão & Qualidade):** Valida a legibilidade, remove overengineering e assegura as regras do projeto.
 
-**Regras Inegociáveis que a skill protege:**
-1. **Mimetismo de código:** Seguir estritamente os padrões existentes; não inventar novas dependências ou frameworks.
-2. **Separação de responsabilidades:** O front-end **nunca** calcula XP, ofensivas ou regras de negócio; o back-end calcula e o front apenas renderiza.
-3. **Nomenclatura em PT-BR:** Nomes de variáveis, funções e rotas em português funcional.
+Os perfis compartilham o mapa `AGENTS.md` e os `CONTEXT.md` das áreas. Não há pipeline obrigatório por quantidade de arquivos. As regras de produto ficam nessas fontes; a skill registra como delimitar uma subtarefa, passar contexto suficiente e integrar o resultado.
 
 ---
 
@@ -70,7 +67,7 @@ Ao executar o `/brag`, é criada a pasta `brag-output/` contendo:
 
 > [!IMPORTANT]
 > **Por que o `brag-output/` fica no `.gitignore`?**  
-> Vídeos renderizados em `.mp4` e assets intermediários somam entre 10 MB e 20 MB por execução. Para **evitar inchar o histórico do Git** e manter o repositório leve para clonagem, a pasta `brag-output*/` é ignorada automaticamente pelo [`.gitignore`](file:///d:/Programacao/Sementis-2/.gitignore).  
+> Vídeos renderizados em `.mp4` e assets intermediários somam entre 10 MB e 20 MB por execução. Para **evitar inchar o histórico do Git** e manter o repositório leve para clonagem, a pasta `brag-output*/` é ignorada automaticamente pelo [`.gitignore`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/.gitignore).
 > Se desejar disponibilizar o vídeo publicamente, faça upload nas **Releases do GitHub** ou publique nas redes sociais oficiais do Sementis.
 
 ---

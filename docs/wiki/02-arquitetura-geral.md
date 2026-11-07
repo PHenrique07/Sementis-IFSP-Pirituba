@@ -32,7 +32,7 @@ flowchart TD
     subgraph DADOS["💾 Camada de Persistência & Serviços Externos"]
         MODELS["models.py (SQLModel Schema Definition)"]
         SQLITE[("sementis.db (SQLite Database)")]
-        GEMINI["Google Gemini API (google-genai / SemeIA)"]
+        GEMINI["Provedor SemeIA (padrao: OpenRouter)"]
     end
 
     UI --> VJS
@@ -51,11 +51,11 @@ flowchart TD
 
 ## 🔄 Roteamento Dinâmico de Ambiente (`api-config.js`)
 
-Uma das maiores dores de cabeça em aplicações desacopladas é alternar as URLs da API entre o ambiente local de desenvolvimento (`localhost:5000`) e a produção. O Sementis resolve isso de forma elegante através do [`js/api-config.js`](file:///d:/Programacao/Sementis-2/js/api-config.js).
+Uma das maiores dores de cabeça em aplicações desacopladas é alternar as URLs da API entre o ambiente local de desenvolvimento (`localhost:5000`) e a produção. O Sementis resolve isso de forma elegante através do [`js/api-config.js`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/frontend/js/api-config.js).
 
 Toda requisição feita no front-end utiliza a constante `API_BASE_URL`:
 - Se a página estiver rodando em `localhost` ou `127.0.0.1`, ela aponta automaticamente para a API local: `http://127.0.0.1:5000`.
-- Se estiver rodando na Vercel ou no domínio oficial, ela direciona para o servidor de produção no PythonAnywhere: `https://lucasperes.pythonanywhere.com`.
+- Se estiver rodando na Vercel ou no domínio oficial, ela direciona para o servidor de produção no PythonAnywhere: `https://PHenrique07.pythonanywhere.com`.
 
 Isso permite que qualquer desenvolvedor clone o repositório, abra o front-end via extensão *Live Server* do VS Code e teste imediatamente sem alterar uma linha de código sequer.
 
@@ -67,59 +67,38 @@ Abaixo está o raio-x completo do repositório, explicando a responsabilidade de
 
 ```text
 Sementis-2/
-├── 📄 app.py                  # Ponto de entrada do Flask, configuração de CORS, JWT e rotas HTTP
-├── 📄 crud.py                 # Funções de negócio do banco de dados (regras de XP, ofensiva, turmas)
-├── 📄 models.py               # Definição das tabelas e esquemas de dados usando SQLModel
-├── 📄 seeds.py                # Script de povoamento inicial do banco (módulos, trilhas, itens da loja)
-├── 📄 semeia.py               # Integração com Google Gemini para geração automática de trilhas por IA
-├── 📄 live_game.py            # Máquina de estados das salas multiplayer em tempo real do Live Arena
-├── 📄 questoes.json           # Banco estático de perguntas com validações científicas e pedagógicas
-├── 📄 sementis.db             # Banco de dados local SQLite
-├── 📄 sw.js                   # Service Worker do PWA para controle de cache e funcionamento offline
-│
-├── 📁 js/                     # Scripts Vanilla JavaScript do front-end
-│   ├── api-config.js          # Detecção de ambiente (Localhost vs Produção)
-│   ├── auth.js                # Helpers para salvar, ler e validar tokens JWT no cliente
-│   ├── main.js                # Script mestre da UI: barra de XP, vidas, modais e sincronização
-│   ├── quiz.js                # Engine das trilhas de estudo: corações, layouts, feedback pedagógico
-│   ├── sounds.js              # Efeitos sonoros interativos (SFX de acerto, erro, clique, vitória)
-│   ├── shared-navbar.js       # Componente de barra de navegação unificada entre as páginas
-│   ├── home.js                # Lógica da tela inicial do aluno e carregamento dos módulos
-│   ├── arena.js               # Interface e polling do aluno no jogo ao vivo
-│   ├── live-host.js           # Painel de controle do professor gerenciando o quiz ao vivo
-│   ├── loja.js                # Catálogo de itens, compra e equipamento de avatares/temas
-│   ├── missoes.js             # Tela de missões diárias e resgate de recompensas
-│   ├── ligas.js               # Tabela de classificação semanal e transição de ligas
-│   ├── painel-professor.js    # Dashboard principal do educador e métricas de turmas
-│   ├── turma-professor.js     # Gestão individual da turma, alunos, avisos e download de CSV
-│   └── turma-aluno.js         # Área da turma na perspectiva do estudante e mural
-│
-├── 📁 css/                    # Folhas de estilo modularizadas em CSS3 puro
-│   ├── styles.css             # Variáveis CSS globais, reset e temas (cores das lixeiras, etc.)
-│   ├── shared-navbar.css      # Estilização da navegação inferior e superior
-│   ├── quiz.css               # Estilos para telas de perguntas, botões e modais de resultado
-│   ├── painel-professor.css   # Layout do dashboard docente e formulários
-│   ├── turma-professor.css    # Estilização do gerenciamento de turma e tabelas
-│   ├── loja.css               # Grid de cosméticos, raridades e tags visuais
-│   └── jogos.css              # Central arcade de jogos e animações em vídeo WebM
-│
-├── 📁 assets/                 # Recursos multimídia da aplicação
-│   ├── webm/                  # Animações 3D ultraleves em formato WebM transparente
-│   ├── sounds/                # Arquivos de áudio para feedbacks da gamificação
-│   └── icons/                 # Ícones do PWA e da interface
-│
-├── 📁 FlapFish/               # Mini-game arcade educativo feito em Phaser 3
-│   ├── index.html             # Ponto de entrada do jogo
-│   ├── phaser.js              # Biblioteca Phaser 3 minificada
-│   └── src/                   # Cenas do jogo (Preloader, Menu, Game, GameOver)
-│
-├── 📁 pwa/                    # Configurações do Progressive Web App
-│   ├── manifest.webmanifest   # Metadados de instalação para Android, iOS e Desktop
-│   └── pwa-register.js        # Script de registro do Service Worker
-│
-└── 📁 .github/                # Configurações de CI/CD, Skills e Agentes de IA
-    ├── agents/                # Definição do esquadrão de agentes (SemeIA, CaIA, GratIA, etc.)
-    └── skills/                # Capacidades especializadas do projeto
+??? app.py                      # Entrada Flask/WSGI compativel
+??? seeds.py                    # Entrada da sementeira compativel
+??? backend/
+?   ??? CONTEXT.md
+?   ??? app.py                  # Rotas e autorizacao
+?   ??? models.py               # Tabelas SQLModel
+?   ??? crud.py                 # Regras de negocio
+?   ??? semeia.py                # Geracao pedagogica por IA
+?   ??? live_game.py             # Salas e estados Live
+?   ??? seeds.py                 # Povoamento e sincronizacao
+?   ??? caminhos.py              # Caminhos absolutos compartilhados
+?   ??? dados/questoes.json      # Curriculo e perguntas
+??? frontend/
+?   ??? CONTEXT.md
+?   ??? *.html                  # Paginas e scripts inline existentes
+?   ??? js/                     # Integracao HTTP e DOM
+?   ??? css/                    # Estilos
+?   ??? assets/                 # Imagens, sons e videos
+?   ??? FlapFish/               # Minigame Phaser
+?   ??? pwa/                    # Manifest e registro
+?   ??? sw.js                   # Service worker na raiz publica
+??? tests/
+?   ??? CONTEXT.md
+?   ??? unit/                   # Modelos e regras
+?   ??? integration/            # API, inventario e arquivos publicos
+?   ??? manuais/                # Scripts executados explicitamente
+??? docs/                       # Wiki, contextos e referencias
+??? .github/                    # Perfis, skills e CI
+??? .agents/                    # Integracoes existentes
+??? pytest.ini
+??? vercel.json
+??? sementis.db                 # Banco local preservado na raiz
 ```
 
 ---
@@ -145,7 +124,7 @@ sequenceDiagram
     Front->>Front: Armazena token no localStorage
     
     Note over Front,API: Próximas requisições autenticadas:
-    Front->>API: GET /meu-perfil (Header Authorization: Bearer JWT)
+    Front->>API: GET /api/perfil (Header Authorization: Bearer JWT)
     API->>API: Middleware @token_obrigatorio decodifica JWT
     API->>DB: Busca dados atualizados do usuário
     DB-->>API: Retorna XP, Vidas, Moedas, Ofensiva

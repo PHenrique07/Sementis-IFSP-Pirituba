@@ -1,0 +1,288 @@
+/* Transições entre documentos da mesma origem; links continuam nativos. */
+@view-transition {
+  navigation: auto;
+}
+html { background-color: #1a1a4a; }
+.bottom-nav { view-transition-name: menu-principal; }
+::view-transition-group(*) { animation-duration: 180ms; }
+::view-transition-old(menu-principal) { animation: none; opacity: 0; }
+::view-transition-new(menu-principal) { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
+/* Navbar compartilhada (fonte: trilhas) */
+#shared-navbar-root {
+  display: contents;
+}
+
+@media (min-width: 1024px) {
+  #shared-navbar-root {
+    display: block;
+    width: 250px;
+    min-width: 250px;
+  }
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  background: #1a1a4a;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.sidebar-logo {
+  display: none;
+}
+
+.sidebar-logo a {
+  display: block;
+  cursor: pointer;
+}
+
+.nav-items-wrapper {
+  display: contents;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 4px;
+  flex: 1;
+  min-width: 0;
+  border-radius: 12px;
+  color: #8d92bc;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.nav-item img {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.nav-item span {
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.2;
+}
+
+.nav-item.active {
+  color: #a9ff71;
+}
+
+.nav-item.active img {
+  transform: scale(1.08);
+}
+
+.nav-item:hover:not(.active) {
+  color: #fff;
+}
+
+/* Visibilidade por viewport */
+.desktop-only {
+  display: none !important;
+}
+
+.mobile-only {
+  display: flex !important;
+}
+
+/* Submenu "Mais" no Mobile (efeito de cascata para cima) */
+.more-menu-popup {
+  position: absolute;
+  right: 12px;
+  bottom: calc(100% + 12px);
+  z-index: 25;
+  min-width: 160px;
+  background: rgba(26, 26, 74, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  display: none !important;
+  opacity: 0;
+  transform: translateY(16px) scale(0.95);
+  transform-origin: bottom right;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.more-menu-popup.open {
+  display: block !important;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  animation: cascadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.more-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.more-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: #8d92bc;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  opacity: 0;
+}
+
+.more-menu-popup.open .more-menu-item {
+  animation: cascadeItem 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.more-menu-popup.open .more-menu-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.more-menu-popup.open .more-menu-item:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.more-menu-item img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.more-menu-item.active {
+  color: #a9ff71;
+  background: rgba(169, 255, 113, 0.12);
+}
+
+.more-menu-item:hover:not(.active) {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Keyframes Animação em Cascata */
+@keyframes cascadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cascadeItem {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bottom-nav {
+    top: 0;
+    right: auto;
+    bottom: 0;
+    width: 250px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 0;
+    border-top: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 4px 0 22px rgba(0, 0, 0, 0.25);
+  }
+
+  .sidebar-logo {
+    display: block;
+    padding: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+  }
+
+  .sidebar-logo img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .nav-items-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 12px;
+  }
+
+  .nav-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    font-size: 16px;
+    flex: initial;
+    text-align: left;
+  }
+
+  .nav-item img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nav-item span {
+    font-size: 18px;
+    font-weight: 700;
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .nav-item.active {
+    background: rgba(169, 255, 113, 0.1);
+  }
+
+  .nav-item:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Visibilidade no Desktop */
+  .desktop-only {
+    display: flex !important;
+  }
+
+  .mobile-only {
+    display: none !important;
+  }
+}
+

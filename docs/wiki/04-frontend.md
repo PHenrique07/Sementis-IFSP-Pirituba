@@ -1,5 +1,7 @@
 # Como Funciona o Front-end 💻
 
+Os arquivos descritos nesta pagina ficam em `frontend/`. Caminhos como `js/`, `css/`, `assets/` e `sw.js` sao relativos a essa raiz publica; as URLs do produto continuam sem o prefixo `/frontend`.
+
 O front-end do **Sementis** adota uma filosofia de desenvolvimento moderna, veloz e descomplicada: **Vanilla Web** (HTML5 semântico, CSS3 puro e JavaScript moderno ES6+). Não há frameworks pesados (como React, Angular ou Vue) nem pipelines complexos de compilação (Webpack, Vite). O código roda nativamente em qualquer navegador moderno com máxima performance e tempo de carregamento quase instantâneo.
 
 ---
@@ -23,7 +25,7 @@ graph TD
 
 ## 🧠 Scripts Centrais e Arquitetura do Cliente
 
-Toda a interação do front-end é orquestrada por uma suíte de utilitários em [`js/`](file:///d:/Programacao/Sementis-2/js):
+Toda a interação do front-end é orquestrada por uma suíte de utilitários em [`js/`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/tree/main/frontend/js):
 
 ### 1. Roteamento de API (`api-config.js`)
 Configura a base de todas as chamadas HTTP. Detecta se a página está rodando em `localhost:5000` (desenvolvimento) ou no domínio da nuvem e exporta a variável global `API_BASE_URL`.
@@ -42,7 +44,7 @@ Gerencia o ciclo de vida do token de acesso:
 
 ### 4. Componentização: A Navbar Compartilhada (`shared-navbar.js`)
 Sem frameworks, como manter a barra de navegação unificada em 10 telas diferentes?
-* Criamos o script [`js/shared-navbar.js`](file:///d:/Programacao/Sementis-2/js/shared-navbar.js), que procura pela tag `<div id="shared-navbar-root"></div>`.
+* Criamos o script [`js/shared-navbar.js`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/frontend/js/shared-navbar.js), que procura pela tag `<div id="shared-navbar-root"></div>`.
 * O script injeta o HTML da barra inferior com ícones SVG modernos, detecta a página atual via `window.location.pathname` e adiciona a classe `.active` automaticamente no botão correspondente (Início, Trilhas, Missões, Loja ou Perfil).
 
 ### 5. Motor de Efeitos Sonoros (`sounds.js`)
