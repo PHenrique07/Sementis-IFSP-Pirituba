@@ -518,11 +518,11 @@
     94% { transform: translate(-50%, -50%) rotate(0); }
   }
 
-  /* ── ELEMENTOS DE SUSTENTABILIDADE E PERSONAGEM AO LADO DA TRILHA (ESTILO DUOLINGO) ── */
+  /* ── PERSONAGENS E ILUSTRAÇÕES DE SUSTENTABILIDADE AO LADO DA TRILHA ── */
   .personagem {
     position: absolute;
-    width: 132px;
-    height: 124px;
+    width: 120px;
+    height: 120px;
     transform: translate(-50%, -50%);
     padding: 0;
     border: none;
@@ -536,134 +536,73 @@
     align-items: center;
     justify-content: flex-end;
   }
-  .personagem-svg {
+  .personagem-sombra {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    width: 74px;
+    height: 16px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(8, 20, 14, 0.6) 0%, rgba(8, 20, 14, 0) 72%);
+    pointer-events: none;
+    animation: sombraRespirar 3.2s ease-in-out infinite;
+    animation-delay: var(--atraso-personagem, 0s);
+  }
+  .personagem-avatar {
     position: relative;
     z-index: 1;
-    width: 126px;
-    height: 118px;
-    overflow: visible;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.28));
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .personagem:hover .personagem-svg,
-  .personagem:focus-visible .personagem-svg {
-    transform: translateY(-5px) scale(1.09);
-  }
-  .personagem-corpo {
-    transform-origin: 70px 108px;
-    animation: personagemRespirar 3.6s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center bottom;
+    animation: personagemFlutuar 3.2s ease-in-out infinite;
     animation-delay: var(--atraso-personagem, 0s);
   }
-  .personagem-olhos {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: personagemPiscar 5.2s infinite;
-    animation-delay: var(--atraso-personagem, 0s);
+  .personagem-img {
+    display: block;
+    width: auto;
+    max-width: 110px;
+    height: 98px;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.32));
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    user-select: none;
   }
-  .personagem-chama {
-    transform-box: fill-box;
-    transform-origin: bottom center;
-    animation: chamaTremular 1.4s ease-in-out infinite alternate;
+  .personagem:hover .personagem-img,
+  .personagem:focus-visible .personagem-img {
+    transform: translateY(-8px) scale(1.12);
   }
-  .personagem-helice {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: heliceGirar 6s linear infinite;
+  .personagem:hover .personagem-sombra,
+  .personagem:focus-visible .personagem-sombra {
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0.35;
   }
-  .personagem-peso {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: pesoTreinar 2.2s ease-in-out infinite;
+  .personagem.falando { z-index: 7; }
+  .personagem.falando .personagem-avatar {
+    animation: personagemComemorar 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  .personagem-coracao {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: coracaoPulsar 1.8s ease-in-out infinite;
+  @keyframes personagemFlutuar {
+    0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+    50% { transform: translateY(-7px) rotate(1.2deg); }
   }
-  .personagem-gota {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: gotaPingar 1.5s ease-in infinite;
+  @keyframes sombraRespirar {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+    50% { transform: translateX(-50%) scale(0.82) translateY(2px); opacity: 0.32; }
   }
-  .personagem-brilho {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: brilhoGirar 2.4s ease-in-out infinite;
-  }
-  .personagem-sapo {
-    transform-box: fill-box;
-    transform-origin: bottom center;
-    animation: sapoPular 3.4s ease-in-out infinite;
-  }
-  .personagem.falando { z-index: 6; }
-  .personagem.falando .personagem-corpo {
-    animation: personagemSaudar 0.65s ease-in-out;
-  }
-  .personagem-gesto {
-    transform-origin: 85px 75px;
-  }
-  .personagem.falando .personagem-gesto {
-    animation: personagemAcenar 0.35s ease-in-out 3 alternate;
-  }
-  @keyframes personagemRespirar {
-    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
-    50% { transform: translateY(-4px) rotate(1.5deg); }
-  }
-  @keyframes personagemPiscar {
-    0%, 44%, 48%, 100% { transform: scaleY(1); }
-    46% { transform: scaleY(0.08); }
-  }
-  @keyframes chamaTremular {
-    0% { transform: scaleY(1) skewX(-2deg); }
-    100% { transform: scaleY(1.07) skewX(3deg); }
-  }
-  @keyframes heliceGirar {
-    to { transform: rotate(360deg); }
-  }
-  @keyframes pesoTreinar {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-  }
-  @keyframes coracaoPulsar {
-    0%, 100% { transform: scale(1) translateY(0); }
-    50% { transform: scale(1.18) translateY(-4px); }
-  }
-  @keyframes gotaPingar {
-    0% { transform: translateY(0); opacity: 1; }
-    80% { transform: translateY(14px); opacity: 0.85; }
-    100% { transform: translateY(19px); opacity: 0; }
-  }
-  @keyframes brilhoGirar {
-    0%, 100% { transform: scale(0.9) rotate(0deg); opacity: 0.7; }
-    50% { transform: scale(1.25) rotate(18deg); opacity: 1; }
-  }
-  @keyframes sapoPular {
-    0%, 86%, 100% { transform: translateY(0) scale(1); }
-    89% { transform: translateY(1px) scale(1.06, 0.94); }
-    93% { transform: translateY(-7px) scale(0.95, 1.06); }
-    97% { transform: translateY(0) scale(1.03, 0.97); }
-  }
-  @keyframes personagemSaudar {
-    0%, 100% { transform: translateY(0); }
-    35% { transform: translateY(-10px) rotate(-4deg) scale(1.04); }
-    70% { transform: translateY(0) scaleY(0.95); }
-  }
-  @keyframes personagemAcenar {
-    to { transform: rotate(-16deg); }
+  @keyframes personagemComemorar {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-16px) scale(1.15) rotate(-4deg); }
+    60% { transform: translateY(0) scale(0.93) rotate(2deg); }
+    80% { transform: translateY(-6px) scale(1.05); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .personagem .personagem-corpo,
-    .personagem .personagem-olhos,
-    .personagem .personagem-gesto,
-    .personagem .personagem-chama,
-    .personagem .personagem-helice,
-    .personagem .personagem-peso,
-    .personagem .personagem-coracao,
-    .personagem .personagem-gota,
-    .personagem .personagem-brilho,
-    .personagem .personagem-sapo { animation: none; }
-    .personagem .personagem-svg,
-    .personagem .personagem-fala { transition: none; }
+    .personagem-avatar,
+    .personagem-sombra,
+    .personagem.falando .personagem-avatar { animation: none; }
+    .personagem-img,
+    .personagem-fala { transition: none; }
   }
   .personagem-fala {
     position: absolute;
@@ -1352,334 +1291,82 @@ const TOQUES_BAU  = 3;
 
 const NOMES_RARIDADE = { comum: 'Comum', raro: 'Raro', epico: 'Épico', lendario: 'Lendário' };
 
-// Personagens e cenas de sustentabilidade na trilha (Estilo Duolingo Flat Vector 3/4)
+// Personagens e cenas de sustentabilidade na trilha (Ilustrações originais com recorte e animações)
 const ELEMENTOS_TRILHA = [
   {
     nome: 'Sementinha Regando a Mudinha',
     dica: 'Cada atitude sustentável é uma semente plantada! Regue seus hábitos todos os dias.',
-    svg: `<svg class="personagem-svg" viewBox="0 0 140 130" aria-hidden="true" focusable="false">
-      <ellipse cx="62" cy="115" rx="34" ry="11" fill="rgba(8, 20, 12, 0.45)"/>
-      <ellipse cx="108" cy="117" rx="18" ry="7" fill="rgba(8, 20, 12, 0.38)"/>
-      <g class="personagem-corpo">
-        <!-- Vasinho com brotinho ecológico -->
-        <g transform="translate(92, 82)">
-          <path d="M4 14 L28 14 L25 32 C25 34 23 35 16 35 C9 35 7 34 7 32 Z" fill="#c85a28"/>
-          <rect x="2" y="10" width="28" height="6" rx="3" fill="#e07442"/>
-          <ellipse cx="16" cy="11" rx="11" ry="2.5" fill="#4a2c18"/>
-          <path d="M16 11 L16 3" stroke="#58cc02" stroke-width="3" stroke-linecap="round"/>
-          <path d="M16 5 C10 1 6 4 9 8 C11 10 15 8 16 5 Z" fill="#78e826"/>
-          <path d="M16 4 C22 0 26 3 23 7 C21 9 17 7 16 4 Z" fill="#58cc02"/>
-        </g>
-        <!-- Pezinhos verdes -->
-        <ellipse cx="48" cy="111" rx="8" ry="4.5" transform="rotate(-12 48 111)" fill="#3b8500"/>
-        <ellipse cx="75" cy="111" rx="8" ry="4.5" transform="rotate(12 75 111)" fill="#3b8500"/>
-        <!-- Braço esquerdo alegre -->
-        <path d="M35 74 C20 68 17 52 24 46" fill="none" stroke="#46a302" stroke-width="11" stroke-linecap="round"/>
-        <!-- Corpo Sementinha verde Duolingo -->
-        <path d="M62 28 C38 28 28 52 28 76 C28 98 41 109 62 109 C83 109 96 98 96 76 C96 52 86 28 62 28 Z" fill="#46a302"/>
-        <path d="M62 28 C41 28 32 50 32 74 C32 94 43 105 62 105 C81 105 92 94 92 74 C92 50 83 28 62 28 Z" fill="#58cc02"/>
-        <!-- Barriguinha iluminada -->
-        <ellipse cx="62" cy="82" rx="21" ry="17" fill="#89e219"/>
-        <!-- Coroa de folhas da semente -->
-        <path d="M62 29 C54 10 30 8 28 20 C26 30 46 34 62 29 Z" fill="#46a302"/>
-        <path d="M62 28 C55 12 34 11 32 20 C31 27 48 31 62 28 Z" fill="#78e826"/>
-        <path d="M62 29 C70 8 96 6 98 19 C99 29 78 33 62 29 Z" fill="#58cc02"/>
-        <!-- Olhinhos estilo Duo -->
-        <g class="personagem-olhos">
-          <ellipse cx="50" cy="59" rx="9" ry="11.5" fill="#ffffff"/>
-          <ellipse cx="74" cy="59" rx="9" ry="11.5" fill="#ffffff"/>
-          <circle cx="52" cy="60" r="5" fill="#1e293b"/>
-          <circle cx="72" cy="60" r="5" fill="#1e293b"/>
-          <circle cx="54" cy="57" r="2" fill="#ffffff"/>
-          <circle cx="74" cy="57" r="2" fill="#ffffff"/>
-        </g>
-        <ellipse cx="38" cy="68" rx="5" ry="3" fill="#ff7eb6" opacity="0.6"/>
-        <ellipse cx="86" cy="68" rx="5" ry="3" fill="#ff7eb6" opacity="0.6"/>
-        <path d="M54 70 C54 81 70 81 70 70 Z" fill="#3a1018"/>
-        <path d="M57 75 C60 72 64 72 67 75 C65 79 59 79 57 75 Z" fill="#ff6b8b"/>
-        <!-- Braço com regador azul e gotinhas caindo animadas -->
-        <g class="personagem-gesto">
-          <path d="M88 73 C98 73 103 68 106 64" fill="none" stroke="#58cc02" stroke-width="10" stroke-linecap="round"/>
-          <rect x="96" y="54" width="18" height="15" rx="4" transform="rotate(18 105 61)" fill="#1cb0f6"/>
-          <path d="M112 60 L124 67" stroke="#0091d5" stroke-width="4" stroke-linecap="round"/>
-          <ellipse cx="125" cy="68" rx="2.5" ry="4" transform="rotate(-20 125 68)" fill="#5cd6ff"/>
-          <g class="personagem-gota">
-            <circle cx="118" cy="74" r="2.4" fill="#5cd6ff"/>
-            <circle cx="113" cy="80" r="2.8" fill="#1cb0f6"/>
-            <circle cx="122" cy="83" r="2.2" fill="#5cd6ff"/>
-          </g>
-        </g>
-      </g>
-    </svg>`
+    img: 'assets/personagens/semente_regando.png'
+  },
+  {
+    nome: 'Vovó Maromba Treinando Reciclagem',
+    dica: 'Separar o lixo reciclável dá um treino monstro! Aqui ninguém joga plástico fora do lugar!',
+    img: 'assets/personagens/vovo_peso.png'
+  },
+  {
+    nome: 'Curupira Protetor da Floresta',
+    dica: 'Cada árvore em pé garante água limpa e ar puro para todos. Proteja a natureza!',
+    img: 'assets/personagens/curupira_arvore.png'
+  },
+  {
+    nome: 'Cenourão Economia Verde',
+    dica: 'Sustentabilidade e desenvolvimento andam juntos! Compostagem e energia limpa dão lucro.',
+    img: 'assets/personagens/cenoura_grafico.png'
+  },
+  {
+    nome: 'Patrulheiro do Rio & Sapinho',
+    dica: 'Limpando rios e córregos para que os animais vivam felizes e sem plástico nas águas!',
+    img: 'assets/personagens/patrulheiro_rede.png'
   },
   {
     nome: 'Sementinha Abraçando o Planeta Terra',
     dica: 'A Terra é a nossa única casa. Cada cuidado com a água e com o solo faz a diferença!',
-    svg: `<svg class="personagem-svg" viewBox="0 0 140 130" aria-hidden="true" focusable="false">
-      <ellipse cx="70" cy="115" rx="42" ry="12" fill="rgba(8, 20, 12, 0.45)"/>
-      <g class="personagem-corpo">
-        <!-- Coração rosa flutuando animado -->
-        <g class="personagem-coracao" transform="translate(104, 18)">
-          <path d="M10 3.2 C10 0 6 -2 3 1 C0 -2 -4 0 -4 3.2 C-4 8 3 12 3 14 C3 12 10 8 10 3.2 Z" fill="#ff6b8b"/>
-        </g>
-        <!-- Pezinhos da semente -->
-        <ellipse cx="44" cy="111" rx="8" ry="4.5" fill="#3b8500"/>
-        <ellipse cx="88" cy="111" rx="8" ry="4.5" fill="#3b8500"/>
-        <!-- Corpo da Sementinha atrás do globo -->
-        <path d="M54 36 C34 36 28 54 28 76 C28 98 42 108 54 108 C64 108 68 102 70 96 C62 82 58 64 62 48 Z" fill="#58cc02"/>
-        <!-- Folhinhas no topo da cabeça -->
-        <path d="M50 36 C42 16 22 16 20 27 C18 36 36 40 50 36 Z" fill="#78e826"/>
-        <path d="M50 36 C56 16 78 14 80 26 C82 35 64 39 50 36 Z" fill="#58cc02"/>
-        <!-- Globo Terrestre Azul e Verde sendo abraçado -->
-        <circle cx="86" cy="74" r="30" fill="#0284c7"/>
-        <circle cx="86" cy="74" r="28" fill="#0ea5e9"/>
-        <!-- Continentes verdes no globo -->
-        <path d="M68 64 C70 56 80 54 85 58 C90 62 88 70 81 72 C74 74 66 72 68 64 Z" fill="#58cc02"/>
-        <path d="M86 78 C92 74 102 76 104 84 C106 92 98 96 90 94 C82 92 80 82 86 78 Z" fill="#58cc02"/>
-        <path d="M96 60 C98 55 106 58 104 65 C102 70 94 65 96 60 Z" fill="#58cc02"/>
-        <!-- Olhinhos fechados de carinho -->
-        <path d="M38 56 Q44 62 50 56" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>
-        <ellipse cx="34" cy="62" rx="4.5" ry="2.8" fill="#ff7eb6" opacity="0.6"/>
-        <!-- Braços abraçando o globo com força -->
-        <path d="M36 68 C44 76 60 78 72 76" fill="none" stroke="#46a302" stroke-width="10" stroke-linecap="round"/>
-        <circle cx="73" cy="76" r="6" fill="#58cc02"/>
-        <path d="M102 66 C108 72 108 82 100 88" fill="none" stroke="#46a302" stroke-width="10" stroke-linecap="round"/>
-        <circle cx="99" cy="88" r="6" fill="#58cc02"/>
-      </g>
-    </svg>`
+    img: 'assets/personagens/semente_planeta.png'
   },
   {
-    nome: 'Vovó Maromba da Reciclagem',
-    dica: 'Separar o lixo e reciclagem dá um treino monstro! Aqui ninguém joga plástico fora do lugar!',
-    svg: `<svg class="personagem-svg" viewBox="0 0 140 130" aria-hidden="true" focusable="false">
-      <!-- 3 sombras no chão (pesos + vovó) igual ao Duolingo -->
-      <ellipse cx="22" cy="113" rx="17" ry="7" fill="rgba(8, 20, 12, 0.45)"/>
-      <ellipse cx="70" cy="115" rx="32" ry="11" fill="rgba(8, 20, 12, 0.45)"/>
-      <ellipse cx="118" cy="113" rx="17" ry="7" fill="rgba(8, 20, 12, 0.45)"/>
-      <g class="personagem-corpo">
-        <!-- Perninhas firmes no agachamento -->
-        <path d="M56 96 L52 110 M84 96 L88 110" stroke="#1e293b" stroke-width="10" stroke-linecap="round"/>
-        <ellipse cx="50" cy="111" rx="8" ry="4" fill="#58cc02"/>
-        <ellipse cx="90" cy="111" rx="8" ry="4" fill="#58cc02"/>
-        <!-- Tronco musculoso com cropped rosa e bermuda verde (igual à imagem) -->
-        <path d="M42 56 C42 46 98 46 98 56 L94 98 C94 104 46 104 46 98 Z" fill="#ec4899"/>
-        <path d="M44 84 L96 84 L93 98 C93 103 47 103 47 98 Z" fill="#58cc02"/>
-        <!-- BARRA COM PESOS DE TAMBORES RECICLÁVEIS E LOGO RECICLAGEM -->
-        <g class="personagem-peso">
-          <!-- Braços com bíceps definidos -->
-          <circle cx="34" cy="68" r="12" fill="#d98260"/>
-          <circle cx="34" cy="66" r="10" fill="#eba080"/>
-          <circle cx="106" cy="68" r="12" fill="#d98260"/>
-          <circle cx="106" cy="66" r="10" fill="#eba080"/>
-          <!-- Barra de ferro envergada -->
-          <path d="M16 82 Q70 72 124 82" fill="none" stroke="#94a3b8" stroke-width="5.5" stroke-linecap="round"/>
-          <!-- Tambor de reciclagem esquerdo com símbolo -->
-          <g transform="translate(6, 64)">
-            <rect x="0" y="0" width="22" height="34" rx="6" fill="#334155"/>
-            <rect x="3" y="3" width="16" height="28" rx="4" fill="#475569"/>
-            <!-- Símbolo branco de reciclagem 3 setas -->
-            <path d="M11 11 L14 16 L8 16 Z M14 22 L17 17 L12 17 Z M7 22 L11 22 L9 26 Z" fill="#ffffff"/>
-          </g>
-          <!-- Tambor de reciclagem direito com símbolo -->
-          <g transform="translate(112, 64)">
-            <rect x="0" y="0" width="22" height="34" rx="6" fill="#334155"/>
-            <rect x="3" y="3" width="16" height="28" rx="4" fill="#475569"/>
-            <path d="M11 11 L14 16 L8 16 Z M14 22 L17 17 L12 17 Z M7 22 L11 22 L9 26 Z" fill="#ffffff"/>
-          </g>
-        </g>
-        <!-- Coque grisalho volumoso de vovó -->
-        <circle cx="70" cy="18" r="14" fill="#cbd5e1"/>
-        <circle cx="70" cy="16" r="12" fill="#e2e8f0"/>
-        <!-- Rosto da Vovó com brincos dourados -->
-        <rect x="46" y="26" width="48" height="38" rx="18" fill="#eba080"/>
-        <circle cx="44" cy="46" r="3.5" fill="#eab308"/>
-        <circle cx="96" cy="46" r="3.5" fill="#eab308"/>
-        <!-- Cabelo lateral grisalho -->
-        <path d="M46 36 C44 26 58 24 70 26 C82 24 96 26 94 36 C86 31 54 31 46 36 Z" fill="#e2e8f0"/>
-        <!-- Olhos focados e sobrancelhas brancas grossas -->
-        <g class="personagem-olhos">
-          <ellipse cx="60" cy="44" rx="7" ry="8" fill="#ffffff"/>
-          <ellipse cx="80" cy="44" rx="7" ry="8" fill="#ffffff"/>
-          <circle cx="61" cy="44" r="3.5" fill="#1e293b"/>
-          <circle cx="79" cy="44" r="3.5" fill="#1e293b"/>
-        </g>
-        <path d="M51 36 L66 40" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-        <path d="M89 36 L74 40" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-        <!-- Boca com dentes cerrados de esforço maromba -->
-        <rect x="60" y="53" width="20" height="7" rx="3.5" fill="#ffffff" stroke="#7c2d12" stroke-width="2"/>
-        <line x1="66" y1="53" x2="66" y2="60" stroke="#cbd5e1" stroke-width="1.5"/>
-        <line x1="74" y1="53" x2="74" y2="60" stroke="#cbd5e1" stroke-width="1.5"/>
-        <!-- Gotas de suor voando dos lados (igual ao Duolingo!) -->
-        <path d="M36 28 C32 28 31 33 35 34 C38 34 39 30 36 28 Z" fill="#38bdf8"/>
-        <path d="M104 26 C108 26 109 31 105 32 C102 32 101 28 104 26 Z" fill="#38bdf8"/>
-      </g>
-    </svg>`
+    nome: 'Vovó Maromba na Compostagem',
+    dica: 'Restos de alimento viram adubo rico na composteira. Feche o ciclo orgânico!',
+    img: 'assets/personagens/vovo_compostagem.png'
   },
   {
-    nome: 'Curupira Protetor das Árvores',
-    dica: 'Cada árvore em pé garante água limpa e ar puro para todos. Proteja a floresta!',
-    svg: `<svg class="personagem-svg" viewBox="0 0 140 130" aria-hidden="true" focusable="false">
-      <ellipse cx="50" cy="115" rx="32" ry="11" fill="rgba(8, 20, 12, 0.45)"/>
-      <ellipse cx="106" cy="116" rx="24" ry="9" fill="rgba(8, 20, 12, 0.45)"/>
-      <g class="personagem-corpo">
-        <!-- Coração flutuando na árvore -->
-        <g class="personagem-coracao" transform="translate(112, 28)">
-          <path d="M8 2.5 C8 0 5 -1.5 2.5 1 C0 -1.5 -3 0 -3 2.5 C-3 6.5 2.5 9.5 2.5 11 C2.5 9.5 8 6.5 8 2.5 Z" fill="#ff6b8b"/>
-        </g>
-        <!-- Árvore com copa frondosa verde sendo abraçada -->
-        <g transform="translate(82, 14)">
-          <!-- Tronco marrom da árvore -->
-          <rect x="14" y="44" width="22" height="60" rx="6" fill="#8c4a27"/>
-          <path d="M14 68 L24 64 M18 84 L30 80" stroke="#6c3418" stroke-width="3" stroke-linecap="round"/>
-          <!-- Copa da árvore em nuvem geométrica Duolingo -->
-          <circle cx="25" cy="24" r="26" fill="#2b8a3e"/>
-          <circle cx="12" cy="30" r="18" fill="#3ca100"/>
-          <circle cx="38" cy="30" r="18" fill="#58cc02"/>
-          <circle cx="25" cy="18" r="20" fill="#78e826"/>
-        </g>
-        <!-- PÉS INVERTIDOS VIRADOS PARA TRÁS (calcanhar pra frente) -->
-        <ellipse cx="40" cy="112" rx="9" ry="4.5" transform="rotate(18 40 112)" fill="#b8562b"/>
-        <circle cx="32" cy="110" r="2" fill="#d97343"/>
-        <ellipse cx="68" cy="112" rx="9" ry="4.5" transform="rotate(-18 68 112)" fill="#b8562b"/>
-        <circle cx="76" cy="110" r="2" fill="#d97343"/>
-        <!-- Tronco do Curupira com bermudinha verde -->
-        <path d="M42 66 C42 54 84 54 84 66 L80 98 C80 104 46 104 46 98 Z" fill="#df7a4b"/>
-        <path d="M44 88 L82 88 L80 101 C80 105 46 105 46 101 Z" fill="#58cc02"/>
-        <!-- CABELO DE FOGO ESPETADO VERMELHO E AMARELO ANIMADO -->
-        <g class="personagem-chama">
-          <path d="M34 44 C26 26 40 10 52 16 C58 4 76 3 82 15 C96 9 108 26 99 44 Z" fill="#ff4b4b"/>
-          <path d="M40 44 C34 30 46 16 56 21 C62 10 75 9 80 20 C91 16 99 30 93 44 Z" fill="#ff9600"/>
-          <path d="M48 44 C45 33 53 23 60 27 C65 18 73 19 76 27 C83 25 87 34 84 44 Z" fill="#ffc800"/>
-        </g>
-        <!-- Cabeça e orelhinhas pontudas de guardião -->
-        <rect x="42" y="34" width="48" height="38" rx="18" fill="#df7a4b"/>
-        <path d="M43 48 L35 44 L40 54 Z" fill="#c96538"/>
-        <!-- Olhinhos cheios de afeto e sobrancelhas -->
-        <g class="personagem-olhos">
-          <ellipse cx="54" cy="50" rx="7" ry="8.5" fill="#ffffff"/>
-          <ellipse cx="74" cy="50" rx="7" ry="8.5" fill="#ffffff"/>
-          <circle cx="56" cy="50" r="4" fill="#1e293b"/>
-          <circle cx="76" cy="50" r="4" fill="#1e293b"/>
-        </g>
-        <path d="M48 40 L60 44 M80 44 L68 40" stroke="#5a1807" stroke-width="4" stroke-linecap="round"/>
-        <ellipse cx="47" cy="56" rx="4" ry="2.5" fill="#ff7eb6" opacity="0.6"/>
-        <!-- Braços abraçando com carinho o tronco da árvore -->
-        <path d="M40 68 C52 76 78 76 96 70" fill="none" stroke="#c96538" stroke-width="10" stroke-linecap="round"/>
-        <circle cx="96" cy="70" r="6" fill="#df7a4b"/>
-      </g>
-    </svg>`
+    nome: 'Curupira Plantando Mudas',
+    dica: 'Plantar espécies nativas ajuda a recuperar o solo e chama os passarinhos de volta!',
+    img: 'assets/personagens/curupira_plantando.png'
   },
   {
-    nome: 'Cenourão Economia Verde & Gráfico Eco',
-    dica: 'Sustentabilidade e desenvolvimento andam juntos! Compostagem e energia limpa dão lucro.',
-    svg: `<svg class="personagem-svg" viewBox="0 0 140 130" aria-hidden="true" focusable="false">
-      <ellipse cx="54" cy="115" rx="32" ry="11" fill="rgba(8, 20, 12, 0.45)"/>
-      <ellipse cx="106" cy="116" rx="26" ry="9" fill="rgba(8, 20, 12, 0.45)"/>
-      <g class="personagem-corpo">
-        <!-- Cavalete com Gráfico de Crescimento Verde (igual à linha 4 da imagem) -->
-        <g transform="translate(86, 36)">
-          <!-- Pernas do cavalete de madeira -->
-          <line x1="22" y1="46" x2="10" y2="76" stroke="#8c4a27" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="24" y1="46" x2="36" y2="76" stroke="#8c4a27" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="23" y1="46" x2="23" y2="78" stroke="#6c3418" stroke-width="4.5" stroke-linecap="round"/>
-          <!-- Quadro branco com moldura de madeira -->
-          <rect x="0" y="6" width="46" height="42" rx="4" fill="#ffffff" stroke="#a16207" stroke-width="3"/>
-          <!-- Folha verde no topo do gráfico -->
-          <path d="M23 12 C18 9 14 12 16 16 C18 19 23 18 23 12 Z" fill="#58cc02"/>
-          <!-- Barras verdes crescentes -->
-          <rect x="8" y="32" width="6" height="12" rx="1.5" fill="#a3e635"/>
-          <rect x="18" y="26" width="6" height="18" rx="1.5" fill="#58cc02"/>
-          <rect x="28" y="20" width="6" height="24" rx="1.5" fill="#16a34a"/>
-          <!-- Linha ascendente do gráfico -->
-          <path d="M9 31 L19 24 L31 17" fill="none" stroke="#eab308" stroke-width="2.5" stroke-linecap="round"/>
-        </g>
-        <!-- Perninhas e sapatos da Cenoura -->
-        <path d="M44 98 L42 110 M64 98 L66 110" stroke="#d95b00" stroke-width="8" stroke-linecap="round"/>
-        <ellipse cx="40" cy="111" rx="7.5" ry="4" fill="#ffffff"/>
-        <ellipse cx="68" cy="111" rx="7.5" ry="4" fill="#ffffff"/>
-        <!-- Topete de folhas de cenoura verdes no topo -->
-        <path d="M54 26 C42 4 24 8 28 22 C32 28 46 28 54 26 Z" fill="#3ca100"/>
-        <path d="M54 26 C66 4 84 8 80 22 C76 28 62 28 54 26 Z" fill="#46a302"/>
-        <path d="M54 27 C47 2 61 2 54 27 Z" stroke="#78e826" stroke-width="10" stroke-linecap="round"/>
-        <!-- Corpo de Cenoura arredondado Duolingo -->
-        <path d="M28 42 C28 27 80 27 80 42 L70 96 C67 106 41 106 38 96 Z" fill="#ff8800"/>
-        <!-- ÓCULOS DE SOL WAYFARER COM REFLEXO BRANCO DIAGONAL -->
-        <g>
-          <path d="M26 48 L82 48" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
-          <rect x="30" y="46" width="22" height="15" rx="4" fill="#111827"/>
-          <rect x="56" y="46" width="22" height="15" rx="4" fill="#111827"/>
-          <rect x="32" y="48" width="18" height="11" rx="2.5" fill="#1e293b"/>
-          <rect x="58" y="48" width="18" height="11" rx="2.5" fill="#1e293b"/>
-          <!-- Brilhos brancos diagonais -->
-          <path d="M35 57 L42 50 M41 57 L45 53" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M61 57 L68 50 M67 57 L71 53" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
-        </g>
-        <path d="M34 40 Q41 36 48 40" fill="none" stroke="#7c2d12" stroke-width="3" stroke-linecap="round"/>
-        <path d="M59 40 Q67 36 74 40" fill="none" stroke="#7c2d12" stroke-width="3" stroke-linecap="round"/>
-        <!-- Sorriso confiante de lado com dente branco -->
-        <path d="M46 68 Q56 74 66 66" fill="none" stroke="#5a1807" stroke-width="3.5" stroke-linecap="round"/>
-        <path d="M58 70 L64 67 L62 73 Z" fill="#ffffff"/>
-        <!-- Braço apontando para o gráfico -->
-        <g class="personagem-gesto">
-          <path d="M72 68 C84 66 90 58 92 50" fill="none" stroke="#ff8800" stroke-width="9" stroke-linecap="round"/>
-          <circle cx="92" cy="48" r="5" fill="#ffa94d"/>
-        </g>
-      </g>
-    </svg>`
+    nome: 'Cenourão da Coleta Seletiva',
+    dica: 'Separe papel, plástico, vidro e metal. O que seria lixo vira recurso!',
+    img: 'assets/personagens/cenoura_seletiva.png'
   },
   {
-    nome: 'Patrulheiro do Rio & Sapinho na Cabeça',
-    dica: 'Limpando rios e córregos para que os animais vivam felizes e sem plástico nas águas!',
-    svg: `<svg class="personagem-svg" viewBox="0 0 140 130" aria-hidden="true" focusable="false">
-      <!-- Ondinhas d'água azuis e sombra no chão -->
-      <ellipse cx="60" cy="115" rx="35" ry="12" fill="rgba(8, 20, 12, 0.45)"/>
-      <path d="M12 118 Q26 112 40 118 Q54 124 68 118 Q82 112 96 118" fill="none" stroke="#38bdf8" stroke-width="4.5" stroke-linecap="round"/>
-      <g class="personagem-corpo">
-        <!-- Corpo estilo Duolingo Junior com camisa verde -->
-        <rect x="33" y="44" width="54" height="66" rx="22" fill="#15803d"/>
-        <rect x="35" y="44" width="50" height="62" rx="20" fill="#22c55e"/>
-        <!-- Bermudinha escura e botinhas impermeáveis -->
-        <path d="M35 78 L85 78 L85 96 C85 103 76 106 60 106 C44 106 35 103 35 96 Z" fill="#1e293b"/>
-        <ellipse cx="44" cy="111" rx="8" ry="4" fill="#0284c7"/>
-        <ellipse cx="76" cy="111" rx="8" ry="4" fill="#0284c7"/>
-        <!-- Cabeça redonda com cabelo ruivo/laranja em tigela -->
-        <rect x="34" y="28" width="52" height="42" rx="19" fill="#fbcfe8"/>
-        <rect x="34" y="28" width="52" height="42" rx="19" fill="#fed7aa"/>
-        <path d="M30 42 C30 20 90 20 90 42 C78 32 42 32 30 42 Z" fill="#ea580c"/>
-        <!-- SAPINHO VERDE SENTADO NO TOPO DA CABEÇA ANIMADO -->
-        <g class="personagem-sapo" transform="translate(42, 12)">
-          <ellipse cx="18" cy="18" rx="15" ry="9" fill="#46a302"/>
-          <ellipse cx="18" cy="17" rx="13" ry="8" fill="#58cc02"/>
-          <!-- Olhões amarelos esbugalhados do sapinho -->
-          <circle cx="10" cy="9" r="5" fill="#facc15"/>
-          <circle cx="26" cy="9" r="5" fill="#facc15"/>
-          <circle cx="10" cy="9" r="2.3" fill="#1e293b"/>
-          <circle cx="26" cy="9" r="2.3" fill="#1e293b"/>
-          <!-- Patinhas apoiadas na testa -->
-          <circle cx="7" cy="22" r="3" fill="#46a302"/>
-          <circle cx="29" cy="22" r="3" fill="#46a302"/>
-        </g>
-        <!-- Olhos focados e atentos para a limpeza -->
-        <g class="personagem-olhos">
-          <ellipse cx="50" cy="52" rx="7.5" ry="9" fill="#ffffff"/>
-          <ellipse cx="70" cy="52" rx="7.5" ry="9" fill="#ffffff"/>
-          <circle cx="53" cy="52" r="4" fill="#1e293b"/>
-          <circle cx="73" cy="52" r="4" fill="#1e293b"/>
-        </g>
-        <path d="M42 43 L56 46 M80 43 L66 46" stroke="#9a3412" stroke-width="3.5" stroke-linecap="round"/>
-        <path d="M56 63 Q61 67 66 63" fill="none" stroke="#7c2d12" stroke-width="3" stroke-linecap="round"/>
-        <!-- Rede rosa coletando garrafinha plástica azul na água -->
-        <g class="personagem-gesto">
-          <line x1="48" y1="86" x2="102" y2="54" stroke="#ec4899" stroke-width="5" stroke-linecap="round"/>
-          <circle cx="56" cy="82" r="5" fill="#fbcfe8"/>
-          <!-- Rede translúcida com a garrafinha capturada -->
-          <path d="M96 46 C96 66 106 82 116 80 C125 78 128 58 128 46 Z" fill="#e0f2fe" opacity="0.9"/>
-          <!-- Garrafa plástica reciclável -->
-          <rect x="108" y="54" width="9" height="15" rx="3" transform="rotate(22 112 61)" fill="#38bdf8" stroke="#0284c7" stroke-width="1.5"/>
-          <ellipse cx="112" cy="46" rx="16" ry="10" transform="rotate(-12 112 46)" fill="none" stroke="#f472b6" stroke-width="5.5"/>
-        </g>
-      </g>
-    </svg>`
+    nome: 'Patrulheiro da Energia Solar e Eólica',
+    dica: 'O sol e os ventos geram energia limpa sem poluir o nosso ar.',
+    img: 'assets/personagens/patrulheiro_solar.png'
+  },
+  {
+    nome: 'Sementinha Estudando Sustentabilidade',
+    dica: 'Conhecimento é a ferramenta mais poderosa para mudar o planeta para melhor!',
+    img: 'assets/personagens/semente_lendo.png'
+  },
+  {
+    nome: 'Vovó Maromba do Muque Ecológico',
+    dica: 'Força na compostagem e no consumo consciente! Você tem o poder de mudar tudo!',
+    img: 'assets/personagens/vovo_muque.png'
+  },
+  {
+    nome: 'Curupira Vigia das Matas',
+    dica: 'Olhos atentos na mata para afastar queimadas e desmatamento ilegal!',
+    img: 'assets/personagens/curupira_binoculo.png'
+  },
+  {
+    nome: 'Cenourão Inovação Sustentável',
+    dica: 'A tecnologia e a criatividade criam soluções incríveis para o meio ambiente!',
+    img: 'assets/personagens/cenoura_laptop.png'
+  },
+  {
+    nome: 'Patrulheiro Cientista das Águas',
+    dica: 'Testando a pureza dos rios para garantir vida saudável a toda a comunidade!',
+    img: 'assets/personagens/patrulheiro_quimica.png'
   }
 ];
 
@@ -1979,7 +1666,12 @@ function renderizarPersonagens(scene, itens, pts, W) {
     fala.className = 'personagem-fala';
     fala.setAttribute('role', 'status');
 
-    btn.innerHTML = elemento.svg;
+    btn.innerHTML = `
+      <div class="personagem-sombra"></div>
+      <div class="personagem-avatar">
+        <img class="personagem-img" src="${elemento.img}" alt="${elemento.nome}">
+      </div>
+    `;
     btn.appendChild(fala);
 
     let timerFala = null;
