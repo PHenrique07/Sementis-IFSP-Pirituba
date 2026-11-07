@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#12123d">
     <title>Turma — Sementis</title>
-    <link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/selo_sementis_branco.png" type="image/png">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/turma-professor.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -33,7 +33,10 @@
         <section class="turma-hero" aria-labelledby="turma-nome">
             <div class="turma-hero-info">
                 <div class="hero-badge">
-                    <span class="hero-eyebrow">🌱 ESPAÇO DA TURMA</span>
+                    <span class="hero-eyebrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-1px; margin-right:4px;"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
+                        ESPAÇO DA TURMA
+                    </span>
                 </div>
                 <h1 id="turma-nome">Carregando turma...</h1>
                 <p id="turma-descricao">Acompanhe avisos, engajamento e desempenho pedagógico dos estudantes.</p>
@@ -68,7 +71,9 @@
                     </button>
                     <div class="export-menu" id="export-menu">
                         <button type="button" class="export-option" onclick="exportarRelatorioPDF()">
-                            <span class="export-opt-icon">📄</span>
+                            <span class="export-opt-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            </span>
                             <div>
                                 <strong>Relatório PDF</strong>
                                 <small>Visual no estilo Sementis</small>
@@ -76,14 +81,18 @@
                         </button>
                         <div class="export-menu-divider"></div>
                         <button type="button" class="export-option" onclick="exportarRelatorio('csv')">
-                            <span class="export-opt-icon">📊</span>
+                            <span class="export-opt-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
+                            </span>
                             <div>
                                 <strong>Baixar CSV</strong>
                                 <small>Compatível com Excel &amp; Google Sheets</small>
                             </div>
                         </button>
                         <button type="button" class="export-option" onclick="exportarRelatorio('xls')">
-                            <span class="export-opt-icon">📑</span>
+                            <span class="export-opt-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                            </span>
                             <div>
                                 <strong>Baixar Excel (.XLS)</strong>
                                 <small>Planilha com formatação de cores</small>
@@ -97,7 +106,9 @@
         <!-- Grade de Indicadores Pedagógicos (6 KPIs) -->
         <section class="kpi-grid" aria-label="Indicadores da turma">
             <article class="kpi-card kpi-card--total">
-                <span class="kpi-icon">👥</span>
+                <span class="kpi-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </span>
                 <div class="kpi-body">
                     <span class="kpi-label">Alunos na turma</span>
                     <strong id="kpi-alunos">—</strong>
@@ -105,7 +116,9 @@
                 </div>
             </article>
             <article class="kpi-card kpi-card--green">
-                <span class="kpi-icon">✦</span>
+                <span class="kpi-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </span>
                 <div class="kpi-body">
                     <span class="kpi-label">Ativos na semana</span>
                     <strong id="kpi-ativos">—</strong>
@@ -113,7 +126,9 @@
                 </div>
             </article>
             <article class="kpi-card kpi-card--blue">
-                <span class="kpi-icon">⚡</span>
+                <span class="kpi-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                </span>
                 <div class="kpi-body">
                     <span class="kpi-label">XP médio semanal</span>
                     <strong id="kpi-xp">—</strong>
@@ -121,7 +136,9 @@
                 </div>
             </article>
             <article class="kpi-card kpi-card--orange">
-                <span class="kpi-icon">◎</span>
+                <span class="kpi-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                </span>
                 <div class="kpi-body">
                     <span class="kpi-label">Progresso médio</span>
                     <strong id="kpi-progresso">—</strong>
@@ -129,7 +146,9 @@
                 </div>
             </article>
             <article class="kpi-card kpi-card--red">
-                <span class="kpi-icon">⚠️</span>
+                <span class="kpi-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </span>
                 <div class="kpi-body">
                     <span class="kpi-label">Precisam de apoio</span>
                     <strong id="kpi-risco">—</strong>
@@ -137,7 +156,9 @@
                 </div>
             </article>
             <article class="kpi-card kpi-card--purple">
-                <span class="kpi-icon">🏆</span>
+                <span class="kpi-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 9H4a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-2"></path><path d="M8 22v-4m8 4v-4M5 22h14"></path></svg>
+                </span>
                 <div class="kpi-body">
                     <span class="kpi-label">Alunos destaque</span>
                     <strong id="kpi-destaques">—</strong>
@@ -190,7 +211,8 @@
                                 + Atribuir Trilha
                             </button>
                             <a href="painel-professor.html?aba=semeia" class="btn-semeia-gerar-link">
-                                ✨ Gerar Nova com IA
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-2px; margin-right:4px;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+                                <span>Gerar Nova com IA</span>
                             </a>
                         </div>
                     </div>
@@ -212,7 +234,9 @@
                     <!-- Barra de Ferramentas: Busca, Filtros e Ordenação -->
                     <div class="alunos-toolbar">
                         <div class="search-box">
-                            <span class="search-icon">🔍</span>
+                            <span class="search-icon" aria-hidden="true">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </span>
                             <input type="text" id="busca-aluno" placeholder="Buscar por nome ou e-mail..." autocomplete="off">
                             <button id="limpar-busca" type="button" class="clear-search-btn" title="Limpar busca" style="display:none;">✕</button>
                         </div>
@@ -221,12 +245,12 @@
                         <div class="sort-box">
                             <label for="select-ordenacao" class="sort-label">Ordenar:</label>
                             <select id="select-ordenacao" class="sort-select" onchange="alterarOrdenacao(this.value)">
-                                <option value="xp_semanal">⚡ XP Semanal (Maior ritmo)</option>
-                                <option value="xp_total">⭐ XP Total</option>
-                                <option value="nivel">🎖️ Nível</option>
-                                <option value="ofensiva">🔥 Dias de Ofensiva</option>
-                                <option value="progresso">📈 Progresso (%)</option>
-                                <option value="nome">🔤 Nome Alfabético</option>
+                                <option value="xp_semanal">XP Semanal (Maior ritmo)</option>
+                                <option value="xp_total">XP Total</option>
+                                <option value="nivel">Nível</option>
+                                <option value="ofensiva">Dias de Ofensiva</option>
+                                <option value="progresso">Progresso (%)</option>
+                                <option value="nome">Nome Alfabético</option>
                             </select>
                         </div>
 
@@ -340,8 +364,8 @@
     <div class="modal-overlay" id="modal-atribuir-trilha" role="dialog" aria-modal="true" aria-labelledby="modal-atribuir-title" style="display:none;">
         <div class="modal-card">
             <div class="modal-header">
-                <div class="modal-icon" style="background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; display:flex; align-items:center; justify-content:center; font-size:22px; width:48px; height:48px; border-radius:12px;">
-                    ✨
+                <div class="modal-icon" style="background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:12px; color:#c084fc;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
                 </div>
                 <div>
                     <h2 id="modal-atribuir-title" style="margin:0; font-size:18px; font-weight:800; color:#fff;">Atribuir Trilha da SemeIA</h2>

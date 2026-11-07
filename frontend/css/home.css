@@ -171,6 +171,13 @@
 .header-logo {
     height: 40px;
     width: auto;
+    aspect-ratio: 1707 / 420;
+}
+
+.home-header img,
+.module-icon {
+    font-size: 0;
+    color: transparent;
 }
 
 .header-logo-link {
@@ -1332,10 +1339,6 @@
 }
 
 /* ===== Modules View ===== */
-.modules-view {
-    animation: fadeIn 0.3s ease;
-}
-
 .modules-header {
     display: flex;
     align-items: center;
@@ -1406,13 +1409,7 @@
     text-align: center;
     cursor: pointer;
     transition: all var(--transition-base);
-    animation: slideUp 0.5s ease backwards;
 }
-
-.module-card:nth-child(2) { animation-delay: 0.1s; }
-.module-card:nth-child(3) { animation-delay: 0.2s; }
-.module-card:nth-child(4) { animation-delay: 0.3s; }
-.module-card:nth-child(5) { animation-delay: 0.4s; }
 
 .module-card:hover:not(.locked) {
     transform: translateY(-8px);
@@ -1550,10 +1547,6 @@
 }
 
 /* ===== Trilhas View ===== */
-.trilhas-view {
-    animation: fadeIn 0.3s ease;
-}
-
 .trilhas-header {
     display: flex;
     align-items: center;
@@ -1605,10 +1598,6 @@
 }
 
 /* ===== Trail Detail View ===== */
-.trail-detail-view {
-    animation: fadeIn 0.3s ease;
-}
-
 .trail-detail-header {
     display: flex;
     align-items: center;
@@ -1633,13 +1622,7 @@
     gap: 20px;
     position: relative;
     padding: 20px 0;
-    animation: slideUp 0.5s ease backwards;
 }
-
-.lesson-item:nth-child(3) { animation-delay: 0.1s; }
-.lesson-item:nth-child(5) { animation-delay: 0.2s; }
-.lesson-item:nth-child(7) { animation-delay: 0.3s; }
-.lesson-item:nth-child(9) { animation-delay: 0.4s; }
 
 @media (min-width: 768px) {
     .lesson-item {

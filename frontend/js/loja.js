@@ -936,7 +936,7 @@ function fecharModalDroneLoot(resgatarMoedas = true) {
 
     if (typeof toast !== "undefined" && toast.success) {
       toast.success("Loot Diário Resgatado!", {
-        description: "+67 moedas adicionadas à sua conta pelo Drone Sustentável! 🛸",
+        description: "+67 moedas adicionadas à sua conta pelo Drone Sustentável!",
       });
     }
 

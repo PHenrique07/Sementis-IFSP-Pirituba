@@ -48,6 +48,13 @@ html { background-color: #1a1a4a; }
   cursor: pointer;
 }
 
+.sidebar-logo img,
+.nav-item img,
+.more-menu-item img {
+  font-size: 0;
+  color: transparent;
+}
+
 .nav-items-wrapper {
   display: contents;
 }
@@ -104,6 +111,10 @@ html { background-color: #1a1a4a; }
 
 /* Visibilidade por viewport */
 .desktop-only {
+  display: none !important;
+}
+
+.turmas-desktop-only {
   display: none !important;
 }
 
@@ -171,6 +182,10 @@ html { background-color: #1a1a4a; }
   animation-delay: 0.12s;
 }
 
+.more-menu-popup.open .more-menu-item:nth-child(3) {
+  animation-delay: 0.19s;
+}
+
 .more-menu-item img {
   width: 24px;
   height: 24px;
@@ -235,6 +250,7 @@ html { background-color: #1a1a4a; }
   .sidebar-logo img {
     width: 100%;
     height: auto;
+    aspect-ratio: 1707 / 420;
     display: block;
   }
 
@@ -261,6 +277,11 @@ html { background-color: #1a1a4a; }
     height: 28px;
   }
 
+  .nav-item.turmas-desktop-only img {
+    width: 36px;
+    height: 36px;
+  }
+
   .nav-item span {
     font-size: 18px;
     font-weight: 700;
@@ -281,8 +302,17 @@ html { background-color: #1a1a4a; }
     display: flex !important;
   }
 
+  .turmas-desktop-only {
+    display: flex !important;
+  }
+
   .mobile-only {
     display: none !important;
   }
+}
+
+.more-menu-item[href="turma-aluno.html"] img {
+  width: 34px;
+  height: 34px;
 }
 

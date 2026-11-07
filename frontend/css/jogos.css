@@ -122,6 +122,40 @@ body.jogos-page {
   height: 121%;
 }
 
+.game-banner--roots {
+  background: radial-gradient(circle at 50% 45%, rgba(126, 200, 80, 0.3), transparent 48%), #17263a;
+}
+
+.roots-banner-art {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: var(--accent-green);
+  font-size: 32px;
+  text-shadow: 0 0 18px rgba(169, 255, 113, 0.65);
+}
+
+.roots-banner-art strong {
+  color: var(--text-light);
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.roots-banner-leaf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border: 1px solid rgba(169, 255, 113, 0.35);
+  border-radius: 50%;
+  background: rgba(13, 14, 41, 0.5);
+}
+
+.roots-banner-leaf--right {
+  filter: grayscale(1) sepia(1) hue-rotate(315deg) saturate(2);
+}
+
 .game-banner--lit::before,
 .game-banner--lit::after {
   content: '';

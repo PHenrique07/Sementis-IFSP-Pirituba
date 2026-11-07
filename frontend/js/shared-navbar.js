@@ -19,7 +19,7 @@ function buildSharedNavbar(activeSection) {
   const isLoja = activeSection === 'Loja';
   const isJogos = activeSection === 'Jogos';
   const isPerfil = activeSection === 'Perfil';
-  const isMais = isPerfil || isJogos;
+  const isMais = isPerfil || isJogos || isTurmas;
 
   return `
 <nav class="bottom-nav" aria-label="Navegação principal">
@@ -33,8 +33,8 @@ function buildSharedNavbar(activeSection) {
       <img src="assets/icons/menu_rodape_tarefa.png" alt="Trilhas">
       <span>Trilhas</span>
     </a>
-    <a class="nav-item ${isTurmas ? 'active' : ''}" href="turma-aluno.html" ${isTurmas ? 'aria-current="page"' : ''}>
-      <img src="assets/icons/menu_turmas.svg" alt="Turmas">
+    <a class="nav-item turmas-desktop-only ${isTurmas ? 'active' : ''}" href="turma-aluno.html" ${isTurmas ? 'aria-current="page"' : ''}>
+      <img src="assets/icons/turma_icon.png" alt="Turmas">
       <span>Turmas</span>
     </a>
     <a class="nav-item ${isLigas ? 'active' : ''}" href="ligas.html" ${isLigas ? 'aria-current="page"' : ''}>
@@ -65,6 +65,10 @@ function buildSharedNavbar(activeSection) {
 
   <div class="more-menu-popup mobile-only" id="more-menu-popup" aria-hidden="true">
     <div class="more-menu-content">
+      <a class="more-menu-item ${isTurmas ? 'active' : ''}" href="turma-aluno.html">
+        <img src="assets/icons/turma_icon.png" alt="Turmas">
+        <span>Turmas</span>
+      </a>
       <a class="more-menu-item ${isPerfil ? 'active' : ''}" href="perfil.html">
         <img src="assets/icons/menu_rodape_usuario.png" alt="Perfil">
         <span>Perfil</span>

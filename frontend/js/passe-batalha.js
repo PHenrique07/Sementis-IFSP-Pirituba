@@ -551,7 +551,7 @@
             })
             .then(function (d) {
                 if (!d) return;
-                var xp = d.xp_total ?? 0;
+                var xp = d.xp_total ?? d.xp ?? d.pontuacao ?? 0;
                 if (xp !== estado.xpTotal) {
                     estado.xpTotal = xp;
                     atualizarCardEntrada();

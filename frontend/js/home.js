@@ -22,8 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDailyGoal();   
     
     // 3. Roda a animação de entrada
-    // A navegação compartilhada cuida da transição sem esconder o conteúdo. 
-
+    // A navegação compartilhada cuida da transição sem esconder o conteúdo.
     // ==========================================
     // A CORREÇÃO ENTRA AQUI: 
     // Se a página for o mapa de trilhas, puxa os botões do banco!
@@ -347,34 +346,6 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
-}
-
-// ===== Welcome Animation =====
-function playWelcomeAnimation() {
-    const header = document.querySelector('.home-header');
-    const trailItems = document.querySelectorAll('.trail-step, .trilha-step');
-
-    if(header) {
-        header.style.opacity = '0';
-        header.style.transform = 'translateY(-20px)';
-
-        setTimeout(() => {
-            header.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            header.style.opacity = '1';
-            header.style.transform = 'translateY(0)';
-        }, 100);
-    }
-
-    trailItems.forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(30px)';
-
-        setTimeout(() => {
-            item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            item.style.opacity = '1';
-            item.style.transform = 'translateY(0)';
-        }, 200 + (index * 100));
-    });
 }
 
 // ===== View Management =====

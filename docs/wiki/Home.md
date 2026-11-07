@@ -19,10 +19,10 @@ Além disso, o Sementis oferece um ecossistema completo para educadores, incluin
 Se você acabou de cair aqui no time ou está avaliando nosso projeto, entender como a gente se organiza é fundamental. Nossa equipe é dividida estrategicamente no modelo **2 Back-end e 2 Front-end**, garantindo foco total em cada ponta do sistema:
 
 ### A Divisão dos Papéis
-* 🛠️ **Pedro Henrique (Líder Técnico & Banco de Dados):** Coordenação geral técnica da equipe, arquitetura e modelagem do banco de dados ([`models.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/models.py)), motor de regras de negócio, fórmulas de XP, ofensiva diária e persistência de dados ([`crud.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/crud.py)) e scripts de povoamento ([`seeds.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/seeds.py)).
-* ⚙️ **Lucas Peres (Back-end & API):** Estruturação do servidor web, implementação das rotas RESTful no [`app.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/app.py), segurança e autenticação (JWT e hashing Argon2id), configuração de CORS para a Vercel e suporte a endpoints externos.
-* ⚡ **Vinícius Ruza (JavaScript & Phaser Engine):** Arquitetura de consumo assíncrono de API, controle do Quiz Engine das trilhas ([`js/quiz.js`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/frontend/js/quiz.js)), mecânica de game loop, pontuação e desenvolvimento dos jogos em **Phaser 3** ([`FlapFish/`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/tree/main/frontend/FlapFish)).
-* 🎨 **Wellington Mendes / "Tom" (UI/UX & Front-end):** Concepção da identidade visual do Sementis, design de interfaces, estilização com CSS3 puro modular ([`css/`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/tree/main/frontend/css)), responsividade mobile-first, micro-animações e implementação dos layouts HTML semânticos.
+* 🛠️ **Pedro Henrique (Líder Técnico & Banco de Dados):** Coordenação geral técnica da equipe, arquitetura e modelagem do banco de dados ([`backend/models.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/models.py)), motor de regras de negócio, fórmulas de XP, ofensiva diária e persistência de dados ([`backend/crud.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/crud.py)) e scripts de povoamento ([`backend/seeds.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/seeds.py)).
+* ⚙️ **Lucas Peres (Back-end & API):** Estruturação do servidor web, implementação das rotas RESTful no [`backend/app.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/app.py), segurança e autenticação (JWT e hashing Argon2id), configuração de CORS para a Vercel e suporte a endpoints externos.
+* ⚡ **Vinícius Ruza (JavaScript & Phaser Engine):** Arquitetura de consumo assíncrono de API, controle do Quiz Engine das trilhas ([`frontend/js/quiz.js`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/frontend/js/quiz.js)), mecânica de game loop, pontuação e desenvolvimento dos jogos em **Phaser 3** ([`frontend/FlapFish/`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/tree/main/frontend/FlapFish)).
+* 🎨 **Wellington Mendes / "Tom" (UI/UX & Front-end):** Concepção da identidade visual do Sementis, design de interfaces, estilização com CSS3 puro modular ([`frontend/css/`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/tree/main/frontend/css)), responsividade mobile-first, micro-animações e implementação dos layouts HTML semânticos.
 
 ---
 
@@ -69,7 +69,7 @@ gitGraph
 * **Inteligência Artificial:** Google Gemini API via SDK oficial (`google-genai`), acionado pelo módulo **SemeIA** para criação automática de trilhas por professores.
 * **Front-end:** HTML5 Semântico, CSS3 Moderno (Vanilla) e JavaScript Puro (ES6+). Zero frameworks pesados, zero bundlers obrigatórios, carregamento instantâneo.
 * **Jogos & Interatividade:** Phaser 3 para o arcade *Flappy Fish* e *Quiz Engine* nativo para as trilhas de aprendizado e o *Sementis Live Arena* (multiplayer via PIN).
-* **Distribuição & PWA:** PWA com Manifesto e Service Worker (`sw.js`). Front-end hospedado na **Vercel** (`sementis.com.br`) e API no **PythonAnywhere**, com chaveamento automático de ambiente via [`js/api-config.js`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/frontend/js/api-config.js).
+* **Distribuição & PWA:** PWA com Manifesto e Service Worker (`frontend/sw.js`). Front-end hospedado na **Vercel** (`sementis.com.br`) e API no **PythonAnywhere**, com chaveamento automático de ambiente via [`frontend/js/api-config.js`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/frontend/js/api-config.js).
 
 ---
 
@@ -125,10 +125,11 @@ Navegue pelos capítulos técnicos detalhados da documentação:
 
 1. **[01. Onboarding e Visão Geral (Esta Página)](Home.md)** — Contexto, cultura do time, fluxo de PRs e papéis.
 2. **[02. Arquitetura Geral & Estrutura de Pastas](02-arquitetura-geral.md)** — Como o front-end, o back-end e o banco de dados se comunicam, e o propósito de cada arquivo do repositório.
-3. **[03. Como Funciona o Back-end](03-backend.md)** — Flask, SQLModel, regras de negócio no `crud.py`, autenticação Argon2id/JWT e IA no `semeia.py`.
+3. **[03. Como Funciona o Back-end](03-backend.md)** — Flask, SQLModel, regras de negócio no `backend/crud.py`, autenticação Argon2id/JWT e IA no `backend/semeia.py`.
 4. **[04. Como Funciona o Front-end](04-frontend.md)** — Arquitetura Vanilla JS, PWA, estilos modulares em CSS, gerenciamento global de estado e consumo de API.
 5. **[05. Os Games em JS e Interatividade](05-games-js.md)** — Quiz Engine interativo, Sementis Live Arena (Kahoot multiplayer) e Flappy Fish em Phaser 3.
 6. **[06. Guia de Contribuição e Execução Local](06-guia-de-contribuicao.md)** — Como clonar, rodar o ambiente de desenvolvimento e padrões de código seguidos pelo time.
+7. **[07. Guia de Skills de IA e REA](07-guia-de-skills.md)** — Catálogo de Agent Skills, orquestração do Esquadrão Sementis e engenharia reversa com o toolkit REA.
 
 ---
 

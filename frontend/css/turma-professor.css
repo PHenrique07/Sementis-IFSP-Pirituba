@@ -341,14 +341,22 @@ body.turma-professor-page {
     place-items: center;
     border-radius: 14px;
     background: rgba(169, 255, 113, .15);
+    color: #a9ff71;
     font-size: 18px;
 }
 
-.kpi-card--green .kpi-icon { background: rgba(169, 255, 113, .18); }
-.kpi-card--blue .kpi-icon { background: rgba(105, 204, 255, .18); }
-.kpi-card--orange .kpi-icon { background: rgba(255, 176, 95, .18); }
-.kpi-card--red .kpi-icon { background: rgba(255, 118, 118, .18); }
-.kpi-card--purple .kpi-icon { background: rgba(192, 132, 252, .18); }
+.kpi-icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.kpi-card--total .kpi-icon { background: rgba(169, 255, 113, .18); color: #a9ff71; }
+.kpi-card--green .kpi-icon { background: rgba(169, 255, 113, .18); color: #a9ff71; }
+.kpi-card--blue .kpi-icon { background: rgba(105, 204, 255, .18); color: #69ccff; }
+.kpi-card--orange .kpi-icon { background: rgba(255, 176, 95, .18); color: #ffb05f; }
+.kpi-card--red .kpi-icon { background: rgba(255, 118, 118, .18); color: #ff7676; }
+.kpi-card--purple .kpi-icon { background: rgba(192, 132, 252, .18); color: #c084fc; }
 
 .kpi-card span:not(.kpi-icon), .kpi-card small { display: block; color: var(--turma-muted); font-size: 11px; }
 .kpi-card strong { display: block; line-height: 1.1; margin: 2px 0; font-size: 23px; }

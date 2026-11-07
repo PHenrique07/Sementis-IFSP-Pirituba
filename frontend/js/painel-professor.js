@@ -48,7 +48,7 @@ let turmasCache = [];
 // CARREGAR TURMAS
 // =====================================================================
 async function carregarTurmas() {
-    if (typeof showLoading === 'function') showLoading('Carregando Turmas', 'Buscando turmas e dados dos alunos 🌱');
+    if (typeof showLoading === 'function') showLoading('Carregando Turmas', 'Buscando turmas e dados dos alunos...');
     try {
         const res = await apiFetch('/api/professor/turmas');
         if (!res) return;
@@ -352,7 +352,7 @@ function fecharRanking() {
 
 function renderLinhaRanking(aluno) {
     const posClass  = aluno.posicao <= 3 ? `pos-${aluno.posicao}` : '';
-    const medalha   = { 1: '🥇', 2: '🥈', 3: '🥉' }[aluno.posicao] || aluno.posicao;
+    const medalha   = { 1: '1º', 2: '2º', 3: '3º' }[aluno.posicao] || aluno.posicao;
     const iniciais  = aluno.nome.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
     const ligaNomes = { 1: 'Bronze', 2: 'Prata', 3: 'Ouro', 4: 'Diamante' };
     const ligaNome  = ligaNomes[aluno.liga_id] || 'Bronze';
@@ -372,12 +372,12 @@ function renderLinhaRanking(aluno) {
             </td>
             <td>
                 <span class="rank-xp">
-                    ⚡ ${aluno.xp_semanal.toLocaleString('pt-BR')} XP
+                    ${aluno.xp_semanal.toLocaleString('pt-BR')} XP
                 </span>
             </td>
             <td>
                 <span class="rank-ofensiva">
-                    🔥 ${aluno.ofensiva}d
+                    <img src="assets/icons/icone_sequencia_fogo.png" alt="Ofensiva" style="width:14px; height:14px; display:inline-block; vertical-align:-2px; margin-right:3px;">${aluno.ofensiva}d
                 </span>
             </td>
             <td><span class="liga-badge ${ligaClass}">${ligaNome}</span></td>
@@ -577,7 +577,7 @@ async function executarCriacaoSalaLive() {
     limparMsg(msgEl);
     if (spinner) spinner.style.display = 'block';
     if (btn) btn.disabled = true;
-    if (typeof showLoading === 'function') showLoading('Criando Sala ao Vivo', 'Preparando o telão e sorteando perguntas sustentáveis ⚡');
+    if (typeof showLoading === 'function') showLoading('Criando Sala ao Vivo', 'Preparando o telão e sorteando perguntas sustentáveis...');
 
     try {
         const res = await apiFetch('/api/live/criar-sala', {
@@ -648,7 +648,7 @@ async function carregarSalasRecentesLive() {
                     <span>PIN: <strong style="color:var(--color-accent); font-family:monospace; font-size:16px;">${sala.pin}</strong> • ${sala.total_participantes} alunos • Status: ${sala.status}</span>
                 </div>
                 <a href="live-host.html?pin=${sala.pin}" class="btn-ver-ranking" style="padding:10px 18px;">
-                    Abrir Telão 📺
+                    Abrir Telão
                 </a>
             `;
             list.appendChild(item);
@@ -688,11 +688,11 @@ let semeiaArquivoAtual = null;
 
 // Mensagens rotatórias exibidas durante o processamento
 const SEMEIA_MSGS_PROCESSANDO = [
-    '🌱 SemeIA está lendo o material...',
-    '🧠 SemeIA está criando as questões...',
-    '✨ SemeIA está montando a trilha...',
-    '🎮 SemeIA está preparando o minigame...',
-    '📚 Finalizando e salvando sua trilha...',
+    'SemeIA está analisando o material pedagógico...',
+    'SemeIA está formulando as questões socioambientais...',
+    'SemeIA está estruturando o caminho da trilha...',
+    'SemeIA está configurando o minigame coringa...',
+    'Finalizando e salvando sua trilha pedagógica...',
 ];
 
 async function carregarCotaSemeIA() {
@@ -782,7 +782,7 @@ function semeiaOnFileSelect(e) {
 function definirArquivoSemeIA(arquivo) {
     semeiaArquivoAtual = arquivo;
     const titulo = document.getElementById('semeia-drop-title');
-    if (titulo) titulo.textContent = `📄 ${arquivo.name}`;
+    if (titulo) titulo.textContent = arquivo.name;
     document.getElementById('semeia-dropzone')?.classList.add('arquivo-selecionado');
 }
 window.semeiaOnDragOver  = semeiaOnDragOver;
@@ -1041,12 +1041,12 @@ function renderizarMinhasTrilhasSemeIA(trilhas) {
         card.className = 'semeia-trilha-gerenciada-card';
 
         const turmasTags = (trilha.turmas && trilha.turmas.length > 0)
-            ? trilha.turmas.map(t => `<span class="trilha-turma-tag">🎓 ${escHtml(t.nome)}</span>`).join('')
+            ? trilha.turmas.map(t => `<span class="trilha-turma-tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:-1px; margin-right:3px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>${escHtml(t.nome)}</span>`).join('')
             : '<span class="trilha-turma-sem">Nenhuma turma atribuída ainda</span>';
 
         const totalAtividades = trilha.total_atividades || 0;
         const temMinigame = trilha.tipos_atividades && trilha.tipos_atividades.includes('minigame');
-        const tiposBadge = temMinigame ? '🕹️ Quiz + Minigame' : '🎯 Quiz';
+        const tiposBadge = temMinigame ? 'Quiz + Minigame' : 'Quiz';
 
         const turmasIdsStr = JSON.stringify((trilha.turmas || []).map(t => t.id));
 
@@ -1055,7 +1055,7 @@ function renderizarMinhasTrilhasSemeIA(trilhas) {
                 <div>
                     <h4 class="trilha-gerenciada-nome">${escHtml(trilha.nome)}</h4>
                     <div class="trilha-gerenciada-meta">
-                        <span>🎯 ${totalAtividades} ${totalAtividades === 1 ? 'fase' : 'fases'}</span>
+                        <span><strong>${totalAtividades}</strong> ${totalAtividades === 1 ? 'fase' : 'fases'}</span>
                         <span>•</span>
                         <span>${tiposBadge}</span>
                     </div>
@@ -1180,7 +1180,7 @@ async function salvarAtribuicaoTurmasTrilha() {
         }
 
         if (feedbackEl) {
-            feedbackEl.textContent = 'Turmas atualizadas com sucesso! 🎉';
+            feedbackEl.textContent = 'Turmas atualizadas com sucesso!';
             feedbackEl.className = 'mensagem-feedback sucesso';
         }
 

@@ -1,6 +1,4 @@
-# Sementis
-
-![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-blue.svg)
+# Sementis 🌱 ![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-blue.svg)
 
 Plataforma educacional gamificada desenvolvida como projeto acadêmico no IFSP Pirituba. O Sementis ensina sustentabilidade com trilhas, quizzes, missões, avatares, ligas e atividades para turmas.
 
@@ -75,18 +73,17 @@ A suíte usa bancos isolados e inclui modelos, regras, inventário, fluxos HTTP 
 
 `vercel.json` configura a publicação estática de `frontend/` a partir da raiz do repositório. A API continua podendo ser hospedada no PythonAnywhere com `from app import app as application` no WSGI. Os detalhes e limites de validação estão no [registro da reorganização](docs/reestruturacao.md).
 
-## Integrantes e contribuições
+## 👥 Integrantes e Contribuições
 
+- **[Pedro Henrique Santos da Silva](https://www.linkedin.com/in/pedro-henrique-santos-da-silva-40b521349/)** — **Líder Técnico & Desenvolvedor Backend:** Responsável pela coordenação geral do projeto e pela arquitetura da API.
 
-- **[Pedro Henrique Santos da Silva](https://www.linkedin.com/in/pedro-henrique-santos-da-silva-40b521349/)** — **Líder Técnico & Desenvolvedor Backend:** Responsável pela coordenação geral do desenvolvimento, arquitetura do banco de dados (Models), implementação do CRUD e povoamento do banco(Seeds).
+- **[Lucas Peres Gomes](https://www.linkedin.com/in/lucas-peres-gomes-747318276/)** — **Desenvolvedor Backend:** Responsável pela estruturação do servidor, configuração da aplicação (`app.py`, `backend/crud.py`, `backend/models.py`), além da implementação de regras de negócio e lógica da API.
 
-- **[Lucas Peres Gomes](https://www.linkedin.com/in/lucas-peres-gomes-747318276/)** — **Desenvolvedor Backend:** Responsável pela estruturação do servidor, configuração da aplicação (`app.py`) e desenvolvimento das rotas da API.
-
-- **[Vinícius Ruza Magalhães](https://www.linkedin.com/in/vinicius-ruza-magalhães-394104353/)** — **Desenvolvedor de Integração:** Responsável por conectar o frontend ao backend utilizando JavaScript assíncrono e manipulação de arquivos JSON.
+- **[Vinícius Ruza Magalhães](https://www.linkedin.com/in/vinicius-ruza-magalhães-394104353/)** — **Desenvolvedor de Integração:** Responsável por conectar o frontend ao backend utilizando JavaScript assíncrono e APIs, garantindo a comunicação eficiente entre as camadas do sistema.
 
 - **[Wellington Mendes](https://www.linkedin.com/in/wmendesc/)** — **Desenvolvedor Frontend:** Responsável pela criação da interface, estilização visual (UI/UX) e garantia da responsividade da aplicação.
 
-## Licença
+## 📄 Licença
 
-Todos os Direitos Reservados (All Rights Reserved)
+Todos os Direitos Reservados (All Rights Reserved)  
 Este repositório e seu código-fonte são de propriedade exclusiva da equipe criadora.
