@@ -521,12 +521,12 @@
   /* ── PERSONAGENS E ILUSTRAÇÕES DE SUSTENTABILIDADE AO LADO DA TRILHA ── */
   .personagem {
     position: absolute;
-    width: 120px;
-    height: 120px;
+    width: 156px;
+    height: 160px;
     transform: translate(-50%, -50%);
     padding: 0;
     border: none;
-    border-radius: 20px;
+    border-radius: 24px;
     background: none;
     cursor: pointer;
     z-index: 2;
@@ -540,11 +540,11 @@
     position: absolute;
     bottom: 2px;
     left: 50%;
-    width: 74px;
-    height: 16px;
+    width: 104px;
+    height: 22px;
     transform: translateX(-50%);
     border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(8, 20, 14, 0.6) 0%, rgba(8, 20, 14, 0) 72%);
+    background: radial-gradient(ellipse at center, rgba(8, 20, 14, 0.68) 0%, rgba(8, 20, 14, 0) 74%);
     pointer-events: none;
     animation: sombraRespirar 3.2s ease-in-out infinite;
     animation-delay: var(--atraso-personagem, 0s);
@@ -562,21 +562,21 @@
   .personagem-img {
     display: block;
     width: auto;
-    max-width: 110px;
-    height: 98px;
+    max-width: 152px;
+    height: 144px;
     object-fit: contain;
-    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.32));
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
     transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: none;
     user-select: none;
   }
   .personagem:hover .personagem-img,
   .personagem:focus-visible .personagem-img {
-    transform: translateY(-8px) scale(1.12);
+    transform: translateY(-10px) scale(1.12);
   }
   .personagem:hover .personagem-sombra,
   .personagem:focus-visible .personagem-sombra {
-    transform: translateX(-50%) scale(0.8);
+    transform: translateX(-50%) scale(0.78);
     opacity: 0.35;
   }
   .personagem.falando { z-index: 7; }
@@ -629,6 +629,26 @@
   .personagem.falando .personagem-fala {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+
+  @media (max-width: 420px) {
+    .personagem {
+      width: 132px;
+      height: 136px;
+    }
+    .personagem-sombra {
+      width: 88px;
+      height: 18px;
+    }
+    .personagem-img {
+      max-width: 128px;
+      height: 122px;
+    }
+    .personagem-fala {
+      width: 180px;
+      font-size: 11.5px;
+      padding: 9px 11px;
+    }
   }
 
   /* Ícone exclusivo para nó ativo (não concluído) */
@@ -1291,84 +1311,179 @@ const TOQUES_BAU  = 3;
 
 const NOMES_RARIDADE = { comum: 'Comum', raro: 'Raro', epico: 'Épico', lendario: 'Lendário' };
 
-// Personagens e cenas de sustentabilidade na trilha (Ilustrações originais com recorte e animações)
-const ELEMENTOS_TRILHA = [
-  {
-    nome: 'Sementinha Regando a Mudinha',
-    dica: 'Cada atitude sustentável é uma semente plantada! Regue seus hábitos todos os dias.',
-    img: 'assets/personagens/semente_regando.png'
-  },
-  {
-    nome: 'Vovó Maromba Treinando Reciclagem',
-    dica: 'Separar o lixo reciclável dá um treino monstro! Aqui ninguém joga plástico fora do lugar!',
-    img: 'assets/personagens/vovo_peso.png'
-  },
-  {
-    nome: 'Curupira Protetor da Floresta',
-    dica: 'Cada árvore em pé garante água limpa e ar puro para todos. Proteja a natureza!',
-    img: 'assets/personagens/curupira_arvore.png'
-  },
-  {
-    nome: 'Cenourão Economia Verde',
-    dica: 'Sustentabilidade e desenvolvimento andam juntos! Compostagem e energia limpa dão lucro.',
-    img: 'assets/personagens/cenoura_grafico.png'
-  },
-  {
-    nome: 'Patrulheiro do Rio & Sapinho',
-    dica: 'Limpando rios e córregos para que os animais vivam felizes e sem plástico nas águas!',
-    img: 'assets/personagens/patrulheiro_rede.png'
-  },
-  {
-    nome: 'Sementinha Abraçando o Planeta Terra',
-    dica: 'A Terra é a nossa única casa. Cada cuidado com a água e com o solo faz a diferença!',
-    img: 'assets/personagens/semente_planeta.png'
-  },
-  {
-    nome: 'Vovó Maromba na Compostagem',
-    dica: 'Restos de alimento viram adubo rico na composteira. Feche o ciclo orgânico!',
-    img: 'assets/personagens/vovo_compostagem.png'
-  },
-  {
-    nome: 'Curupira Plantando Mudas',
-    dica: 'Plantar espécies nativas ajuda a recuperar o solo e chama os passarinhos de volta!',
-    img: 'assets/personagens/curupira_plantando.png'
-  },
-  {
-    nome: 'Cenourão da Coleta Seletiva',
-    dica: 'Separe papel, plástico, vidro e metal. O que seria lixo vira recurso!',
-    img: 'assets/personagens/cenoura_seletiva.png'
-  },
-  {
-    nome: 'Patrulheiro da Energia Solar e Eólica',
-    dica: 'O sol e os ventos geram energia limpa sem poluir o nosso ar.',
-    img: 'assets/personagens/patrulheiro_solar.png'
-  },
-  {
-    nome: 'Sementinha Estudando Sustentabilidade',
-    dica: 'Conhecimento é a ferramenta mais poderosa para mudar o planeta para melhor!',
-    img: 'assets/personagens/semente_lendo.png'
-  },
-  {
-    nome: 'Vovó Maromba do Muque Ecológico',
-    dica: 'Força na compostagem e no consumo consciente! Você tem o poder de mudar tudo!',
-    img: 'assets/personagens/vovo_muque.png'
-  },
-  {
-    nome: 'Curupira Vigia das Matas',
-    dica: 'Olhos atentos na mata para afastar queimadas e desmatamento ilegal!',
-    img: 'assets/personagens/curupira_binoculo.png'
-  },
-  {
-    nome: 'Cenourão Inovação Sustentável',
-    dica: 'A tecnologia e a criatividade criam soluções incríveis para o meio ambiente!',
-    img: 'assets/personagens/cenoura_laptop.png'
-  },
-  {
-    nome: 'Patrulheiro Cientista das Águas',
-    dica: 'Testando a pureza dos rios para garantir vida saudável a toda a comunidade!',
-    img: 'assets/personagens/patrulheiro_quimica.png'
+// Acervo completo com os 25 personagens e poses originais de sustentabilidade (5 por personagem)
+const CATALAGO_PERSONAGENS = {
+  semente: [
+    {
+      nome: 'Sementinha Regando a Mudinha',
+      dica: 'Cada atitude sustentável é uma semente plantada! Regue seus hábitos todos os dias.',
+      img: 'assets/personagens/semente_regando.png'
+    },
+    {
+      nome: 'Sementinha Abraçando o Planeta Terra',
+      dica: 'A Terra é a nossa única casa. Cada cuidado com a água e com o solo faz a diferença!',
+      img: 'assets/personagens/semente_planeta.png'
+    },
+    {
+      nome: 'Sementinha Estudando Sustentabilidade',
+      dica: 'Conhecimento é a ferramenta mais poderosa para mudar o planeta para melhor!',
+      img: 'assets/personagens/semente_lendo.png'
+    },
+    {
+      nome: 'Sementinha na Reciclagem',
+      dica: 'Separar garrafas plásticas permite que elas ganhem vida nova em vez de poluir o oceano!',
+      img: 'assets/personagens/semente_reciclando.png'
+    },
+    {
+      nome: 'Sementinha na Praia Limpa',
+      dica: 'Cuidar das praias e rios protege a fauna marinha e garante água viva para o futuro!',
+      img: 'assets/personagens/semente_praia.png'
+    }
+  ],
+  vovo: [
+    {
+      nome: 'Vovó Maromba Treinando Reciclagem',
+      dica: 'Separar o lixo reciclável dá um treino monstro! Aqui ninguém joga plástico fora do lugar!',
+      img: 'assets/personagens/vovo_peso.png'
+    },
+    {
+      nome: 'Vovó Maromba na Compostagem',
+      dica: 'Restos de alimento viram adubo rico na composteira. Feche o ciclo orgânico!',
+      img: 'assets/personagens/vovo_compostagem.png'
+    },
+    {
+      nome: 'Vovó Maromba do Muque Ecológico',
+      dica: 'Força na compostagem e no consumo consciente! Você tem o poder de mudar tudo!',
+      img: 'assets/personagens/vovo_muque.png'
+    },
+    {
+      nome: 'Vovó Maromba no Plano Tático',
+      dica: 'Planejar o descarte consciente e reduzir o consumo é tática de campeão ecológico!',
+      img: 'assets/personagens/vovo_prancheta.png'
+    },
+    {
+      nome: 'Vovó Maromba Descansando na Rede',
+      dica: 'Depois de um dia reduzindo a pegada de carbono, o descanso é mais que merecido!',
+      img: 'assets/personagens/vovo_rede.png'
+    }
+  ],
+  curupira: [
+    {
+      nome: 'Curupira Protetor da Floresta',
+      dica: 'Cada árvore em pé garante água limpa e ar puro para todos. Proteja a natureza!',
+      img: 'assets/personagens/curupira_arvore.png'
+    },
+    {
+      nome: 'Curupira Plantando Mudas',
+      dica: 'Plantar espécies nativas ajuda a recuperar o solo e chama os passarinhos de volta!',
+      img: 'assets/personagens/curupira_plantando.png'
+    },
+    {
+      nome: 'Curupira Vigia das Matas',
+      dica: 'Olhos atentos na mata para afastar queimadas e desmatamento ilegal!',
+      img: 'assets/personagens/curupira_binoculo.png'
+    },
+    {
+      nome: 'Curupira Recolhendo Resíduos',
+      dica: 'Lixo na mata jamais! A floresta precisa respirar limpa e livre de embalagens!',
+      img: 'assets/personagens/curupira_lixo.png'
+    },
+    {
+      nome: 'Curupira no Riacho Cristalino',
+      dica: 'Preservar as nascentes e matas ciliares garante água fresca e potável para sempre!',
+      img: 'assets/personagens/curupira_riacho.png'
+    }
+  ],
+  cenoura: [
+    {
+      nome: 'Cenourão Economia Verde',
+      dica: 'Sustentabilidade e desenvolvimento andam juntos! Compostagem e energia limpa dão lucro.',
+      img: 'assets/personagens/cenoura_grafico.png'
+    },
+    {
+      nome: 'Cenourão Inovação Sustentável',
+      dica: 'A tecnologia e a criatividade criam soluções incríveis para o meio ambiente!',
+      img: 'assets/personagens/cenoura_laptop.png'
+    },
+    {
+      nome: 'Cenourão Garrafa Reutilizável',
+      dica: 'Diga adeus aos copos descartáveis! Garrafinha permanente é estilosa e amiga do planeta.',
+      img: 'assets/personagens/cenoura_garrafa.png'
+    },
+    {
+      nome: 'Cenourão da Coleta Seletiva',
+      dica: 'Separe papel, plástico, vidro e metal. O que seria lixo vira recurso!',
+      img: 'assets/personagens/cenoura_seletiva.png'
+    },
+    {
+      nome: 'Cenourão Estudando Políticas Verdes',
+      dica: 'Liderar com consciência ambiental cria benefícios duradouros para toda a sociedade!',
+      img: 'assets/personagens/cenoura_leitura.png'
+    }
+  ],
+  patrulheiro: [
+    {
+      nome: 'Patrulheiro do Rio & Sapinho',
+      dica: 'Limpando rios e córregos para que os animais vivam felizes e sem plástico nas águas!',
+      img: 'assets/personagens/patrulheiro_rede.png'
+    },
+    {
+      nome: 'Patrulheiro da Biodiversidade',
+      dica: 'Cada inseto, fungo e plantinha tem uma função vital no ecossistema!',
+      img: 'assets/personagens/patrulheiro_lupa.png'
+    },
+    {
+      nome: 'Patrulheiro Cientista das Águas',
+      dica: 'Testando a pureza dos rios para garantir vida saudável a toda a comunidade!',
+      img: 'assets/personagens/patrulheiro_quimica.png'
+    },
+    {
+      nome: 'Patrulheiro Caderno de Campo',
+      dica: 'Registrar o reflorestamento e melhorias ecológicas orienta ações ainda mais eficazes!',
+      img: 'assets/personagens/patrulheiro_caderno.png'
+    },
+    {
+      nome: 'Patrulheiro da Energia Solar e Eólica',
+      dica: 'O sol e os ventos geram energia limpa sem poluir o nosso ar.',
+      img: 'assets/personagens/patrulheiro_solar.png'
+    }
+  ]
+};
+
+// Seleciona um conjunto exclusivo e variado de personagens para cada trilha diferente
+function selecionarPersonagensParaTrilha(identificadorTrilha) {
+  const chave = String(identificadorTrilha || 'trilha_padrao');
+  let hash = 0;
+  for (let i = 0; i < chave.length; i++) {
+    hash = ((hash << 5) - hash) + chave.charCodeAt(i);
+    hash |= 0;
   }
-];
+  const seed = Math.abs(hash);
+
+  const ordemBase = ['semente', 'vovo', 'curupira', 'cenoura', 'patrulheiro'];
+  const offset = seed % ordemBase.length;
+  const ordemRotacionada = [
+    ...ordemBase.slice(offset),
+    ...ordemBase.slice(0, offset)
+  ];
+
+  const resultado = [];
+  // Primeira rodada: 1 pose única para cada um dos 5 personagens
+  ordemRotacionada.forEach((tipo, idx) => {
+    const catalogo = CATALAGO_PERSONAGENS[tipo];
+    const poseIndex = (Math.floor(seed / (idx + 1)) + idx) % catalogo.length;
+    resultado.push(catalogo[poseIndex]);
+  });
+
+  // Segunda rodada com poses alternativas caso a trilha tenha muitas fases
+  ordemRotacionada.forEach((tipo, idx) => {
+    const catalogo = CATALAGO_PERSONAGENS[tipo];
+    const poseIndex = (Math.floor(seed / (idx + 1)) + idx + 2) % catalogo.length;
+    resultado.push(catalogo[poseIndex]);
+  });
+
+  return resultado;
+}
 
 function seededNoise(n) {
   const x = Math.sin(n * 127.1 + 311.7) * 43758.5453123;
@@ -1631,27 +1746,31 @@ function criarNoBau(scene, bau, {x, y}) {
 // PERSONAGENS AO LADO DA TRILHA (ESTILO DUOLINGO)
 // ==============================================================
 function renderizarPersonagens(scene, itens, pts, W) {
-  if (W < 330) return; // Em telas extremamente estreitas não sobra espaço lateral
+  if (W < 320) return; // Em telas extremamente estreitas não sobra espaço lateral
 
-  // Offset de acordo com o módulo/trilha para variar ainda mais a ordem se desejar,
-  // mantendo a Sementinha, Curupira, Cenoura de Óculos e Vovó Maromba sempre presentes!
+  // Identificador da trilha para garantir que cada trilha tenha uma ordem e poses de personagens exclusivas
+  const urlParams = new URLSearchParams(window.location.search);
+  const idTrilha = urlParams.get('trilha_id') || urlParams.get('trilha') || trilhaAtualId || urlParams.get('module') || 'trilha_padrao';
+  const personagensTrilha = selecionarPersonagensParaTrilha(idTrilha);
+
   let indiceElemento = 0;
   let ultimoY = -999;
+  const espacoMinimoY = W < 390 ? 200 : 220; // Permite personagens bem distribuídos mesmo em trilhas curtas
 
   for (let i = 1; i < itens.length; i++) {
     if (itens[i].tipo !== 'licao') continue;
 
     const { x, y } = pts[i];
-    // Garante espaçamento vertical confortável (~280px, ou seja, a cada ~2 lições)
-    if (y - ultimoY < 270) continue;
+    // Garante espaçamento vertical confortável
+    if (y - ultimoY < espacoMinimoY) continue;
     ultimoY = y;
 
-    const elemento = ELEMENTOS_TRILHA[indiceElemento % ELEMENTOS_TRILHA.length];
+    const elemento = personagensTrilha[indiceElemento % personagensTrilha.length];
     indiceElemento++;
 
     // Posiciona do lado onde há mais espaço livre em relação à curva da trilha
     const lado = x < W / 2 ? 'direita' : 'esquerda';
-    const margemLateral = W < 390 ? 56 : 68;
+    const margemLateral = W < 390 ? 70 : 82;
 
     const btn = document.createElement('button');
     btn.type = 'button';
