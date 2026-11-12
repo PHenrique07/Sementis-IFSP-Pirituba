@@ -23,3 +23,6 @@ brag-output*/
 
 # Materiais locais do pitch
 /pitch-assets/
+
+# Scripts locais e transitórios
+scratch/
