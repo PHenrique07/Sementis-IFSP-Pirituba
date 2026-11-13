@@ -518,105 +518,154 @@
     94% { transform: translate(-50%, -50%) rotate(0); }
   }
 
-  /* ── ELEMENTOS DE SUSTENTABILIDADE E PERSONAGEM AO LADO DA TRILHA ───────── */
+  /* ── PERSONAGENS E ILUSTRAÇÕES DE SUSTENTABILIDADE AO LADO DA TRILHA ── */
   .personagem {
     position: absolute;
-    width: 96px;
-    height: 106px;
+    width: 156px;
+    height: 160px;
     transform: translate(-50%, -50%);
     padding: 0;
     border: none;
-    border-radius: 16px;
+    border-radius: 24px;
     background: none;
     cursor: pointer;
-    z-index: 1;
+    z-index: 2;
     font-family: inherit;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
   }
-  .personagem-svg {
+  .personagem-sombra {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    width: 104px;
+    height: 22px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(8, 20, 14, 0.68) 0%, rgba(8, 20, 14, 0) 74%);
+    pointer-events: none;
+    animation: sombraRespirar 3.2s ease-in-out infinite;
+    animation-delay: var(--atraso-personagem, 0s);
+  }
+  .personagem-avatar {
     position: relative;
     z-index: 1;
-    width: 86px;
-    height: 94px;
-    overflow: visible;
-    filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.12));
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .personagem:hover .personagem-svg,
-  .personagem:focus-visible .personagem-svg {
-    transform: translateY(-4px) scale(1.08);
-  }
-  .personagem-corpo {
-    transform-origin: 50px 99px;
-    animation: personagemRespirar 4s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center bottom;
+    animation: personagemFlutuar 3.2s ease-in-out infinite;
     animation-delay: var(--atraso-personagem, 0s);
   }
-  .personagem-olhos {
+  .personagem-img {
+    display: block;
+    width: 152px;
+    max-width: 152px;
+    height: 144px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    user-select: none;
+  }
+  .personagem-parte {
     transform-box: fill-box;
     transform-origin: center;
-    animation: personagemPiscar 5.4s infinite;
+    animation: personagemParteMover 4s ease-in-out infinite;
     animation-delay: var(--atraso-personagem, 0s);
   }
-  .personagem.falando { z-index: 6; }
-  .personagem.falando .personagem-corpo {
-    animation: personagemSaudar 0.65s ease-in-out;
+  @keyframes personagemParteMover {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
   }
-  .personagem-gesto {
-    transform-origin: 69px 70px;
+  @media (hover: hover) and (pointer: fine) {
+    .personagem:hover .personagem-img {
+      transform: translateY(-6px) scale(1.05);
+    }
   }
-  .personagem.falando .personagem-gesto {
-    animation: personagemAcenar 0.35s ease-in-out 3 alternate;
+  .personagem:focus-visible .personagem-img {
+    transform: translateY(-6px) scale(1.05);
   }
-  @keyframes personagemRespirar {
-    0%, 100% { transform: rotate(-2deg); }
-    50% { transform: translateY(-3px) rotate(2deg); }
+  .personagem:hover .personagem-sombra,
+  .personagem:focus-visible .personagem-sombra {
+    transform: translateX(-50%) scale(0.78);
+    opacity: 0.35;
   }
-  @keyframes personagemPiscar {
-    0%, 42%, 46%, 100% { transform: scaleY(1); }
-    44% { transform: scaleY(0.08); }
+  .personagem.falando { z-index: 7; }
+  .personagem.falando .personagem-avatar {
+    animation: personagemComemorar 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  @keyframes personagemSaudar {
-    0%, 100% { transform: translateY(0); }
-    35% { transform: translateY(-9px) rotate(-5deg); }
-    70% { transform: translateY(0) scaleY(0.96); }
+  @keyframes personagemFlutuar {
+    0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+    50% { transform: translateY(-7px) rotate(1.2deg); }
   }
-  @keyframes personagemAcenar {
-    to { transform: rotate(-18deg); }
+  @keyframes sombraRespirar {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+    50% { transform: translateX(-50%) scale(0.82) translateY(2px); opacity: 0.32; }
+  }
+  @keyframes personagemComemorar {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-16px) scale(1.15) rotate(-4deg); }
+    60% { transform: translateY(0) scale(0.93) rotate(2deg); }
+    80% { transform: translateY(-6px) scale(1.05); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .personagem .personagem-corpo,
-    .personagem .personagem-olhos,
-    .personagem .personagem-gesto { animation: none; }
-    .personagem .personagem-svg,
-    .personagem .personagem-fala { transition: none; }
+    .personagem-avatar,
+    .personagem-parte,
+    .personagem-sombra,
+    .personagem.falando .personagem-avatar { animation: none; }
+    .personagem-img,
+    .personagem-fala { transition: none; }
+    .personagem:hover .personagem-img,
+    .personagem:focus-visible .personagem-img { transform: none; }
   }
   .personagem-fala {
     position: absolute;
-    bottom: calc(100% + 8px);
-    width: 184px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: #fff;
-    color: var(--bg);
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.35;
+    bottom: calc(100% + 10px);
+    width: 210px;
+    padding: 11px 14px;
+    border-radius: 16px;
+    border: 2px solid rgba(110, 224, 122, 0.45);
+    background: #13261b;
+    color: #f0fdf4;
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1.4;
     text-align: left;
-    box-shadow: 0 8px 20px var(--shadow-strong);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 3px 0 rgba(46, 125, 50, 0.6);
     opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(8px) scale(0.95);
+    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: none;
-    z-index: 4;
+    z-index: 8;
   }
-  .personagem.esquerda .personagem-fala { left: 0; }
-  .personagem.direita .personagem-fala  { right: 0; }
+  .personagem.esquerda .personagem-fala { left: 4px; }
+  .personagem.direita .personagem-fala  { right: 4px; }
   .personagem.falando .personagem-fala {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+
+  @media (max-width: 420px) {
+    .personagem {
+      width: 132px;
+      height: 136px;
+    }
+    .personagem-sombra {
+      width: 88px;
+      height: 18px;
+    }
+    .personagem-img {
+      max-width: 128px;
+      height: 122px;
+    }
+    .personagem-fala {
+      width: 180px;
+      font-size: 11.5px;
+      padding: 9px 11px;
+    }
   }
 
   /* Ícone exclusivo para nó ativo (não concluído) */
@@ -1109,6 +1158,7 @@
 
 <script src="/js/sounds.js"></script>
 <script src="/js/quiz.js"></script>
+<script src="/js/personagens.js?v=20261112-7"></script>
 <script>
 // ==============================================================
 // FUNÇÕES DO MODAL DO JOGO
@@ -1279,80 +1329,179 @@ const TOQUES_BAU  = 3;
 
 const NOMES_RARIDADE = { comum: 'Comum', raro: 'Raro', epico: 'Épico', lendario: 'Lendário' };
 
-// Elementos de sustentabilidade e personagens da trilha (SVG 2D puro alinhado à identidade Sementis)
-const ELEMENTOS_TRILHA = [
-  {
-    nome: 'Broto, guardião da floresta',
-    dica: 'Pequenas atitudes criam raízes. Cuide das árvores e dos espaços verdes!',
-    svg: `<svg class="personagem-svg" viewBox="0 0 100 110" aria-hidden="true" focusable="false">
-      <ellipse cx="50" cy="103" rx="29" ry="5" fill="rgba(0,0,0,0.18)"/>
-      <g class="personagem-corpo">
-<path d="M38 87 L35 99 M62 87 L65 99" stroke="#886044" stroke-width="10" stroke-linecap="round"/>
-<path d="M30 63 Q12 69 17 54 M70 63 Q87 60 84 47" fill="none" stroke="#62b938" stroke-width="10" stroke-linecap="round"/>
-<path d="M50 25 Q26 5 21 19 Q22 35 50 32 Q72 32 79 12 Q58 9 50 25" fill="#a9ff71"/>
-<path d="M23 46 Q23 28 50 28 Q77 28 77 46 L73 76 Q70 91 50 91 Q30 91 27 76Z" fill="#62b938"/>
-<path d="M28 44 Q30 31 50 32 Q69 31 72 44 L68 68 Q50 82 32 68Z" fill="#a9ff71"/>
-<g class="personagem-olhos" fill="#202044">
-        <ellipse cx="41" cy="48" rx="7" ry="10" fill="#fff"/><ellipse cx="59" cy="48" rx="7" ry="10" fill="#fff"/>
-        <ellipse cx="43" cy="49" rx="3" ry="5"/><ellipse cx="57" cy="49" rx="3" ry="5"/>
-      </g><path d="M43 63 Q50 71 57 63" fill="none" stroke="#202044" stroke-width="3" stroke-linecap="round"/></g>
-    </svg>`
-  },
-  {
-    nome: 'Sol, energia para aprender',
-    dica: 'Aproveite a luz natural e apague as lâmpadas ao sair.',
-    svg: `<svg class="personagem-svg" viewBox="0 0 100 110" aria-hidden="true" focusable="false">
-      <ellipse cx="50" cy="103" rx="29" ry="5" fill="rgba(0,0,0,0.18)"/>
-      <g class="personagem-corpo">
-<path d="M36 82 L32 98 M64 82 L68 98" stroke="#e5a53b" stroke-width="10" stroke-linecap="round"/>
-<g class="personagem-gesto"><path d="M72 65 Q89 62 84 46" fill="none" stroke="#ffc857" stroke-width="10" stroke-linecap="round"/></g>
-<path d="M27 65 L16 75" stroke="#ffc857" stroke-width="10" stroke-linecap="round"/>
-<path d="M50 10 L58 22 L73 17 L76 32 L91 37 L84 51 L91 64 L77 70 L73 85 L58 81 L50 94 L41 81 L26 85 L23 70 L9 64 L16 51 L9 37 L24 32 L27 17 L42 22Z" fill="#e5a53b"/>
-<circle cx="50" cy="51" r="33" fill="#ffc857"/><path d="M30 33 Q43 20 62 29" stroke="#ffe9a3" stroke-width="6" fill="none" stroke-linecap="round"/>
-<g class="personagem-olhos" fill="#202044">
-        <ellipse cx="41" cy="48" rx="7" ry="10" fill="#fff"/><ellipse cx="59" cy="48" rx="7" ry="10" fill="#fff"/>
-        <ellipse cx="43" cy="49" rx="3" ry="5"/><ellipse cx="57" cy="49" rx="3" ry="5"/>
-      </g><path d="M43 63 Q50 71 57 63" fill="none" stroke="#202044" stroke-width="3" stroke-linecap="round"/></g>
-    </svg>`
-  },
-  {
-    nome: 'Lia, exploradora Sementis',
-    dica: 'Uma lição de cada vez! Que tal colocar uma ideia sustentável em prática hoje?',
-    svg: `<svg class="personagem-svg" viewBox="0 0 100 110" aria-hidden="true" focusable="false">
-      <ellipse cx="50" cy="103" rx="29" ry="5" fill="rgba(0,0,0,0.18)"/>
-      <g class="personagem-corpo">
-<path d="M39 83 L36 99 M60 83 L64 99" stroke="#6551a8" stroke-width="11" stroke-linecap="round"/>
-<path d="M25 45 Q19 12 48 13 Q77 10 77 44 L73 75 L25 75Z" fill="#47304c"/>
-<path d="M35 67 Q50 60 65 67 L72 87 Q50 96 28 87Z" fill="#a9ff71"/>
-<path d="M31 72 L20 83" stroke="#bd7858" stroke-width="10" stroke-linecap="round"/>
-<g class="personagem-gesto"><path d="M67 72 Q85 70 82 54" stroke="#bd7858" stroke-width="10" fill="none" stroke-linecap="round"/></g>
-<rect x="28" y="24" width="44" height="45" rx="19" fill="#d99570"/>
-<path d="M26 40 Q23 16 48 17 Q73 14 74 39 Q57 38 48 26 Q42 39 26 40" fill="#47304c"/>
-<rect x="19" y="77" width="22" height="17" rx="4" fill="#8c72d8"/><path d="M29 80 L29 90" stroke="#c8b7ff" stroke-width="2"/>
-<g class="personagem-olhos" fill="#202044">
-        <ellipse cx="41" cy="48" rx="7" ry="10" fill="#fff"/><ellipse cx="59" cy="48" rx="7" ry="10" fill="#fff"/>
-        <ellipse cx="43" cy="49" rx="3" ry="5"/><ellipse cx="57" cy="49" rx="3" ry="5"/>
-      </g><path d="M43 63 Q50 71 57 63" fill="none" stroke="#202044" stroke-width="3" stroke-linecap="round"/></g>
-    </svg>`
-  },
-  {
-    nome: 'Gota, amiga dos rios',
-    dica: 'Feche a torneira enquanto escova os dentes. Cada gota conta!',
-    svg: `<svg class="personagem-svg" viewBox="0 0 100 110" aria-hidden="true" focusable="false">
-      <ellipse cx="50" cy="103" rx="29" ry="5" fill="rgba(0,0,0,0.18)"/>
-      <g class="personagem-corpo">
-<path d="M37 84 L32 99 M63 84 L68 99" stroke="#3298b8" stroke-width="10" stroke-linecap="round"/>
-<path d="M26 65 Q13 64 13 52 M74 65 Q87 67 89 56" fill="none" stroke="#61d6e3" stroke-width="9" stroke-linecap="round"/>
-<path d="M50 12 C42 29 20 40 20 60 C20 82 32 92 50 92 C68 92 80 82 80 60 C80 40 58 29 50 12Z" fill="#3298b8"/>
-<path d="M50 12 C43 31 24 41 24 58 C24 76 36 84 50 84 C64 84 76 76 76 58 C76 41 57 31 50 12Z" fill="#61d6e3"/>
-<path d="M33 39 L39 32" stroke="#c3f7f5" stroke-width="5" stroke-linecap="round"/>
-<g class="personagem-olhos" fill="#202044">
-        <ellipse cx="41" cy="48" rx="7" ry="10" fill="#fff"/><ellipse cx="59" cy="48" rx="7" ry="10" fill="#fff"/>
-        <ellipse cx="43" cy="49" rx="3" ry="5"/><ellipse cx="57" cy="49" rx="3" ry="5"/>
-      </g><path d="M43 63 Q50 71 57 63" fill="none" stroke="#202044" stroke-width="3" stroke-linecap="round"/></g>
-    </svg>`
+// Acervo completo com os 25 personagens e poses originais de sustentabilidade (5 por personagem)
+const CATALAGO_PERSONAGENS = {
+  semente: [
+    {
+      nome: 'Sementinha Regando a Mudinha',
+      dica: 'Cada atitude sustentável é uma semente plantada! Regue seus hábitos todos os dias.',
+      img: 'assets/personagens/vetores/semente_regando.svg'
+    },
+    {
+      nome: 'Sementinha Abraçando o Planeta Terra',
+      dica: 'A Terra é a nossa única casa. Cada cuidado com a água e com o solo faz a diferença!',
+      img: 'assets/personagens/vetores/semente_planeta.svg'
+    },
+    {
+      nome: 'Sementinha Estudando Sustentabilidade',
+      dica: 'Conhecimento é a ferramenta mais poderosa para mudar o planeta para melhor!',
+      img: 'assets/personagens/vetores/semente_lendo.svg'
+    },
+    {
+      nome: 'Sementinha na Reciclagem',
+      dica: 'Separar garrafas plásticas permite que elas ganhem vida nova em vez de poluir o oceano!',
+      img: 'assets/personagens/vetores/semente_reciclando.svg'
+    },
+    {
+      nome: 'Sementinha na Praia Limpa',
+      dica: 'Cuidar das praias e rios protege a fauna marinha e garante água viva para o futuro!',
+      img: 'assets/personagens/vetores/semente_praia.svg'
+    }
+  ],
+  vovo: [
+    {
+      nome: 'Vovó Maromba Treinando Reciclagem',
+      dica: 'Separar o lixo reciclável dá um treino monstro! Aqui ninguém joga plástico fora do lugar!',
+      img: 'assets/personagens/vetores/vovo_peso.svg'
+    },
+    {
+      nome: 'Vovó Maromba na Compostagem',
+      dica: 'Restos de alimento viram adubo rico na composteira. Feche o ciclo orgânico!',
+      img: 'assets/personagens/vetores/vovo_compostagem.svg'
+    },
+    {
+      nome: 'Vovó Maromba do Muque Ecológico',
+      dica: 'Força na compostagem e no consumo consciente! Você tem o poder de mudar tudo!',
+      img: 'assets/personagens/vetores/vovo_muque.svg'
+    },
+    {
+      nome: 'Vovó Maromba no Plano Tático',
+      dica: 'Planejar o descarte consciente e reduzir o consumo é tática de campeão ecológico!',
+      img: 'assets/personagens/vetores/vovo_prancheta.svg'
+    },
+    {
+      nome: 'Vovó Maromba Descansando na Rede',
+      dica: 'Depois de um dia reduzindo a pegada de carbono, o descanso é mais que merecido!',
+      img: 'assets/personagens/vetores/vovo_rede.svg'
+    }
+  ],
+  curupira: [
+    {
+      nome: 'Curupira Protetor da Floresta',
+      dica: 'Cada árvore em pé garante água limpa e ar puro para todos. Proteja a natureza!',
+      img: 'assets/personagens/vetores/curupira_arvore.svg'
+    },
+    {
+      nome: 'Curupira Plantando Mudas',
+      dica: 'Plantar espécies nativas ajuda a recuperar o solo e chama os passarinhos de volta!',
+      img: 'assets/personagens/vetores/curupira_plantando.svg'
+    },
+    {
+      nome: 'Curupira Vigia das Matas',
+      dica: 'Olhos atentos na mata para afastar queimadas e desmatamento ilegal!',
+      img: 'assets/personagens/vetores/curupira_binoculo.svg'
+    },
+    {
+      nome: 'Curupira Recolhendo Resíduos',
+      dica: 'Lixo na mata jamais! A floresta precisa respirar limpa e livre de embalagens!',
+      img: 'assets/personagens/vetores/curupira_lixo.svg'
+    },
+    {
+      nome: 'Curupira no Riacho Cristalino',
+      dica: 'Preservar as nascentes e matas ciliares garante água fresca e potável para sempre!',
+      img: 'assets/personagens/vetores/curupira_riacho.svg'
+    }
+  ],
+  cenoura: [
+    {
+      nome: 'Cenourão Economia Verde',
+      dica: 'Sustentabilidade e desenvolvimento andam juntos! Compostagem e energia limpa dão lucro.',
+      img: 'assets/personagens/vetores/cenoura_grafico.svg'
+    },
+    {
+      nome: 'Cenourão Inovação Sustentável',
+      dica: 'A tecnologia e a criatividade criam soluções incríveis para o meio ambiente!',
+      img: 'assets/personagens/vetores/cenoura_laptop.svg'
+    },
+    {
+      nome: 'Cenourão Garrafa Reutilizável',
+      dica: 'Diga adeus aos copos descartáveis! Garrafinha permanente é estilosa e amiga do planeta.',
+      img: 'assets/personagens/vetores/cenoura_garrafa.svg'
+    },
+    {
+      nome: 'Cenourão da Coleta Seletiva',
+      dica: 'Separe papel, plástico, vidro e metal. O que seria lixo vira recurso!',
+      img: 'assets/personagens/vetores/cenoura_seletiva.svg'
+    },
+    {
+      nome: 'Cenourão Estudando Políticas Verdes',
+      dica: 'Liderar com consciência ambiental cria benefícios duradouros para toda a sociedade!',
+      img: 'assets/personagens/vetores/cenoura_leitura.svg'
+    }
+  ],
+  patrulheiro: [
+    {
+      nome: 'Patrulheiro do Rio & Sapinho',
+      dica: 'Limpando rios e córregos para que os animais vivam felizes e sem plástico nas águas!',
+      img: 'assets/personagens/vetores/patrulheiro_rede.svg'
+    },
+    {
+      nome: 'Patrulheiro da Biodiversidade',
+      dica: 'Cada inseto, fungo e plantinha tem uma função vital no ecossistema!',
+      img: 'assets/personagens/vetores/patrulheiro_lupa.svg'
+    },
+    {
+      nome: 'Patrulheiro Cientista das Águas',
+      dica: 'Testando a pureza dos rios para garantir vida saudável a toda a comunidade!',
+      img: 'assets/personagens/vetores/patrulheiro_quimica.svg'
+    },
+    {
+      nome: 'Patrulheiro Caderno de Campo',
+      dica: 'Registrar o reflorestamento e melhorias ecológicas orienta ações ainda mais eficazes!',
+      img: 'assets/personagens/vetores/patrulheiro_caderno.svg'
+    },
+    {
+      nome: 'Patrulheiro da Energia Solar e Eólica',
+      dica: 'O sol e os ventos geram energia limpa sem poluir o nosso ar.',
+      img: 'assets/personagens/vetores/patrulheiro_solar.svg'
+    }
+  ]
+};
+
+// Seleciona um conjunto exclusivo e variado de personagens para cada trilha diferente
+function selecionarPersonagensParaTrilha(identificadorTrilha) {
+  const chave = String(identificadorTrilha || 'trilha_padrao');
+  let hash = 0;
+  for (let i = 0; i < chave.length; i++) {
+    hash = ((hash << 5) - hash) + chave.charCodeAt(i);
+    hash |= 0;
   }
-];
+  const seed = Math.abs(hash);
+
+  const ordemBase = ['semente', 'vovo', 'curupira', 'cenoura', 'patrulheiro'];
+  const offset = seed % ordemBase.length;
+  const ordemRotacionada = [
+    ...ordemBase.slice(offset),
+    ...ordemBase.slice(0, offset)
+  ];
+
+  const resultado = [];
+  // Primeira rodada: 1 pose única para cada um dos 5 personagens
+  ordemRotacionada.forEach((tipo, idx) => {
+    const catalogo = CATALAGO_PERSONAGENS[tipo];
+    const poseIndex = (Math.floor(seed / (idx + 1)) + idx) % catalogo.length;
+    resultado.push(catalogo[poseIndex]);
+  });
+
+  // Segunda rodada com poses alternativas caso a trilha tenha muitas fases
+  ordemRotacionada.forEach((tipo, idx) => {
+    const catalogo = CATALAGO_PERSONAGENS[tipo];
+    const poseIndex = (Math.floor(seed / (idx + 1)) + idx + 2) % catalogo.length;
+    resultado.push(catalogo[poseIndex]);
+  });
+
+  return resultado;
+}
 
 function seededNoise(n) {
   const x = Math.sin(n * 127.1 + 311.7) * 43758.5453123;
@@ -1404,6 +1553,9 @@ const observadorTrilha = new IntersectionObserver(entradas => {
     if (isIntersecting) animacoesTrilhaVisiveis.add(target);
     else animacoesTrilhaVisiveis.delete(target);
     target.classList.toggle('animacao-pausada', !isIntersecting || document.hidden);
+    if (isIntersecting && target.classList.contains('personagem')) {
+      animarIlustracaoPersonagem(target);
+    }
   });
 }, { rootMargin: '100px' });
 document.addEventListener('visibilitychange', () => {
@@ -1612,26 +1764,39 @@ function criarNoBau(scene, bau, {x, y}) {
 }
 
 // ==============================================================
-// PERSONAGENS AO LADO DA TRILHA
+// PERSONAGENS AO LADO DA TRILHA (ESTILO DUOLINGO)
 // ==============================================================
 function renderizarPersonagens(scene, itens, pts, W) {
-  if (W < 340) return; // Em telas muito estreitas não sobra espaço lateral
+  if (W < 320) return; // Em telas extremamente estreitas não sobra espaço lateral
+
+  // Identificador da trilha para garantir que cada trilha tenha uma ordem e poses de personagens exclusivas
+  const urlParams = new URLSearchParams(window.location.search);
+  const idTrilha = urlParams.get('trilha_id') || urlParams.get('trilha') || trilhaAtualId || urlParams.get('module') || 'trilha_padrao';
+  const personagensTrilha = selecionarPersonagensParaTrilha(idTrilha);
 
   let indiceElemento = 0;
+  let ultimoY = -999;
+  const espacoMinimoY = W < 390 ? 200 : 220; // Permite personagens bem distribuídos mesmo em trilhas curtas
 
-  for (let i = 2; i < itens.length; i += 4) {
+  for (let i = 1; i < itens.length; i++) {
     if (itens[i].tipo !== 'licao') continue;
 
-    const elemento = ELEMENTOS_TRILHA[indiceElemento % ELEMENTOS_TRILHA.length];
+    const { x, y } = pts[i];
+    // Garante espaçamento vertical confortável
+    if (y - ultimoY < espacoMinimoY) continue;
+    ultimoY = y;
+
+    const elemento = personagensTrilha[indiceElemento % personagensTrilha.length];
     indiceElemento++;
 
-    const { x, y } = pts[i];
+    // Posiciona do lado onde há mais espaço livre em relação à curva da trilha
     const lado = x < W / 2 ? 'direita' : 'esquerda';
+    const margemLateral = W < 390 ? 70 : 82;
 
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = `personagem ${lado}`;
-    btn.style.left = (lado === 'direita' ? W - 60 : 60) + 'px';
+    btn.style.left = (lado === 'direita' ? W - margemLateral : margemLateral) + 'px';
     btn.style.top  = y + 'px';
     btn.style.setProperty('--atraso-personagem', `-${indiceElemento * 0.7}s`);
     btn.setAttribute('aria-expanded', 'false');
@@ -1641,7 +1806,12 @@ function renderizarPersonagens(scene, itens, pts, W) {
     fala.className = 'personagem-fala';
     fala.setAttribute('role', 'status');
 
-    btn.innerHTML = elemento.svg;
+    btn.innerHTML = `
+      <div class="personagem-sombra"></div>
+      <div class="personagem-avatar">
+      </div>
+    `;
+    btn.querySelector('.personagem-avatar').appendChild(criarIlustracaoPersonagem(elemento));
     btn.appendChild(fala);
 
     let timerFala = null;

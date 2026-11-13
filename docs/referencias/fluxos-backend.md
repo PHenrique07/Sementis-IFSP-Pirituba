@@ -21,6 +21,8 @@ Esta seleção é um mapa para leitura, não uma especificação exaustiva. Leia
 | POST | `/completar_atividade` | Conclusão/game over do quiz |
 | GET | `/api/modulos/<int:modulo_id>/trilhas` | Mapa de módulo |
 | GET | `/api/modulos/progresso` | Progresso da home |
+| GET | `/api/passe`, `/api/drone` | Catálogo/progresso do passe e disponibilidade da entrega diária |
+| POST | `/api/passe/<int:nivel>/resgatar`, `/api/drone/resgatar` | Resgates autenticados e persistidos, sem aceitar valores do cliente |
 | GET | `/api/atividades/<int:atividade_id>/questoes` | Perguntas do quiz |
 | GET | `/api/trilhas/<int:trilha_id>` | Mapa de trilha específica |
 | POST | `/api/trilhas/<int:trilha_id>/baus/<int:posicao>/abrir` | Abertura de baú |

@@ -1402,13 +1402,14 @@
 }
 
 .module-card {
+    position: relative;
     background: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-xl);
-    padding: 24px;
+    padding: 56px 24px 24px;
     text-align: center;
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .module-card:hover:not(.locked) {
@@ -1418,9 +1419,29 @@
 }
 
 .module-card.active {
-    background: linear-gradient(135deg, rgba(169, 255, 113, 0.15), rgba(169, 255, 113, 0.05));
-    border-color: var(--color-accent);
-    box-shadow: 0 8px 32px rgba(169, 255, 113, 0.2);
+    background: linear-gradient(160deg, rgba(169, 255, 113, 0.1), rgba(255, 255, 255, 0.035) 70%);
+    border-color: rgba(169, 255, 113, 0.7);
+    box-shadow: inset 0 1px 0 rgba(196, 255, 158, 0.12), 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+
+.module-highlight {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border: 1px solid rgba(169, 255, 113, 0.22);
+    border-radius: var(--radius-full);
+    background: rgba(169, 255, 113, 0.09);
+    color: var(--color-accent-light);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 .module-card.locked {
@@ -1459,22 +1480,23 @@
 }
 
 .module-pulse {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 130px;
-    height: 130px;
-    border: 3px solid var(--color-accent);
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    background: var(--color-accent);
     border-radius: 50%;
-    animation: pulse-ring 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(169, 255, 113, 0.4);
+    animation: module-light 3.2s ease-in-out infinite;
 }
 
-@media (min-width: 768px) {
+@keyframes module-light {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
     .module-pulse {
-        width: 150px;
-        height: 150px;
-        border-width: 4px;
+        animation: none;
     }
 }
 

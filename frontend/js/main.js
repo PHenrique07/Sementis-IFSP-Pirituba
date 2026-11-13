@@ -213,17 +213,17 @@ function aplicarDadosPerfil(dados) {
 
     const ligaId = dados.liga_id || 1;
     let nomeLiga = "BRONZE";
-    let iconeLiga = "assets/ligas/liga_medalha_bronze.png";
+    let iconeLiga = "/assets/ligas/liga_medalha_bronze.png";
 
     if (ligaId === 2) {
         nomeLiga = "PRATA";
-        iconeLiga = "assets/ligas/liga_trofeu_prata.png";
+        iconeLiga = "/assets/ligas/liga_medalha_prata.png";
     } else if (ligaId === 3) {
         nomeLiga = "OURO";
-        iconeLiga = "assets/ligas/liga_trofeu_ouro.png";
+        iconeLiga = "/assets/ligas/liga_medalha_ouro.png";
     } else if (ligaId === 4) {
         nomeLiga = "DIAMANTE";
-        iconeLiga = "assets/ligas/liga_trofeu_diamante.png";
+        iconeLiga = "/assets/ligas/liga_medalha_ouro.png";
     }
 
     const porcentagem = xpProximo > 0 ? (xpAtual / xpProximo) * 100 : 0;
