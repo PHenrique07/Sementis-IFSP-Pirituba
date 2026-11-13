@@ -2,24 +2,32 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Flap Fish</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #111;
+            background-color: #00131b;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            width: 100%;
+            height: 100dvh;
             overflow: hidden;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #game-container {
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+        }
+
+        #game-container canvas {
+            display: block;
+            touch-action: manipulation;
         }
     </style>
 </head>
@@ -29,6 +37,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0/phaser.min.js"></script>
 
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/main.js?v=fullscreen"></script>
 </body>
 </html>
