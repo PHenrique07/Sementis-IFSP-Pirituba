@@ -69,6 +69,13 @@ Leia [dados/CONTEXT.md](dados/CONTEXT.md) para hierarquia, contratos de questão
 - `GET /api/passe` retorna 60 níveis, `perfil`, XP de progresso e estados `bloqueada`, `disponivel` e `coletada`. `POST /api/passe/<nivel>/resgatar` retorna `recompensa`, `perfil` e `passe`. Nível 1 é inicial; cada avanço requer 500 XP; XP concedido pelo próprio passe não libera níveis. Jornada `raizes-1` permanente, sem plano pago ativo.
 - `GET /api/drone` retorna disponibilidade diária e 67 moedas; `POST /api/drone/resgatar` usa a data do servidor, seguindo o calendário diário das missões. Todas essas rotas usam a identidade do JWT. Valores do cliente são ignorados; chave única e atualização de saldo são atômicas. Repetição retorna 409, nível bloqueado 403 e nível inexistente 404.
 
+## Gacha provisório
+
+- `POST /api/loja/gacha` exige JWT e `Idempotency-Key` (ou `idempotency_key` no JSON, até 128 caracteres). A identidade vem do token; custo e prêmio enviados pelo cliente são ignorados.
+- `resgatar_gacha` cobra 100 moedas e sorteia moedas ou XP com chances iguais entre os tipos. Raridades: comum 55%/50 unidades, raro 30%/150, épico 12%/300 e lendário 3%/777. Não depende de avatares cadastrados. O CRUD legado `rolar_gacha` de inventário não é usado por essa rota.
+- A rodada usa `ResgateRecompensa` com chave `gacha:<chave>`, sem alteração de esquema. Cobrança e crédito são atômicos; repetir a chave retorna o prêmio salvo e o perfil atual, sem nova cobrança. XP também soma ao XP semanal. Sem saldo retorna 400; usuário ausente 404.
+- A resposta inclui `status`, `saldo`, `perfil` e `premio` (`tipo`, `quantidade`, `raridade`, `nome`, `descricao`, `icone`). Os valores do catálogo provisório também identificam a raridade de registros antigos; preserve essa correspondência ao alterar o catálogo.
+
 ## Verificação final
 
 Escolha a verificação em [Validação](../docs/referencias/validacao.md). Se mudar um contrato ou uma limitação descrita aqui, atualize o contexto ou a referência correspondente no mesmo trabalho.

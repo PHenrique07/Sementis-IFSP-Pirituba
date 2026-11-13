@@ -1598,6 +1598,67 @@ JORNADA_PASSE = "raizes-1"
 TOTAL_NIVEIS = 60
 XP_POR_NIVEL = 500
 MOEDAS_DRONE = 67
+CUSTO_GACHA = 100
+# Catálogo provisório: moedas ou XP, com as chances apresentadas na loja.
+RECOMPENSAS_GACHA = {
+    "comum": {"limite": 55, "quantidade": 50},
+    "raro": {"limite": 85, "quantidade": 150},
+    "epico": {"limite": 97, "quantidade": 300},
+    "lendario": {"limite": 100, "quantidade": 777},
+}
+
+
+def resposta_gacha(registro, usuario):
+    tipo = "moedas" if registro.moedas else "xp"
+    quantidade = registro.moedas or registro.xp
+    raridade = next(r for r, dados in RECOMPENSAS_GACHA.items() if dados["quantidade"] == quantidade)
+    return {
+        "status": "sucesso", "saldo": usuario.moedas, "perfil": perfil_recompensas(usuario),
+        "premio": {
+            "tipo": "coins" if tipo == "moedas" else "xp", "quantidade": quantidade,
+            "raridade": raridade, "nome": f"+{quantidade} {'Moedas' if tipo == 'moedas' else 'XP'}",
+            "descricao": "Recompensa creditada na sua conta.",
+            "icone": "coins" if tipo == "moedas" else "star",
+        },
+    }
+
+
+def resgatar_gacha(session: Session, usuario_id: int, idempotency_key: str):
+    usuario = session.get(Usuario, usuario_id)
+    if not usuario:
+        return {"erro": "Usuário não encontrado."}, 404
+    consulta = select(ResgateRecompensa).where(
+        ResgateRecompensa.usuario_id == usuario_id,
+        ResgateRecompensa.chave == f"gacha:{idempotency_key}"
+    )
+    registro = session.exec(consulta).first()
+    if registro:
+        return resposta_gacha(registro, usuario), 200
+
+    sorteio = secrets.randbelow(100)
+    raridade = next(r for r, dados in RECOMPENSAS_GACHA.items() if sorteio < dados["limite"])
+    tipo = secrets.choice(("moedas", "xp"))
+    registro = ResgateRecompensa(usuario_id=usuario_id, chave=f"gacha:{idempotency_key}",
+                                **{tipo: RECOMPENSAS_GACHA[raridade]["quantidade"]})
+    session.add(registro)
+    try:
+        # Reserva a rodada antes da cobrança; repetição não concede nem desconta novamente.
+        session.flush()
+        alteracao = session.exec(update(Usuario).where(
+            Usuario.id == usuario_id, Usuario.moedas >= CUSTO_GACHA
+        ).values(moedas=Usuario.moedas - CUSTO_GACHA + registro.moedas,
+                 xp=Usuario.xp + registro.xp, xp_semanal=Usuario.xp_semanal + registro.xp))
+        if alteracao.rowcount != 1:
+            session.rollback()
+            return {"erro": "Moedas insuficientes para o gacha."}, 400
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        registro = session.exec(consulta).first()
+        if registro is None:
+            raise
+    session.refresh(usuario)
+    return resposta_gacha(registro, usuario), 200
 
 
 def perfil_recompensas(usuario):

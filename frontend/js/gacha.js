@@ -1,4 +1,5 @@
-const GACHA_FILA_STORAGE_KEY = 'sementis-gacha-pendencias-v1';
+// A fila antiga contém tentativas anteriores à existência da rota; não as cobre agora.
+const GACHA_FILA_STORAGE_KEY = 'sementis-gacha-pendencias-v2';
 const GACHA_TIMEOUT_MS = 10000;
 const GACHA_RETRY_INTERVAL_MS = 5000;
 let gachaRetryEmAndamento = false;
@@ -71,7 +72,7 @@ async function enviarPendenciaGacha(pendencia) {
 
     try {
         // O backend deve respeitar Idempotency-Key para impedir cobrança duplicada.
-        const resposta = await fetch('/api/loja/gacha', {
+        const resposta = await fetch(`${API_BASE_URL}/api/loja/gacha`, {
             method: 'POST',
             headers,
             credentials: 'include',
@@ -93,13 +94,24 @@ async function enviarPendenciaGacha(pendencia) {
                 resultado?.mensagem || resultado?.message || resultado?.erro || resultado?.error,
                 resposta.status
             );
-            if ([400, 401, 409].includes(resposta.status)) {
+            if ([400, 401, 403, 404, 409].includes(resposta.status)) {
                 removerPendenciaGacha(pendencia.idempotency_key);
             }
+            if (resposta.status === 401) window.location.href = 'login.html';
             throw erro;
         }
 
         removerPendenciaGacha(pendencia.idempotency_key);
+        if (resultado.perfil) {
+            for (const chave of ['user', 'cached_perfil']) {
+                try {
+                    const anterior = JSON.parse(localStorage.getItem(chave) || '{}');
+                    localStorage.setItem(chave, JSON.stringify({ ...anterior, ...resultado.perfil }));
+                } catch (erro) { /* O perfil confirmado continua disponível no retorno. */ }
+            }
+            window.dispatchEvent(new CustomEvent('perfil:atualizado', { detail: resultado.perfil }));
+            if (typeof atualizarBarraDeXP === 'function') atualizarBarraDeXP();
+        }
         return resultado;
     } catch (erro) {
         if (erro.name === 'AbortError') {

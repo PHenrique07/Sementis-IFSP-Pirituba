@@ -66,28 +66,7 @@ const SHOP_SECTIONS = [
 
 const ALL_ITEMS = SHOP_SECTIONS.flatMap((s) => s.items);
 
-const GACHA_POOL = [
-  { id: "g-c50", rarity: "comum", type: "coins", amount: 50, name: "+50 Moedas", desc: "Um trocado dourado para o cofrinho.", icon: "coins" },
-  { id: "g-c80", rarity: "comum", type: "coins", amount: 80, name: "+80 Moedas", desc: "Quase paga outra rodada na máquina.", icon: "coins" },
-  { id: "g-coracao", rarity: "comum", type: "item", itemId: "vd-coracao", name: "Coração Extra", desc: "Uma vida a mais para continuar aprendendo.", icon: "heart" },
-  { id: "g-c150", rarity: "raro", type: "coins", amount: 150, name: "+150 Moedas", desc: "Lucro na certa. A máquina foi generosa.", icon: "coins" },
-  { id: "g-dica", rarity: "raro", type: "item", itemId: "pw-dica", name: "Dica Mágica", desc: "Um lampejo de genialidade engarrafado.", icon: "lightbulb" },
-  { id: "g-tempo", rarity: "raro", type: "item", itemId: "pw-tempo", name: "Congelar Tempo", desc: "O relógio obedece a você agora.", icon: "timer" },
-  { id: "g-oceano", rarity: "raro", type: "item", itemId: "tm-oceano", name: "Tema Oceano", desc: "Direto das profundezas para o seu app.", icon: "waves" },
-  { id: "g-xp", rarity: "epico", type: "item", itemId: "pw-xp", name: "XP em Dobro", desc: "Progresso turbo nas próximas lições.", icon: "star" },
-  { id: "g-raio", rarity: "epico", type: "item", itemId: "pw-raio", name: "Raio de Sabedoria", desc: "Um trovão de conhecimento puro.", icon: "rocket" },
-  { id: "g-aurora", rarity: "epico", type: "item", itemId: "tm-aurora", name: "Tema Aurora", desc: "O amanhecer mais bonito da floresta.", icon: "sunrise" },
-  { id: "g-c300", rarity: "epico", type: "coins", amount: 300, name: "+300 Moedas", desc: "Chuva de moedas! Segure o cofrinho.", icon: "coins" },
-  { id: "g-espirito", rarity: "lendario", type: "item", itemId: "av-espirito", name: "Espírito da Floresta", desc: "O prêmio supremo da máquina. Lenda viva.", icon: "ghost" },
-  { id: "g-c777", rarity: "lendario", type: "coins", amount: 777, name: "Jackpot +777", desc: "A máquina explodiu em moedas de ouro!", icon: "crown" },
-];
-
-const RARITY_WEIGHTS = [
-  ["comum", 55],
-  ["raro", 30],
-  ["epico", 12],
-  ["lendario", 3],
-];
+// O catálogo e o sorteio provisórios de moedas/XP ficam no servidor.
 
 // Gerenciamento de Estado
 const STORAGE_KEY = "sementis-loja-v1";
