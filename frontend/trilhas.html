@@ -561,7 +561,7 @@
   }
   .personagem-img {
     display: block;
-    width: auto;
+    width: 152px;
     max-width: 152px;
     height: 144px;
     object-fit: contain;
@@ -570,9 +570,23 @@
     pointer-events: none;
     user-select: none;
   }
-  .personagem:hover .personagem-img,
+  .personagem-parte {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: personagemParteMover 4s ease-in-out infinite;
+    animation-delay: var(--atraso-personagem, 0s);
+  }
+  @keyframes personagemParteMover {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .personagem:hover .personagem-img {
+      transform: translateY(-6px) scale(1.05);
+    }
+  }
   .personagem:focus-visible .personagem-img {
-    transform: translateY(-10px) scale(1.12);
+    transform: translateY(-6px) scale(1.05);
   }
   .personagem:hover .personagem-sombra,
   .personagem:focus-visible .personagem-sombra {
@@ -599,10 +613,13 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .personagem-avatar,
+    .personagem-parte,
     .personagem-sombra,
     .personagem.falando .personagem-avatar { animation: none; }
     .personagem-img,
     .personagem-fala { transition: none; }
+    .personagem:hover .personagem-img,
+    .personagem:focus-visible .personagem-img { transform: none; }
   }
   .personagem-fala {
     position: absolute;
@@ -1141,6 +1158,7 @@
 
 <script src="/js/sounds.js"></script>
 <script src="/js/quiz.js"></script>
+<script src="/js/personagens.js?v=20261112-4"></script>
 <script>
 // ==============================================================
 // FUNÇÕES DO MODAL DO JOGO
@@ -1535,6 +1553,9 @@ const observadorTrilha = new IntersectionObserver(entradas => {
     if (isIntersecting) animacoesTrilhaVisiveis.add(target);
     else animacoesTrilhaVisiveis.delete(target);
     target.classList.toggle('animacao-pausada', !isIntersecting || document.hidden);
+    if (isIntersecting && target.classList.contains('personagem')) {
+      animarIlustracaoPersonagem(target);
+    }
   });
 }, { rootMargin: '100px' });
 document.addEventListener('visibilitychange', () => {
@@ -1788,9 +1809,9 @@ function renderizarPersonagens(scene, itens, pts, W) {
     btn.innerHTML = `
       <div class="personagem-sombra"></div>
       <div class="personagem-avatar">
-        <img class="personagem-img" src="${elemento.img}" alt="${elemento.nome}">
       </div>
     `;
+    btn.querySelector('.personagem-avatar').appendChild(criarIlustracaoPersonagem(elemento));
     btn.appendChild(fala);
 
     let timerFala = null;

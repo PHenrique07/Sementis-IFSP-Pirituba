@@ -12,6 +12,7 @@ Comece pela página e confira os scripts efetivamente carregados; nomes de arqui
 | Perfil e navegação comum | `main.js`, `shared-navbar.js`, `perfil.js` |
 | Home e entrada em turma | `home.js`, `entrar-turma.js` |
 | Mapa, quiz e baús | `quiz.js`, `sounds.js`, `loading.js`, scripts inline de `trilhas.html` |
+| Ilustrações vetoriais dos personagens | `personagens.js`, carregado antes do script inline de `trilhas.html` |
 | Professor e geração de trilhas | `painel-professor.js`, `professor.js`, scripts inline de `painel-professor.html` |
 | Turmas | `turma-professor.js`, `turma-aluno.js` |
 | Loja, inventário e gacha | `loja.js`, `inventário.js`, `gacha.js`, scripts inline de `loja.html` |
@@ -41,7 +42,11 @@ Siga os cenários de interface em [Validação](../../docs/referencias/validacao
 
 ## Fluidez e passe de batalha
 
+- Na home, `data-modulo-id` relaciona os cards ao payload de `/api/modulos/progresso`. O card `.active`, `aria-current="step"` e a etiqueta `.module-highlight` acompanham `em_destaque` decidido no servidor; limpe o destaque anterior ao aplicar cache ou resposta atualizada. A etiqueta mostra “Comece por aqui”, “Continue aqui” ou “Módulo concluído”, conforme as contagens do payload, com ponto `.module-pulse` discreto e estático em movimento reduzido. Cards sem módulo cadastrado não herdam o progresso de Fundamentos.
+
 - A navegação continua entre documentos por links nativos. shared-navbar.css habilita View Transitions na mesma origem e preserva visualmente o menu; navegadores sem suporte usam a navegação normal. Validar por HTTP e respeitar movimento reduzido.
 - O mapa reconstrói nós somente quando a largura útil muda; pausa decoração fora da viewport. Fechar o FlapFish descarrega o iframe.
-- Missões e passe (passe-batalha.js) foram integrados de origin/main (1ed20a8), adaptados à raiz pública frontend/. O passe usa assets/ui/passe/ para sombras e pausa decoração fora da tela; preserve o fallback de sombras CSS.
-- A implementação importada do passe ainda usa estado local de coleta/premium e cálculo visual de níveis. Não representa concessão persistida de recompensas pelo servidor; uma integração autoritativa exige contrato de back-end próprio.
+- `personagens.js` apresenta SVGs estáticos com carregamento preguiçoso e reserva em PNG; o observador do mapa carrega a versão inline para animar detalhes independentes somente ao se aproximarem da viewport. IDs de recortes/referências são exclusivos por instância. Os detalhes animados são caminhos completos, sem máscaras que dividam a anatomia. Movimento reduzido e a pausa fora da tela/aba oculta também abrangem as partes internas.
+- Ao mudar o acervo, atualize `VERSAO_VETORES_PERSONAGENS` e a versão do `<script>` em `trilhas.html`. A URL versionada invalida os arquivos antigos; o SVG inline usa `cache: 'no-cache'` para revalidar a resposta HTTP, mantendo o reaproveitamento em memória durante a página. Não use `force-cache`, pois ele pode manter desenhos com recortes já corrigidos.
+- `missions.html` e `passe-batalha.js` usam `GET /api/passe` e `POST /api/passe/<nivel>/resgatar` para a jornada gratuita: somente moedas, XP e vidas. O catálogo, nível e estado de coleta são do servidor; o navegador não calcula elegibilidade nem importa `pb_coletadas`/`pb_premium_ativo` antigos. A apresentação é uma trilha vertical linear (`ol`, etapas com marcadores numerados e conectores), com 12 níveis por carregamento, confirmação após persistência e `<dialog>` acessível. Passe Pro é apenas “Em breve”. A capa reutiliza a Sementinha do acervo, sem o antigo banner ou efeitos dourados.
+- Em `loja.js`, `GET /api/drone` decide a disponibilidade diária; `POST /api/drone/resgatar` concede 67 moedas. Só o botão de resgate concede; fechar a janela não consome a entrega. Falhas HTTP/rede mantêm o saldo e permitem tentar novamente. O cache local e o botão de demonstração não liberam uma segunda recompensa.

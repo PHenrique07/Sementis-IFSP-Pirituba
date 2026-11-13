@@ -495,18 +495,32 @@ function aplicarProgressoModulos(modulos) {
     if (!Array.isArray(modulos)) return;
 
     const cards = document.querySelectorAll('.module-card');
+    document.querySelectorAll('.module-highlight').forEach(destaque => destaque.remove());
     cards.forEach(card => {
-        const tituloElement = card.querySelector('.module-title');
-        if (!tituloElement) return;
-        
-        const nomeModulo = tituloElement.textContent.trim();
-        const nomeLimpo = nomeModulo.toLowerCase();
-        
-        let idMapeado = 1;
-        if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
-        if (nomeLimpo.includes('clima')) idMapeado = 3;
+        card.classList.remove('active');
+        card.removeAttribute('aria-current');
+        const idMapeado = Number(card.dataset.moduloId);
+        if (!idMapeado) return;
         
         const dadosModulo = modulos.find(m => m.modulo_id === idMapeado || m.id === idMapeado);
+        if (dadosModulo && dadosModulo.em_destaque && !card.classList.contains('locked')) {
+            card.classList.add('active');
+            card.setAttribute('aria-current', 'step');
+            const destaque = document.createElement('span');
+            destaque.className = 'module-highlight';
+            const pulso = document.createElement('span');
+            pulso.className = 'module-pulse';
+            pulso.setAttribute('aria-hidden', 'true');
+            const concluido = dadosModulo.total_atividades > 0
+                && dadosModulo.atividades_concluidas >= dadosModulo.total_atividades;
+            const texto = concluido ? 'Módulo concluído' : dadosModulo.atividades_concluidas > 0
+                ? 'Continue aqui' : 'Comece por aqui';
+            const seta = document.createElement('span');
+            seta.textContent = '→';
+            seta.setAttribute('aria-hidden', 'true');
+            destaque.append(pulso, document.createTextNode(texto), seta);
+            card.prepend(destaque);
+        }
         
         const porcentagem = dadosModulo ? dadosModulo.porcentagem : 0;
         const concluidas = dadosModulo ? dadosModulo.atividades_concluidas : 0;

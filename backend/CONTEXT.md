@@ -33,6 +33,8 @@ Os imports internos são relativos ao pacote; consumidores externos usam `backen
 
 ## Conteúdo educacional
 
+`GET /api/modulos/progresso` inclui `em_destaque` em cada módulo: indica o módulo da conclusão mais recente do usuário autenticado (data e ID como desempate). Sem histórico, destaca o primeiro módulo com atividades, na ordem do currículo. É uma seleção de apresentação, sem alterar XP, desbloqueios ou esquema do banco.
+
 Leia [dados/CONTEXT.md](dados/CONTEXT.md) para hierarquia, contratos de questão e efeitos do povoamento. Os comandos `python seeds.py` e `python seeds.py --atualizar-conteudo` continuam na raiz, com implementação em `backend/seeds.py`.
 
 ## Geração de trilhas com IA
@@ -57,6 +59,12 @@ Leia [dados/CONTEXT.md](dados/CONTEXT.md) para hierarquia, contratos de questão
 
 **Invariantes:** uma resposta por jogador/pergunta; o gabarito só aparece nos estados de revelação. Pontuação e transições são decididas no servidor. As salas não sobrevivem a reinícios e não são compartilhadas automaticamente entre processos; considere essa limitação ao mudar execução ou deploy.
 
-## Antes de concluir
+## Passe e drone
+
+- Contrato e compatibilidade: [refatoração do passe](../docs/refatoracao-passe.md). `ResgateRecompensa` registra valores concedidos e chave única por usuário, criada por `create_all` sem alterar saldos antigos. `crud.py` concentra catálogo, elegibilidade e transações.
+- `GET /api/passe` retorna 60 níveis, `perfil`, XP de progresso e estados `bloqueada`, `disponivel` e `coletada`. `POST /api/passe/<nivel>/resgatar` retorna `recompensa`, `perfil` e `passe`. Nível 1 é inicial; cada avanço requer 500 XP; XP concedido pelo próprio passe não libera níveis. Jornada `raizes-1` permanente, sem plano pago ativo.
+- `GET /api/drone` retorna disponibilidade diária e 67 moedas; `POST /api/drone/resgatar` usa a data do servidor, seguindo o calendário diário das missões. Todas essas rotas usam a identidade do JWT. Valores do cliente são ignorados; chave única e atualização de saldo são atômicas. Repetição retorna 409, nível bloqueado 403 e nível inexistente 404.
+
+## Verificação final
 
 Escolha a verificação em [Validação](../docs/referencias/validacao.md). Se mudar um contrato ou uma limitação descrita aqui, atualize o contexto ou a referência correspondente no mesmo trabalho.

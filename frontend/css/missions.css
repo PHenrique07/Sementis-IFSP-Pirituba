@@ -83,1544 +83,249 @@
     padding-top: 24px;
 }
 
-/* =========================================================================
-   CARD DE ENTRADA DO PASSE (NA TELA DE MISSÕES)
-   — Imagem de fundo de arte + barra glassmorphism inferior
-========================================================================= */
-.pass-entry-card {
+/* Passe Sementis: uma jornada gratuita, com a mesma paleta das trilhas. */
+.missions-page [hidden] { display: none !important; }
+.passe-entrada, .passe-capa {
     position: relative;
-    border-radius: 28px;
-    overflow: hidden;
-    cursor: pointer;
-    margin-bottom: 30px;
-    border: 1.5px solid rgba(251, 191, 36, 0.5);
-    box-shadow:
-        0 18px 50px rgba(0, 0, 0, 0.65),
-        0 0 0 1px rgba(255, 255, 255, 0.04),
-        0 0 40px rgba(251, 191, 36, 0.12);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-                box-shadow 0.3s ease,
-                border-color 0.3s ease;
-    background: #0a0d1e;
-    user-select: none;
-    outline: none;
-}
-
-.pass-entry-card:hover,
-.pass-entry-card:focus-visible {
-    transform: translateY(-5px) scale(1.008);
-    border-color: rgba(251, 191, 36, 0.9);
-    box-shadow:
-        0 28px 65px rgba(0, 0, 0, 0.75),
-        0 0 60px rgba(251, 191, 36, 0.28);
-}
-
-.pass-entry-bg-img {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center 25%;
-    filter: saturate(1.15) brightness(0.9);
-    transform: scale(1.03);
-    transition: transform 0.5s ease;
-    z-index: 0;
-}
-
-.pass-entry-card:hover .pass-entry-bg-img {
-    transform: scale(1.07);
-}
-
-.pass-entry-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(10, 8, 20, 0.25) 0%,
-        rgba(10, 8, 20, 0.55) 50%,
-        rgba(6, 5, 14, 0.97) 100%
-    );
-    z-index: 1;
-}
-
-/* Brilho de ouro no canto superior direito */
-.pass-entry-glow {
-    position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 280px;
-    height: 280px;
-    background: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 68%);
-    pointer-events: none;
-    z-index: 1;
-}
-
-.pass-entry-content {
-    position: relative;
-    z-index: 2;
-    padding: 20px 26px;
-    display: flex;
-    flex-direction: column;
-}
-
-.pass-entry-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-/* Badge de Temporada Ativa */
-.pass-entry-season-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: rgba(8, 8, 20, 0.7);
-    border: 1px solid rgba(251, 191, 36, 0.55);
-    color: #fbbf24;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    backdrop-filter: blur(8px);
-}
-
-.pass-live-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #fbbf24;
-    box-shadow: 0 0 10px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.5);
-    animation: passDotBlink 1.4s ease-in-out infinite;
-}
-
-@keyframes passDotBlink {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.3; transform: scale(0.7); }
-}
-
-/* Pill de alerta de recompensas pendentes */
-.pass-entry-alert-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(217, 119, 6, 0.18));
-    border: 1px solid rgba(251, 191, 36, 0.6);
-    color: #fde68a;
-    font-size: 11px;
-    font-weight: 900;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 18px rgba(251, 191, 36, 0.35);
-    animation: alertPulse 2s infinite;
-}
-
-@keyframes alertPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 14px rgba(251, 191, 36, 0.3); }
-    50% { transform: scale(1.04); box-shadow: 0 0 26px rgba(251, 191, 36, 0.6); }
-}
-
-/* Espaçador da arte do banner */
-.pass-entry-art-spacer {
-    height: 100px;
-}
-
-@media (min-width: 1024px) {
-    .pass-entry-art-spacer {
-        height: 140px;
-    }
-}
-
-/* Barra glassmorphism inferior do card de entrada */
-.pass-entry-footer {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    background: rgba(8, 6, 18, 0.65);
-    border: 1px solid rgba(251, 191, 36, 0.22);
-    border-radius: 20px;
-    padding: 14px 20px;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
-}
-
-/* Badge nível hexagonal com ouro */
-.pass-entry-level-badge {
-    width: 54px;
-    height: 54px;
-    border-radius: 14px;
-    background: linear-gradient(145deg, rgba(251, 191, 36, 0.25) 0%, rgba(180, 83, 9, 0.3) 100%);
-    border: 1.5px solid rgba(251, 191, 36, 0.65);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    backdrop-filter: blur(4px);
-}
-
-.pel-label {
-    font-size: 7.5px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #fde68a;
-    text-transform: uppercase;
-    opacity: 0.9;
-}
-
-.pel-value {
-    font-size: 24px;
-    font-weight: 900;
-    color: #ffffff;
-    line-height: 1;
-    font-style: italic;
-    text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
-}
-
-.pass-entry-progress-box {
-    flex: 1;
-    min-width: 160px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.pass-entry-xp-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
-.pass-entry-xp-title {
-    font-size: 10.5px;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.5);
-    text-transform: uppercase;
-    letter-spacing: 0.7px;
-}
-
-.pass-entry-xp-val {
-    font-size: 12px;
-    font-weight: 900;
-    color: #fbbf24;
-    text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
-}
-
-.pass-entry-xp-track {
-    width: 100%;
-    height: 13px;
-    background: rgba(0, 0, 0, 0.55);
-    border-radius: 999px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
-}
-
-.pass-entry-xp-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #d97706 0%, #fbbf24 55%, #fef08a 100%);
-    border-radius: 999px;
-    box-shadow: 0 0 14px rgba(251, 191, 36, 0.7);
-    transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.pass-entry-xp-shine {
-    position: absolute;
-    top: 0;
-    left: -60%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-    animation: xpShine 2.8s ease-in-out infinite;
-    pointer-events: none;
-    border-radius: 999px;
-}
-
-@keyframes xpShine {
-    0% { left: -60%; }
-    100% { left: 130%; }
-}
-
-/* Botão CTA principal de entrada do passe */
-.pass-entry-cta-btn {
-    background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
-    border: 1.5px solid #fde68a;
-    color: #ffffff;
-    font-weight: 900;
-    font-size: 13px;
-    letter-spacing: 0.8px;
-    padding: 12px 24px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        0 4px 0 #78350f,
-        0 6px 20px rgba(245, 158, 11, 0.45);
-    text-transform: uppercase;
-    transition: all 0.18s ease;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-.pass-entry-cta-btn:hover {
-    background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
-    transform: translateY(-2px);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.55),
-        0 4px 0 #78350f,
-        0 10px 28px rgba(245, 158, 11, 0.65);
-}
-
-.pass-entry-cta-btn:active {
-    transform: translateY(3px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 0 #78350f;
-}
-
-
-/* =========================================================================
-   PASSE DE BATALHA VERTICAL IN-PAGE
-   Tema: Gold Glassmorphism — opulência obscura, ouro vivo, vidro profundo
-========================================================================= */
-.pass-inpage-container,
-.pass-inpage-layout {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-.pass-animacao-pausada,
-.pass-animacao-pausada::before,
-.pass-animacao-pausada::after,
-.pass-animacao-pausada *,
-.pass-animacao-pausada *::before,
-.pass-animacao-pausada *::after,
-.missoes-aba-oculta *,
-.missoes-aba-oculta *::before,
-.missoes-aba-oculta *::after {
-    animation-play-state: paused !important;
-}
-
-@keyframes passInpageSlideIn {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* — Barra Superior de Controles (Grid Perfeito: Voltar | Temporada | Meu Nível) — */
-.pass-inpage-top-bar,
-.pass-inpage-nav {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: minmax(0, 1.4fr) minmax(180px, 1fr);
     align-items: center;
-    gap: 16px;
-    width: 100%;
-    padding: 2px 2px 6px 2px;
-}
-
-.pass-inpage-nav .pass-back-btn,
-.pass-inpage-top-bar .pass-back-btn {
-    justify-self: start;
-}
-
-.pass-inpage-nav .pass-inpage-season-pill,
-.pass-inpage-top-bar .pass-inpage-season-pill {
-    justify-self: center;
-}
-
-.pass-inpage-nav .pass-jump-pill-btn,
-.pass-inpage-top-bar .pass-jump-pill-btn {
-    justify-self: end;
-}
-
-/* Botão Voltar: Vidro Nobre Escuro com borda e realce dourado */
-.pass-back-btn,
-.pass-footer-return-btn {
-    background: linear-gradient(135deg, rgba(16, 12, 30, 0.88) 0%, rgba(26, 20, 46, 0.82) 100%);
-    border: 1.5px solid rgba(251, 191, 36, 0.4);
-    border-radius: 14px;
-    color: #f3f4f6;
-    font-size: 13.5px;
-    font-weight: 800;
-    letter-spacing: 0.3px;
-    padding: 10px 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 
-        0 4px 16px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    white-space: nowrap;
-}
-
-.pass-back-btn svg,
-.pass-footer-return-btn svg {
-    color: #fbbf24;
-    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
-    transition: transform 0.22s ease;
-}
-
-.pass-back-btn:hover,
-.pass-footer-return-btn:hover {
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, rgba(217, 119, 6, 0.16) 100%);
-    border-color: #fbbf24;
-    color: #ffffff;
-    transform: translateX(-4px);
-    box-shadow: 
-        0 6px 24px rgba(0, 0, 0, 0.6),
-        0 0 22px rgba(251, 191, 36, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.25);
-}
-
-.pass-back-btn:hover svg,
-.pass-footer-return-btn:hover svg {
-    transform: translateX(-3px);
-}
-
-.pass-back-btn:active,
-.pass-footer-return-btn:active {
-    transform: scale(0.97) translateX(-2px);
-}
-
-/* Pill de Temporada Central */
-.pass-inpage-season-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    padding: 9px 24px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, rgba(16, 12, 30, 0.92) 0%, rgba(28, 20, 50, 0.88) 100%);
-    border: 1.5px solid rgba(251, 191, 36, 0.5);
-    color: #fde68a;
-    font-size: 11.5px;
-    font-weight: 900;
-    letter-spacing: 1.4px;
-    text-transform: uppercase;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 
-        0 4px 18px rgba(0, 0, 0, 0.5),
-        0 0 18px rgba(251, 191, 36, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    user-select: none;
-    white-space: nowrap;
-}
-
-.pass-v-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #fbbf24;
-    box-shadow: 0 0 10px #fbbf24, 0 0 18px rgba(251, 191, 36, 0.7);
-    animation: passDotBlink 1.4s ease-in-out infinite;
-    flex-shrink: 0;
-}
-
-/* Botão Jump / Rolar para o Meu Nível (Gold Action Button) */
-.pass-jump-pill-btn,
-.pass-footer-jump-btn {
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.16) 0%, rgba(217, 119, 6, 0.14) 100%);
-    border: 1.5px solid rgba(251, 191, 36, 0.6);
-    border-radius: 14px;
-    color: #fef08a;
-    font-size: 13.5px;
-    font-weight: 800;
-    letter-spacing: 0.3px;
-    padding: 10px 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    cursor: pointer;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 
-        0 4px 16px rgba(0, 0, 0, 0.5),
-        0 0 14px rgba(251, 191, 36, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    white-space: nowrap;
-}
-
-.pass-jump-pill-btn svg,
-.pass-footer-jump-btn svg {
-    color: #fbbf24;
-    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
-    transition: transform 0.22s ease;
-}
-
-.pass-jump-pill-btn:hover,
-.pass-footer-jump-btn:hover {
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(217, 119, 6, 0.25) 100%);
-    border-color: #fef08a;
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 
-        0 8px 26px rgba(0, 0, 0, 0.6),
-        0 0 26px rgba(251, 191, 36, 0.45),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.pass-jump-pill-btn:hover svg,
-.pass-footer-jump-btn:hover svg {
-    transform: scale(1.15) rotate(15deg);
-}
-
-.pass-jump-pill-btn:active,
-.pass-footer-jump-btn:active {
-    transform: scale(0.97) translateY(1px);
-}
-
-@media (max-width: 768px) {
-    .pass-inpage-top-bar,
-    .pass-inpage-nav {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 10px;
-    }
-
-    .pass-inpage-season-pill {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-        padding: 8px 16px;
-        font-size: 10.5px;
-    }
-}
-
-/* — Card Header Principal (banner + status) — */
-.pass-inpage-header-card {
-    background: rgba(10, 8, 22, 0.8);
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    border-radius: 26px;
-    overflow: hidden;
-    box-shadow:
-        0 24px 70px rgba(0, 0, 0, 0.75),
-        0 0 0 1px rgba(255, 255, 255, 0.03),
-        0 0 50px rgba(251, 191, 36, 0.1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
-
-.pass-inpage-banner-wrap {
-    position: relative;
-    height: 150px;
+    gap: 24px;
+    padding: 36px;
+    border: 1px solid rgba(169,255,113,.2);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(125deg, #242453 20%, #303c50);
     overflow: hidden;
 }
-
-@media (min-width: 1024px) {
-    .pass-inpage-banner-wrap {
-        height: 200px;
-    }
-}
-
-.pass-inpage-banner-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 30%;
-    filter: saturate(1.1) brightness(0.88);
-}
-
-.pass-inpage-banner-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(6, 4, 16, 0.1) 0%,
-        rgba(6, 4, 16, 0.5) 60%,
-        rgba(6, 4, 16, 0.98) 100%
-    );
-}
-
-/* — Status Bar do Header (Losango + Barra + Badge VIP) — */
-.pass-v-status-bar {
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    background: rgba(6, 5, 16, 0.6);
-    border-top: 1px solid rgba(251, 191, 36, 0.18);
-    backdrop-filter: blur(12px);
-}
-
-.pass-v-player-prog {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex: 1;
-}
-
-/* Losango de Nível: Ouro Metálico 3D */
-.pass-v-diamond-level {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #fbbf24 0%, #b45309 100%);
-    transform: rotate(45deg);
-    border-radius: 11px;
-    border: 2px solid #fef08a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow:
-        0 4px 16px rgba(0, 0, 0, 0.55),
-        0 0 22px rgba(251, 191, 36, 0.55),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    flex-shrink: 0;
-    margin-left: 6px;
-}
-
-.pvd-num {
-    transform: rotate(-45deg);
-    font-size: 22px;
-    font-weight: 900;
-    color: #ffffff;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
-    line-height: 1;
-}
-
-.pass-v-crown-meter {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 140px;
-}
-
-.pass-v-crown-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7));
-}
-
-/* Barra de XP: Trilha de ouro fluido */
-.pass-v-bar-track {
-    position: relative;
-    flex: 1;
-    height: 22px;
-    background: rgba(0, 0, 0, 0.55);
-    border: 1px solid rgba(251, 191, 36, 0.25);
-    border-radius: 999px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
-}
-
-.pass-v-bar-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    background: linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fef08a 100%);
-    border-radius: 999px;
-    box-shadow: 0 0 14px rgba(251, 191, 36, 0.7);
-    transition: width 0.5s ease;
-}
-
-.pass-v-bar-label {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 900;
-    color: #ffffff;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
-    letter-spacing: 0.5px;
-}
-
-/* Badge VIP / "Sementis Pass": Gold Glass Card */
-.pass-v-royale-badge {
-    background: rgba(251, 191, 36, 0.1);
-    border: 1.5px solid rgba(251, 191, 36, 0.6);
-    border-radius: 16px;
-    padding: 8px 16px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.5),
-        0 0 24px rgba(251, 191, 36, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.25);
-    position: relative;
-    min-width: 130px;
-    flex-shrink: 0;
-}
-
-.pvr-crown-glow {
-    position: absolute;
-    top: -15px;
-    font-size: 22px;
-    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8));
-    animation: crownFloat 2.2s ease-in-out infinite;
-}
-
-@keyframes crownFloat {
-    0%, 100% { transform: translateY(0) rotate(-3deg); }
-    50% { transform: translateY(-4px) rotate(3deg); }
-}
-
-.pvr-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    margin-top: 6px;
-}
-
-.pvr-title {
+.passe-entrada { margin-bottom: 32px; }
+.passe-eyebrow {
+    color: var(--color-accent-light);
     font-size: 10px;
-    font-weight: 900;
-    color: #fde68a;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+    font-weight: 600;
+    letter-spacing: .1em;
+    line-height: 1.6;
 }
-
-/* Botão de ação do badge VIP */
-.pvr-action-btn {
-    background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
-    border: 1.5px solid #fde68a;
-    border-radius: 8px;
-    color: #ffffff;
-    font-weight: 900;
-    font-size: 11px;
-    letter-spacing: 0.6px;
-    padding: 5px 14px;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        0 3px 0 #78350f,
-        0 4px 12px rgba(245, 158, 11, 0.4);
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.14s ease;
-}
-
-.pvr-action-btn:hover {
-    background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.55),
-        0 3px 0 #78350f,
-        0 6px 18px rgba(245, 158, 11, 0.6);
-}
-
-.pvr-action-btn:active {
-    transform: translateY(2px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 0 #78350f;
-}
-
-.pvr-action-btn.pvr-active {
-    background: linear-gradient(180deg, #10b981 0%, #047857 100%);
-    border-color: #6ee7b7;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 3px 0 #065f46;
-    cursor: default;
-}
-
-/* — Labels das Colunas — */
-.pass-v-col-labels {
-    display: flex;
-    align-items: center;
-    background: rgba(6, 5, 14, 0.5);
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-    padding: 10px 16px;
-    backdrop-filter: blur(8px);
-}
-
-.pvc-label {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 11.5px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 8px 12px;
-    border-radius: 10px;
-}
-
-/* Grátis: Slate Glass neutro, discreto, sem cor primária */
-.pvc-label-free {
-    color: rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
-}
-
-.pvc-label-center {
-    width: 60px;
-    text-align: center;
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: 1.2px;
-    color: rgba(255, 255, 255, 0.3);
-    text-transform: uppercase;
-}
-
-/* Premium: Gold Glass — a identidade */
-.pvc-label-premium {
-    color: #fbbf24;
-    background: rgba(251, 191, 36, 0.1);
-    border: 1px solid rgba(251, 191, 36, 0.45);
-    box-shadow:
-        0 0 14px rgba(251, 191, 36, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
-}
-
-/* — Trilha Vertical — */
-.pass-inpage-track-box {
-    width: 100%;
-}
-
-.pass-v-track {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-}
-
-/* Cada linha da trilha (1 nível) */
-.pass-v-row {
-    display: flex;
-    align-items: stretch;
-    min-height: 110px;
-    position: relative;
-}
-
-/* — Célula Grátis: Dark Glass elegante, sem cor intrusiva — */
-.pass-v-cell-free {
-    flex: 1;
-    min-width: 0;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px 8px 8px 20px;
-    padding: 0;
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    position: relative;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow:
-        0 4px 14px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
-    overflow: visible;
-}
-
-.pv-cell-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    border-radius: inherit;
-    padding: 12px 16px;
-}
-
-.pass-v-cell-free::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
-    border-radius: inherit;
-    pointer-events: none;
-}
-
-.pass-v-cell-free::after,
-.pass-v-cell-premium::after {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    border: 0 solid transparent;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.18s ease;
-}
-
-.pass-v-cell-free::after {
-    border-image: url('../assets/ui/passe/sombra-gratis.png') 120 fill / 60px / 40px;
-}
-
-.pass-v-cell-premium::after {
-    border-image: url('../assets/ui/passe/sombra-premium.png') 120 fill / 60px / 40px;
-}
-
-.pass-sombras-prontas .pass-v-cell-free:not(:hover),
-.pass-sombras-prontas .pass-v-cell-premium:not(:hover) {
-    box-shadow: none;
-}
-
-.pass-sombras-prontas .pass-v-cell-free:not(:hover)::after,
-.pass-sombras-prontas .pass-v-cell-premium:not(:hover)::after {
-    opacity: 1;
-}
-
-.pass-v-cell-free:hover::after,
-.pass-v-cell-premium:hover::after {
-    opacity: 0;
-}
-
-.pass-v-cell-free:hover {
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow:
-        0 8px 22px rgba(0, 0, 0, 0.55),
-        inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    transform: translateY(-2px);
-}
-
-/* — Divisor Central + Losango de Nível — */
-.pass-v-node-divider {
-    width: 58px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.pass-v-vert-line {
-    position: absolute;
-    width: 3px;
-    background: rgba(255, 255, 255, 0.08);
-    top: 0;
-    bottom: 0;
-    z-index: 1;
-    border-radius: 2px;
-}
-
-.pass-v-vert-line.line-filled {
-    background: linear-gradient(180deg, #d97706 0%, #fbbf24 50%, #fef08a 100%);
-    box-shadow: 0 0 12px rgba(251, 191, 36, 0.8);
-}
-
-.pass-v-diamond-node {
-    width: 38px;
-    height: 38px;
-    transform: rotate(45deg);
-    background: rgba(20, 16, 30, 0.9);
-    border: 2px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    z-index: 2;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-    transition: all 0.22s ease;
-    backdrop-filter: blur(4px);
-}
-
-/* Nó Desbloqueado: Esmeralda Sementis */
-.pass-v-diamond-node.node-unlocked {
-    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-    border-color: #6ee7b7;
-    box-shadow: 0 0 16px rgba(16, 185, 129, 0.7);
-}
-
-/* Nó Atual: Ouro Pulsante */
-.pass-v-diamond-node.node-current {
-    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-    border-color: #fef08a;
-    box-shadow: 0 0 32px rgba(251, 191, 36, 1);
-    animation: currentDiamondPulse 1.8s infinite;
-}
-
-@keyframes currentDiamondPulse {
-    0%, 100% { transform: rotate(45deg) scale(1); }
-    50% { transform: rotate(45deg) scale(1.14); }
-}
-
-.pvn-number {
-    transform: rotate(-45deg);
-    font-size: 14px;
-    font-weight: 900;
-    color: #ffffff;
-    line-height: 1;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-}
-
-/* — Célula Premium: Gold Glass — a estrela do show — */
-.pass-v-cell-premium {
-    flex: 1;
-    min-width: 0;
-    background: rgba(251, 191, 36, 0.07);
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    border-radius: 8px 20px 20px 8px;
-    padding: 0;
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    position: relative;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow:
-        0 4px 18px rgba(0, 0, 0, 0.45),
-        0 0 20px rgba(251, 191, 36, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
-    overflow: visible;
-}
-
-/* Reflexo superior sutil de vidro dourado */
-.pass-v-cell-premium::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 45%;
-    background: linear-gradient(180deg, rgba(251, 191, 36, 0.08) 0%, transparent 100%);
-    pointer-events: none;
-    border-radius: 8px 20px 0 0;
-}
-
-.pass-v-cell-premium:hover {
-    border-color: rgba(251, 191, 36, 0.75);
-    box-shadow:
-        0 8px 26px rgba(0, 0, 0, 0.6),
-        0 0 32px rgba(251, 191, 36, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-}
-
-/* Partículas cintilantes douradas */
-.pv-sparkles {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-        radial-gradient(1.5px 1.5px at 15% 25%, rgba(254, 240, 138, 0.9) 0%, transparent 100%),
-        radial-gradient(1px 1px at 85% 15%, rgba(251, 191, 36, 0.8) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 70% 70%, rgba(254, 240, 138, 0.7) 0%, transparent 100%),
-        radial-gradient(1px 1px at 30% 80%, rgba(251, 191, 36, 0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 55% 40%, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
-    opacity: 0.8;
-}
-
-/* — Conteúdo Interno das Células — */
-.pv-cell-content {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex: 1;
-    min-width: 0;
-}
-
-.pv-item-visual {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.pv-item-img {
-    width: 52px;
-    height: 52px;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
-    transition: transform 0.22s ease;
-}
-
-.pass-v-cell-free:hover .pv-item-img,
-.pass-v-cell-premium:hover .pv-item-img {
-    transform: scale(1.14) translateY(-2px);
-}
-
-.pv-item-info-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    gap: 3px;
-    flex: 1;
-    min-width: 0;
-}
-
-.pv-item-header-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.pv-item-qty {
-    font-size: 15px;
-    font-weight: 900;
-    color: #ffffff;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-    line-height: 1;
-}
-
-.pv-item-rarity-chip {
-    display: inline-block;
-    font-size: 8px;
-    font-weight: 900;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid currentColor;
-    padding: 2px 7px;
-    border-radius: 5px;
-    backdrop-filter: blur(4px);
-}
-
-.pv-item-title {
-    font-size: 13px;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.95);
-    line-height: 1.25;
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.pv-item-desc {
-    display: none;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.55);
-    line-height: 1.35;
-    max-width: 260px;
-}
-
-@media (min-width: 1024px) {
-    .pv-item-desc {
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-}
-
-.pv-item-action-wrap {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-left: 12px;
-}
-
-/* ==========================================================================
-   BOTÕES DA TRILHA — Suculentos, 3D, Gold Glass Premium
-========================================================================== */
-
-/* Botão COLETAR: Esmeralda Sementis pulsante */
-.pv-claim-btn {
-    position: relative;
-    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
-    border: 1.5px solid #6ee7b7;
-    border-radius: 12px;
-    color: #ffffff;
-    font-size: 11.5px;
-    font-weight: 900;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    padding: 8px 18px;
-    cursor: pointer;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        0 4px 0 #047857;
-    transition: background 0.15s ease;
-}
-
-.pv-claim-btn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    box-shadow: 0 0 28px rgba(16, 185, 129, 0.8);
-    animation: claimPulse 1.8s infinite;
-}
-
-@keyframes claimPulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-}
-
-.pv-claim-btn:hover {
-    background: linear-gradient(180deg, #34d399 0%, #059669 100%);
-}
-
-.pv-claim-btn:active {
-    transform: translateY(3px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 0 #047857;
-}
-
-.pv-claim-btn:active::before {
-    animation: none;
-    opacity: 0;
-}
-
-/* Tag COLETADO: glass esmeralda */
-.pv-claimed-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(16, 185, 129, 0.45);
-    border-radius: 10px;
-    padding: 7px 13px;
-    font-size: 10px;
-    font-weight: 900;
-    color: #6ee7b7;
-    text-transform: uppercase;
-    backdrop-filter: blur(6px);
-    letter-spacing: 0.5px;
-}
-
-/* Botão PREMIUM / UPGRADE: Ouro 3D — o destaque visual principal */
-.pv-premium-lock-btn {
-    background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
-    border: 1.5px solid #fde68a;
-    border-radius: 12px;
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 0.6px;
-    padding: 8px 16px;
-    cursor: pointer;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        0 3px 0 #78350f,
-        0 5px 14px rgba(245, 158, 11, 0.45);
-    text-transform: uppercase;
-    transition: all 0.15s ease;
-}
-
-.pv-premium-lock-btn:hover {
-    background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.55),
-        0 3px 0 #78350f,
-        0 8px 20px rgba(245, 158, 11, 0.7);
-    transform: translateY(-1px);
-}
-
-.pv-premium-lock-btn:active {
-    transform: translateY(3px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 0 #78350f;
-}
-
-/* Tag BLOQUEADO: discreto, suave */
-.pv-locked-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10px;
+.passe-entrada h1, .passe-capa h1 {
+    margin: 12px 0;
+    font-size: clamp(26px, 3.2vw, 40px);
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 9px;
-    padding: 6px 11px;
-    backdrop-filter: blur(4px);
-    letter-spacing: 0.5px;
+    line-height: 1.2;
+    letter-spacing: -.035em;
+    text-wrap: balance;
 }
-
-/* — Estados das Células — */
-.pass-v-cell-locked {
-    opacity: 0.6;
+.passe-entrada-texto > p:not(.passe-eyebrow), .passe-capa > div > p:not(.passe-eyebrow) {
+    max-width: 420px;
+    color: var(--color-gray-300);
+    font-size: 13px;
+    line-height: 1.7;
 }
-
-.pass-v-cell-locked .pv-item-img {
-    filter: grayscale(0.65) brightness(0.65) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
-}
-
-/* — Indicador de Nível Atual: Aura Dourada Viva — */
-.pass-v-row-current {
+.passe-arte {
     position: relative;
+    display: grid;
+    justify-items: center;
+    isolation: isolate;
 }
-
-.pass-v-row-current::after {
-    content: "";
+.passe-arte::before {
+    content: '';
     position: absolute;
-    inset: -3px;
-    border: 1.5px solid rgba(251, 191, 36, 0.8);
-    border-radius: 22px;
-    pointer-events: none;
-    box-shadow:
-        0 0 28px rgba(251, 191, 36, 0.6),
-        0 0 50px rgba(251, 191, 36, 0.15);
-    animation: currentGoldGlow 2.5s ease-in-out infinite alternate;
+    width: 220px;
+    height: 220px;
+    top: 8px;
+    border: 1px solid rgba(169,255,113,.13);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(169,255,113,.13), rgba(169,255,113,.025));
+    z-index: -1;
 }
-
-@keyframes currentGoldGlow {
-    from {
-        opacity: 0.65;
-    }
-    to {
-        opacity: 1;
-    }
+.passe-arte img { width: 100%; max-width: 280px; height: 250px; object-fit: contain; }
+.passe-arte-legenda { color: #c2d8c1; font-size: 11px; text-align: center; line-height: 1.6; }
+.passe-mini-progresso { display: flex; justify-content: space-between; gap: 16px; margin: 24px 0 8px; font-size: 10px; color: var(--color-gray-300); }
+.passe-mini-progresso > :first-child { color: var(--color-accent); font-weight: 600; white-space: nowrap; }
+.passe-mini-progresso > :last-child { text-align: right; }
+.passe-barra {
+    display: block;
+    width: 100%;
+    height: 7px;
+    appearance: none;
+    border: 0;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    background: rgba(255,255,255,.1);
+    accent-color: var(--color-accent);
 }
-
-/* — Rodapé In-Page — */
-.pass-inpage-footer-bar {
-    display: flex;
+.passe-barra::-webkit-progress-bar { background: rgba(255,255,255,.1); border-radius: inherit; }
+.passe-barra::-webkit-progress-value { background: var(--color-accent); border-radius: inherit; }
+.passe-barra::-moz-progress-bar { background: var(--color-accent); border-radius: inherit; }
+.passe-botao, .passe-coletar {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding: 18px 0 36px;
-}
-
-/* ==========================================================================
-   RESPONSIVIDADE MOBILE (< 680px)
-========================================================================= */
-@media (max-width: 680px) {
-    .pass-v-row {
-        min-height: 96px;
-    }
-
-    .pv-cell-inner {
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 8px;
-        text-align: center;
-    }
-
-    .pv-cell-content {
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .pv-item-info-wrap {
-        align-items: center;
-        text-align: center;
-    }
-
-    .pv-item-title {
-        font-size: 10px;
-        max-width: 110px;
-    }
-
-    .pv-item-desc {
-        display: none !important;
-    }
-
-    .pv-item-action-wrap {
-        margin-left: 0;
-        margin-top: 4px;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .pv-claim-btn {
-        width: 100%;
-        padding: 5px 0;
-        font-size: 10px;
-    }
-
-    .pv-premium-lock-btn {
-        width: 100%;
-        padding: 5px 0;
-        font-size: 9.5px;
-    }
-}
-
-
-/* Modal de Recompensa Resgatada (Estilo Unboxing) */
-.pass-modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.pass-modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(8, 8, 24, 0.88);
-    backdrop-filter: blur(16px);
-    animation: modalFadeIn 0.3s ease-out;
-}
-
-@keyframes modalFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.pass-modal-card {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 420px;
-    background: linear-gradient(160deg, #1d1b4b 0%, #11112e 100%);
-    border-radius: 28px;
-    border: 2px solid #a9ff71;
-    padding: 36px 28px 28px;
-    text-align: center;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7), 0 0 60px rgba(169, 255, 113, 0.2);
-    animation: modalPop 0.45s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    overflow: hidden;
-}
-
-@keyframes modalPop {
-    0% { transform: scale(0.6) translateY(40px); opacity: 0; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
-}
-
-.pass-modal-sunburst {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 500px;
-    height: 500px;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(169, 255, 113, 0.15) 0%, transparent 65%);
-    pointer-events: none;
-    animation: sunburstRotate 20s linear infinite;
-}
-
-@keyframes sunburstRotate {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-.pass-modal-header-badge {
-    display: inline-block;
-    padding: 5px 14px;
-    border-radius: 999px;
-    background: rgba(169, 255, 113, 0.15);
-    border: 1px solid #a9ff71;
-    color: #a9ff71;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 1.5px;
-    margin-bottom: 20px;
-    position: relative;
-    z-index: 1;
-}
-
-.pass-modal-icon-wrap {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    z-index: 1;
-}
-
-.pass-modal-icon-wrap img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.6));
-    animation: floatIcon 3s ease-in-out infinite;
-}
-
-@keyframes floatIcon {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-
-.pass-modal-rarity {
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #a9ff71;
-    margin-bottom: 6px;
-    position: relative;
-    z-index: 1;
-}
-
-.pass-modal-item-name {
-    font-size: 24px;
-    font-weight: 900;
-    color: #ffffff;
-    margin: 0 0 10px 0;
-    letter-spacing: -0.5px;
-    position: relative;
-    z-index: 1;
-}
-
-.pass-modal-desc {
-    color: #a0a5cc;
-    font-size: 13px;
-    line-height: 1.5;
-    margin: 0 0 24px 0;
-    position: relative;
-    z-index: 1;
-}
-
-.pass-modal-claim-btn {
-    width: 100%;
-    padding: 14px 20px;
-    border-radius: 14px;
-    border: none;
-    background: linear-gradient(135deg, #10b981 0%, #a9ff71 100%);
-    color: #0d0e29;
-    font-size: 15px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    min-height: 44px;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--color-accent);
+    color: #1c2b23;
+    font: 600 12px var(--font-family);
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(169, 255, 113, 0.4);
-    transition: transform 0.2s ease, filter 0.2s ease;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+    touch-action: manipulation;
+}
+.passe-entrada .passe-botao { margin-top: 22px; }
+.passe-botao:active, .passe-coletar:not(:disabled):active { transform: scale(.98); }
+.passe-botao:focus-visible, .passe-coletar:focus-visible, .passe-link:focus-visible,
+.passe-mais:focus-visible, .passe-voltar:focus-visible { outline: 3px solid var(--color-accent-light); outline-offset: 4px; }
+.passe-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px; }
+.passe-voltar, .passe-link {
+    min-height: 44px;
+    padding: 8px 0;
+    border: none;
+    background: none;
+    color: var(--color-gray-200);
+    font: 500 12px var(--font-family);
+    cursor: pointer;
+}
+.passe-link { color: var(--color-accent); }
+.passe-pro { display: flex; align-items: center; gap: 8px; color: var(--color-gray-300); font-size: 11px; }
+.passe-pro span { padding: 4px 8px; border: 1px solid rgba(255,255,255,.15); border-radius: var(--radius-full); font-size: 9px; }
+.passe-tipos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.passe-tipos span { padding: 5px 10px; border: 1px solid rgba(169,255,113,.18); border-radius: var(--radius-full); color: var(--color-accent-light); font-size: 10px; }
+.passe-progresso { margin: 20px 0 36px; padding: 24px; border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius-lg); background: rgba(26,26,74,.45); }
+.passe-resumo { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.passe-resumo strong { font-size: 24px; font-weight: 600; }
+.passe-resumo > p { color: var(--color-gray-300); font-size: 11px; text-align: right; }
+.passe-progresso .passe-barra { margin: 16px 0 8px; }
+.passe-saldos { padding-top: 12px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,.08); color: var(--color-gray-300); font-size: 10px; }
+.passe-secao-titulo { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+.passe-secao-titulo h2 { font-size: 21px; font-weight: 600; letter-spacing: -.02em; margin-top: 6px; }
+.passe-secao-titulo > span { font-size: 10px; color: var(--color-gray-300); }
+.passe-mensagem:not(:empty) { padding: 14px 16px; margin-bottom: 20px; border-radius: var(--radius-md); background: rgba(169,255,113,.1); color: var(--color-accent-light); font-size: 12px; }
+.passe-mensagem.erro { background: rgba(255,140,140,.08); color: #ffd0d0; }
+.passe-recompensas {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.passe-etapa {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 20px;
+}
+.passe-etapa::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: -24px;
+    bottom: -24px;
+    width: 2px;
+    background: rgba(255,255,255,.12);
+}
+.passe-etapa:first-child::before { top: 50%; }
+.passe-etapa:last-child::before { bottom: 50%; }
+.passe-etapa.coletada::before, .passe-etapa.disponivel::before { background: rgba(169,255,113,.5); }
+.passe-marco {
     position: relative;
     z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 2px solid #55557f;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-gray-300);
+    font-size: 13px;
+    font-weight: 600;
 }
-
-.pass-modal-claim-btn:hover {
-    transform: scale(1.02);
-    filter: brightness(1.1);
+.passe-etapa.disponivel .passe-marco, .passe-etapa.coletada .passe-marco { border-color: var(--color-accent); color: var(--color-accent-light); }
+.passe-etapa.nivel-atual .passe-marco { background: var(--color-accent); color: var(--color-primary-dark); box-shadow: 0 0 0 5px rgba(169,255,113,.12); }
+.passe-recompensa {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr) 180px;
+    gap: 20px;
+    align-items: center;
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-lg);
+    background: rgba(26,26,74,.45);
 }
-
-
-
-/* Responsividade Mobile do Passe de Batalha */
-@media (max-width: 768px) {
-    .sementis-pass-container {
-        padding: 20px 14px 16px;
-        border-radius: 20px;
-    }
-    .pass-main-title { font-size: 1.7rem; }
-    .pass-level-card { min-width: 100%; padding: 14px; }
-    .pb-sidebar-guide { width: 68px; min-width: 68px; padding-right: 8px; }
-    .pb-stage-column { width: 120px; min-width: 120px; }
-    .pb-slot-free, .pb-slot-premium { height: 160px; }
-    .pb-card { height: 156px; }
-    .pb-card-visual { height: 60px; }
-    .pb-card-img { width: 44px; height: 44px; }
-    .pb-card-name { font-size: 9.5px; }
-    .pb-btn { height: 26px; font-size: 9.5px; }
+.passe-recompensa.disponivel { border-color: rgba(169,255,113,.5); background: linear-gradient(150deg, rgba(169,255,113,.07), rgba(26,26,74,.65)); }
+.passe-recompensa.nivel-atual { box-shadow: inset 3px 0 0 var(--color-accent); }
+.passe-recompensa-topo { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 9px; color: var(--color-gray-300); }
+.passe-recompensa-topo > :first-child { font-weight: 600; letter-spacing: .08em; }
+.passe-recompensa.disponivel .passe-recompensa-topo > :last-child, .passe-recompensa.coletada .passe-recompensa-topo > :last-child { color: var(--color-accent); }
+.passe-premio-arte { display: grid; place-items: center; width: 80px; height: 88px; }
+.passe-premio-arte img { width: 66px; height: 66px; object-fit: contain; }
+.passe-recompensa.bloqueada .passe-premio-arte img { opacity: .65; }
+.passe-recompensa h3 { font-size: 18px; font-weight: 600; margin-top: 8px; }
+.passe-premio-texto > p { margin-top: 6px; color: var(--color-gray-300); font-size: 10px; line-height: 1.6; }
+.passe-coletar { width: 100%; padding: 11px 8px; font-size: 11px; }
+.passe-coletar:disabled { color: var(--color-gray-300); background: rgba(255,255,255,.055); cursor: default; }
+.passe-recompensa.coletada .passe-coletar { color: var(--color-accent-light); background: rgba(169,255,113,.06); }
+.passe-mais { display: block; width: 100%; min-height: 48px; margin: 24px 0; border: 1px solid rgba(169,255,113,.25); border-radius: var(--radius-md); background: none; color: var(--color-accent); font: 500 12px var(--font-family); cursor: pointer; }
+.passe-nota { display: flex; gap: 16px; margin-top: 28px; padding: 20px; border-top: 1px solid rgba(255,255,255,.1); }
+.passe-nota > span { color: var(--color-accent); font-size: 24px; }
+.passe-nota strong { font-size: 12px; font-weight: 500; }
+.passe-nota p { max-width: 620px; margin-top: 8px; color: var(--color-gray-300); font-size: 11px; line-height: 1.7; }
+.passe-modal { position: fixed; inset: 0; width: min(400px, calc(100% - 32px)); margin: auto; padding: 36px 24px 24px; border: 1px solid rgba(169,255,113,.3); border-radius: var(--radius-xl); background: #242453; color: var(--color-white); text-align: center; font-family: var(--font-family); }
+.passe-modal::backdrop { background: rgba(10,10,30,.75); }
+.passe-modal-fechar { position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border: 0; background: none; color: var(--color-gray-300); cursor: pointer; font-size: 24px; }
+.passe-modal-icone { display: grid; place-items: center; margin: 24px auto 12px; width: 130px; height: 130px; border-radius: 50%; background: rgba(169,255,113,.08); }
+.passe-modal-icone img { object-fit: contain; }
+.passe-modal h2 { font-size: 25px; font-weight: 600; }
+.passe-modal > p:not(.passe-eyebrow) { color: var(--color-gray-300); font-size: 12px; margin: 12px 0 24px; }
+.passe-modal .passe-botao { width: 100%; }
+@media (hover: hover) and (pointer: fine) {
+    .passe-botao:hover, .passe-coletar:not(:disabled):hover { background: var(--color-accent-light); }
+    .passe-link:hover, .passe-voltar:hover { color: var(--color-white); }
+}
+@media (max-width: 700px) {
+    .passe-entrada, .passe-capa { grid-template-columns: minmax(0, 1fr) 150px; gap: 8px; padding: 24px; }
+    .passe-arte img { height: 180px; }
+    .passe-arte::before { width: 150px; height: 150px; }
+    .passe-arte-legenda { display: none; }
+    .passe-etapa { grid-template-columns: 36px minmax(0, 1fr); gap: 14px; }
+    .passe-etapa::before { left: 17px; }
+    .passe-marco { width: 36px; height: 36px; font-size: 11px; }
+    .passe-recompensa { grid-template-columns: 56px minmax(0, 1fr); gap: 12px; padding: 16px; }
+    .passe-premio-arte { width: 56px; height: 64px; }
+    .passe-premio-arte img { width: 48px; height: 48px; }
+    .passe-coletar { grid-column: 1 / -1; }
+    .passe-secao-titulo h2 { font-size: 19px; }
+    .passe-progresso { padding: 20px; }
+}
+@media (max-width: 480px) {
+    .passe-entrada, .passe-capa { grid-template-columns: minmax(0, 1fr); padding: 24px; }
+    .passe-entrada .passe-arte { grid-row: 1; }
+    .passe-entrada .passe-arte img, .passe-capa .passe-arte img { height: 170px; }
+    .passe-arte::before { top: 0; }
+    .passe-capa { grid-template-columns: minmax(0, 1fr) 105px; gap: 0; }
+    .passe-capa .passe-arte { align-self: center; }
+    .passe-capa .passe-arte img { width: 100%; max-width: 145px; height: 145px; }
+    .passe-capa .passe-arte::before { width: 110px; height: 110px; }
+    .passe-capa h1 { font-size: 28px; }
+    .passe-capa .passe-eyebrow { font-size: 8px; }
+    .passe-capa > div > p:not(.passe-eyebrow) { font-size: 11px; }
+    .passe-tipos { gap: 4px; }
+    .passe-tipos span { padding: 4px 7px; font-size: 9px; }
+    .passe-resumo { align-items: flex-start; gap: 10px; }
+    .passe-resumo > p { max-width: 140px; font-size: 10px; }
+    .passe-resumo .passe-link { font-size: 10px; padding-top: 0; white-space: nowrap; }
+    .passe-recompensa h3 { font-size: 15px; }
+    .passe-recompensa-topo { font-size: 8px; }
+    .passe-coletar { font-size: 10px; }
+    .passe-premio-arte { height: 64px; }
+    .passe-saldos { line-height: 1.8; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .passe-botao, .passe-coletar { transition: none; }
+    .passe-botao:active, .passe-coletar:not(:disabled):active { transform: none; }
 }
 
 .highlight-icon {
@@ -2136,27 +841,3 @@
 .color-prata { color: #c0c0c0; box-shadow: 0 0 10px rgba(192, 192, 192, 0.1); }
 .color-ouro { color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
 .color-diamante { color: #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.1); text-shadow: 0 0 8px rgba(0, 255, 255, 0.4); }
-
-/* As linhas do passe não precisam recompor o fundo a cada quadro da rolagem. */
-.pass-v-row .pass-v-cell-free,
-.pass-v-row .pass-v-cell-premium,
-.pass-v-row .pv-cell-inner {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-@media (prefers-reduced-motion: reduce) {
-    .missions-page *, .missions-page *::before, .missions-page *::after {
-        animation: none !important;
-        transition: none !important;
-        scroll-behavior: auto !important;
-    }
-}
-
-@media (max-width: 600px) {
-    .pass-v-status-bar { flex-wrap: wrap; padding: 18px 16px; }
-    .pass-v-player-prog { min-width: 0; flex-basis: 100%; }
-    .pass-v-crown-meter { min-width: 0; }
-    .pass-v-royale-badge { width: 100%; }
-    .pass-inpage-footer-bar { display: flex; flex-direction: column; }
-    .pass-inpage-footer-bar button { width: 100%; justify-content: center; }
-}

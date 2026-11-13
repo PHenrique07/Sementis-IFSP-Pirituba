@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 134 116" class="personagem-img personagem-vetor" aria-hidden="true" focusable="false">
+  <!-- Contornos revisados a partir da Sementinha original, sem recortes na anatomia. -->
+  <ellipse cx="49" cy="105" rx="35" ry="6" fill="#394945"/>
+  <path d="M29 97c-3 3-5 6-4 8 2 3 10 3 13 1l1-8zm29 1 1 8c3 3 12 2 13-1 0-3-4-6-7-8" fill="#69cc0e"/>
+  <path d="M19 49C15 40 10 35 6 39c-5 5-1 16 4 21l10 8Z" fill="#6bce13"/>
+  <path d="M78 58c5-1 9-5 12-9 3-4 8-4 10-1 1 3-2 6-5 8-3 5-7 9-13 12Z" fill="#6bce13"/>
+  <path d="M50 24C30 24 16 40 15 61c-1 18 6 32 18 38 8 4 22 5 31 0 13-7 20-24 20-40 0-20-13-35-30-35Z" fill="#70d20d"/>
+  <path d="M24 49c2-14 14-23 27-23 10 0 17 4 22 10-7-4-14-4-20-1-12-6-21 1-29 14Z" fill="#7cdb15"/>
+  <path d="M49 27c1-5 2-9 4-12 2 4 3 8 3 12" fill="#70d20d"/>
+  <path d="M52 20C42 21 23 20 18 13c-5-7 2-11 12-10 10 0 19 7 22 17Z" fill="#70d20d"/>
+  <path d="M55 20C60 9 73 4 83 7c8 2 7 8 0 12-7 5-18 5-28 1Z" fill="#70d20d"/>
+  <path d="M24 57c-3 4-3 9 1 12 4 2 9 1 11-2l-2-10Zm42 0-1 10c3 3 8 2 10-1 2-4 1-7-2-9Z" fill="#84dc19"/>
+  <ellipse cx="40" cy="52" rx="11" ry="13" transform="rotate(9 40 52)" fill="#fffef7"/>
+  <ellipse cx="65" cy="52" rx="10.5" ry="12.5" transform="rotate(-7 65 52)" fill="#fffef7"/>
+  <ellipse cx="43" cy="54" rx="5.2" ry="7" fill="#1e2a28"/>
+  <ellipse cx="67" cy="54" rx="5.1" ry="6.8" fill="#1e2a28"/>
+  <ellipse cx="44.3" cy="51.5" rx="1.5" ry="1.8" fill="#fff" opacity=".85"/>
+  <ellipse cx="68.2" cy="51.5" rx="1.4" ry="1.7" fill="#fff" opacity=".85"/>
+  <path d="M42 72c5 2 11 2 17-1 1 9-2 16-8 16-6 0-9-7-9-15Z" fill="#a94126"/>
+  <path d="M43 72c5 1 10 1 15-1l-1 4c-4 2-9 2-13 0Z" fill="#fffef7"/>
+  <path d="M46 83c2-4 7-5 11-2-1 4-4 6-7 5Z" fill="#fa6957"/>
+  <g transform="rotate(27 103 50)">
+    <path d="M96 44c-8-4-11 1-8 7 1 3 4 4 7 3" fill="none" stroke="#168ac4" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M112 47c6-2 9-1 10 3l-2 6-7-1-4-6Z" fill="#169bd8"/>
+    <rect x="94" y="40" width="20" height="19" rx="4" fill="#16a8e5"/>
+    <path d="M98 41h11c2 0 3 1 3 3v10c-5-1-10-4-14-7Z" fill="#25b8ef"/>
+    <path d="M97 43v9" fill="none" stroke="#69d3f4" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="121" cy="54" rx="3.4" ry="4" fill="#39b9ee"/>
+  </g>
+  <g class="personagem-parte" fill="#4bc3f2">
+    <path d="M122 64c-1 3-3 5-3 7 0 4 6 4 6 0 0-2-1-4-3-7Z"/>
+    <path d="M129 74c-1 2-3 4-3 6 0 3 5 3 5 0 0-2-1-4-2-6Z"/>
+  </g>
+  <path d="m96 91 3 16c1 5 19 5 21 0l3-16Z" fill="#ba6626"/>
+  <path d="m98 95 2 11c4 2 14 2 18 0l2-11Z" fill="#c4702b"/>
+  <path d="M110 88V75" fill="none" stroke="#6fcf14" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M109 80c-9 0-13-8-9-10 5-2 10 3 9 10Zm2 0c-1-7 7-13 11-9 3 4-4 9-11 9Z" fill="#78d51a"/>
+  <rect x="93" y="85" width="33" height="9" rx="3" fill="#c7742d"/>
+  <path d="M96 88h27" stroke="#dc8a3f" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
