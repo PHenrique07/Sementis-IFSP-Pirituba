@@ -1,7 +1,7 @@
-// SVGs locais: o acervo mantém as poses da prancha original e o PNG como reserva.
+// SVGs locais: a versão estática permanece se a animação inline não carregar.
 const vetoresPersonagens = new Map();
 // Atualize junto da versão do script em trilhas.html ao alterar o acervo.
-const VERSAO_VETORES_PERSONAGENS = '20261112-6';
+const VERSAO_VETORES_PERSONAGENS = '20261112-7';
 let instanciaPersonagem = 0;
 
 function criarIlustracaoPersonagem(elemento) {
@@ -10,9 +10,7 @@ function criarIlustracaoPersonagem(elemento) {
   imagem.alt = elemento.nome;
   imagem.loading = 'lazy';
   imagem.decoding = 'async';
-  imagem.dataset.vetor = elemento.img.replace('personagens/', 'personagens/vetores/').replace('.png', '.svg')
-    + `?v=${VERSAO_VETORES_PERSONAGENS}`;
-  imagem.addEventListener('error', () => { imagem.src = elemento.img; }, { once: true });
+  imagem.dataset.vetor = `${elemento.img}?v=${VERSAO_VETORES_PERSONAGENS}`;
   imagem.src = imagem.dataset.vetor;
   return imagem;
 }
