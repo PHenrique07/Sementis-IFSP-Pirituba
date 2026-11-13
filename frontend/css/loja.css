@@ -1141,40 +1141,9 @@
     isolation: isolate;
 }
 
-.loja-shop::after {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 38px;
-    left: 50%;
-    width: min(1010px, 88vw);
-    height: 618px;
-    transform: translateX(-50%);
-    background: url('../assets/gifs/Design sem nome (1).gif') center / contain no-repeat;
-    border: 1px solid transparent;
-    border-radius: 30px;
-    transition: transform 240ms ease, filter 240ms ease, border-color 240ms ease, box-shadow 240ms ease, background-image 240ms ease;
-    pointer-events: none;
-}
-
-.loja-shop:hover::after {
-    transform: translateX(-50%) scale(1.035);
-    background-image:
-        linear-gradient(135deg, rgba(169, 255, 113, 0.22), rgba(105, 204, 255, 0.08) 52%, rgba(169, 255, 113, 0.16)),
-        url('../assets/gifs/Design sem nome (1).gif');
-    background-blend-mode: screen;
-    border-color: rgba(169, 255, 113, 0.55);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 34px rgba(169, 255, 113, 0.3), 0 22px 48px rgba(8, 18, 24, 0.35);
-    filter: drop-shadow(0 0 16px rgba(169, 255, 113, 0.22));
-}
-
 .loja-shop-section {
     position: relative;
     z-index: 1;
-}
-
-.loja-shop-section:first-child {
-    padding-top: 730px;
 }
 
 .loja-shop-section-header,
@@ -1192,15 +1161,6 @@
     }
 }
 
-@media (max-width: 760px) {
-    .loja-shop::after {
-        display: none;
-    }
-
-    .loja-shop-section:first-child {
-        padding-top: 0;
-    }
-}
 
 .loja-shop-section-header {
     display: grid;

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <script src="/js/api-config.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1a1a4a">
     <meta name="application-name" content="Sementis">
     <link rel="manifest" href="pwa/manifest.webmanifest">
@@ -13,8 +15,10 @@
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/shared-navbar.css">
     <link rel="stylesheet" href="/css/painel-professor.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 </head>
+
 <body class="home-page">
     <!-- Header -->
     <header class="home-header">
@@ -23,25 +27,25 @@
                 <img src="/assets/brand/logo_sementis_branco.png" alt="Sementis Logo" class="header-logo">
             </a>
             <div class="user-stats">
-            <div class="stat-item">
-                <img src="/assets/icons/icone_sequencia_fogo.png" alt="Sequência" class="stat-icon">
-                <!-- ADICIONE O ID AQUI -->
-                <span class="stat-value" id="header-ofensiva">—</span>
+                <div class="stat-item">
+                    <img src="/assets/icons/icone_sequencia_fogo.png" alt="Sequência" class="stat-icon">
+                    <!-- ADICIONE O ID AQUI -->
+                    <span class="stat-value" id="header-ofensiva">—</span>
+                </div>
+                <div class="stat-item">
+                    <img src="/assets/icons/icone_moeda.png" alt="Moedas" class="stat-icon">
+                    <!-- ADICIONE O ID AQUI -->
+                    <span class="stat-value" id="header-moedas">—</span>
+                </div>
+                <div class="stat-item">
+                    <img src="/assets/icons/icone_vida.png" alt="Vidas" class="stat-icon">
+                    <!-- ADICIONE O ID AQUI -->
+                    <span class="stat-value" id="header-vidas">—</span>
+                </div>
+                <button class="profile-btn">
+                    <img src="/assets/icons/icone_usuario.png" alt="Perfil">
+                </button>
             </div>
-            <div class="stat-item">
-                <img src="/assets/icons/icone_moeda.png" alt="Moedas" class="stat-icon">
-                <!-- ADICIONE O ID AQUI -->
-                <span class="stat-value" id="header-moedas">—</span>
-            </div>
-            <div class="stat-item">
-                <img src="/assets/icons/icone_vida.png" alt="Vidas" class="stat-icon">
-                <!-- ADICIONE O ID AQUI -->
-                <span class="stat-value" id="header-vidas">—</span>
-            </div>
-            <button class="profile-btn">
-                <img src="/assets/icons/icone_usuario.png" alt="Perfil">
-            </button>
-        </div>
         </div>
 
         <div class="user-progress">
@@ -80,7 +84,12 @@
             </div>
             <div class="live-home-action">
                 <span>Jogar Agora</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-2px; margin-left:4px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="display:inline-block; vertical-align:-2px; margin-left:4px;">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
             </div>
         </a>
 
@@ -137,7 +146,7 @@
                 </div>
 
                 <!-- Module 4: Consumo Consciente -->
-                <div class="module-card" data-module="consumo">
+                <div class="module-card locked" data-module="consumo">
                     <div class="module-icon-wrapper">
                         <img src="/assets/tarefas/tarefa_bloqueada.png" alt="Bloqueado" class="module-icon">
                     </div>
@@ -149,7 +158,7 @@
                 </div>
 
                 <!-- Module 5: Horta -->
-                <div class="module-card" data-module="horta">
+                <div class="module-card locked" data-module="horta">
                     <div class="module-icon-wrapper">
                         <img src="/assets/tarefas/tarefa_bloqueada.png" alt="Bloqueado" class="module-icon">
                     </div>
@@ -184,7 +193,8 @@
                 <div class="trails-header">
                     <div>
                         <h2 class="section-title">Trilhas de Aprendizado</h2>
-                        <p class="trail-map-subtitle">Percorra o caminho gamificado inspirado no Duolingo, usando os ícones e cores do Sementis.</p>
+                        <p class="trail-map-subtitle">Percorra o caminho gamificado inspirado no Duolingo, usando os
+                            ícones e cores do Sementis.</p>
                     </div>
                     <div class="trail-legend">
                         <span class="legend-item"><span class="legend-dot completed"></span>Concluída</span>
@@ -246,7 +256,7 @@
                         </div>
                     </div>
 
-                    <div class="trail-step align-right" data-module="consumo" data-trail="consumo">
+                    <div class="trail-step align-right locked" data-module="consumo" data-trail="consumo">
                         <div class="trail-node">
                             <img src="/assets/tarefas/tarefa_bloqueada.png" alt="Consumo Consciente" class="trail-icon">
                             <span class="trail-badge locked">Bloqueada</span>
@@ -261,7 +271,7 @@
                         </div>
                     </div>
 
-                    <div class="trail-step align-left" data-module="horta" data-trail="horta">
+                    <div class="trail-step align-left locked" data-module="horta" data-trail="horta">
                         <div class="trail-node">
                             <img src="/assets/tarefas/tarefa_bloqueada.png" alt="Horta Sustentável" class="trail-icon">
                             <span class="trail-badge locked">Bloqueada</span>
@@ -283,14 +293,16 @@
                 <h2 class="section-title">Mini-Jogos Rápidos</h2>
                 <div class="games-grid">
                     <div class="game-quick-card">
-                        <img src="/assets/jogos/flappy-fish/jogo_flappy_fish_peixe.png" alt="Flappy Fish" class="game-thumb">
+                        <img src="/assets/jogos/flappy-fish/jogo_flappy_fish_peixe.png" alt="Flappy Fish"
+                            class="game-thumb">
                         <div class="game-overlay">
                             <h3>Flappy Fish</h3>
                             <p>Desvie da poluição</p>
                         </div>
                     </div>
                     <div class="game-quick-card">
-                        <img src="/assets/jogos/garbage-recycle/jogo_garbage_recycle_cesto_lixo_reciclavel.png" alt="Garbage Recycle" class="game-thumb">
+                        <img src="/assets/jogos/garbage-recycle/jogo_garbage_recycle_cesto_lixo_reciclavel.png"
+                            alt="Garbage Recycle" class="game-thumb">
                         <div class="game-overlay">
                             <h3>Garbage Recycle</h3>
                             <p>Separe o lixo</p>
@@ -321,12 +333,14 @@
     </main>
 
     <!-- Botão flutuante "Entrar em Turma" — só aparece para alunos -->
-    <button id="btn-entrar-turma" class="btn-join-class" title="Entrar em uma Turma" style="display:none;" aria-label="Entrar em turma">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <line x1="23" y1="11" x2="17" y2="11"/>
-            <line x1="20" y1="8" x2="20" y2="14"/>
+    <button id="btn-entrar-turma" class="btn-join-class" title="Entrar em uma Turma" style="display:none;"
+        aria-label="Entrar em turma">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <line x1="23" y1="11" x2="17" y2="11" />
+            <line x1="20" y1="8" x2="20" y2="14" />
         </svg>
         <span>Entrar em Turma</span>
     </button>
@@ -336,11 +350,12 @@
         <div class="modal-card">
             <div class="modal-header">
                 <div class="modal-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <line x1="23" y1="11" x2="17" y2="11"/>
-                        <line x1="20" y1="8" x2="20" y2="14"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="23" y1="11" x2="17" y2="11" />
+                        <line x1="20" y1="8" x2="20" y2="14" />
                     </svg>
                 </div>
                 <div>
@@ -352,7 +367,8 @@
             <div class="modal-body">
                 <div class="input-group">
                     <label for="input-codigo-convite">Código de Convite</label>
-                    <input type="text" id="input-codigo-convite" placeholder="Ex: aB3xY9" maxlength="6" autocomplete="off" spellcheck="false">
+                    <input type="text" id="input-codigo-convite" placeholder="Ex: aB3xY9" maxlength="6"
+                        autocomplete="off" spellcheck="false">
                 </div>
                 <div class="modal-msg" id="modal-turma-msg"></div>
                 <button class="btn-modal-confirm" id="btn-confirmar-turma">
@@ -371,4 +387,5 @@
     <script src="/js/home.js"></script>
     <script src="/js/entrar-turma.js"></script>
 </body>
+
 </html>

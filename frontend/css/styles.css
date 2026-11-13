@@ -280,6 +280,26 @@ input {
     font-weight: 500;
 }
 
+.btn--nav-home {
+    padding: 10px 20px;
+    font-size: 14px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .user-profile-menu {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .btn--nav-home {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 .profile-dropdown-container {
     position: relative;
     display: flex;
