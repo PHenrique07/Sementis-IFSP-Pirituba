@@ -23,6 +23,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return headers;
     }
 
+    async function buscarApiAmigos(caminho, opcoes = {}) {
+        const resposta = await fetch(`${API_BASE_URL}${caminho}`, {
+            ...opcoes, credentials: 'include', headers: getAuthHeaders()
+        });
+        if (resposta.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+            throw new Error('Sua sessão expirou. Faça login novamente.');
+        }
+        return resposta;
+    }
+
+    function escaparHtml(valor = '') {
+        return String(valor).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     // -------------------------------------------------------------------------
     // 1. BANNER CUSTOMIZÁVEL (Sem salvar no DB por hora - LocalStorage)
     // -------------------------------------------------------------------------
@@ -699,15 +717,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const sfListaPedidos = document.getElementById('sf-lista-pedidos');
 
     function renderizarCardAmigo(amigo, isOnline) {
-        const primeiraLetra = (amigo.nome || 'A').trim()[0].toUpperCase();
+        const nome = escaparHtml(amigo.nome || 'Amigo');
+        const avatar = escaparHtml(amigo.avatar_url || '');
+        const primeiraLetra = escaparHtml((amigo.nome || 'A').trim()[0].toUpperCase());
         const gradienteIdx = ((amigo.id || 1) % 5) + 1;
 
         return `
-            <div class="friend-card" title="${amigo.nome} • Nível ${amigo.nivel || 1}">
+            <div class="friend-card" title="${nome} • Nível ${amigo.nivel || 1}">
                 <div class="friend-card-avatar">
                     <div class="friend-card-avatar-inner">
                         ${amigo.avatar_url ? `
-                            <img src="${amigo.avatar_url}" alt="${amigo.nome}" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="${avatar}" alt="${nome}" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <span class="friend-card-avatar-letter gradient-${gradienteIdx}" style="display: none;">${primeiraLetra}</span>
                         ` : `
                             <span class="friend-card-avatar-letter gradient-${gradienteIdx}">${primeiraLetra}</span>
@@ -716,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="friend-card-status ${isOnline ? 'online' : 'offline'}"></span>
                 </div>
                 <div class="friend-card-info">
-                    <span class="friend-card-name">${amigo.nome}</span>
+                    <span class="friend-card-name">${nome}</span>
                     <span class="friend-card-meta">
                         <span class="xp-tag">${amigo.xp || 0} XP</span>
                         <span>•</span>
@@ -735,7 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const resp = await fetch('/api/amigos', { headers: getAuthHeaders() });
+            const resp = await buscarApiAmigos('/api/amigos');
             if (!resp.ok) throw new Error('Falha ao obter lista de amigos');
 
             const amigos = await resp.json();
@@ -892,9 +912,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isNum = /^\d+$/.test(alvo);
                 const payload = isNum ? { id: parseInt(alvo, 10) } : { email: alvo };
 
-                const resp = await fetch('/api/amigos/adicionar', {
+                const resp = await buscarApiAmigos('/api/amigos/adicionar', {
                     method: 'POST',
-                    headers: getAuthHeaders(),
                     body: JSON.stringify(payload)
                 });
 
@@ -938,7 +957,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!sfListaPedidos || !token) return;
 
         try {
-            const resp = await fetch('/api/amigos/pedidos', { headers: getAuthHeaders() });
+            const resp = await buscarApiAmigos('/api/amigos/pedidos');
             if (!resp.ok) throw new Error('Erro ao buscar pedidos');
 
             const pedidos = await resp.json();
@@ -963,20 +982,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             sfListaPedidos.innerHTML = pedidos.map(ped => {
-                const avatar = ped.avatar_url;
-                const primeiraLetra = (ped.nome || 'A')[0].toUpperCase();
+                const avatar = escaparHtml(ped.avatar_url || '');
+                const nome = escaparHtml(ped.nome || 'Colega');
+                const primeiraLetra = escaparHtml((ped.nome || 'A')[0].toUpperCase());
                 const nivel = ped.nivel ?? 1;
 
                 return `
                     <div class="sf-request-item" id="sf-req-${ped.amizade_id}">
                         <div class="sf-req-user">
                             ${avatar ? `
-                                <img src="${avatar}" alt="${ped.nome}" class="sf-req-avatar" onerror="this.src='/assets/icons/icone_usuario.png'">
+                                <img src="${avatar}" alt="${nome}" class="sf-req-avatar" onerror="this.src='/assets/icons/icone_usuario.png'">
                             ` : `
                                 <div class="sf-req-avatar-glass">${primeiraLetra}</div>
                             `}
                             <div class="sf-req-info">
-                                <strong>${ped.nome}</strong>
+                                <strong>${nome}</strong>
                                 <span>Nível ${nivel}</span>
                             </div>
                         </div>
@@ -1004,9 +1024,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const endpoint = acao === 'aceitar' ? '/api/amigos/aceitar' : '/api/amigos/rejeitar';
 
         try {
-            const resp = await fetch(endpoint, {
+            const resp = await buscarApiAmigos(endpoint, {
                 method: 'POST',
-                headers: getAuthHeaders(),
                 body: JSON.stringify({ amizade_id: amizadeId })
             });
 

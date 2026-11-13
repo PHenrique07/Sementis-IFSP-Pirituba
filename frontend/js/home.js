@@ -171,7 +171,7 @@ function showAchievementDetails(achievementName) {
 
 // ===== Progress Bar Animations =====
 function animateProgressBars() {
-    const progressBars = document.querySelectorAll('.progress-fill, .goal-progress-fill, .progress-fill-small, .trail-mini-progress-fill');
+    const progressBars = document.querySelectorAll('.progress-fill, .goal-progress-fill, .progress-fill-small');
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -494,24 +494,16 @@ window.carregarTrilha = carregarTrilha;
 function aplicarProgressoModulos(modulos) {
     if (!Array.isArray(modulos)) return;
 
-    const cards = document.querySelectorAll('.module-card');
+    const cards = document.querySelectorAll('.module-card[data-modulo-id], .trail-step[data-modulo-id]');
     document.querySelectorAll('.module-highlight').forEach(destaque => destaque.remove());
     cards.forEach(card => {
-        const tituloElement = card.querySelector('.module-title');
-        if (!tituloElement) return;
-        
-        const nomeModulo = tituloElement.textContent.trim();
-        const nomeLimpo = nomeModulo.toLowerCase();
-        
-        let idMapeado = null;
-        if (nomeLimpo.includes('fundamento') || nomeLimpo.includes('básico') || nomeLimpo.includes('basico')) idMapeado = 1;
-        else if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
-        else if (nomeLimpo.includes('clima')) idMapeado = 3;
-
+        card.classList.remove('active');
+        card.removeAttribute('aria-current');
+        const idMapeado = Number(card.dataset.moduloId);
         if (!idMapeado) return;
         
-        const dadosModulo = modulos.find(m => m.modulo_id === idMapeado || m.id === idMapeado);
-        if (dadosModulo && dadosModulo.em_destaque && !card.classList.contains('locked')) {
+        const dadosModulo = modulos.find(m => Number(m.modulo_id ?? m.id) === idMapeado);
+        if (dadosModulo && dadosModulo.em_destaque && card.classList.contains('module-card') && !card.classList.contains('locked')) {
             card.classList.add('active');
             card.setAttribute('aria-current', 'step');
             const destaque = document.createElement('span');
@@ -532,17 +524,21 @@ function aplicarProgressoModulos(modulos) {
         
         const porcentagem = dadosModulo ? dadosModulo.porcentagem : 0;
         const concluidas = dadosModulo ? dadosModulo.atividades_concluidas : 0;
-        const total = dadosModulo ? dadosModulo.total_atividades : 5;
+        const total = dadosModulo ? dadosModulo.total_atividades : 0;
         
-        const barra = card.querySelector('.module-progress-fill');
+        const barra = card.querySelector('.module-progress-fill, .trail-mini-progress-fill');
         if (barra) {
             barra.style.width = `${porcentagem}%`;
         }
         
-        const textoLicoes = card.querySelector('.module-progress-text');
+        const textoLicoes = card.querySelector('.module-progress-text, .trail-mini-progress-text');
         if (textoLicoes && !textoLicoes.classList.contains('locked-text')) {
-            textoLicoes.textContent = `${concluidas}/${total} lições completas`;
+            textoLicoes.textContent = dadosModulo
+                ? `${concluidas}/${total} ${card.classList.contains('module-card') ? 'lições completas' : 'lições'}`
+                : 'Progresso indisponível';
         }
+        const badge = card.querySelector('.trail-badge');
+        if (badge) badge.textContent = dadosModulo ? `${concluidas}/${total}` : '—';
     });
 }
 

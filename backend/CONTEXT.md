@@ -59,7 +59,11 @@ Leia [dados/CONTEXT.md](dados/CONTEXT.md) para hierarquia, contratos de questão
 
 **Invariantes:** uma resposta por jogador/pergunta; o gabarito só aparece nos estados de revelação. Pontuação e transições são decididas no servidor. As salas não sobrevivem a reinícios e não são compartilhadas automaticamente entre processos; considere essa limitação ao mudar execução ou deploy.
 
-## Passe e drone
+## Amizades
+
+`GET /api/amigos` e `GET /api/amigos/pedidos` usam o usuário do JWT. `POST /api/amigos/adicionar` recebe somente o destinatário por `email` ou `id`; o remetente sempre vem do token. `POST /api/amigos/aceitar` e `/api/amigos/rejeitar` recebem `amizade_id` e exigem que o usuário seja o destinatário de um convite pendente. O fluxo usa a tabela `Amizade` existente, sem mudança de esquema. Convite criado retorna 201; dados inválidos 400, usuário/convite ausente 404, falta de permissão 403 e duplicidade/convite já respondido 409.
+
+## Recompensas do passe e drone
 
 - Contrato e compatibilidade: [refatoração do passe](../docs/refatoracao-passe.md). `ResgateRecompensa` registra valores concedidos e chave única por usuário, criada por `create_all` sem alterar saldos antigos. `crud.py` concentra catálogo, elegibilidade e transações.
 - `GET /api/passe` retorna 60 níveis, `perfil`, XP de progresso e estados `bloqueada`, `disponivel` e `coletada`. `POST /api/passe/<nivel>/resgatar` retorna `recompensa`, `perfil` e `passe`. Nível 1 é inicial; cada avanço requer 500 XP; XP concedido pelo próprio passe não libera níveis. Jornada `raizes-1` permanente, sem plano pago ativo.

@@ -18,6 +18,8 @@ Esta seleção é um mapa para leitura, não uma especificação exaustiva. Leia
 | --- | --- | --- |
 | POST | `/cadastro`, `/login`, `/validar-token` | Cadastro e sessão |
 | GET | `/api/perfil` | Perfil e barra de XP |
+| GET | `/api/amigos`, `/api/amigos/pedidos` | Amigos aceitos e convites recebidos pelo usuário autenticado |
+| POST | `/api/amigos/adicionar`, `/api/amigos/aceitar`, `/api/amigos/rejeitar` | Envio por e-mail/ID e resposta a convites próprios pendentes |
 | POST | `/completar_atividade` | Conclusão/game over do quiz |
 | GET | `/api/modulos/<int:modulo_id>/trilhas` | Mapa de módulo |
 | GET | `/api/modulos/progresso` | Progresso da home |
