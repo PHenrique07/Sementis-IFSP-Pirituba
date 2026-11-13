@@ -43,6 +43,8 @@ Siga os cenários de interface em [Validação](../../docs/referencias/validacao
 ## Fluidez e passe de batalha
 
 - Na home, `data-modulo-id` relaciona os cards ao payload de `/api/modulos/progresso`. O card `.active`, `aria-current="step"` e a etiqueta `.module-highlight` acompanham `em_destaque` decidido no servidor; limpe o destaque anterior ao aplicar cache ou resposta atualizada. A etiqueta mostra “Comece por aqui”, “Continue aqui” ou “Módulo concluído”, conforme as contagens do payload, com ponto `.module-pulse` discreto e estático em movimento reduzido. Cards sem módulo cadastrado não herdam o progresso de Fundamentos.
+- O mesmo payload atualiza a lista `.trail-step[data-modulo-id]`, seus badges, contagens e barras. Não deixe `.trail-mini-progress-fill` no observador de animação que restaura larguras antigas; as larguras vêm da API. Não use um total fixo de lições como fallback.
+- As amizades do perfil são carregadas por `perfil.js` com `API_BASE_URL`, JWT e credenciais, inclusive quando a interface é publicada em outra origem. A interface permite convidar por e-mail/ID, listar pedidos e aceitar/recusar; nomes e avatares interpolados no HTML são escapados.
 
 - A navegação continua entre documentos por links nativos. shared-navbar.css habilita View Transitions na mesma origem e preserva visualmente o menu; navegadores sem suporte usam a navegação normal. Validar por HTTP e respeitar movimento reduzido.
 - O mapa reconstrói nós somente quando a largura útil muda; pausa decoração fora da viewport. Fechar o FlapFish descarrega o iframe.

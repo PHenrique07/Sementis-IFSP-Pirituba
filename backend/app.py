@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory, Response, send_file
 from .crud import obter_passe, obter_drone, resgatar_passe, resgatar_drone
+from .crud import (enviar_solicitacao_amizade, aceitar_amizade, rejeitar_amizade,
+                   listar_amigos, listar_solicitacoes_pendentes)
 from flask_cors import CORS
 #Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from .crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
@@ -451,6 +453,65 @@ def obter_progresso_modulos():
     with Session(engine) as session:
         progresso = listar_progresso_geral_modulos(session, id_usuario)
         return jsonify(progresso), 200
+
+def resposta_amizade(resultado, codigo_sucesso=200):
+    codigo = resultado.pop("codigo_http", codigo_sucesso if resultado.get("status") == "sucesso" else 400)
+    return jsonify(resultado), codigo
+
+
+@app.route('/api/amigos', methods=['GET'])
+@token_obrigatorio
+def consultar_amigos():
+    with Session(engine) as session:
+        return jsonify(listar_amigos(session, request.usuario_id)), 200
+
+
+@app.route('/api/amigos/pedidos', methods=['GET'])
+@token_obrigatorio
+def consultar_pedidos_amizade():
+    with Session(engine) as session:
+        return jsonify(listar_solicitacoes_pendentes(session, request.usuario_id)), 200
+
+
+@app.route('/api/amigos/adicionar', methods=['POST'])
+@token_obrigatorio
+def adicionar_amigo():
+    dados = request.get_json(silent=True)
+    if not isinstance(dados, dict) or ("id" in dados) == ("email" in dados):
+        return jsonify({"status": "erro", "mensagem": "Informe o e-mail ou o ID do seu amigo."}), 400
+    destinatario_id = dados.get("id")
+    email = dados.get("email")
+    if "id" in dados:
+        if type(destinatario_id) is not int or destinatario_id <= 0:
+            return jsonify({"status": "erro", "mensagem": "O ID deve ser um número inteiro positivo."}), 400
+    elif not isinstance(email, str) or not email.strip() or len(email) > 254 or "@" not in email:
+        return jsonify({"status": "erro", "mensagem": "Informe um e-mail válido."}), 400
+    with Session(engine) as session:
+        return resposta_amizade(enviar_solicitacao_amizade(
+            session, request.usuario_id, email, destinatario_id
+        ), 201)
+
+
+def responder_pedido_amizade(funcao):
+    dados = request.get_json(silent=True)
+    amizade_id = dados.get("amizade_id") if isinstance(dados, dict) else None
+    if type(amizade_id) is not int or amizade_id <= 0:
+        return jsonify({"status": "erro", "mensagem": "Informe um convite válido."}), 400
+    with Session(engine) as session:
+        return resposta_amizade(funcao(session, amizade_id, request.usuario_id))
+
+
+@app.route('/api/amigos/aceitar', methods=['POST'])
+@token_obrigatorio
+def aceitar_pedido_amizade():
+    return responder_pedido_amizade(aceitar_amizade)
+
+
+@app.route('/api/amigos/rejeitar', methods=['POST'])
+@token_obrigatorio
+def rejeitar_pedido_amizade():
+    return responder_pedido_amizade(rejeitar_amizade)
+
 
 @app.route('/api/passe', methods=['GET'])
 @token_obrigatorio

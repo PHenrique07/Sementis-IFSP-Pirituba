@@ -942,15 +942,22 @@ def obter_loja_diaria(session: Session):
 # ==========================================
 
 # 29. Enviar Solicitação de Amizade
-def enviar_solicitacao_amizade(session: Session, remetente_id: int, destinatario_email: str):
+def enviar_solicitacao_amizade(session: Session, remetente_id: int, destinatario_email: str = None, destinatario_id: int = None):
     remetente = session.get(Usuario, remetente_id)
-    destinatario = session.exec(select(Usuario).where(Usuario.email == destinatario_email)).first()
+    if not remetente:
+        return {"status": "erro", "mensagem": "Usuário não encontrado.", "codigo_http": 404}
+    if destinatario_id is not None:
+        destinatario = session.get(Usuario, destinatario_id)
+    else:
+        destinatario = session.exec(select(Usuario).where(
+            func.lower(Usuario.email) == (destinatario_email or "").strip().lower()
+        )).first()
     
     if not destinatario:
-        return {"status": "erro", "mensagem": "Usuário não encontrado com esse email."}
+        return {"status": "erro", "mensagem": "Usuário não encontrado com esse e-mail ou ID.", "codigo_http": 404}
         
     if remetente_id == destinatario.id:
-        return {"status": "erro", "mensagem": "Você não pode adicionar a si mesmo."}
+        return {"status": "erro", "mensagem": "Você não pode adicionar a si mesmo.", "codigo_http": 400}
         
     # Verifica se já existe amizade ou convite pendente entre os dois
     amizade_existente = session.exec(
@@ -962,24 +969,27 @@ def enviar_solicitacao_amizade(session: Session, remetente_id: int, destinatario
     
     if amizade_existente:
         if amizade_existente.status == "aceito":
-            return {"status": "erro", "mensagem": "Vocês já são amigos."}
+            return {"status": "erro", "mensagem": "Vocês já são amigos.", "codigo_http": 409}
         elif amizade_existente.status == "pendente":
-            return {"status": "erro", "mensagem": "Já existe um convite pendente entre vocês."}
+            return {"status": "erro", "mensagem": "Já existe um convite pendente entre vocês.", "codigo_http": 409}
             
     nova_amizade = Amizade(usuario_id_1=remetente_id, usuario_id_2=destinatario.id, status="pendente")
     session.add(nova_amizade)
     session.commit()
-    return {"status": "sucesso", "mensagem": "Solicitação de amizade enviada!"}
+    return {"status": "sucesso", "mensagem": "Solicitação de amizade enviada!", "amizade_id": nova_amizade.id}
 
 # 30. Aceitar Solicitação de Amizade
 def aceitar_amizade(session: Session, amizade_id: int, usuario_id: int):
     amizade = session.get(Amizade, amizade_id)
     
     if not amizade:
-        return {"status": "erro", "mensagem": "Solicitação não encontrada."}
+        return {"status": "erro", "mensagem": "Solicitação não encontrada.", "codigo_http": 404}
         
     if amizade.usuario_id_2 != usuario_id:
-        return {"status": "erro", "mensagem": "Você não tem permissão para aceitar este convite."}
+        return {"status": "erro", "mensagem": "Você não tem permissão para aceitar este convite.", "codigo_http": 403}
+
+    if amizade.status != "pendente":
+        return {"status": "erro", "mensagem": "Este convite já foi respondido.", "codigo_http": 409}
         
     amizade.status = "aceito"
     session.add(amizade)
@@ -1059,10 +1069,13 @@ def rejeitar_amizade(session: Session, amizade_id: int, usuario_id: int):
     amizade = session.get(Amizade, amizade_id)
     
     if not amizade:
-        return {"status": "erro", "mensagem": "Solicitação não encontrada."}
+        return {"status": "erro", "mensagem": "Solicitação não encontrada.", "codigo_http": 404}
         
     if amizade.usuario_id_2 != usuario_id:
-        return {"status": "erro", "mensagem": "Você não tem permissão para rejeitar este convite."}
+        return {"status": "erro", "mensagem": "Você não tem permissão para rejeitar este convite.", "codigo_http": 403}
+
+    if amizade.status != "pendente":
+        return {"status": "erro", "mensagem": "Este convite já foi respondido.", "codigo_http": 409}
         
     session.delete(amizade)
     session.commit()
