@@ -44,7 +44,7 @@ Como a aplicação possui uma arquitetura desacoplada, o processo envolve inicia
    ```bash
    python seeds.py
    ```
-   *(Este comando criará o arquivo `sementis.db` e registrará módulos, trilhas, itens da loja, turmas e missões padrão).*
+   *(Use no ambiente de desenvolvimento. O comando inicializa o esquema e o povoamento; se já houver usuário, interrompe o povoamento para evitar duplicatas. Para atualizar currículo existente, leia `backend/dados/CONTEXT.md` antes de usar `--atualizar-conteudo`.)*
 
 5. Inicie o servidor Flask:
    ```bash
@@ -59,9 +59,9 @@ Como a aplicação possui uma arquitetura desacoplada, o processo envolve inicia
 ### 3. Passo a Passo: Front-end (Cliente)
 
 1. Com o servidor Flask rodando no terminal, abra a pasta do projeto no VS Code.
-2. Localize o arquivo `index.html` na raiz do projeto.
-3. Clique com o botão direito em `index.html` e selecione **"Open with Live Server"** (ou abra em `http://localhost:5500` / `http://localhost:3000`).
-4. **Mágica da detecção de ambiente:** O arquivo [`js/api-config.js`](file:///d:/Programacao/Sementis-2/js/api-config.js) detectará automaticamente que o host é `localhost` e fará todas as chamadas `fetch()` apontarem para a sua API local na porta 5000.
+2. Localize o arquivo `frontend/index.html`. As páginas, scripts, estilos e assets ficam juntos em `frontend/`.
+3. Sirva `frontend/` como raiz pública em uma origem permitida pelo CORS de `backend/app.py`, como `http://localhost:3000`: configure a raiz/porta do Live Server ou use `python -m http.server 3000 --directory frontend` a partir da raiz do repositório em outro terminal. A porta padrão 5500 não está na lista atual de origens.
+4. O arquivo [`js/api-config.js`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/frontend/js/api-config.js) detecta `localhost`/`127.0.0.1` e aponta para a API local na porta 5000.
 
 ---
 
@@ -72,7 +72,7 @@ Para manter a consistência e a facilidade de manutenção por qualquer membro d
 1. **Mimetismo de Código (Não invente):**
    Siga estritamente os padrões existentes no repositório. Não adicione bibliotecas pesadas de terceiros (Tailwind, React, Redux) nem mude a estrutura estabelecida.
 2. **Modelagem via SQLModel:**
-   Qualquer alteração estrutural no banco de dados DEVE ser feita adicionando ou modificando classes no [`models.py`](file:///d:/Programacao/Sementis-2/models.py). Não execute comandos SQL manuais (*raw SQL*).
+   Qualquer alteração estrutural no banco de dados DEVE ser feita adicionando ou modificando classes no [`models.py`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/backend/models.py). Não execute comandos SQL manuais (*raw SQL*).
 3. **Separação Rígida de Responsabilidades:**
    O front-end **nunca** calcula saldo de moedas, promoção de ligas ou ofensiva. O front envia a ação via API, o back-end processa e valida as regras de negócio, e o front apenas exibe o retorno.
 4. **Nomenclatura em Português:**
@@ -80,20 +80,20 @@ Para manter a consistência e a facilidade de manutenção por qualquer membro d
 
 ---
 
-## 🤖 O Esquadrão Sementis (Pipeline de Agentes)
+## 🤖 Contexto para agentes e perfis do esquadrão
 
-No desenvolvimento do projeto com Inteligência Artificial, seguimos o pipeline de papéis especializados:
+O ponto de entrada é o [AGENTS.md do repositório](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/AGENTS.md), que encaminha a tarefa aos contextos da área:
 
 ```mermaid
 graph LR
-    S[SemeIA - Orquestrador] --> B[BrinIA - Pesquisa e Requisitos]
-    B --> C[CaIA - Planejamento Estratégico]
-    C --> G[GratIA - Implementação de Código]
-    G --> X[XimbeIA - Revisão e Otimização]
+    A[AGENTS.md - Mapa global] --> B[CONTEXT.md da área]
+    B --> C[Contrato local quando necessário]
+    C --> D[Referências e arquivos da tarefa]
+    D --> E[Alteração e validação]
 ```
 
-* **SemeIA:** Avalia se uma demanda é uma correção rápida (*Fast Path*) ou uma funcionalidade complexa (*Full Pipeline*).
-* **BrinIA:** Especialista em pesquisa que documenta os requisitos pedagógicos e técnicos sem alterar código.
-* **CaIA:** Arquiteta de soluções que desenha contratos de dados (payloads) e arquitetura de módulos.
-* **GratIA:** Especialista em implementação prática que escreve o código funcional em Flask + Vanilla JS.
-* **XimbeIA:** Revisora rigorosa que remove redundâncias, melhora a legibilidade e garante o cumprimento das convenções do projeto.
+Um mesmo agente pode pesquisar, planejar, implementar e revisar. Os contextos de `backend/`, `frontend/` e `tests/` orientam cada área. Os perfis **SemeIA** (execução de ponta a ponta), **BrinIA** (pesquisa), **CaIA** (planejamento), **GratIA** (implementação) e **XimbeIA** (revisão) continuam disponíveis; trabalhar em vários arquivos não obriga chamar todo o esquadrão.
+
+Antes de alterar um modelo, explicite impacto e compatibilidade dos dados. Antes de concluir, confira as invariantes da área e a [validação por escopo](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/docs/referencias/validacao.md). A suíte automatizada usa bancos isolados; scripts manuais podem acessar o banco local.
+
+A [metodologia de contexto](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/docs/metodologia-contexto.md) explica a organização e sua referência no artigo da Building CERC.

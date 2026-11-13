@@ -37,7 +37,11 @@
 - **[06. Guia de Contribuição](06-guia-de-contribuicao)**
   - Execução Local Passo a Passo
   - Regras Inegociáveis
-  - O Esquadrão Sementis (Pipeline de Agentes)
+  - Contexto para Agentes e Perfis do Esquadrão
+
+- **[07. Guia de Skills](07-guia-de-skills)**
+  - Procedimentos Recorrentes
+  - Colaboração Opcional entre Perfis
 
 - **[07. Guia de Skills & REA](07-guia-de-skills)**
   - O que são Agent Skills?

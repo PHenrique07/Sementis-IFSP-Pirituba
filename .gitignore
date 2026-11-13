@@ -19,4 +19,10 @@ Thumbs.db
 
 # Saídas do /brag (vídeos renderizados e composições)
 brag-output*/
-*.mp4
+*.mp4
+
+# Materiais locais do pitch
+/pitch-assets/
+
+# Scripts locais e transitórios
+scratch/

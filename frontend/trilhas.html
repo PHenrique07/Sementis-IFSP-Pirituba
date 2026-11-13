@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="/js/api-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1a4a">
+<meta name="application-name" content="Sementis">
+<link rel="manifest" href="pwa/manifest.webmanifest">
+<link rel="icon" href="/assets/icons/pwa-icon.svg" type="image/svg+xml">
+<title>Trilha de Aprendizado - Sementis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg:           #27275e;
+    --bg-dark:      #1a1a4a;
+    --bg-light:     #3a3a7a;
+    --green:        #a9ff71;
+    --green-dark:   #7acc44;
+    --green-glow:   rgba(169, 255, 113, 0.4);
+    --node-locked:  #2d2d5a;
+    --node-border:  #3a3a6a;
+    --path-done:    #a9ff71;
+    --path-locked:  #3d3d72;
+    --text-muted:   #7878b0;
+    --text-light:   #a0a0c8;
+    --shadow-base:  rgba(0, 0, 0, 0.2);
+    --shadow-strong: rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(135deg, var(--bg) 0%, var(--bg-dark) 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 92px;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Background decorative elements */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 20%, rgba(169, 255, 113, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(169, 255, 113, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    right: -220px;
+    bottom: -160px;
+    width: clamp(640px, 95vw, 1200px);
+    aspect-ratio: 1 / 1;
+    background: url('assets/brand/logo_sementis_background_5__opacidade.png') no-repeat center / contain;
+    opacity: 0.22;
+    transform: rotate(-24deg);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── BOTTOM NAV / SIDEBAR ───────────────── */
+  .bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+    background: var(--bg-dark);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .sidebar-logo {
+    display: none;
+  }
+
+  .nav-items-wrapper {
+    display: contents;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    color: #8d92bc;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .nav-item img {
+    width: 30px;
+    height: 30px;
+    transition: transform 0.2s ease;
+  }
+
+  .nav-item span {
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .nav-item.active {
+    color: var(--green);
+  }
+
+  .nav-item.active img {
+    transform: scale(1.08);
+  }
+
+  .nav-item:hover:not(.active) {
+    color: #fff;
+  }
+
+  .back-btn {
+    position: fixed;
+    top: calc(14px + env(safe-area-inset-top));
+    left: 14px;
+    z-index: 25;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(26, 26, 74, 0.82);
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .back-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(42, 42, 98, 0.9);
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  .header {
+    width: 100%;
+    max-width: 460px;
+    padding: 40px 32px 24px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 12px var(--shadow-base);
+  }
+  .header p {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    letter-spacing: 0.02em;
+  }
+  .xp-bar-wrap {
+    margin: 0 auto;
+    width: 240px;
+    height: 12px;
+    background: var(--bg-dark);
+    border-radius: 99px;
+    overflow: hidden;
+    border: 2px solid rgba(169, 255, 113, 0.15);
+    box-shadow: inset 0 2px 4px var(--shadow-base),
+                0 2px 8px var(--shadow-base);
+    position: relative;
+  }
+  .xp-bar-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .xp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--green-dark) 0%, var(--green) 100%);
+    border-radius: 99px;
+    transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 12px var(--green-glow);
+    position: relative;
+  }
+  .xp-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+    border-radius: 99px;
+  }
+
+  /* ── TRAIL SCENE ─────────────────────────── */
+  .trail-scene {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    z-index: 1;
+  }
+
+  .trail-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+
+  /* ── NODE ────────────────────────────────── */
+  .node {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    transform: translate(-50%, -50%);
+    cursor: default;
+    filter: drop-shadow(0 4px 12px var(--shadow-base));
+    transition: filter 0.3s ease;
+  }
+
+  .node-inner {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .node.done:hover .node-inner,
+  .node.active:hover .node-inner {
+    transform: scale(1.1);
+  }
+
+  .node.locked .node-inner {
+    background: linear-gradient(145deg, var(--node-locked) 0%, #22224a 100%);
+    box-shadow: 0 8px 0 #1a1a3e,
+                inset 0 2px 0 rgba(255, 255, 255, 0.05),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+    border: 4px solid var(--node-border);
+  }
+
+  .node.done .node-inner,
+  .node.active .node-inner {
+    background: linear-gradient(145deg, var(--green) 0%, var(--green-dark) 100%);
+    box-shadow: 0 8px 0 #6aaa34,
+                0 0 30px var(--green-glow),
+                inset 0 2px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+    border: 4px solid #d4ff9e;
+  }
+
+  .node.active .node-inner {
+    cursor: pointer;
+  }
+
+  .node.done:hover .node-inner,
+  .node.active:hover .node-inner {
+    box-shadow: 0 8px 0 #6aaa34,
+                0 0 38px var(--green-glow),
+                0 0 56px rgba(169, 255, 113, 0.28),
+                inset 0 2px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  @keyframes nodePulse {
+    0%, 100% {
+      box-shadow: 0 8px 0 #6aaa34,
+                  0 0 20px var(--green-glow),
+                  inset 0 2px 0 rgba(255, 255, 255, 0.4);
+    }
+    50% {
+      box-shadow: 0 8px 0 #6aaa34,
+                  0 0 45px var(--green-glow),
+                  0 0 60px rgba(169, 255, 113, 0.3),
+                  inset 0 2px 0 rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  .node img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 50%;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+
+  .node-label {
+    position: absolute;
+    bottom: -28px; left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+    text-shadow: 0 1px 2px var(--shadow-base);
+  }
+  .node.done .node-label,
+  .node.active .node-label {
+    color: var(--green);
+    font-weight: 800;
+  }
+
+  /* star badge */
+  .star-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 32px; height: 32px;
+    background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 3px 8px var(--shadow-strong),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border: 3px solid var(--green-dark);
+    animation: starAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes starAppear {
+    0% { transform: scale(0) rotate(-180deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  /* bounce arrow */
+  .arrow-bounce {
+    position: absolute;
+    top: -36px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    color: var(--green);
+    animation: bounce 0.8s ease-in-out infinite alternate;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px var(--shadow-base));
+  }
+  @keyframes bounce {
+    from { transform: translateX(-50%) translateY(0); opacity: 1; }
+    to   { transform: translateX(-50%) translateY(-10px); opacity: 0.7; }
+  }
+
+  /* ── SVG PATHS ───────────────────────────── */
+  .seg-done {
+    stroke: var(--path-done);
+    stroke-width: 8;
+    fill: none;
+    stroke-dasharray: 18 10;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 8px var(--green-glow));
+    animation: pathDraw 0.8s ease-out;
+  }
+  .seg-locked {
+    stroke: var(--path-locked);
+    stroke-width: 8;
+    fill: none;
+    stroke-dasharray: 18 10;
+    stroke-linecap: round;
+    opacity: 0.6;
+  }
+
+  @keyframes pathDraw {
+    from { stroke-dashoffset: 100; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* ── TOOLTIP "COMEÇAR" NO NÓ ATIVO ────────── */
+  .start-tooltip {
+    position: absolute;
+    bottom: calc(100% + 16px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: var(--bg-dark);
+    border: 2px solid var(--green);
+    color: var(--green);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 4px 0 #0f0f33, 0 0 18px var(--green-glow);
+    animation: tooltipFlutuar 0.9s ease-in-out infinite alternate;
+    z-index: 3;
+  }
+  .start-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: var(--bg-dark);
+    border-right: 2px solid var(--green);
+    border-bottom: 2px solid var(--green);
+    transform: translate(-50%, -6px) rotate(45deg);
+  }
+  @keyframes tooltipFlutuar {
+    from { transform: translateX(-50%) translateY(0); }
+    to   { transform: translateX(-50%) translateY(-6px); }
+  }
+
+  /* ── BAÚ NO MEIO DA TRILHA ───────────────── */
+  .bau-node,
+  .bau-modal-card {
+    --bau-corpo: #3a3a7a;
+    --bau-claro: #4a4a92;
+    --bau-reforco: var(--green-dark);
+    --bau-fecho: var(--green);
+    --bau-brilho: var(--green-glow);
+  }
+  .bau-node {
+    position: absolute;
+    width: 104px;
+    height: 88px;
+    transform: translate(-50%, -50%);
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    background: none;
+    cursor: pointer;
+    z-index: 2;
+    font-family: inherit;
+    transition: transform 0.2s ease;
+  }
+  .bau-node.bloqueado {
+    --bau-corpo: var(--node-locked);
+    --bau-claro: var(--node-border);
+    --bau-reforco: #22224a;
+    --bau-fecho: var(--text-muted);
+    --bau-brilho: transparent;
+  }
+  .bau-node.disponivel {
+    animation: bauChamar 2.2s ease-in-out infinite;
+  }
+  .bau-node:not(.bloqueado):hover {
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+  [data-raridade="comum"]    { --bau-reforco: #8d92bc; --bau-fecho: #b8b8e6; --bau-brilho: rgba(184, 184, 230, 0.3); }
+  [data-raridade="raro"]     { --bau-reforco: #2a9fd6; --bau-fecho: #4fc3f7; --bau-brilho: rgba(79, 195, 247, 0.45); }
+  [data-raridade="epico"]    { --bau-reforco: #9b5de5; --bau-fecho: #c084fc; --bau-brilho: rgba(192, 132, 252, 0.5); }
+  [data-raridade="lendario"] { --bau-reforco: #d99e00; --bau-fecho: #ffc107; --bau-brilho: rgba(255, 193, 7, 0.55); }
+
+  .bau-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 0 14px var(--bau-brilho)) drop-shadow(0 4px 8px var(--shadow-base));
+  }
+  .bau-svg .bau-sombra    { fill: rgba(0, 0, 0, 0.28); }
+  .bau-svg .bau-corpo     { fill: var(--bau-corpo); }
+  .bau-svg .bau-base      { fill: rgba(0, 0, 0, 0.22); }
+  .bau-svg .bau-claro     { fill: var(--bau-claro); }
+  .bau-svg .bau-reforco   { fill: var(--bau-reforco); }
+  .bau-svg .bau-fecho     { fill: var(--bau-fecho); }
+  .bau-svg .bau-fechadura { fill: var(--bg-dark); }
+  .bau-svg .bau-tampa {
+    transform-origin: 12px 46px;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .bau-aberto .bau-tampa {
+    transform: translate(-4px, -12px) rotate(-20deg);
+  }
+  .bau-dica {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: var(--green);
+    color: var(--bg-dark);
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 3px 0 var(--green-dark);
+  }
+  @keyframes bauChamar {
+    0%, 70%, 100% { transform: translate(-50%, -50%) rotate(0); }
+    76% { transform: translate(-50%, -50%) rotate(-7deg); }
+    82% { transform: translate(-50%, -50%) rotate(7deg); }
+    88% { transform: translate(-50%, -50%) rotate(-4deg); }
+    94% { transform: translate(-50%, -50%) rotate(0); }
+  }
+
+  /* ── PERSONAGENS E ILUSTRAÇÕES DE SUSTENTABILIDADE AO LADO DA TRILHA ── */
+  .personagem {
+    position: absolute;
+    width: 156px;
+    height: 160px;
+    transform: translate(-50%, -50%);
+    padding: 0;
+    border: none;
+    border-radius: 24px;
+    background: none;
+    cursor: pointer;
+    z-index: 2;
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .personagem-sombra {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    width: 104px;
+    height: 22px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(8, 20, 14, 0.68) 0%, rgba(8, 20, 14, 0) 74%);
+    pointer-events: none;
+    animation: sombraRespirar 3.2s ease-in-out infinite;
+    animation-delay: var(--atraso-personagem, 0s);
+  }
+  .personagem-avatar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center bottom;
+    animation: personagemFlutuar 3.2s ease-in-out infinite;
+    animation-delay: var(--atraso-personagem, 0s);
+  }
+  .personagem-img {
+    display: block;
+    width: auto;
+    max-width: 152px;
+    height: 144px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    user-select: none;
+  }
+  .personagem:hover .personagem-img,
+  .personagem:focus-visible .personagem-img {
+    transform: translateY(-10px) scale(1.12);
+  }
+  .personagem:hover .personagem-sombra,
+  .personagem:focus-visible .personagem-sombra {
+    transform: translateX(-50%) scale(0.78);
+    opacity: 0.35;
+  }
+  .personagem.falando { z-index: 7; }
+  .personagem.falando .personagem-avatar {
+    animation: personagemComemorar 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes personagemFlutuar {
+    0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+    50% { transform: translateY(-7px) rotate(1.2deg); }
+  }
+  @keyframes sombraRespirar {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+    50% { transform: translateX(-50%) scale(0.82) translateY(2px); opacity: 0.32; }
+  }
+  @keyframes personagemComemorar {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-16px) scale(1.15) rotate(-4deg); }
+    60% { transform: translateY(0) scale(0.93) rotate(2deg); }
+    80% { transform: translateY(-6px) scale(1.05); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .personagem-avatar,
+    .personagem-sombra,
+    .personagem.falando .personagem-avatar { animation: none; }
+    .personagem-img,
+    .personagem-fala { transition: none; }
+  }
+  .personagem-fala {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    width: 210px;
+    padding: 11px 14px;
+    border-radius: 16px;
+    border: 2px solid rgba(110, 224, 122, 0.45);
+    background: #13261b;
+    color: #f0fdf4;
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: left;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 3px 0 rgba(46, 125, 50, 0.6);
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    z-index: 8;
+  }
+  .personagem.esquerda .personagem-fala { left: 4px; }
+  .personagem.direita .personagem-fala  { right: 4px; }
+  .personagem.falando .personagem-fala {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  @media (max-width: 420px) {
+    .personagem {
+      width: 132px;
+      height: 136px;
+    }
+    .personagem-sombra {
+      width: 88px;
+      height: 18px;
+    }
+    .personagem-img {
+      max-width: 128px;
+      height: 122px;
+    }
+    .personagem-fala {
+      width: 180px;
+      font-size: 11.5px;
+      padding: 9px 11px;
+    }
+  }
+
+  /* Ícone exclusivo para nó ativo (não concluído) */
+  .node-active-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--green) 0%, var(--green-dark) 100%);
+  }
+
+  .bau-node:focus-visible,
+  .personagem:focus-visible,
+  .bau-alvo:focus-visible,
+  .bau-fechar:focus-visible,
+  .bau-coletar:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: 4px;
+  }
+
+  /* ── MODAL DO BAÚ (3 TOQUES) ─────────────── */
+  .bau-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 15, 30, 0.88);
+  }
+  .bau-modal.aberto {
+    display: flex;
+  }
+  .bau-modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    padding: 28px 24px 24px;
+    border-radius: 24px;
+    background: linear-gradient(145deg, var(--bg) 0%, var(--bg-dark) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    text-align: center;
+    animation: bauModalEntrar 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes bauModalEntrar {
+    from { transform: scale(0.9); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .bau-fechar {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .bau-fechar:hover {
+    background: #FF4B4B;
+  }
+  .bau-etiqueta {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .bau-modal-card h2 {
+    margin: 4px 0 6px;
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .bau-instrucao {
+    min-height: 42px;
+    font-size: 14px;
+    color: var(--text-light);
+  }
+  .bau-instrucao.erro {
+    color: #ff8a8a;
+  }
+  .bau-alvo {
+    position: relative;
+    display: block;
+    width: 180px;
+    height: 152px;
+    margin: 8px auto;
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    background: none;
+    cursor: pointer;
+  }
+  .bau-alvo:disabled {
+    cursor: default;
+  }
+  .bau-alvo.tremer {
+    animation: bauTremer 0.32s ease;
+  }
+  @keyframes bauTremer {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.12, 0.9) rotate(-4deg); }
+    60%  { transform: scale(0.95, 1.08) rotate(3deg); }
+    100% { transform: scale(1); }
+  }
+  .faisca {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bau-fecho);
+    pointer-events: none;
+    animation: faiscaVoar 0.6s ease-out forwards;
+  }
+  @keyframes faiscaVoar {
+    from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    to   { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+  }
+  .bau-toques {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 4px 0 14px;
+  }
+  .bau-toques span {
+    width: 44px;
+    height: 8px;
+    border-radius: 9999px;
+    background: var(--node-locked);
+    transition: background 0.2s ease;
+  }
+  .bau-toques span.feito {
+    background: var(--bau-fecho);
+  }
+  .bau-raridade {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    background: var(--bau-fecho);
+    color: var(--bg-dark);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .bau-raridade.subiu {
+    animation: raridadeSubiu 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes raridadeSubiu {
+    from { transform: scale(0.6); }
+    to   { transform: scale(1); }
+  }
+  .bau-recompensa {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .bau-recompensa[hidden] {
+    display: none;
+  }
+  .bau-premio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    font-weight: 700;
+  }
+  .bau-premio img {
+    width: 28px;
+    height: 28px;
+  }
+  .bau-coletar {
+    margin-top: 6px;
+    padding: 14px;
+    border: none;
+    border-radius: 16px;
+    background: var(--green);
+    color: var(--bg-dark);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #6aaa34;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  .bau-coletar:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #6aaa34;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .start-tooltip,
+    .bau-node.disponivel,
+    .bau-alvo.tremer,
+    .bau-raridade.subiu,
+    .bau-modal-card,
+    .faisca {
+      animation: none !important;
+    }
+  }
+
+  .animacao-pausada,
+  .animacao-pausada *,
+  .animacao-pausada::before,
+  .animacao-pausada::after {
+    animation-play-state: paused !important;
+  }
+
+  /* ── RESPONSIVE ─────────────────────────── */
+  @media (max-width: 480px) {
+    body {
+      padding-bottom: 88px;
+    }
+
+    body::after {
+      right: -170px;
+      bottom: 48px;
+      width: clamp(420px, 108vw, 760px);
+      opacity: 0.18;
+    }
+    .header {
+      padding: 32px 24px 20px;
+    }
+    .header h1 {
+      font-size: 24px;
+    }
+    .xp-bar-wrap {
+      width: 200px;
+    }
+    .node {
+      width: 100px;
+      height: 100px;
+    }
+    .node-label {
+      font-size: 11px;
+      bottom: -26px;
+    }
+
+    .back-btn {
+      top: calc(10px + env(safe-area-inset-top));
+      left: 10px;
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .header h1 {
+      font-size: 32px;
+    }
+    .xp-bar-wrap {
+      width: 280px;
+      height: 14px;
+    }
+    .node {
+      width: 120px;
+      height: 120px;
+    }
+    .node-label {
+      font-size: 13px;
+      bottom: -30px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    body {
+      padding-bottom: 0;
+      padding-left: 250px;
+    }
+
+    .bottom-nav {
+      top: 0;
+      right: auto;
+      bottom: 0;
+      width: 250px;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      padding: 0;
+      border-top: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 4px 0 22px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar-logo {
+      display: block;
+      padding: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-logo img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .nav-items-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0 12px;
+    }
+
+    .nav-item {
+      flex-direction: row;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 16px;
+    }
+
+    .nav-item span {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .nav-item.active {
+      background: rgba(169, 255, 113, 0.1);
+    }
+
+    .nav-item:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .back-btn {
+      left: 268px;
+      top: 18px;
+    }
+  }
+  
+  /* ── ESTILOS DO MODAL DO JOGO ────────────────── */
+  .modal-escondido {
+      display: none; 
+  }
+
+  .modal-visivel {
+      display: flex;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 15, 30, 0.9); 
+      justify-content: center;
+      align-items: center;
+      
+  }
+
+  .conteudo-modal {
+      position: relative;
+      background-color: var(--bg-dark); 
+      border-radius: 20px;
+      box-shadow: 0px 15px 50px rgba(0,0,0,0.6);
+      width: 90vw;
+      height: 85vh;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .cabecalho-modal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background-color: rgba(0, 0, 0, 0.15);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .info-cabecalho {
+      display: flex;
+      flex-direction: column;
+  }
+
+  .label-cabecalho {
+      font-size: 11px;
+      color: var(--green);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+  }
+
+  .titulo-modal {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      margin-top: 2px;
+  }
+
+  .btn-fechar-jogo {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+  }
+
+  .btn-fechar-jogo:hover {
+      background-color: #FF4B4B;
+      transform: scale(1.1);
+  }
+
+  .corpo-modal {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #000; 
+      padding: 0;
+  }
+</style>
+<link rel="stylesheet" href="/css/shared-navbar.css">
+<link rel="stylesheet" href="/css/quiz.css">
+</head>
+<body>
+
+<a class="back-btn" href="home.html" aria-label="Voltar para home">← Voltar</a>
+
+<div class="header">
+  <h1 id="trilhaTitle">Carregando Trilha...</h1>
+  <p id="trilhaProgressText">— de — concluídas</p>
+  <div class="xp-bar-wrap">
+    <div class="xp-bar-fill" id="xpFill"></div>
+  </div>
+</div>
+
+<div class="trail-scene" id="scene"></div>
+
+<div id="shared-navbar-root"></div>
+<script src="/js/shared-navbar.js"></script>
+
+<!-- Modal do Baú: 3 toques, cada um pode evoluir a raridade (sorteio feito no backend) -->
+<div id="modal-bau" class="bau-modal" role="dialog" aria-modal="true" aria-labelledby="bau-titulo">
+  <div class="bau-modal-card" id="bau-card">
+    <button type="button" class="bau-fechar" id="bau-fechar" aria-label="Fechar baú">&times;</button>
+    <span class="bau-etiqueta">Baú da trilha</span>
+    <h2 id="bau-titulo">Toque 3x no baú!</h2>
+    <p class="bau-instrucao" id="bau-instrucao" aria-live="polite">Cada toque pode aumentar a raridade da recompensa.</p>
+    <button type="button" class="bau-alvo" id="bau-alvo" aria-label="Tocar no baú"></button>
+    <div class="bau-toques" aria-hidden="true"><span></span><span></span><span></span></div>
+    <span class="bau-raridade" id="bau-raridade">Comum</span>
+    <div class="bau-recompensa" id="bau-recompensa" hidden>
+      <div class="bau-premio"><img src="assets/icons/icone_moeda.png" alt=""><strong id="bau-moedas">+0</strong> moedas</div>
+      <div class="bau-premio"><img src="assets/icons/icone_experiencia_prata.png" alt=""><strong id="bau-xp">+0</strong> XP</div>
+      <button type="button" class="bau-coletar" id="bau-coletar">Coletar</button>
+    </div>
+  </div>
+</div>
+
+<!-- O Modal do Jogo (inicia escondido) -->
+<div id="modal-jogo" class="modal-escondido">
+    <div class="conteudo-modal">
+        <div class="cabecalho-modal">
+            <div class="info-cabecalho">
+                <span class="label-cabecalho">Desafio Final</span>
+                <span class="titulo-modal">🕹️ Flappy Fish</span>
+            </div>
+            <button onclick="fecharJogo()" class="btn-fechar-jogo">&times;</button>
+        </div>
+        <div class="corpo-modal">
+           <iframe id="iframe-flapfish" src="about:blank" title="FlapFish" width="100%" height="100%" frameborder="0" onload="if(this.getAttribute('src') !== 'about:blank') window.hideLoading?.();"></iframe>
+        </div>
+    </div>
+</div>
+
+<script src="/js/sounds.js"></script>
+<script src="/js/quiz.js"></script>
+<script>
+// ==============================================================
+// FUNÇÕES DO MODAL DO JOGO
+// ==============================================================
+function abrirJogo() {
+    document.getElementById('modal-jogo').className = 'modal-visivel';
+    showLoading('Carregando FlapFish', 'Preparando o desafio final 🐟');
+    document.getElementById('iframe-flapfish').src = "/FlapFish/index.html";
+}
+function fecharJogo() {
+    document.getElementById('modal-jogo').className = 'modal-escondido';
+    hideLoading();
+    document.getElementById('iframe-flapfish').src = "about:blank"; // Encerra o jogo e libera seus recursos
+    
+    // Mostra um aviso pro usuário saber que precisa voltar depois
+    alert("Jogo fechado. Para salvar seu progresso e ganhar XP, vença o Flappy Fish!");
+}
+
+// Para o iframe conseguir avisar a tela principal que o jogador venceu
+window.addEventListener("message", function(event) {
+    if (event.data === "vitoria_flapfish") {
+        document.getElementById('modal-jogo').className = 'modal-escondido';
+        document.getElementById('iframe-flapfish').src = 'about:blank';
+        
+        // Simula a vitória como se fosse um Quiz chamando o backend
+        const trilhaId = localStorage.getItem('ultima_fase_id');
+        fetch("/completar_atividade", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+              atividade_id: trilhaId,
+              erros: 0,
+              concluida_com_sucesso: true
+            })
+        })
+        .then(() => {
+            alert("Parabéns! Desafio Final concluído. Você ganhou XP e Moedas!");
+            window.location.href = "home.html"; // Volta pra home pra mostrar o novo XP
+        });
+    }
+});
+
+// ==============================================================
+// LÓGICA DINÂMICA: BUSCA AS FASES DA API DO LUCAS E DESENHA O MAPA
+// ==============================================================
+let lessons = [];
+let bausTrilha = [];
+let trilhaAtualId = null;
+
+// ==============================================================
+// 1. O TRADUTOR DE NOMES E BUSCA NA API
+// ==============================================================
+async function carregarMapaDinamico() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const trilhaIdParam = urlParams.get('trilha_id') || urlParams.get('trilha');
+  const nomeClicado = urlParams.get('module'); 
+  const turmaIdParam = urlParams.get('turma_id');
+
+  // Ajusta botão de voltar caso venha da tela da turma
+  const backBtn = document.querySelector('.back-btn');
+  if (backBtn && (turmaIdParam || urlParams.get('origem') === 'turma')) {
+    backBtn.href = turmaIdParam ? `turma-aluno.html?turma_id=${encodeURIComponent(turmaIdParam)}` : 'turma-aluno.html';
+    backBtn.textContent = '← Voltar para Turma';
+  }
+  
+  // O TRADUTOR: Descobre qual ID precisa baseado no nome da URL caso não tenha ID explícito
+  let moduloId = '1'; 
+  if (nomeClicado) {
+      const nomeLimpo = nomeClicado.toLowerCase().trim();
+      if (nomeLimpo.includes('fundamento')) moduloId = '1';
+      if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) moduloId = '2';
+      if (nomeLimpo.includes('climática') || nomeLimpo.includes('climatica') || nomeLimpo.includes('mudança')) moduloId = '3';
+  }
+  
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    const titleEl = document.getElementById('trilhaTitle');
+    const subtitulo = document.getElementById('trilhaProgressText');
+    if (titleEl) titleEl.textContent = '❌ Sessão expirada';
+    if (subtitulo) subtitulo.textContent = 'Por favor, faça login novamente';
+    return;
+  }
+
+  try {
+    const url = trilhaIdParam 
+      ? `${API_BASE_URL}/api/trilhas/${encodeURIComponent(trilhaIdParam)}`
+      : `${API_BASE_URL}/api/modulos/${moduloId}/trilhas`;
+    console.log('📡 Carregando trilha:', url);
+    console.log('🔐 Token enviado:', token.substring(0, 20) + '...');
+
+    const response = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        alert("Sua sessão expirou ou é inválida. Por favor, faça login novamente.");
+        window.location.href = 'login.html';
+        return;
+      }
+      const errorText = await response.text();
+      const errorMsg = `Erro ${response.status}: ${errorText || 'Erro ao carregar dados do banco.'}`;
+      console.error('❌', errorMsg);
+      throw new Error(errorMsg);
+    }
+
+    const mapData = await response.json();
+
+    if (mapData && mapData.length > 0) {
+      const trilha = mapData[0];
+
+      const titleEl = document.getElementById('trilhaTitle');
+      if (titleEl) titleEl.textContent = trilha.trilha_nome;
+      document.title = `${trilha.trilha_nome} - Sementis`;
+
+      trilhaAtualId = trilha.trilha_id;
+      bausTrilha = Array.isArray(trilha.baus) ? trilha.baus : [];
+
+      lessons = [];
+      lessons.push({ id: 'intro', label: 'Introdução', state: 'done', tipo: 'leitura' });
+
+      trilha.atividades.forEach(atv => {
+        let stateVisual = 'locked';
+        if (atv.status === 'liberada') stateVisual = 'active';
+        if (atv.status === 'concluida') stateVisual = 'done';
+
+        lessons.push({
+          id: atv.id.toString(),
+          label: atv.nome,
+          state: stateVisual,
+          tipo: atv.tipo
+        });
+      });
+
+      const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
+      const totalFases = lessons.length - 1;
+      const subtitulo = document.getElementById('trilhaProgressText');
+      if(subtitulo) subtitulo.textContent = `${concluidas} de ${totalFases} concluídas`;
+
+      build();
+    } else {
+      const titleEl = document.getElementById('trilhaTitle');
+      const subtitulo = document.getElementById('trilhaProgressText');
+      if (titleEl) titleEl.textContent = 'ℹ️ Nenhuma trilha encontrada';
+      if (subtitulo) subtitulo.textContent = 'Este módulo não tem trilhas disponíveis';
+    }
+  } catch (error) {
+    console.error("Erro na carga do mapa:", error);
+    const titleEl = document.getElementById('trilhaTitle');
+    const subtitulo = document.getElementById('trilhaProgressText');
+    if (titleEl) titleEl.textContent = '❌ Erro ao carregar';
+    if (subtitulo) subtitulo.textContent = error.message || 'Verifique sua conexão';
+  }
+}
+
+const PAD_TOP     = 104;
+const PAD_BOT     = 130;
+const PAD_SIDE    = 112;
+const PASSO_LICAO = 196; // Distância vertical entre duas lições
+const PASSO_BAU   = 150; // Distância menor quando há um baú no meio
+const TOQUES_BAU  = 3;
+
+const NOMES_RARIDADE = { comum: 'Comum', raro: 'Raro', epico: 'Épico', lendario: 'Lendário' };
+
+// Acervo completo com os 25 personagens e poses originais de sustentabilidade (5 por personagem)
+const CATALAGO_PERSONAGENS = {
+  semente: [
+    {
+      nome: 'Sementinha Regando a Mudinha',
+      dica: 'Cada atitude sustentável é uma semente plantada! Regue seus hábitos todos os dias.',
+      img: 'assets/personagens/semente_regando.png'
+    },
+    {
+      nome: 'Sementinha Abraçando o Planeta Terra',
+      dica: 'A Terra é a nossa única casa. Cada cuidado com a água e com o solo faz a diferença!',
+      img: 'assets/personagens/semente_planeta.png'
+    },
+    {
+      nome: 'Sementinha Estudando Sustentabilidade',
+      dica: 'Conhecimento é a ferramenta mais poderosa para mudar o planeta para melhor!',
+      img: 'assets/personagens/semente_lendo.png'
+    },
+    {
+      nome: 'Sementinha na Reciclagem',
+      dica: 'Separar garrafas plásticas permite que elas ganhem vida nova em vez de poluir o oceano!',
+      img: 'assets/personagens/semente_reciclando.png'
+    },
+    {
+      nome: 'Sementinha na Praia Limpa',
+      dica: 'Cuidar das praias e rios protege a fauna marinha e garante água viva para o futuro!',
+      img: 'assets/personagens/semente_praia.png'
+    }
+  ],
+  vovo: [
+    {
+      nome: 'Vovó Maromba Treinando Reciclagem',
+      dica: 'Separar o lixo reciclável dá um treino monstro! Aqui ninguém joga plástico fora do lugar!',
+      img: 'assets/personagens/vovo_peso.png'
+    },
+    {
+      nome: 'Vovó Maromba na Compostagem',
+      dica: 'Restos de alimento viram adubo rico na composteira. Feche o ciclo orgânico!',
+      img: 'assets/personagens/vovo_compostagem.png'
+    },
+    {
+      nome: 'Vovó Maromba do Muque Ecológico',
+      dica: 'Força na compostagem e no consumo consciente! Você tem o poder de mudar tudo!',
+      img: 'assets/personagens/vovo_muque.png'
+    },
+    {
+      nome: 'Vovó Maromba no Plano Tático',
+      dica: 'Planejar o descarte consciente e reduzir o consumo é tática de campeão ecológico!',
+      img: 'assets/personagens/vovo_prancheta.png'
+    },
+    {
+      nome: 'Vovó Maromba Descansando na Rede',
+      dica: 'Depois de um dia reduzindo a pegada de carbono, o descanso é mais que merecido!',
+      img: 'assets/personagens/vovo_rede.png'
+    }
+  ],
+  curupira: [
+    {
+      nome: 'Curupira Protetor da Floresta',
+      dica: 'Cada árvore em pé garante água limpa e ar puro para todos. Proteja a natureza!',
+      img: 'assets/personagens/curupira_arvore.png'
+    },
+    {
+      nome: 'Curupira Plantando Mudas',
+      dica: 'Plantar espécies nativas ajuda a recuperar o solo e chama os passarinhos de volta!',
+      img: 'assets/personagens/curupira_plantando.png'
+    },
+    {
+      nome: 'Curupira Vigia das Matas',
+      dica: 'Olhos atentos na mata para afastar queimadas e desmatamento ilegal!',
+      img: 'assets/personagens/curupira_binoculo.png'
+    },
+    {
+      nome: 'Curupira Recolhendo Resíduos',
+      dica: 'Lixo na mata jamais! A floresta precisa respirar limpa e livre de embalagens!',
+      img: 'assets/personagens/curupira_lixo.png'
+    },
+    {
+      nome: 'Curupira no Riacho Cristalino',
+      dica: 'Preservar as nascentes e matas ciliares garante água fresca e potável para sempre!',
+      img: 'assets/personagens/curupira_riacho.png'
+    }
+  ],
+  cenoura: [
+    {
+      nome: 'Cenourão Economia Verde',
+      dica: 'Sustentabilidade e desenvolvimento andam juntos! Compostagem e energia limpa dão lucro.',
+      img: 'assets/personagens/cenoura_grafico.png'
+    },
+    {
+      nome: 'Cenourão Inovação Sustentável',
+      dica: 'A tecnologia e a criatividade criam soluções incríveis para o meio ambiente!',
+      img: 'assets/personagens/cenoura_laptop.png'
+    },
+    {
+      nome: 'Cenourão Garrafa Reutilizável',
+      dica: 'Diga adeus aos copos descartáveis! Garrafinha permanente é estilosa e amiga do planeta.',
+      img: 'assets/personagens/cenoura_garrafa.png'
+    },
+    {
+      nome: 'Cenourão da Coleta Seletiva',
+      dica: 'Separe papel, plástico, vidro e metal. O que seria lixo vira recurso!',
+      img: 'assets/personagens/cenoura_seletiva.png'
+    },
+    {
+      nome: 'Cenourão Estudando Políticas Verdes',
+      dica: 'Liderar com consciência ambiental cria benefícios duradouros para toda a sociedade!',
+      img: 'assets/personagens/cenoura_leitura.png'
+    }
+  ],
+  patrulheiro: [
+    {
+      nome: 'Patrulheiro do Rio & Sapinho',
+      dica: 'Limpando rios e córregos para que os animais vivam felizes e sem plástico nas águas!',
+      img: 'assets/personagens/patrulheiro_rede.png'
+    },
+    {
+      nome: 'Patrulheiro da Biodiversidade',
+      dica: 'Cada inseto, fungo e plantinha tem uma função vital no ecossistema!',
+      img: 'assets/personagens/patrulheiro_lupa.png'
+    },
+    {
+      nome: 'Patrulheiro Cientista das Águas',
+      dica: 'Testando a pureza dos rios para garantir vida saudável a toda a comunidade!',
+      img: 'assets/personagens/patrulheiro_quimica.png'
+    },
+    {
+      nome: 'Patrulheiro Caderno de Campo',
+      dica: 'Registrar o reflorestamento e melhorias ecológicas orienta ações ainda mais eficazes!',
+      img: 'assets/personagens/patrulheiro_caderno.png'
+    },
+    {
+      nome: 'Patrulheiro da Energia Solar e Eólica',
+      dica: 'O sol e os ventos geram energia limpa sem poluir o nosso ar.',
+      img: 'assets/personagens/patrulheiro_solar.png'
+    }
+  ]
+};
+
+// Seleciona um conjunto exclusivo e variado de personagens para cada trilha diferente
+function selecionarPersonagensParaTrilha(identificadorTrilha) {
+  const chave = String(identificadorTrilha || 'trilha_padrao');
+  let hash = 0;
+  for (let i = 0; i < chave.length; i++) {
+    hash = ((hash << 5) - hash) + chave.charCodeAt(i);
+    hash |= 0;
+  }
+  const seed = Math.abs(hash);
+
+  const ordemBase = ['semente', 'vovo', 'curupira', 'cenoura', 'patrulheiro'];
+  const offset = seed % ordemBase.length;
+  const ordemRotacionada = [
+    ...ordemBase.slice(offset),
+    ...ordemBase.slice(0, offset)
+  ];
+
+  const resultado = [];
+  // Primeira rodada: 1 pose única para cada um dos 5 personagens
+  ordemRotacionada.forEach((tipo, idx) => {
+    const catalogo = CATALAGO_PERSONAGENS[tipo];
+    const poseIndex = (Math.floor(seed / (idx + 1)) + idx) % catalogo.length;
+    resultado.push(catalogo[poseIndex]);
+  });
+
+  // Segunda rodada com poses alternativas caso a trilha tenha muitas fases
+  ordemRotacionada.forEach((tipo, idx) => {
+    const catalogo = CATALAGO_PERSONAGENS[tipo];
+    const poseIndex = (Math.floor(seed / (idx + 1)) + idx + 2) % catalogo.length;
+    resultado.push(catalogo[poseIndex]);
+  });
+
+  return resultado;
+}
+
+function seededNoise(n) {
+  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453123;
+  return x - Math.floor(x);
+}
+
+// Junta lições e baús na ordem em que aparecem no caminho.
+// O baú de "posicao" N vem depois da N-ésima atividade (lessons[0] é a Introdução).
+function montarItensTrilha() {
+  const itens = [];
+  lessons.forEach((lesson, i) => {
+    itens.push({ tipo: 'licao', dados: lesson });
+    const bau = bausTrilha.find(b => b.posicao === i);
+    if (i > 0 && bau) itens.push({ tipo: 'bau', dados: bau });
+  });
+  return itens;
+}
+
+function itemLiberado(item) {
+  return item.tipo === 'bau' ? item.dados.status !== 'bloqueado' : item.dados.state !== 'locked';
+}
+
+function getNodePoints(itens, width) {
+  const points = [];
+  let y = PAD_TOP;
+
+  for (let i = 0; i < itens.length; i++) {
+    if (i > 0) {
+      const temBau = itens[i].tipo === 'bau' || itens[i - 1].tipo === 'bau';
+      y += (temBau ? PASSO_BAU : PASSO_LICAO) + seededNoise(i * 4.17) * 28;
+    }
+
+    const baseWave = Math.sin(i * 1.18 + 0.5) * 0.12 + Math.sin(i * 0.63 + 1.7) * 0.07;
+    const jitter = (seededNoise(i + 3.21) - 0.5) * 0.1;
+    let xNorm = 0.5 + baseWave + jitter;
+    if (itens[i].tipo === 'bau') xNorm = 0.5 + (xNorm - 0.5) * 0.5; // baú fica mais perto do centro
+    const x = Math.max(PAD_SIDE, Math.min(width - PAD_SIDE, xNorm * width));
+
+    points.push({ x, y });
+  }
+
+  return points;
+}
+
+// Mantém a decoração parada longe da viewport e quando a aba está oculta.
+const animacoesTrilhaVisiveis = new Set();
+const observadorTrilha = new IntersectionObserver(entradas => {
+  entradas.forEach(({ target, isIntersecting }) => {
+    if (isIntersecting) animacoesTrilhaVisiveis.add(target);
+    else animacoesTrilhaVisiveis.delete(target);
+    target.classList.toggle('animacao-pausada', !isIntersecting || document.hidden);
+  });
+}, { rootMargin: '100px' });
+document.addEventListener('visibilitychange', () => {
+  animacoesTrilhaVisiveis.forEach(el => el.classList.toggle('animacao-pausada', document.hidden));
+});
+
+function build() {
+  const scene = document.getElementById('scene');
+  const W = Math.min(window.innerWidth, 460);
+  
+  if(lessons.length === 0) return; // Segurança pra não bugar se a API não respondeu
+  
+  const itens = montarItensTrilha();
+  const pts = getNodePoints(itens, W);
+  const H = pts[pts.length - 1].y + PAD_BOT;
+  scene.style.height = H + 'px';
+
+  // ── SVG ────────────────────────────────────
+  const svgNS = 'http://www.w3.org/2000/svg';
+  let svg = scene.querySelector('.trail-svg');
+  if (!svg) {
+    svg = document.createElementNS(svgNS, 'svg');
+    svg.classList.add('trail-svg');
+    scene.appendChild(svg);
+  }
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i+1];
+    const isDone = itemLiberado(itens[i+1]);
+
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const diameter = Math.hypot(dx, dy) || 1;
+    const radius = diameter / 2;
+    const sweepFlag = i % 2 === 0 ? 1 : 0;
+
+    const p = document.createElementNS(svgNS, 'path');
+    p.setAttribute('d', `M${a.x},${a.y} A${radius},${radius} 0 0 ${sweepFlag} ${b.x},${b.y}`);
+    p.setAttribute('class', isDone ? 'seg-done' : 'seg-locked');
+    svg.appendChild(p);
+  }
+
+  // ── Nodes ──────────────────────────────────
+  observadorTrilha.disconnect();
+  animacoesTrilhaVisiveis.clear();
+  scene.querySelectorAll('.node, .bau-node, .personagem').forEach(n => n.remove());
+
+  renderizarPersonagens(scene, itens, pts, W);
+
+  const concluidas = lessons.filter(l => l.state === 'done' && l.id !== 'intro').length;
+
+  itens.forEach((item, i) => {
+    if (item.tipo === 'bau') {
+      criarNoBau(scene, item.dados, pts[i]);
+    } else {
+      criarNoLicao(scene, item.dados, pts[i], concluidas);
+    }
+  });
+
+  scene.querySelectorAll('.personagem, .bau-node.disponivel, .node.active').forEach(el => {
+    el.classList.add('animacao-pausada');
+    observadorTrilha.observe(el);
+  });
+
+  // Animação da Barra de XP verde
+  const totalFases = Math.max(1, lessons.length - 1);
+  const percentage = (concluidas / totalFases * 100).toFixed(0);
+
+  setTimeout(() => {
+    const fillElement = document.getElementById('xpFill');
+    if(fillElement) fillElement.style.width = percentage + '%';
+  }, 500);
+}
+
+function criarNoLicao(scene, lesson, {x, y}, concluidas) {
+  const div = document.createElement('div');
+  div.className = `node ${lesson.state}`;
+  div.style.left = x + 'px';
+  div.style.top  = y + 'px';
+
+  const inner = document.createElement('div');
+  inner.className = 'node-inner';
+
+  if (lesson.state === 'active') {
+    // Nó ativo da vez: NÃO exibe checkmark! Exibe ícone ativo de estrela/semente
+    const activeIcon = document.createElement('div');
+    activeIcon.className = 'node-active-icon';
+    activeIcon.innerHTML = `
+      <svg viewBox="0 0 24 24" width="44" height="44" fill="#ffffff" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>`;
+    inner.appendChild(activeIcon);
+
+    // Balão de ação: "COMEÇAR" apenas na primeira lição do aluno; nas demais, muda para "CONTINUAR"
+    const tooltip = document.createElement('div');
+    tooltip.className = 'start-tooltip';
+    tooltip.textContent = (concluidas === 0) ? 'COMEÇAR' : 'CONTINUAR';
+    div.appendChild(tooltip);
+  } else {
+    // Nó concluído (com checkmark) ou bloqueado (com cadeado)
+    const img = document.createElement('img');
+    img.src = (lesson.state === 'locked')
+      ? 'assets/tarefas/tarefa_bloqueada.png'
+      : 'assets/tarefas/tarefa_concluida.png';
+    img.alt = lesson.state;
+    inner.appendChild(img);
+  }
+
+  if (lesson.state === 'done' && lesson.label !== 'Introdução') {
+    const star = document.createElement('div');
+    star.className = 'star-badge';
+    star.textContent = '⭐';
+    inner.appendChild(star);
+  }
+
+  div.appendChild(inner);
+
+  const lbl = document.createElement('span');
+  lbl.className = 'node-label';
+  lbl.textContent = lesson.label;
+  div.appendChild(lbl);
+
+  if (lesson.state === 'active' || lesson.state === 'done') {
+    div.onclick = () => {
+      if (lesson.id === 'intro') {
+        alert("Bem-vindo ao módulo! Clique na próxima bolinha para começar.");
+        return;
+      }
+
+      // SALVA OS DADOS PARA QUEM FOR LER DEPOIS
+      localStorage.setItem('ultima_fase_id', lesson.id);
+      localStorage.setItem('ultima_fase_tipo', lesson.tipo);
+      
+      console.log(`Fase ID: ${lesson.id} | Tipo: ${lesson.tipo}`);
+
+      // ROTEAMENTO DINÂMICO
+      if (lesson.tipo === 'minigame') {
+          abrirJogo(); // CHAMA A FUNÇÃO NOVA QUE ABRE O MODAL
+      } else {
+          // SE FOR QUIZ, ABRE A TELA PRETA NORMAL
+          if (typeof openQuizModal === 'function') {
+              openQuizModal();
+          } else {
+              alert("Erro: O script do quiz não foi carregado.");
+          }
+      }
+    };
+  } else {
+    div.onclick = () => alert("🔒 Complete a fase anterior para liberar esta lição!");
+  }
+
+  scene.appendChild(div);
+}
+
+// ==============================================================
+// BAÚS NO MEIO DA TRILHA
+// ==============================================================
+function svgBau() {
+  return `
+    <svg class="bau-svg" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+      <ellipse class="bau-sombra" cx="60" cy="93" rx="46" ry="6"/>
+      <rect class="bau-corpo" x="12" y="44" width="96" height="46" rx="9"/>
+      <rect class="bau-base" x="12" y="78" width="96" height="12" rx="6"/>
+      <rect class="bau-reforco" x="28" y="44" width="11" height="46"/>
+      <rect class="bau-reforco" x="81" y="44" width="11" height="46"/>
+      <g class="bau-tampa">
+        <path class="bau-claro" d="M8 46 C8 22 30 12 60 12 C90 12 112 22 112 46 Z"/>
+        <rect class="bau-reforco" x="28" y="15" width="11" height="31"/>
+        <rect class="bau-reforco" x="81" y="15" width="11" height="31"/>
+      </g>
+      <rect class="bau-fecho" x="49" y="37" width="22" height="22" rx="6"/>
+      <circle class="bau-fechadura" cx="60" cy="46" r="3.2"/>
+      <rect class="bau-fechadura" x="58.6" y="47" width="2.8" height="6" rx="1"/>
+    </svg>`;
+}
+
+function criarNoBau(scene, bau, {x, y}) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = `bau-node ${bau.status}`;
+  btn.style.left = x + 'px';
+  btn.style.top  = y + 'px';
+  btn.innerHTML = svgBau();
+
+  if (bau.status === 'disponivel') {
+    btn.setAttribute('aria-label', 'Abrir baú da trilha');
+    const dica = document.createElement('span');
+    dica.className = 'bau-dica';
+    dica.textContent = 'Toque 3x!';
+    btn.appendChild(dica);
+    btn.onclick = () => abrirModalBau(bau);
+  } else if (bau.status === 'coletado') {
+    const nome = NOMES_RARIDADE[bau.raridade] || 'Comum';
+    btn.classList.add('bau-aberto');
+    btn.dataset.raridade = bau.raridade || 'comum';
+    btn.setAttribute('aria-label', `Baú ${nome} já aberto`);
+    btn.onclick = () => alert(`✨ Você já abriu este baú (${nome}).`);
+  } else {
+    btn.setAttribute('aria-label', 'Baú bloqueado');
+    btn.onclick = () => alert("🔒 Complete as lições anteriores para liberar este baú!");
+  }
+
+  scene.appendChild(btn);
+}
+
+// ==============================================================
+// PERSONAGENS AO LADO DA TRILHA (ESTILO DUOLINGO)
+// ==============================================================
+function renderizarPersonagens(scene, itens, pts, W) {
+  if (W < 320) return; // Em telas extremamente estreitas não sobra espaço lateral
+
+  // Identificador da trilha para garantir que cada trilha tenha uma ordem e poses de personagens exclusivas
+  const urlParams = new URLSearchParams(window.location.search);
+  const idTrilha = urlParams.get('trilha_id') || urlParams.get('trilha') || trilhaAtualId || urlParams.get('module') || 'trilha_padrao';
+  const personagensTrilha = selecionarPersonagensParaTrilha(idTrilha);
+
+  let indiceElemento = 0;
+  let ultimoY = -999;
+  const espacoMinimoY = W < 390 ? 200 : 220; // Permite personagens bem distribuídos mesmo em trilhas curtas
+
+  for (let i = 1; i < itens.length; i++) {
+    if (itens[i].tipo !== 'licao') continue;
+
+    const { x, y } = pts[i];
+    // Garante espaçamento vertical confortável
+    if (y - ultimoY < espacoMinimoY) continue;
+    ultimoY = y;
+
+    const elemento = personagensTrilha[indiceElemento % personagensTrilha.length];
+    indiceElemento++;
+
+    // Posiciona do lado onde há mais espaço livre em relação à curva da trilha
+    const lado = x < W / 2 ? 'direita' : 'esquerda';
+    const margemLateral = W < 390 ? 70 : 82;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `personagem ${lado}`;
+    btn.style.left = (lado === 'direita' ? W - margemLateral : margemLateral) + 'px';
+    btn.style.top  = y + 'px';
+    btn.style.setProperty('--atraso-personagem', `-${indiceElemento * 0.7}s`);
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', `Dica ecológica: ${elemento.nome}`);
+
+    const fala = document.createElement('span');
+    fala.className = 'personagem-fala';
+    fala.setAttribute('role', 'status');
+
+    btn.innerHTML = `
+      <div class="personagem-sombra"></div>
+      <div class="personagem-avatar">
+        <img class="personagem-img" src="${elemento.img}" alt="${elemento.nome}">
+      </div>
+    `;
+    btn.appendChild(fala);
+
+    let timerFala = null;
+    btn.onclick = () => {
+      const falando = btn.classList.toggle('falando');
+      btn.setAttribute('aria-expanded', String(falando));
+      fala.textContent = falando ? `${elemento.nome}: ${elemento.dica}` : '';
+      clearTimeout(timerFala);
+      if (falando) {
+        window.sounds?.playPop();
+        timerFala = setTimeout(() => {
+          btn.classList.remove('falando');
+          btn.setAttribute('aria-expanded', 'false');
+          fala.textContent = '';
+        }, 4500);
+      }
+    };
+
+    btn.onkeydown = (evento) => {
+      if (evento.key === 'Escape') {
+        clearTimeout(timerFala);
+        btn.classList.remove('falando');
+        btn.setAttribute('aria-expanded', 'false');
+        fala.textContent = '';
+      }
+    };
+    scene.appendChild(btn);
+  }
+}
+
+// ==============================================================
+// MODAL DO BAÚ — 3 TOQUES PARA EVOLUIR A RARIDADE
+// O sorteio acontece no backend; o front só revela um resultado por toque.
+// ==============================================================
+let bauAtual = null;
+let bauToques = 0;
+let bauPromessa = null;
+let bauResultado = null;
+let bauAnimando = false;
+let bauFocoAnterior = null;
+
+function abrirModalBau(bau) {
+  bauAtual = bau;
+  bauToques = 0;
+  bauPromessa = null;
+  bauResultado = null;
+  bauAnimando = false;
+  bauFocoAnterior = document.activeElement;
+
+  const card = document.getElementById('bau-card');
+  const alvo = document.getElementById('bau-alvo');
+  card.dataset.raridade = 'comum';
+  alvo.innerHTML = svgBau();
+  alvo.classList.remove('bau-aberto');
+  alvo.disabled = false;
+
+  document.getElementById('bau-titulo').textContent = 'Toque 3x no baú!';
+  definirInstrucaoBau('Cada toque pode aumentar a raridade da recompensa.');
+  atualizarRaridadeBau('comum', false);
+  document.querySelectorAll('.bau-toques span').forEach(s => s.classList.remove('feito'));
+  document.getElementById('bau-recompensa').hidden = true;
+
+  document.getElementById('modal-bau').classList.add('aberto');
+  window.sounds?.playRattle();
+  alvo.focus();
+}
+
+function fecharModalBau() {
+  document.getElementById('modal-bau').classList.remove('aberto');
+  // Se o backend já abriu o baú, atualiza o mapa para mostrar o baú aberto
+  if (bauResultado) carregarMapaDinamico();
+  if (bauFocoAnterior && document.body.contains(bauFocoAnterior)) bauFocoAnterior.focus();
+}
+
+function definirInstrucaoBau(texto, erro = false) {
+  const el = document.getElementById('bau-instrucao');
+  el.textContent = texto;
+  el.classList.toggle('erro', erro);
+}
+
+function atualizarRaridadeBau(raridade, animar) {
+  const etiqueta = document.getElementById('bau-raridade');
+  document.getElementById('bau-card').dataset.raridade = raridade;
+  etiqueta.textContent = NOMES_RARIDADE[raridade];
+  etiqueta.classList.remove('subiu');
+  if (animar) {
+    void etiqueta.offsetWidth; // reinicia a animação
+    etiqueta.classList.add('subiu');
+  }
+}
+
+async function solicitarAberturaBau() {
+  const token = localStorage.getItem('token');
+  const resposta = await fetch(`${API_BASE_URL}/api/trilhas/${trilhaAtualId}/baus/${bauAtual.posicao}/abrir`, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+
+  if (resposta.status === 401) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+    throw new Error('Sessão expirada');
+  }
+
+  const dados = await resposta.json().catch(() => ({}));
+  if (!resposta.ok) throw new Error(dados.erro || 'Não foi possível abrir o baú.');
+  return dados;
+}
+
+function soltarFaiscas(alvo) {
+  for (let i = 0; i < 12; i++) {
+    const faisca = document.createElement('span');
+    faisca.className = 'faisca';
+    const angulo = (Math.PI * 2 * i) / 12;
+    const distancia = 60 + Math.random() * 40;
+    faisca.style.setProperty('--dx', `${Math.cos(angulo) * distancia}px`);
+    faisca.style.setProperty('--dy', `${Math.sin(angulo) * distancia}px`);
+    alvo.appendChild(faisca);
+    setTimeout(() => faisca.remove(), 600);
+  }
+}
+
+async function tocarBau() {
+  if (bauAnimando || bauToques >= TOQUES_BAU) return;
+  bauAnimando = true;
+
+  if (!bauPromessa) bauPromessa = solicitarAberturaBau();
+
+  try {
+    bauResultado = await bauPromessa;
+  } catch (erro) {
+    definirInstrucaoBau(erro.message, true);
+    bauPromessa = null;
+    bauAnimando = false;
+    return;
+  }
+
+  const alvo = document.getElementById('bau-alvo');
+  const anterior = bauToques > 0 ? bauResultado.evolucao[bauToques - 1] : 'comum';
+  const raridade = bauResultado.evolucao[bauToques];
+  const evoluiu = raridade !== anterior;
+  bauToques++;
+
+  alvo.classList.remove('tremer');
+  void alvo.offsetWidth;
+  alvo.classList.add('tremer');
+  soltarFaiscas(alvo);
+
+  document.querySelectorAll('.bau-toques span').forEach((s, i) => s.classList.toggle('feito', i < bauToques));
+  atualizarRaridadeBau(raridade, evoluiu);
+
+  if (evoluiu) {
+    window.sounds?.playCrack();
+    definirInstrucaoBau(`Evoluiu para ${NOMES_RARIDADE[raridade]}!`);
+  } else {
+    window.sounds?.playPop();
+  }
+
+  if (bauToques < TOQUES_BAU) {
+    if (!evoluiu) {
+      const faltam = TOQUES_BAU - bauToques;
+      definirInstrucaoBau(`Continua ${NOMES_RARIDADE[raridade]}... falta${faltam > 1 ? 'm' : ''} ${faltam} toque${faltam > 1 ? 's' : ''}.`);
+    }
+    setTimeout(() => { bauAnimando = false; }, 320);
+    return;
+  }
+
+  setTimeout(revelarRecompensaBau, 450);
+}
+
+function revelarRecompensaBau() {
+  const alvo = document.getElementById('bau-alvo');
+  alvo.classList.add('bau-aberto');
+  alvo.disabled = true;
+
+  document.getElementById('bau-titulo').textContent = `Baú ${NOMES_RARIDADE[bauResultado.raridade]}!`;
+  definirInstrucaoBau('Recompensa adicionada à sua conta.');
+  document.getElementById('bau-moedas').textContent = `+${bauResultado.moedas}`;
+  document.getElementById('bau-xp').textContent = `+${bauResultado.xp}`;
+  document.getElementById('bau-recompensa').hidden = false;
+  window.sounds?.playReveal(bauResultado.raridade);
+
+  // Mantém o cache local alinhado com o saldo calculado pelo backend
+  try {
+    const usuario = JSON.parse(localStorage.getItem('user'));
+    if (usuario) {
+      usuario.moedas = bauResultado.moedas_totais;
+      localStorage.setItem('user', JSON.stringify(usuario));
+    }
+  } catch (e) { /* cache inválido, ignora */ }
+
+  document.getElementById('bau-coletar').focus();
+}
+
+document.getElementById('bau-alvo').addEventListener('click', tocarBau);
+document.getElementById('bau-fechar').addEventListener('click', fecharModalBau);
+document.getElementById('bau-coletar').addEventListener('click', fecharModalBau);
+
+// Teclado: Esc fecha e Tab fica preso dentro do modal
+document.getElementById('modal-bau').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    fecharModalBau();
+    return;
+  }
+  if (e.key !== 'Tab') return;
+  const focaveis = [...e.currentTarget.querySelectorAll('button:not([disabled])')]
+    .filter(el => el.offsetParent !== null);
+  if (focaveis.length === 0) return;
+  const primeiro = focaveis[0];
+  const ultimo = focaveis[focaveis.length - 1];
+  if (e.shiftKey && document.activeElement === primeiro) {
+    e.preventDefault();
+    ultimo.focus();
+  } else if (!e.shiftKey && document.activeElement === ultimo) {
+    e.preventDefault();
+    primeiro.focus();
+  }
+});
+
+// Em vez de só rodar o build, agora ele busca da API primeiro
+carregarMapaDinamico();
+let larguraTrilha = Math.min(window.innerWidth, 460);
+let quadroRedimensionamento = null;
+window.addEventListener('resize', () => {
+  if (quadroRedimensionamento !== null) return;
+  quadroRedimensionamento = requestAnimationFrame(() => {
+    quadroRedimensionamento = null;
+    const largura = Math.min(window.innerWidth, 460);
+    if (largura === larguraTrilha) return;
+    larguraTrilha = largura;
+    build();
+  });
+});
+</script>
+<script src="pwa/pwa-register.js"></script>
+<script src="/js/loading.js"></script>
+
+</body>
+</html>

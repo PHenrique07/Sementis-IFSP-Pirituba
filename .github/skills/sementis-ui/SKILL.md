@@ -14,7 +14,7 @@ Use ao criar ou alterar páginas, componentes, navegação, formulários, cards,
 Antes de editar:
 
 1. Leia a página HTML e o CSS da tela relacionada.
-2. Reutilize `css/styles.css` e `css/shared-navbar.css` quando aplicável.
+2. Consulte `frontend/CONTEXT.md` e reutilize `frontend/css/styles.css` e `frontend/css/shared-navbar.css` quando aplicável. As URLs públicas continuam `/css/...`, sem prefixo `/frontend`.
 3. Procure componentes equivalentes antes de criar classes novas.
 4. Preserve HTML, CSS e JavaScript puro. Não introduza frameworks, bibliotecas ou ícones remotos sem necessidade.
 5. Mantenha variáveis, funções e comentários prioritariamente em português.
@@ -46,7 +46,7 @@ Use os tokens de `:root` em vez de repetir valores hexadecimais. Evite criar uma
 - Cards servem para itens repetidos, métricas, módulos e diálogos; não transforme cada seção em um card.
 - Mantenha raios consistentes: 8px para controles compactos, 12px ou 16px para superfícies maiores e `9999px` somente para pílulas ou avatares.
 - O botão principal deve ser visualmente evidente, mas não competir com o conteúdo.
-- Use ícones e imagens existentes em `assets/` e `pwa/icons/`; mantenha dimensões estáveis.
+- Use ícones e imagens existentes em `frontend/assets/` e `frontend/pwa/icons/`; mantenha dimensões estáveis.
 
 ## Componentes
 

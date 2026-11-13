@@ -1,5 +1,7 @@
 # Os Games em JS e Interatividade 🎮
 
+As paginas e jogos ficam em `frontend/`, incluindo `frontend/FlapFish/`. A reorganizacao preserva URLs como `/arena.html`, `/live-host.html` e `/FlapFish/index.html`.
+
 O Sementis transforma conceitos de sustentabilidade em experiências interativas através de múltiplos jogos em JavaScript, que vão desde um motor de quiz pedagógico com sistema de vidas até um jogo arcade 2D construído em **Phaser 3** e uma arena multiplayer estilo *Kahoot!*.
 
 ---
@@ -90,7 +92,7 @@ Para facilitar a visualização mesmo em projetores de baixa resolução ou para
 | **●** | Círculo | Amarelo (`#f59e0b`) | Energia Solar |
 | **■** | Quadrado | Verde (`#10b981`) | Flora e Florestas |
 
-Na tela do aluno em [`arena.html`](file:///d:/Programacao/Sementis-2/arena.html), apenas os 4 grandes botões táteis são exibidos, tornando a resposta ultrarrápida no celular.
+Na tela do aluno em [`arena.html`](https://github.com/PHenrique07/Sementis-IFSP-Pirituba/blob/main/frontend/arena.html), apenas os 4 grandes botões táteis são exibidos, tornando a resposta ultrarrápida no celular.
 
 ---
 
