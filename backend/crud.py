@@ -2,10 +2,10 @@ from sqlmodel import SQLModel, create_engine, Session, func, select
 from datetime import date
 import secrets
 import string
-from sqlalchemy import inspect, text
+from sqlalchemy import inspect, text, update
 from sqlalchemy.exc import IntegrityError
 # Importando todas as tabelas do models.py
-from .models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade, GeradorTrilha, TurmaTrilha, BauColetado
+from .models import Usuario, Modulo, Trilha, Atividade, ProgressoUsuario, Missao, ProgressoMissao, Questao, ItemLoja, InventarioUsuario, Turma, TurmaAluno, Amizade, GeradorTrilha, TurmaTrilha, BauColetado, ResgateRecompensa
 from .caminhos import CAMINHO_BANCO
 from datetime import date, timedelta
 import math
@@ -661,6 +661,20 @@ def listar_progresso_geral_modulos(session: Session, usuario_id: int):
             "atividades_concluidas": concluidas,
             "porcentagem": round((concluidas / total_atividades) * 100, 2) if total_atividades > 0 else 0
         })
+    # A última conclusão pertence ao usuário autenticado, inclusive ao revisar
+    # um módulo anterior. Sem histórico, aponta para o primeiro com atividades.
+    ultimo_modulo = session.exec(
+        select(Trilha.modulo_id)
+        .select_from(ProgressoUsuario)
+        .join(Atividade, ProgressoUsuario.atividade_id == Atividade.id)
+        .join(Trilha, Atividade.trilha_id == Trilha.id)
+        .where(ProgressoUsuario.usuario_id == usuario_id)
+        .order_by(ProgressoUsuario.data_conclusao.desc(), ProgressoUsuario.id.desc())
+    ).first()
+    if ultimo_modulo is None:
+        ultimo_modulo = next((m["modulo_id"] for m in progresso_geral if m["total_atividades"] > 0), None)
+    for modulo in progresso_geral:
+        modulo["em_destaque"] = modulo["modulo_id"] == ultimo_modulo
     return progresso_geral
 
 
@@ -1564,3 +1578,101 @@ def abrir_bau_trilha(session: Session, usuario_id: int, trilha_id: int, posicao:
         "moedas_totais": usuario.moedas,
     }, 200
 
+
+
+# Recompensas do passe e do drone
+JORNADA_PASSE = "raizes-1"
+TOTAL_NIVEIS = 60
+XP_POR_NIVEL = 500
+MOEDAS_DRONE = 67
+
+
+def perfil_recompensas(usuario):
+    return {
+        "id": usuario.id, "xp": usuario.xp, "xp_total": usuario.xp,
+        "xp_semanal": usuario.xp_semanal, "nivel": calcular_nivel(usuario.xp),
+        "moedas": usuario.moedas, "vidas": usuario.vidas,
+    }
+
+
+def recompensa_nivel(nivel):
+    etapa = (nivel - 1) // 10
+    tipo = ("moedas", "xp", "vidas")[(nivel - 1) % 3]
+    quantidade = {"moedas": 100 + etapa * 25, "xp": 150 + etapa * 25, "vidas": 1}[tipo]
+    return {"nivel": nivel, "tipo": tipo, "quantidade": quantidade, "xp_necessario": (nivel - 1) * XP_POR_NIVEL}
+
+
+def obter_passe(session: Session, usuario_id: int):
+    usuario = session.get(Usuario, usuario_id)
+    if not usuario:
+        return None
+    xp_passe = session.exec(select(func.coalesce(func.sum(ResgateRecompensa.xp), 0)).where(
+        ResgateRecompensa.usuario_id == usuario_id,
+        ResgateRecompensa.chave.like("passe:%")
+    )).one()
+    xp_progresso = max(0, usuario.xp - xp_passe)
+    nivel_atual = min(TOTAL_NIVEIS, xp_progresso // XP_POR_NIVEL + 1)
+    coletadas = set(session.exec(select(ResgateRecompensa.chave).where(
+        ResgateRecompensa.usuario_id == usuario_id,
+        ResgateRecompensa.chave.like(f"passe:{JORNADA_PASSE}:%")
+    )).all())
+    recompensas = []
+    for nivel in range(1, TOTAL_NIVEIS + 1):
+        item = recompensa_nivel(nivel)
+        coletada = f"passe:{JORNADA_PASSE}:{nivel}" in coletadas
+        item["estado"] = "coletada" if coletada else "disponivel" if nivel <= nivel_atual else "bloqueada"
+        recompensas.append(item)
+    return {
+        "jornada": JORNADA_PASSE, "nome": "Raízes do Saber", "total_niveis": TOTAL_NIVEIS,
+        "nivel_atual": nivel_atual, "xp_progresso": xp_progresso, "xp_por_nivel": XP_POR_NIVEL,
+        "xp_no_nivel": xp_progresso % XP_POR_NIVEL if nivel_atual < TOTAL_NIVEIS else XP_POR_NIVEL,
+        "pro_disponivel": False, "recompensas": recompensas, "perfil": perfil_recompensas(usuario),
+    }
+
+
+def obter_drone(session: Session, usuario_id: int):
+    chave = f"drone:{date.today().isoformat()}"
+    registro = session.exec(select(ResgateRecompensa.id).where(
+        ResgateRecompensa.usuario_id == usuario_id, ResgateRecompensa.chave == chave
+    )).first()
+    return {"disponivel": registro is None, "moedas": MOEDAS_DRONE}
+
+
+def registrar_resgate(session: Session, usuario_id: int, chave: str, recompensa: dict):
+    usuario = session.get(Usuario, usuario_id)
+    if not usuario:
+        return {"erro": "Usuário não encontrado."}, 404
+    valores = {tipo: recompensa.get(tipo, 0) for tipo in ("moedas", "xp", "vidas")}
+    session.add(ResgateRecompensa(usuario_id=usuario_id, chave=chave, **valores))
+    try:
+        # A restrição única reserva a coleta antes de modificar o saldo.
+        session.flush()
+        session.exec(update(Usuario).where(Usuario.id == usuario_id).values(
+            moedas=Usuario.moedas + valores["moedas"], vidas=Usuario.vidas + valores["vidas"],
+            xp=Usuario.xp + valores["xp"], xp_semanal=Usuario.xp_semanal + valores["xp"]
+        ))
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        return {"erro": "Esta recompensa já foi resgatada."}, 409
+    session.refresh(usuario)
+    return {"recompensa": valores, "perfil": perfil_recompensas(usuario)}, 200
+
+
+def resgatar_drone(session: Session, usuario_id: int):
+    return registrar_resgate(session, usuario_id, f"drone:{date.today().isoformat()}", {"moedas": MOEDAS_DRONE})
+
+
+def resgatar_passe(session: Session, usuario_id: int, nivel: int):
+    if nivel < 1 or nivel > TOTAL_NIVEIS:
+        return {"erro": "Nível não encontrado."}, 404
+    passe = obter_passe(session, usuario_id)
+    if passe is None:
+        return {"erro": "Usuário não encontrado."}, 404
+    if nivel > passe["nivel_atual"]:
+        return {"erro": "Conclua mais lições para liberar este nível."}, 403
+    item = recompensa_nivel(nivel)
+    resposta, status = registrar_resgate(session, usuario_id, f"passe:{JORNADA_PASSE}:{nivel}", {item["tipo"]: item["quantidade"]})
+    if status == 200:
+        resposta["passe"] = obter_passe(session, usuario_id)
+    return resposta, status

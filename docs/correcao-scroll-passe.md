@@ -1,5 +1,7 @@
 # Travamento ao rolar o passe de batalha
 
+> Registro histórico, substituído pela [refatoração do passe](refatoracao-passe.md). O passe atual não utiliza os PNGs de sombras descritos abaixo; esses arquivos foram removidos. As instruções seguintes documentam a implementação anterior.
+
 Registro de manutenção: 02/11/2026. Complementa a correção anterior dos brilhos com a tela parada; aquela mudança não tinha demonstrado melhora consistente durante a rolagem.
 
 ## Diagnóstico e resultado
@@ -21,7 +23,7 @@ Remover apenas o blur, os filtros das imagens ou os vídeos não explicou a melh
 ## Implementação
 
 - [`../css/missions.css`](../css/missions.css): as sombras em repouso usam dois PNGs transparentes em 2×, recortados em nove partes por `border-image` no `::after` dos cards. As bordas, fundos, blur e hover continuam definidos em CSS. No hover, a camada rasterizada desaparece em 180 ms e a sombra CSS original é usada.
-- [`../assets/ui/passe/sombra-gratis.png`](../assets/ui/passe/sombra-gratis.png) e [`../assets/ui/passe/sombra-premium.png`](../assets/ui/passe/sombra-premium.png): sombras geradas pelo próprio renderizador CSS, sem redesenhar as artes.
+- `sombra-gratis.png` e `sombra-premium.png` (removidos): sombras geradas pelo próprio renderizador CSS, sem redesenhar as artes.
 - [`../js/passe-batalha.js`](../js/passe-batalha.js): carrega ambos os PNGs e só adiciona `pass-sombras-prontas` ao body quando os dois terminam com sucesso. Enquanto carregam, ou se qualquer um falhar, permanecem as sombras CSS originais. A abertura não espera esses recursos.
 - O wrapper `.pv-cell-inner` conserva o recorte e o padding originais do conteúdo. A célula externa permite desenhar a sombra fora dela. `min-width: 0` mantém as larguras flex originais no celular.
 - Um `IntersectionObserver`, com margem de 100 px, acompanha a barra superior, o cabeçalho e as linhas. A classe `pass-animacao-pausada` suspende animações fora da região próxima da tela. Linhas antigas são desregistradas na reconstrução; reabrir reaproveita as observações. A aba oculta pausa a decoração por `missoes-aba-oculta`.

@@ -16,7 +16,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/shared-navbar.css">
-    <link rel="stylesheet" href="/css/missions.css">
+    <link rel="stylesheet" href="/css/missions.css?v=3">
 </head>
 <body class="missions-page">
     <!-- Navegação -->
@@ -38,52 +38,17 @@
                  VISÃO 1: TELA DE MISSÕES PADRÃO (CARD DO PASSE + MISSÕES)
             ======================================================== -->
             <div id="missions-home-view" class="missions-view-panel">
-                <!-- Card do Passe de Batalha (Limpo, sem texto encavalado) -->
-                <section class="pass-entry-card" id="pass-entry-card" onclick="abrirPasseVertical()" role="button" tabindex="0" aria-label="Abrir Passe de Batalha">
-                    <div class="pass-entry-bg-img" style="background-image: url('/assets/brand/passe_batalha_banner.jpg');"></div>
-                    <div class="pass-entry-overlay"></div>
-                    <div class="pass-entry-glow"></div>
-                    
-                    <div class="pass-entry-content">
-                        <!-- Topo do Card -->
-                        <div class="pass-entry-top">
-                            <div class="pass-entry-season-badge">
-                                <span class="pass-live-dot"></span>
-                                <span>TEMPORADA 1 &nbsp;·&nbsp; RAÍZES DO SABER</span>
-                            </div>
-                            <div class="pass-entry-alert-pill" id="pass-entry-alert-badge" style="display: none;">
-                                <span class="sparkle-icon">✨</span>
-                                <span id="pass-entry-alert-text">Recompensas Prontas!</span>
-                            </div>
-                        </div>
-
-                        <!-- Espaçador central para deixar a arte original brilhar com clareza -->
-                        <div class="pass-entry-art-spacer"></div>
-
-                        <!-- Barra Inferior de Progresso e Ação (Estilo Vidro Glassmorphism) -->
-                        <div class="pass-entry-footer">
-                            <div class="pass-entry-level-badge">
-                                <span class="pel-label">NÍVEL</span>
-                                <strong class="pel-value" id="pass-card-player-level">1</strong>
-                            </div>
-
-                            <div class="pass-entry-progress-box">
-                                <div class="pass-entry-xp-info">
-                                    <span class="pass-entry-xp-title">Progresso da Temporada</span>
-                                    <span class="pass-entry-xp-val" id="pass-card-xp-counter">0 / 500 XP</span>
-                                </div>
-                                <div class="pass-entry-xp-track">
-                                    <div class="pass-entry-xp-fill" id="pass-card-xp-fill" style="width: 0%;"></div>
-                                    <div class="pass-entry-xp-shine"></div>
-                                </div>
-                            </div>
-
-                            <button type="button" class="pass-entry-cta-btn" onclick="event.stopPropagation(); abrirPasseVertical();">
-                                <span>ABRIR PASSE</span>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </button>
-                        </div>
+                <!-- Capa e progresso da jornada gratuita -->
+                <section class="passe-entrada" aria-labelledby="passe-entrada-titulo">
+                    <div class="passe-entrada-texto">
+                        <p class="passe-eyebrow">PASSE SEMENTIS · RAÍZES DO SABER</p>
+                        <h1 id="passe-entrada-titulo">Seu aprendizado<br>rende bons frutos.</h1>
+                        <p>Conclua lições e transforme seu progresso em vidas, moedas e XP.</p>
+                        <div class="passe-mini-progresso"><span data-passe-nivel>Nível 1</span><span data-passe-xp>Carregando progresso…</span></div>
+                        <progress class="passe-barra" data-passe-barra max="500" value="0" aria-label="Progresso do passe"></progress>
+                        <button type="button" class="passe-botao" id="passe-abrir">Explorar recompensas <span aria-hidden="true">→</span></button>
                     </div>
+                    <div class="passe-arte" aria-hidden="true"><img src="/assets/personagens/vetores/semente_planeta.svg?v=20261112-4" alt="" width="280" height="250"><span class="passe-arte-legenda">Pequenas atitudes.<br>Grandes conquistas.</span></div>
                 </section>
 
 
@@ -220,112 +185,34 @@
             </div><!-- /#missions-home-view -->
 
             <!-- ========================================================
-                 VISÃO 2: PASSE DE BATALHA VERTICAL (INTEGRADO AO LADO DA NAVBAR)
+                 VISÃO 2: PASSE SEMENTIS E RECOMPENSAS
             ======================================================== -->
             <div id="missions-pass-view" class="missions-view-panel" style="display: none;">
-                <div class="pass-inpage-layout pass-inpage-container">
-                    <!-- Barra de Topo do Passe (Navegação & Retorno) -->
-                    <div class="pass-inpage-nav pass-inpage-top-bar">
-                        <button type="button" class="pass-back-btn" onclick="fecharPasseVertical()" title="Voltar para a lista de missões">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                            <span>Voltar para Missões</span>
-                        </button>
-                        
-                        <div class="pass-inpage-season-pill">
-                            <span class="pass-v-dot"></span>
-                            <span class="pass-season-title">TEMPORADA 1 &nbsp;·&nbsp; RAÍZES DO SABER</span>
-                        </div>
-
-                        <button type="button" class="pass-jump-pill-btn" onclick="rolarParaNivelAtual()" title="Rolar até meu nível atual">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <circle cx="12" cy="12" r="6"></circle>
-                                <circle cx="12" cy="12" r="2"></circle>
-                            </svg>
-                            <span>Meu Nível</span>
-                        </button>
+                <nav class="passe-nav" aria-label="Navegação do passe">
+                    <button type="button" class="passe-voltar" id="passe-voltar">← Missões</button>
+                    <span class="passe-pro">Passe Pro <span>Em breve</span></span>
+                </nav>
+                <section class="passe-capa" aria-labelledby="passe-titulo">
+                    <div>
+                        <p class="passe-eyebrow">PASSE SEMENTIS · GRATUITO PARA TODOS</p>
+                        <h1 id="passe-titulo" tabindex="-1">Raízes do Saber</h1>
+                        <p>Cada lição é uma semente.<br>Veja suas conquistas florescerem.</p>
+                        <div class="passe-tipos"><span>♥ Vidas</span><span>● Moedas</span><span>✦ XP</span></div>
                     </div>
-
-                    <!-- Header do Passe: Banner + Nível/XP + Card Royale -->
-                    <div class="pass-inpage-header-card">
-                        <div class="pass-inpage-banner-wrap">
-                            <img src="/assets/brand/passe_batalha_banner.jpg" alt="Passe Sementis" class="pass-inpage-banner-img">
-                            <div class="pass-inpage-banner-overlay"></div>
-                        </div>
-
-                        <!-- Barra de Status: Nível / Coroas + Card Pass Royale Dourado Nobre -->
-                        <div class="pass-v-status-bar">
-                            <!-- Esquerda: Nível Hexagonal + XP/Coroas -->
-                            <div class="pass-v-player-prog">
-                                <div class="pass-v-diamond-level">
-                                    <span class="pvd-num" id="pass-v-player-level">1</span>
-                                </div>
-                                <div class="pass-v-crown-meter">
-                                    <div class="pass-v-crown-icon">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#ffd700" stroke="#b8860b" stroke-width="1"><path d="M2 20h20l-2-10-5 5-3-8-3 8-5-5-2 10z"></path></svg>
-                                    </div>
-                                    <div class="pass-v-bar-track">
-                                        <div class="pass-v-bar-fill" id="pass-v-xp-fill" style="width: 0%;"></div>
-                                        <span class="pass-v-bar-label" id="pass-v-xp-label">0 / 500 XP</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Direita: Card Pass Royale Flutuante -->
-                            <div class="pass-v-royale-badge" id="pass-v-royale-badge">
-                                <div class="pvr-crown-glow">👑</div>
-                                <div class="pvr-info">
-                                    <span class="pvr-title">Passe Sementis</span>
-                                    <button type="button" class="pvr-action-btn" id="pass-v-upgrade-btn" onclick="ativarPassePremium()">
-                                        Upgrade!
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cabeçalhos das 2 Colunas (GRÁTIS | NÍVEL | PASSE SEMENTIS) -->
-                        <div class="pass-v-col-labels">
-                            <div class="pvc-label pvc-label-free">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-                                GRÁTIS
-                            </div>
-                            <div class="pvc-label-center">
-                                <span>NÍVEL</span>
-                            </div>
-                            <div class="pvc-label pvc-label-premium">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-                                PASSE SEMENTIS
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Trilha Vertical (Duas Colunas Perfeitas) -->
-                    <div class="pass-inpage-track-box">
-                        <div class="pass-v-track" id="pass-v-track">
-                            <!-- Gerado dinamicamente via passe-batalha.js -->
-                        </div>
-                    </div>
-
-                    <!-- Rodapé da Visão do Passe -->
-                    <div class="pass-inpage-footer-bar">
-                        <button type="button" class="pass-footer-jump-btn" onclick="rolarParaNivelAtual()">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <circle cx="12" cy="12" r="6"></circle>
-                                <circle cx="12" cy="12" r="2"></circle>
-                            </svg>
-                            <span>Ir para Meu Nível</span>
-                        </button>
-                        <button type="button" class="pass-footer-return-btn" onclick="fecharPasseVertical()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                            <span>Voltar para Missões</span>
-                        </button>
-                    </div>
-                </div>
+                    <div class="passe-arte" aria-hidden="true"><img src="/assets/personagens/vetores/semente_regando.svg?v=20261112-6" width="280" height="250" alt=""></div>
+                </section>
+                <section class="passe-progresso" aria-label="Seu progresso">
+                    <div class="passe-resumo"><div><p class="passe-eyebrow">SEU CRESCIMENTO</p><strong data-passe-nivel>Nível 1</strong></div><p data-passe-xp>Carregando progresso…</p></div>
+                    <progress class="passe-barra" data-passe-barra max="500" value="0" aria-label="Progresso até o próximo nível"></progress>
+                    <div class="passe-resumo"><p data-passe-disponiveis>Buscando recompensas…</p><button type="button" class="passe-link" id="passe-ir-nivel">Ir ao meu nível ↓</button></div>
+                    <p class="passe-saldos" id="passe-saldos"></p>
+                </section>
+                <div class="passe-secao-titulo"><div><p class="passe-eyebrow">CULTIVE SEU PROGRESSO</p><h2>Uma conquista de cada vez</h2></div><span>60 níveis · Sem prazo para terminar</span></div>
+                <p class="passe-mensagem" id="passe-mensagem" role="status" aria-live="polite"></p>
+                <button type="button" class="passe-link" id="passe-tentar" hidden>Tentar novamente</button>
+                <ol class="passe-recompensas" id="pass-v-track" aria-label="Trilha de recompensas por nível"></ol>
+                <button type="button" class="passe-mais" id="passe-mais" hidden>Ver mais níveis ↓</button>
+                <aside class="passe-nota"><span aria-hidden="true">✦</span><div><strong>O melhor prêmio é o que você aprende.</strong><p>O XP das recompensas aumenta sua experiência. Para liberar novos níveis do passe, continue estudando e concluindo lições.</p></div></aside>
             </div><!-- /#missions-pass-view -->
         </main>
     </div>
@@ -392,23 +279,14 @@
 
 
 
-    <!-- Modal de Recompensa Resgatada (Estilo Fortnite Unboxing) -->
-    <div id="pass-reward-modal" class="pass-modal-overlay" style="display: none;">
-        <div class="pass-modal-backdrop" onclick="fecharModalRecompensaPasse()"></div>
-        <div class="pass-modal-card">
-            <div class="pass-modal-sunburst"></div>
-            <div class="pass-modal-header-badge">RECOMPENSA DESBLOQUEADA!</div>
-            <div class="pass-modal-icon-wrap" id="pass-modal-icon-wrap">
-                <img id="pass-modal-img" src="/assets/icons/icone_moeda.png" alt="Recompensa">
-            </div>
-            <div class="pass-modal-rarity" id="pass-modal-rarity">LENDÁRIO</div>
-            <h3 class="pass-modal-item-name" id="pass-modal-name">100 Moedas Sementis</h3>
-            <p class="pass-modal-desc" id="pass-modal-desc">Você alcançou este escalão do Passe Sementis e fortaleceu seu inventário ecológico!</p>
-            <button type="button" class="pass-modal-claim-btn" id="pass-modal-close-btn" onclick="fecharModalRecompensaPasse()">
-                <span>Coletar Recompensa</span>
-            </button>
-        </div>
-    </div>
+    <dialog class="passe-modal" id="pass-reward-modal" aria-labelledby="pass-modal-name">
+        <form method="dialog"><button class="passe-modal-fechar" aria-label="Fechar">×</button></form>
+        <p class="passe-eyebrow">MAIS UMA CONQUISTA SUA</p>
+        <div class="passe-modal-icone"><img id="pass-modal-img" src="/assets/icons/icone_moeda.png" width="88" height="88" alt=""></div>
+        <h2 id="pass-modal-name">Recompensa recebida!</h2>
+        <p id="pass-modal-desc">Sua recompensa já foi salva na conta.</p>
+        <form method="dialog"><button class="passe-botao">Continuar cultivando <span aria-hidden="true">→</span></button></form>
+    </dialog>
 
     <!-- Scripts -->
     <script>
@@ -421,10 +299,9 @@
             }
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="/js/sounds.js"></script>
     <script src="pwa/pwa-register.js"></script>
-    <script src="/js/passe-batalha.js"></script>
+    <script src="/js/passe-batalha.js?v=3"></script>
     <script src="/js/missoes.js"></script>
 </body>
 </html>

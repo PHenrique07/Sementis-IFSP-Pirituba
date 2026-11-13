@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, Field
 from typing import Optional
 from datetime import datetime
 from datetime import date
-from sqlalchemy import Column, JSON
+from sqlalchemy import Column, JSON, UniqueConstraint
 
 # 1. Tabela de Usuário (Mantida)
 
@@ -207,3 +207,16 @@ class BauColetado(SQLModel, table=True):
     posicao: int  # Quantidade de atividades que vêm antes do baú na trilha
     raridade: str = Field(default="comum")  # "comum", "raro", "epico", "lendario"
     data_coleta: datetime = Field(default_factory=datetime.utcnow)
+
+
+# Histórico autoritativo do drone diário e das recompensas do passe.
+class ResgateRecompensa(SQLModel, table=True):
+    __table_args__ = (UniqueConstraint("usuario_id", "chave", name="uq_resgate_usuario_chave"),)
+
+    id: int | None = Field(default=None, primary_key=True)
+    usuario_id: int = Field(foreign_key="usuario.id", index=True)
+    chave: str
+    moedas: int = Field(default=0)
+    xp: int = Field(default=0)
+    vidas: int = Field(default=0)
+    data_resgate: datetime = Field(default_factory=datetime.utcnow)

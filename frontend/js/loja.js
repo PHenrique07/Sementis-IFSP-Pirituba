@@ -889,60 +889,64 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ===== Lógica do Drone Sustentável & Loot Diário (+67 Moedas) =====
-function inicializarDroneLootDiario() {
-  const HOJE_KEY = "sementis_drone_loot_date";
-  const hojeStr = new Date().toISOString().split("T")[0];
-  const ultimaData = localStorage.getItem(HOJE_KEY);
-
-  // Executa se ainda não resgatou hoje
-  if (ultimaData !== hojeStr) {
-    setTimeout(() => {
-      executarAnimacaoDroneLoot();
-    }, 1200);
+async function inicializarDroneLootDiario() {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+  try {
+    const resposta = await fetch(`${API_BASE_URL}/api/drone`, {
+      headers: { Authorization: `Bearer ${token}` }, cache: "no-store"
+    });
+    if (!resposta.ok) return;
+    const dados = await resposta.json();
+    if (dados.disponivel) setTimeout(executarAnimacaoDroneLoot, 1200);
+  } catch (erro) {
+    console.warn("Não foi possível consultar a entrega do drone.");
   }
 }
 
-function fecharModalDroneLoot(resgatarMoedas = true) {
+let resgatandoDrone = false;
+async function fecharModalDroneLoot(resgatarMoedas = false) {
+  if (resgatandoDrone) return;
   const modal = document.getElementById("drone-loot-modal");
-  if (modal) {
-    modal.classList.remove("open");
+  if (!resgatarMoedas) {
+    modal?.classList.remove("open");
+    return;
   }
-
-  const hojeStr = new Date().toISOString().split("T")[0];
-  localStorage.setItem("sementis_drone_loot_date", hojeStr);
-
-  if (resgatarMoedas) {
-    try {
-      if (typeof userState !== "undefined" && userState) {
-        userState.coins = (userState.coins || 0) + 67;
-      }
-      if (typeof updateBalanceUI === "function") updateBalanceUI();
-      if (typeof saveState === "function") saveState();
-
-      const token = localStorage.getItem("token");
-      if (token) {
-        fetch(`${API_BASE_URL}/api/moedas/adicionar`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ moedas: 67 })
-        }).catch(() => {});
-      }
-    } catch (err) {
-      console.error("Erro ao resgatar moedas:", err);
+  const botao = document.getElementById("btn-claim-drone-loot");
+  const textoOriginal = botao?.innerHTML;
+  resgatandoDrone = true;
+  if (botao) { botao.disabled = true; botao.textContent = "Salvando moedas…"; }
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Faça login para receber sua entrega.");
+    const resposta = await fetch(`${API_BASE_URL}/api/drone/resgatar`, {
+      method: "POST", headers: { Authorization: `Bearer ${token}` }
+    });
+    const dados = await resposta.json();
+    if (resposta.status === 409) {
+      modal?.classList.remove("open");
+      toast.info("Sua entrega de hoje já foi resgatada.");
+      if (typeof atualizarBarraDeXP === "function") atualizarBarraDeXP();
+      return;
     }
-
-    if (typeof toast !== "undefined" && toast.success) {
-      toast.success("Loot Diário Resgatado!", {
-        description: "+67 moedas adicionadas à sua conta pelo Drone Sustentável!",
-      });
+    if (!resposta.ok) throw new Error(dados.erro || "Não foi possível salvar suas moedas.");
+    sincronizarPerfil(dados.perfil);
+    saveState();
+    for (const chave of ["user", "cached_perfil"]) {
+      try {
+        const anterior = JSON.parse(localStorage.getItem(chave) || "{}");
+        localStorage.setItem(chave, JSON.stringify({ ...anterior, ...dados.perfil }));
+      } catch (erro) { /* O saldo confirmado continua visível se o cache falhar. */ }
     }
-
-    if (typeof userState !== "undefined") {
-      window.dispatchEvent(new CustomEvent("perfil:atualizado", { detail: userState }));
-    }
+    if (typeof atualizarBarraDeXP === "function") atualizarBarraDeXP();
+    window.dispatchEvent(new CustomEvent("perfil:atualizado", { detail: dados.perfil }));
+    modal?.classList.remove("open");
+    toast.success("Entrega recebida!", { description: `+${dados.recompensa.moedas} moedas salvas na sua conta.` });
+  } catch (erro) {
+    toast.error("A entrega ainda não foi coletada", { description: erro.message || "Verifique sua conexão e tente novamente." });
+  } finally {
+    resgatandoDrone = false;
+    if (botao) { botao.disabled = false; botao.innerHTML = textoOriginal; }
   }
 }
 
@@ -961,14 +965,14 @@ function inicializarEventosDroneModal() {
   if (btnClose) {
     btnClose.onclick = (e) => {
       e.stopPropagation();
-      fecharModalDroneLoot(true);
+      fecharModalDroneLoot(false);
     };
   }
 
   if (modal) {
     modal.onclick = (e) => {
       if (e.target === modal) {
-        fecharModalDroneLoot(true);
+        fecharModalDroneLoot(false);
       }
     };
   }
@@ -1042,6 +1046,5 @@ function executarAnimacaoDroneLoot() {
 
 // Função global para testar a animação a qualquer momento via console/dev button
 window.testarDroneLoot = function() {
-  localStorage.removeItem("sementis_drone_loot_date");
   executarAnimacaoDroneLoot();
 };

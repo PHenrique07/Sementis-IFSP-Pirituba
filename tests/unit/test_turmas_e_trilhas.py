@@ -2,6 +2,7 @@
 test_turmas_e_trilhas.py — Testes unitários para o fluxo de turmas do aluno e gerenciamento de trilhas pelo professor.
 """
 import pytest
+from datetime import datetime, timedelta
 from sqlmodel import SQLModel, create_engine, Session, select
 from backend.models import Usuario, Modulo, Trilha, Atividade, Turma, TurmaAluno, TurmaTrilha, ProgressoUsuario
 from backend.crud import (
@@ -10,7 +11,8 @@ from backend.crud import (
     listar_turmas_do_aluno,
     obter_ranking_da_turma,
     listar_trilhas_do_professor,
-    listar_trilhas_da_turma
+    listar_trilhas_da_turma,
+    listar_progresso_geral_modulos
 )
 
 @pytest.fixture(name="sessao")
@@ -23,6 +25,46 @@ def fixture_sessao():
     with Session(engine) as s:
         yield s
     SQLModel.metadata.drop_all(engine)
+
+
+@pytest.mark.parametrize("historico, esperado", [
+    ([], 1),
+    ([(1, 2, 1)], 1),  # Progresso de outro aluno não muda o destaque.
+    ([(1, 1, 1)], 1),
+    ([(1, 1, 1), (2, 1, 2)], 2),
+    ([(3, 1, 1), (1, 1, 2)], 1),  # A data prevalece sobre a ordem dos módulos.
+    ([(3, 1, 1), (1, 2, 2)], 3),
+])
+def test_destaque_modulo_acompanha_ultima_conclusao(sessao, historico, esperado):
+    sessao.add_all([
+        Usuario(id=1, nome="Aluno", email="aluno@teste.com", senha="123", tipo_usuario="aluno"),
+        Usuario(id=2, nome="Outro", email="outro@teste.com", senha="123", tipo_usuario="aluno"),
+    ])
+    for indice in range(1, 4):
+        sessao.add(Modulo(id=indice, nome=f"Módulo {indice}", descricao="Teste", ordem=indice))
+        sessao.add(Trilha(id=indice, nome="Trilha", modulo_id=indice, ordem=1))
+        sessao.add(Atividade(id=indice, nome="Lição", trilha_id=indice, tipo="quiz", ordem=1))
+    for atividade_id, usuario_id, dia in historico:
+        sessao.add(ProgressoUsuario(
+            atividade_id=atividade_id, usuario_id=usuario_id,
+            data_conclusao=datetime(2026, 1, 1) + timedelta(days=dia)
+        ))
+    sessao.commit()
+
+    modulos = listar_progresso_geral_modulos(sessao, 1)
+    assert [m["modulo_id"] for m in modulos if m["em_destaque"]] == [esperado]
+
+
+def test_destaque_ignora_modulo_sem_atividades(sessao):
+    sessao.add_all([
+        Modulo(id=1, nome="Vazio", descricao="Teste", ordem=1),
+        Modulo(id=2, nome="Disponível", descricao="Teste", ordem=2),
+        Trilha(id=1, nome="Trilha", modulo_id=2, ordem=1),
+        Atividade(id=1, nome="Lição", trilha_id=1, tipo="quiz", ordem=1),
+    ])
+    sessao.commit()
+    modulos = listar_progresso_geral_modulos(sessao, 1)
+    assert [m["modulo_id"] for m in modulos if m["em_destaque"]] == [2]
 
 
 def test_fluxo_turma_aluno_e_ranking(sessao: Session):

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory, Response, send_file
+from .crud import obter_passe, obter_drone, resgatar_passe, resgatar_drone
 from flask_cors import CORS
 #Pedro -> Adicionei a nova função de ranking por liga, a outra não existe mais
 from .crud import (engine, criar_tabelas, inserir_usuario, buscar_usuario_por_email,
@@ -450,6 +451,39 @@ def obter_progresso_modulos():
     with Session(engine) as session:
         progresso = listar_progresso_geral_modulos(session, id_usuario)
         return jsonify(progresso), 200
+
+@app.route('/api/passe', methods=['GET'])
+@token_obrigatorio
+def consultar_passe():
+    with Session(engine) as session:
+        passe = obter_passe(session, request.usuario_id)
+        if passe is None:
+            return jsonify({"erro": "Usuário não encontrado."}), 404
+        return jsonify(passe), 200
+
+
+@app.route('/api/passe/<int:nivel>/resgatar', methods=['POST'])
+@token_obrigatorio
+def coletar_nivel_passe(nivel):
+    with Session(engine) as session:
+        resposta, status = resgatar_passe(session, request.usuario_id, nivel)
+        return jsonify(resposta), status
+
+
+@app.route('/api/drone', methods=['GET'])
+@token_obrigatorio
+def consultar_drone():
+    with Session(engine) as session:
+        return jsonify(obter_drone(session, request.usuario_id)), 200
+
+
+@app.route('/api/drone/resgatar', methods=['POST'])
+@token_obrigatorio
+def coletar_drone():
+    with Session(engine) as session:
+        resposta, status = resgatar_drone(session, request.usuario_id)
+        return jsonify(resposta), status
+
 
 # --- Rota Universal: Serve arquivos estáticos de pastas específicas ---
 
