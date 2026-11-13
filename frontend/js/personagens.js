@@ -1,7 +1,7 @@
 // SVGs locais: o acervo mantém as poses da prancha original e o PNG como reserva.
 const vetoresPersonagens = new Map();
 // Atualize junto da versão do script em trilhas.html ao alterar o acervo.
-const VERSAO_VETORES_PERSONAGENS = '20261112-4';
+const VERSAO_VETORES_PERSONAGENS = '20261112-6';
 let instanciaPersonagem = 0;
 
 function criarIlustracaoPersonagem(elemento) {
