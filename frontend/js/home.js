@@ -76,8 +76,8 @@ function initTrailInteractions() {
         const trilhaId = card.getAttribute('data-trilha');
 
         card.addEventListener('click', () => {
-            if (card.classList.contains('locked')) {
-                showNotification('Complete as trilhas anteriores para desbloquear!', 'info');
+            if (card.classList.contains('locked') || card.querySelector('.locked') || card.querySelector('.locked-text')) {
+                alert("Você deve concluir as outras trilhas primeiro!");
                 return;
             }
 
@@ -385,8 +385,8 @@ function initModulesView() {
 
     moduleCards.forEach(card => {
         card.addEventListener('click', () => {
-            if (card.classList.contains('locked')) {
-                showNotification('Complete as lições anteriores para desbloquear este módulo!', 'info');
+            if (card.classList.contains('locked') || card.querySelector('.locked') || card.querySelector('.locked-text')) {
+                alert("Você deve concluir as outras trilhas primeiro!");
                 return;
             }
 
@@ -396,7 +396,7 @@ function initModulesView() {
             window.location.href = target;
         });
 
-        if (!card.classList.contains('locked')) {
+        if (!card.classList.contains('locked') && !card.querySelector('.locked-text')) {
             card.addEventListener('mouseenter', () => {
                 card.style.transform = 'translateY(-8px) scale(1.02)';
             });
@@ -497,9 +497,17 @@ function aplicarProgressoModulos(modulos) {
     const cards = document.querySelectorAll('.module-card');
     document.querySelectorAll('.module-highlight').forEach(destaque => destaque.remove());
     cards.forEach(card => {
-        card.classList.remove('active');
-        card.removeAttribute('aria-current');
-        const idMapeado = Number(card.dataset.moduloId);
+        const tituloElement = card.querySelector('.module-title');
+        if (!tituloElement) return;
+        
+        const nomeModulo = tituloElement.textContent.trim();
+        const nomeLimpo = nomeModulo.toLowerCase();
+        
+        let idMapeado = null;
+        if (nomeLimpo.includes('fundamento') || nomeLimpo.includes('básico') || nomeLimpo.includes('basico')) idMapeado = 1;
+        else if (nomeLimpo.includes('água') || nomeLimpo.includes('agua')) idMapeado = 2;
+        else if (nomeLimpo.includes('clima')) idMapeado = 3;
+
         if (!idMapeado) return;
         
         const dadosModulo = modulos.find(m => m.modulo_id === idMapeado || m.id === idMapeado);
