@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory, Response, send_file
-from .crud import obter_passe, obter_drone, resgatar_passe, resgatar_drone
+from .crud import obter_passe, obter_drone, resgatar_passe, resgatar_drone, resgatar_gacha
 from .crud import (enviar_solicitacao_amizade, aceitar_amizade, rejeitar_amizade,
                    listar_amigos, listar_solicitacoes_pendentes)
 from flask_cors import CORS
@@ -528,6 +528,20 @@ def consultar_passe():
 def coletar_nivel_passe(nivel):
     with Session(engine) as session:
         resposta, status = resgatar_passe(session, request.usuario_id, nivel)
+        return jsonify(resposta), status
+
+
+@app.route('/api/loja/gacha', methods=['POST'])
+@token_obrigatorio
+def girar_gacha():
+    dados = request.get_json(silent=True)
+    chave = request.headers.get("Idempotency-Key")
+    if chave is None and isinstance(dados, dict):
+        chave = dados.get("idempotency_key")
+    if not isinstance(chave, str) or not chave.strip() or len(chave) > 128:
+        return jsonify({"erro": "Informe uma chave válida para a rodada."}), 400
+    with Session(engine) as session:
+        resposta, status = resgatar_gacha(session, request.usuario_id, chave)
         return jsonify(resposta), status
 
 
